@@ -1,0 +1,32 @@
+******** FERRARI Gamepad patch for Liz Allbee *********
+
+INSTRUCTIONS:
+
+--- START:
+-  Attach Ferrari Gamepad
+- start HAI_xosc app
+-> loads everything automatically,
+ends with big red gui window, 
+with a scope, 4 big sliders, etc ...
+----> and opens this text file ... 
+
+--- PLAYING:
+== on GUI:
+- select 4 front sounds in the 4 big GUI slots
+- default is RJKchaos, kiteHi, moogSing, xFMSH
+
+== on Ferrari:
+
+- SELECT sounds to activate: Buttons 1 2 3 4  dis/enable four front sounds
+
+- PLAY / Silence : Hold Button 6 - right shoulder - to play, let go for silence
+
+--- CONTROL/INFLUENCE sound params by joysticks:
++ right joystick up/down is always amp,
++ left joystick (and right js left/right) are either:
+- first 3 parameters of each active sound (direct control),
++ meta controls that influance all parameters 3 thru an influx object
+
+- CHOOSE control mode: press button 5 for
+-> direct mode -> sliders are light gray
+-> influx mode -> sliders are green
