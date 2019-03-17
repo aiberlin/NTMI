@@ -14,27 +14,26 @@ q.getActivePxsAsList = { |q, space|
 	names
 };
 
+
 (
 q.makeMeAPreset = { |q, px|
-	var pp, w, ppg, ng, shrink = -60;
 
 	var namesToStoreNoAmp = px.controlKeys.reject( _ == \amp); // everything except amp
-	// var xpos = px.getHalo(\scene) ? 0;
 	var name = px.key;
-	var presPath = (thisProcess.nowExecutingPath.dirname.dirname +/+ "2_processes/presets/" +/+ name ++ ".pxpreset.scd");
+	var presPath = (thisProcess.nowExecutingPath.dirname +/+
+		"2_processes/presets/" +/+ name ++ ".pxpreset.scd");
 
-	pp = NdefPreset(px, namesToStoreNoAmp);	// <- dont store amp along
-//	px.addHalo(\orderedNames, namesToStoreNoAmp); // take amp out of influx names
+	var preset = NdefPreset(px, namesToStoreNoAmp);	// <- dont store amp along
+	px.addHalo(\orderedNames, namesToStoreNoAmp); // take amp out of influx names
 
 	// must be in folder of preset file or fails... or link to preset file loc.!
 	if(File.exists(presPath)){"\n** going to load preset % from file %\n".postf(name, presPath)};
-//	pp.setPath(presPath);
-	pp.storePath_(presPath); // <<<< this solves it !!!!
-	pp.loadSettings(presPath);
-	if(pp.settings.notNil){ // load first real preset ...
-		pp.setCurr(pp.settings.wrapAt(1).key);
+	preset.storePath_(presPath); // <<<< this solves it !!!!
+	preset.loadSettings(presPath);
+	if(preset.settings.notNil){ // load first real preset ...
+		preset.setCurr(preset.settings.wrapAt(1).key);
 	}{ "sorry, no settings there yet".warn };
-	px.addHalo(\ndefPreset, pp);
+	px.addHalo(\ndefPreset, preset);
 }
 );
 
