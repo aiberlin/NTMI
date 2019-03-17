@@ -14,7 +14,7 @@ x.free;
 //// was: x = MKtl(\xosc, "*x-osc*");
 x = MKtl(\xosc, "xosc*");
 
-q.guiXOSC = x.gui;
+//// q.guiXOSC = x.gui; // moved to gui section
 
 //  x.device.destination.hostname = "127.0.0.1";
 
