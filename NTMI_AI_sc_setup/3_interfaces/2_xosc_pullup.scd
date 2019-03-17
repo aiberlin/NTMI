@@ -10,8 +10,7 @@ q.active = q.active? ();
 q.active.x = Set.new;
 q.active.x.add(q.ndefs.first); // we  Ndefs must be loaded first
 
-x.free;
-//// was: x = MKtl(\xosc, "*x-osc*");
+MKtl.all[\xosc].free;
 x = MKtl(\xosc, "xosc*");
 
 //// q.guiXOSC = x.gui; // moved to gui section
