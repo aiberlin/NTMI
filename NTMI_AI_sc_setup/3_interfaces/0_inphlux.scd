@@ -2,48 +2,33 @@
 //
 
 q = q ? ();
-
+q.inph = q.inph ? ();
 q.inphlux = Influx(9+8, 18);
 // x, y, x,  w, v, u //
-q.inphGui = InfluxKtlGui(q.inphlux);
-q.inphGui.skipjack.dt = 1/10;
 
-// q.inphWGui = InfluxIOWGui(q.inphlux, [9+8, 18]).moveTo(700, 20);
-// q.inphWGui.skipjack.dt = 1/20;
-q.ndefs = q.ndefs ? [];
-
-q.ndefs.do { |ndef, i|
-	q.inphGui.attachToButton(i, ndef);
-};
 
 q.resetInphl = { |q, infl|
 	infl.set(*infl.inNames.collect([_, 0]).flat);
 };
 
+q.inph.actives = q.ndefs;
+
 q.makeCurr = { |q, index, othersOff = true|
-	defer { var others;
+	defer {
 		q.currxoscPx = q.ndefs[index];
 		"q.currxoscPx: %\n".postf(q.currxoscPx);
-		// defer { q.currxoscPx.getHalo.prewin.front }; // other GUI,
-		if(othersOff){
-			others = q.ndefs.copy;
-			others.take(q.currxoscPx);
-			others.do(_.stop);
-		};
 		q.currxoscPx.play(0);
-
-		q.inphGui.attachButtons.do { |but, i|
-			var newval = (index == i).binaryValue;
-			if (newval != but.value) {
-				if (newval > 0 or: othersOff) {
-					but.value_(newval).doAction(0);
-					but.refresh;
-				};
-			};
+		if(othersOff) {
+			q.ndefs.do { |ndef| if (ndef == q.currxoscPx) { ndef.stop } };
 		};
+
+		q.inphlux.attachMapped(q.currxoscPx);
 	};
 };
-// q.makeCurr(4.rand, true);
+
+/*
+q.makeCurr(4.rand, true);
+*/
 q.makeCurr(0);
 
 
@@ -55,23 +40,22 @@ q.makePast = { |q, index|
 		q.inphGui.attachButtons[index].valueAction_(0);
 	};
 };
-// q.makePast(4.rand.postln);
-
-q.inphGui.attachButtons[0].valueAction = 0;
-// q.inphGui.attachButtons[0].valueAction_(0, 0);
-// q.inphGui.attachButtons[0].valueAction_(1);
-
+/*
+q.makePast(4.rand.postln);
+*/
 
 // q.resetInphl(q.inphlux);
 // q.inphlux.resetInvals;
 
 // fi a Start ...
+
 q.seedRandInfl = {|q, infl, seed=2011|
 	var d = thisThread.randData;
 	thisThread.randSeed_(seed);
 	infl.rand;
 	thisThread.randData_(d);
 };
+
 // initialize here!
 q.seedRandInfl(q.inphlux, 2011);
 
@@ -108,3 +92,5 @@ q.centerToNewRandSeed = {|q, infl, preset, seed=2011, much=1|
 	thisThread.randData_(d);
 	seed
 };
+
+
