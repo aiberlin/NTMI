@@ -165,4 +165,4 @@ Ndef(\robTron).addHalo(\reloadFunc, {
 });
 //		Ndef(\robTron).gui;
 //		{ Ndef(\robTron).getHalo(\reloadFunc).value; }.defer(1);
-"\n\nrobtron loaded\n".postln;
+// "\n\nrobtron loaded\n".postln;

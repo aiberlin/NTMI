@@ -22,11 +22,11 @@ Ndef(\xFMSH, { |amp=0, freqA=440, freqB=44, modA_B=0.1, modB_A=0.9, shape=1, ble
 // parameter range Specifications
 Ndef(\xFMSH).addSpec(\blend, [0, 1]);
 Ndef(\xFMSH).addSpec(\modA_B, [0, 6]);
-Ndef(\xFMSH).addSpec(\modB_A, \modB_A);
+Ndef(\xFMSH).addSpec(\modB_A, [0, 6]);
 Ndef(\xFMSH).addSpec(\freqA, \widefreq);
 Ndef(\xFMSH).addSpec(\freqB, \widefreq);
-Ndef(\xFMSH).addSpec(\modAB, \unipolar);
-Ndef(\xFMSH).addSpec(\modBA, \unipolar);
+// Ndef(\xFMSH).addSpec(\modAB, \unipolar);
+// Ndef(\xFMSH).addSpec(\modBA, \unipolar);
 Ndef(\xFMSH).addSpec(\shape, [8, 1/8, \exp]);
 Ndef(\xFMSH).addSpec(\lag, [0, 5, 5]);
 
