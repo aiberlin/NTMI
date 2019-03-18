@@ -6,11 +6,15 @@ q.closeGuis = { |q, name|
 
 q.makeGui.pxmix = {
 	q.closeGuis ("NdefMixer");
-	q.pxmix = NdefMixer(s, 6);
+	q.pxmix = NdefMixer(s, 12);
 	q.pxmix.skipjack.dt = 0.5;
 	q.pxmix.moveTo(5, 5);
+	// set popupmenu to 'activeProxies'
+	q.pxmix.parent.view.children.first.children.first.children[0].valueAction_(1);
 	ProxyMeter.addMixer(q.pxmix);
+	defer ({ ProxyMeter.hideKrs }, 1);
 };
+
 // s.scope(q.numChans).window.bounds_(Rect(00, 1000, 261, 250));
 
 
