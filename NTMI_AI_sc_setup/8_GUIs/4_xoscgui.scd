@@ -1,11 +1,19 @@
 q.makeGui.xosc = {
+	var simView;
 	q.closeGuis ("xosc");
 	q.guiXOSC = x.gui;
 
 	// // tweak q.guiXOSC to display correct stuff only
-	q.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // unused Digi ins
-	q.guiXOSC.views[(0..8)+18+8+8].do{|v| v.view.visible_(false)}; // unused LEDS
-	q.guiXOSC.views.keep(-16).do{|v| v.view.visible_(false)};      // unused Comparator Buttons
+	q.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // hide unused Digi ins
+
+	q.guiXOSC.views[(0..8)+18+8+8].do{|v| v.view.visible_(false)}; // hide unused LEDS
+	q.guiXOSC.views.keep(-16).do{|v| v.view.visible_(false)};      // hide unused Comparator Buttons
+
+	// make add on/off switch for OSC Simulator
+	simView = q.guiXOSC.views[18 + 8];
+	simView.view.visible_(true)
+	.states_([[ "SIM!", Color.white, Color.red() ], ["SIM", Color.black, Color.green ]]);
+
 	// switch off unused analog sliders!
 
 	///////////// should work but does not?

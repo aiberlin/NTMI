@@ -47,7 +47,7 @@ Tdef(\xoscSim, { |ev|
 		imuvals = imuvals.collectInPlace { |val| (val + 0.2.rand2 * 0.95).fold2(8.0).round(0.01) };
 		tempval = (tempval + 3.rand2).fold(0, 100);
 
-		anavals = anavals.collectInPlace { |val| val = (val + 0.05.rand2 * 0.95).fold(0, 1).round(0.01) };
+		anavals = anavals.collectInPlace { |val, i| (val + 0.05.rand2 * 0.95).fold(0, 1).round(0.01) };
 
 		q.addr.sendMsg(\imu, *(imuvals ++ tempval));
 		q.addr.sendMsg('/inputs/analogue', *anavals);

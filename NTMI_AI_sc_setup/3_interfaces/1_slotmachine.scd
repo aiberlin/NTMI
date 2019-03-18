@@ -95,3 +95,7 @@ q.slots.stepNext = { |sl, index, incr = 1|
 		q.slots.addActive(index, Ndef(nextname));
 	};
 };
+
+// init
+q.slots.updateChoices;
+
