@@ -37,8 +37,30 @@ n[3].label_('touch').value_('touch');
 n[3].label_('move').value_('move');
 
 NdefMixer(s)
+
+// test gui update
+MFdef('guiSlots').value;
+
+q.slots.chooseNext(0); MFdef('guiSlots').value;
+q.slots.chooseNext(1); MFdef('guiSlots').value;
+q.slots.chooseNext(2); MFdef('guiSlots').value;
+q.slots.chooseNext(3); MFdef('guiSlots').value;
+
+q.slots.addActive(0, Ndef(\kiteHi));
+q.slots.actives[0].vol;
+
 */
 
+MFdef('guiSlots').add(\set, {
+	q.slots.actives.do { |ndef, i|
+		var pair = q.slots.pops[i];
+		var pop = pair[0], mview = pair[1];
+		pop.items = q.slots.choices[i];
+		pop.value = q.slots.choices[i].indexOf(ndef.key);
+		mview.label = ndef.key;
+		mview.value = ndef.vol;
+	}
+});
 q.currMode = q.currMode ? \move;
 
 q.makeGui.mainstage_adc = {
@@ -95,7 +117,6 @@ q.makeGui.mainstage_adc = {
 	.action_({ Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play });
 
 
-
 	// 4 popups to select sounds, and volume levels
 	m = [ 3, 1, -1, -3].collect { |offset, i|
 		var top = w.bounds.center.y + (offset + 1 * -80 );
@@ -105,12 +126,15 @@ q.makeGui.mainstage_adc = {
 		.value_(q.allSoundNames.indexOf(q.ndefs[i].key)).font_(font);
 		pop.alpha_(0.8);
 		pop.action = { |pop|
-			q.ndefs.put(i, Ndef(pop.item));
+			q.slots.addActive(i, Ndef(pop.item));
 			emmy.refresh;
 		};
 		emmy.uv.alpha = 0.8;
 		emmy.dict[\knobCol] = Color.grey(0, 0.7);
 		emmy.putDict(\myspec, \amp);
+		emmy.action.add(\setVol,  { |em|
+			q.slots.actives[i].vol_(em.value)
+		});
 		emmy.drawFunc.add(\label, {
 			Pen.stringCenteredIn(
 				q.ndefs[i].key.asString,
@@ -119,9 +143,10 @@ q.makeGui.mainstage_adc = {
 				Color.blue
 			)
 		});
-		emmy;
+		[pop,emmy];
 	};
 
+	q.slots.pops = m;
 
 	n = [ 3, 1, -1, -3].collect { |offset, i|
 		var top = w.bounds.center.y + (offset + 1 * -80 );
@@ -232,7 +257,19 @@ q.makeGui.mainstage_adc = {
 			n[0].value = q.zoom;
 			// OSC status
 			oscBut.value = q.osc.timeSinceLast < 1;
-		}, 0.1, name: \mainUV);
+
+			// check if new ndefs, and update if needed
+			if (q.slots.actives.collect(_.key) !=
+				q.slots.pops.collect { |pair| pair[0].item }
+			) { MFdef('guiSlots').value };
+
+			// always check volumes?
+			q.slots.actives.do { |ndef, i|
+				var vol = ndef.vol;
+				var mview = q.slots.pops[i][1];
+				if (mview.value != vol) { mview.value = vol };
+			};
+		}, 0.2, name: \mainUV);
 
 	);
 
@@ -254,7 +291,7 @@ q.makeGui.mainstage_adc = {
 	Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 0.1]);
 	Tdef(\clocK).set(\runtime, 0, \isRunning, true);
 
-//	Tdef(\clocK).gui;
+	//	Tdef(\clocK).gui;
 
 	/// add gui parent here:
 	Tdef(\clocK).set(\timeUV, UserView(w, Rect(rightCol, 110, 300, 200)).front);
