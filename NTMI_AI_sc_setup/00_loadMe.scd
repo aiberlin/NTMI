@@ -103,21 +103,14 @@ Task {
 
 		q.load("3_interfaces/*scd");
 
-		// "*** folder % : \n".postf("5_postres");
-		// "5_postres/*.scd".resolveRelative.pathMatch.do { |path|
-		// 	"***      loading file %\n".postf(path.basename);
-		// 	path.load;
-		// 	0.2.wait;
-		// };
-		//
-		// if (q.hasGui) {
-		// 	"*** folder % : \n".postf("5_postres");
-		// 	"8_GUIs/*.scd".resolveRelative.pathMatch.do { |path|
-		// 		"***      loading file %\n".postf(path.basename);
-		// 		path.load;
-		// 		0.2.wait;
-		// 	};
-		// };
+		"*** folder % : \n".postf("5_postres");
+
+		q.load("5_postres/*scd");
+
+		if (q.hasGui) {
+			"*** folder % : \n".postf("8_GUIs");
+			q.load("8_GUIs/*scd");
+		};
 
 		"\n*** NTMI SETUP loading finished! ***\n".postln;
 	};
