@@ -110,6 +110,8 @@ Task {
 		if (q.hasGui) {
 			"*** folder % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
+			0.2.wait;
+			q.makeGui.mainstage_adc;
 		};
 
 		"\n*** NTMI SETUP loading finished! ***\n".postln;

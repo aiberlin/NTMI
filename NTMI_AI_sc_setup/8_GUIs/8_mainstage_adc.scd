@@ -39,11 +39,16 @@ n[3].label_('move').value_('move');
 NdefMixer(s)
 */
 
+q.currMode = q.currMode ? \move;
+
 q.makeGui.mainstage_adc = {
 	var font = Font("Monaco", 36);
 	var center, centPadsL, padsLPos, centPadsR, padsRPos;
 	var bounds = Window.screenBounds;
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + 30;
+
+	var oscBut, midiBut;
+	// var w, u, v, z, m, n;
 
 	try { w.close };
 	w = Window("N T M I MainStage", bounds.height_( bounds.height - 50)).front;
@@ -52,7 +57,6 @@ q.makeGui.mainstage_adc = {
 	u.background_(Color.red);
 
 	q.padCols = Color.grey(0.5) ! 8;
-	q.currMode = \touch;
 
 	q.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
 	q.movevals = { 1.0.rand2 }!9;
@@ -62,25 +66,33 @@ q.makeGui.mainstage_adc = {
 	Stethoscope(s, 4, view: w.view);
 	ServerMeterView(s, w, 250@0, 4, 4);
 
-	Button(w, Rect(rightCol, 10, 300, 50)).states_([
+	oscBut = Button(w, Rect(rightCol, 10, 300, 50)).states_([
 		["¿¿OSC??", Color.white, Color.red],
 		["¡OSC OK!", Color.black, Color.green]
-	]).font_(font).value_(1);
+	]).font_(font).value_(0);
 
-	Button(w, Rect(rightCol, 80, 300, 50)).states_([
+	midiBut = Button(w, Rect(rightCol, 80, 300, 50)).states_([
 		["¿¿MIDI??", Color.white, Color.red],
 		["MIDI OK!", Color.black, Color.green]
-	]).font_(font).value_(1);
+	]).font_(font).value_(0);
 
 	Button(w, Rect(rightCol, 810, 300, 150)).states_([
 		["RECORD?", Color.white, Color.red],
 		["Recording!", Color.black, Color.green]
-	]).font_(font);
+	]).font_(font)
+	.action_({ |bt|
+		if (bt.value > 0) {
+			s.recChannels_(q.numChans ? 2);
+			s.record;
+		} {
+			s.stopRecording;
+		}
+	});
 
 	Button(w, Rect(rightCol, 610, 300, 150)).states_([
 		["Reset Clock", Color.white, Color.red],
 	]).font_(font)
-	.action_({ Tdef(\clocK).set(\runtime, -12, \isRunning, true).stop.play });
+	.action_({ Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play });
 
 
 
@@ -128,10 +140,12 @@ q.makeGui.mainstage_adc = {
 		});
 		emmy;
 	};
-	n[0].label_(\zoom).value_(1).putDict(\myspec, \unipolar);
+	n[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
 	n[1].label_(\preset).value_(0).putDict(\myspec, [0, 7, \lin, 1]);
 	n[2].label_('¿-?').value_('¿-?').mode_(\code);
 	n[3].label_('move').value_('move').mode_(\code);
+
+	n[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
 
 	n[3].uv.mouseDownAction.add(\toggle, { |x|
 		var vals = [ \touch, \move];
@@ -144,8 +158,6 @@ q.makeGui.mainstage_adc = {
 	(
 		u.drawFunc = { |uv|
 			var center = uv.bounds.center;
-
-			"u refresh".postln;
 
 			Pen.addArc(center, center.y * 0.9, 0, 2pi);
 			// shape:
@@ -209,9 +221,17 @@ q.makeGui.mainstage_adc = {
 
 		z.stop;
 		z = SkipJack({
-			q.padCols = { Color.yellow(rrand(0.2, 1.0)).red_(1) } ! 8;
-			q.movevals = { 1.0.rand }!9;
-			v.refresh
+			// q.padCols = { Color.yellow(rrand(0.2, 1.0)).red_(1) } ! 8;
+			// q.movevals = { 1.0.rand }!9;
+			q.movevals = x.elAt(['accel', 'gyro', 'magnet']).flat.collect(_.value);
+			q.padCols = x.elAt('inA').value.keep(8).collect { |val|
+				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
+			};
+			v.refresh;
+			// zoom
+			n[0].value = q.zoom;
+			// OSC status
+			oscBut.value = q.osc.timeSinceLast < 1;
 		}, 0.1, name: \mainUV);
 
 	);
@@ -232,10 +252,9 @@ q.makeGui.mainstage_adc = {
 
 
 	Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 0.1]);
-	Tdef(\clocK).set(\runtime, 0);
-	Tdef(\clocK).set(\isRunning, true);
+	Tdef(\clocK).set(\runtime, 0, \isRunning, true);
 
-	Tdef(\clocK).gui;
+//	Tdef(\clocK).gui;
 
 	/// add gui parent here:
 	Tdef(\clocK).set(\timeUV, UserView(w, Rect(rightCol, 110, 300, 200)).front);
@@ -250,7 +269,7 @@ q.makeGui.mainstage_adc = {
 	Tdef(\clocK, { |envir|
 		var dt = 1;
 		var timeStr;
-		inf.do {|i|
+		inf.do { |i|
 			if (envir.isRunning == true) {
 				envir.runtime = envir.runtime ? 0 + dt;
 			} {
