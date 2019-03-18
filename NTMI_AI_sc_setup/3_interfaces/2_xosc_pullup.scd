@@ -60,24 +60,15 @@ x.elAt(\sw, (0..7)).do (_.valueAction_(1));
 
 x.elAt(\sw, (0..3)).do { | bt, i|
 	bt.action.add(\front, {|bt|
-		defer {
-			if (bt.value <= 0) {
-
-				/////////// DIRTY! goes thru influx gui FIXME ! :
-				if(q.inphGui.attachButtons[i].value < 1)
-				{
-					q.makeCurr(i, false); // function from 0_inphlux.scd
-					x.elAt(\led)[i].value_(1/2);
-
-				}{
-					q.makePast(i);
-					x.elAt(\led)[i].value_(0);
-				}
-			}
+		if (bt.value <= 0) {
+			q.slots.playAt(i);
+			x.elAt(\led)[i].value_(1/2);
+		}{
+			q.slots.stopAt(i);
+			x.elAt(\led)[i].value_(0);
 		}
 	});
 };
-
 
 
 // switch mode - analog in vs. IMU /// touch vs move mode
@@ -174,12 +165,16 @@ MFdef(\imuFunc).disable( \setInphlux );
 MFdef(\imuFunc).enable( \setInphlux );
 
 
+
 // for monitoring the incoming osc activity by timetag
-q.lastOSCactivity = 0;
+q.osc = q.osc ? ();
+q.osc.lastInTime = 0;
+q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 OSCdef(\imuAlive, { |msg, time|
-	// (time - q.lastOSCactivity ).postc;
-	q.lastOSCactivity = time;
+	q.osc.lastInTime = time;
+
 }, "/imu").permanent_(true);
+
 
 // ///////////////////////////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////
