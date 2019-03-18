@@ -1,7 +1,7 @@
 ////// function to make a presetWin if needed
 
 (
-q.ndefPresetWin = { |q, height= 450, left = 0|
+q.makeGui.ndefPresetWin = { |q, height= 450, left = 0|
 	var pxs = q.ndefs;//q.getInfluxDestins; // could also be q.ndefs
 	var px = q.active.presWin.asArray.first ? pxs[0];
 	var currPreset, switchPxINGui;
@@ -91,7 +91,7 @@ q.ndefPresetWin = { |q, height= 450, left = 0|
 );
 
 /*
-q.ndefPresetWin;
+q.makeGui.ndefPresetWin;
 q.uniWin.getHalo(\active1);
 q.uniWin.getHalo(\active1sy);
 
