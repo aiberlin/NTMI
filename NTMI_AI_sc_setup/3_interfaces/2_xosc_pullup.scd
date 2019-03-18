@@ -25,6 +25,9 @@ try { x.device.destination.sendMsg("tralala") } {
 	x.device.destination.hostname_("localhost");
 };
 
+"*** XOSC - FOR NOW, TURN XOSC RESPONDERS OFF, ONLY USE hand-written OSCdefs!".postln;
+
+x.device.oscFuncDictionary.do(_.disable);
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -41,7 +44,7 @@ OSCdef(\xdig, { |msg|
 			elem.valueAction_(val);
 		}
 	}
-}, '/inputs/digital');
+}, '/inputs/digital').permanent_(true);
 
 
 x.elementsDict.do(_.action_(MFunc()));

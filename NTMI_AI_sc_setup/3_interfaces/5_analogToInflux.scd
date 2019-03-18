@@ -23,7 +23,7 @@ OSCdef(\xana,{ |msg|
 			elem.valueAction_(val);
 		}
 	}
-}, '/inputs/analogue');
+}, '/inputs/analogue').permanent_(true);
 );
 
 8.do{|i|
