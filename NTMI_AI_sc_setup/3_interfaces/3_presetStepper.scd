@@ -1,10 +1,19 @@
+// q.stepNdefPreInf = { |q, ndef, inc = 1|
+// 	var pre = NdefPreset(ndef.key);
+// 	var currIndex = pre.getHalo(\preIndex) ? 0;
+// 	var nextIndex = (currIndex + inc).asInteger;
+// 	var nextSetName = pre.getSetNames.wrapAt(nextIndex);
+// 	pre.addHalo(\preIndex, nextIndex);
+// 	pre.addHalo(\offsetPreName, nextSetName);
+// 	q.inphlux.offsetsFromPreset(*[pre, nextSetName].postcs);
+// 	"";
+// };
+
 q.stepNdefPreInf = { |q, ndef, inc = 1|
 	var pre = NdefPreset(ndef.key);
-	var currIndex = pre.getHalo(\preIndex) ? 0;
-	var nextIndex = (currIndex + inc).asInteger;
-	var nextSetName = pre.getSetNames.wrapAt(nextIndex);
-	pre.addHalo(\preIndex, nextIndex);
-	pre.addHalo(\offsetPreName, nextSetName);
+	var nextSetName;
+	pre.stepCurr(inc);
+	nextSetName = pre.currSet.key;
 	q.inphlux.offsetsFromPreset(*[pre, nextSetName].postcs);
 	"";
 };
