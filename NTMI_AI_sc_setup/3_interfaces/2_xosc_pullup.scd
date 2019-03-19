@@ -70,24 +70,24 @@ q.inph.modes = [\move, \touch];
 q.inph.mode = \move;
 q.inph.modeIndex = { q.inph.modes.indexOf(q.inph.mode) };
 
-x.elAt(\sw, \5).action.add(\front, {|bt|
-	if (bt.value <=0) {
-		if(  q.inph.mode == \move )
-		{
-			q.inph.mode = \touch;
-			"*** enable TOUCH".postln;
-			8.do { |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
-			MFdef(\imuFunc).disable( \setInphlux );
-			x.elAt(\led, \5).value_(0.0);
+MFdef(\imuMode).add(\toggle, {
+	if(  q.inph.mode == \move ) {
+		q.inph.mode = \touch;
+		"*** enable TOUCH".postln;
+		8.do { |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
+		MFdef(\imuFunc).disable( \setInphlux );
+		x.elAt(\led, \5).value_(0.0);
+	}{
+		q.inph.mode = \move;
+		"*** enable MOVE (IMU) ".postln;
+		8.do { |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
+		MFdef(\imuFunc).enable( \setInphlux );
+		x.elAt(\led, \5).value_(1/2);
+	};
+});
 
-		}{
-			q.inph.mode = \move;
-			"*** enable MOVE (IMU) ".postln;
-			8.do { |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
-			MFdef(\imuFunc).enable( \setInphlux );
-			x.elAt(\led, \5).value_(1/2);
-		};
-	}
+x.elAt(\sw, \5).action.add(\front, {|bt|
+	if (bt.value <=0) { MFdef(\imuMode).value }
 });
 
 
