@@ -36,32 +36,6 @@ OSCdef(\xana,{ |msg|
 
 
 /*
-(
-// switch mode - analog in vs. IMU
-q.influxWhich = true;
-
-[\inD_4].do { |bt, i|
-	x.elementsDict[bt].action.add(\front, {|bt|
-		if (bt.value > 0) {
-			if(  q.influxWhich )
-			{
-				"*** enable analox".postln;
-				8.do{|i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
-				MFdef(\xoscFunc).disable( \setInphlux );
-			}{
-				"*** enable IMU ".postln;
-				8.do{|i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
-				MFdef(\xoscFunc).enable( \setInphlux );
-			};
-			q.influxWhich = q.influxWhich.not;
-
-		}
-	});
-};
-
-
-)
-
 
 MFdef(\xoscFunc).add(\setInphlux, {
 var values = x.elAt(\accel).value.unibi ++ x.elAt(\gyro).value.unibi ++ x.elAt(\magnet).value.unibi ;
