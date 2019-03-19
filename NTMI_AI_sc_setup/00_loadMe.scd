@@ -1,16 +1,21 @@
 (
 "*** startup file for NTMI_AI_sc_setup loading...".postln;
 
-q = q ? ();
+q = q ? ();  // <- dict for most everything
+g = g ? ();  // <- gui stuff goes here!
 
-//// generally usful globals:
-q.me = unixCmdGetStdOut("whoami").split(Char.nl).first.asSymbol;
+
+//// Generally useful globals:
+q.time0 = Main.elapsedTime;
 q.myname = Platform.userHomeDir.basename.asSymbol;
-q.basedir = thisProcess.nowExecutingPath;
 q.hasGui = \View.asClass.notNil;
+if (q.hasGui) { "9_optionals/warnWin.scd".loadRelative };
+
+q.dir = q.dir ? ();
+q.dir.base = thisProcess.nowExecutingPath;
 
 // function to load code files or folders which can wait and posts loading time info:
-q.load = { |q, filename, wait = 0.1, dirsup = 0, preText = "", postText = ""|
+q.load = { |q, filename, wait = 0.05, dirsup = 0, preText = "", postText = ""|
 	forkIfNeeded ({
 		var here = "".resolveRelative;
 		var paths;
@@ -36,30 +41,20 @@ q.load = { |q, filename, wait = 0.1, dirsup = 0, preText = "", postText = ""|
 	}, AppClock)
 };
 
-// read early prefs if there
-(Platform.userAppSupportDir +/+ "preprefs.scd").loadPaths;
+//******* PREFERENCES
+///// read user prefs (if there) or default prefs early on:
+"1_prefs/1_prefs.scd".loadRelative;
+// set q.numChans from prefs
+q.numChans = q.prefs.active.numChans ? 2;
+"*** q.numChans is: %\n".postf(q.numChans);
 
-// should move to preprefs ?
-q.numChans = q.numChans ? 4;
-
-
-// ~trioPlayers = ["arik", "laVulega", "isakhan"];
-
-// q.soundsPerPlayer = ( // a dict for filename beginnings
-// 	\arik: 3,
-// 	\laVulega: 2,
-// 	\isakhan: 1,
-// 	\adc: 1,
-// );
-//
-// q.choiseNdefs_storePath = thisProcess.nowExecutingPath.dirname +/+ "presets/choiceNdefs.scd";
-
-// dont do HID by default, more stable
+// dont find HIDs by default, for more stability
 MKtl.find(\midi);
+
 
 Task {
 	s.quit;
-	0.5.wait;
+	0.2.wait;
 
 	"*** loading globals: ".postln;
 	q.load("0_globals/*.scd");
@@ -68,39 +63,35 @@ Task {
 	q.load("2_liveInput.scd");
 
 	"*** loading folder % : \n".postf("2_processes");
-	q.allSoundPaths = "2_processes/*.scd".resolveRelative.pathMatch;
-	q.allSoundNames = q.allSoundPaths.collect{|p|
-		p.basename.split($.)[0].reject{|c| c == $_}.reject(_.isDecDigit)
-	}.asSet.asArray.sort.collect(_.asSymbol);
+	q.process = q.process ? ();
+	q.process.allPaths = "2_processes/*_*.scd".resolveRelative.pathMatch;
+	q.process.allNames = q.process.allPaths.collect { |p|
+		p.basename.split($.)[0].reject {|c| (c == $_) }.reject(_.isDecDigit)
+	}.collectInPlace(_.asSymbol).asSet.asArray.sort;
 
 	q.load("2_processes/*scd");
 
 	0.2.wait;
 
-	q.load("2a_preset_func.scd");
+	q.load("2_processes/presets/2a_preset_func.scd");
 
 	s.waitForBoot {
 
 		"*** server booted, plays 3 pings left.".postln;
-		fork{ 3.do { Env.perc.test; 0.3.wait } };
+		fork { 3.do { Env.perc.test; 0.3.wait } };
 
-		0.5.wait;
-
-		/// for now, random - later, replace from user prefs
-		"\n\n*** choose my 4 random starting Ndefs: \n*** ".post;
-		q.ndefs = q.getNdefs.scramble.keep(4).postcs;
-
-		// only wake up my selected sounds:
+		0.2.wait;
+		// activate the ndefs given in prefs:
+		q.ndefs = q.prefs.active.defaultActives.collect(Ndef(_));
+		//
+		// and only wake up my selected sounds:
 		q.ndefs.do {|ndef|
-			ndef.set(\amp, 0).fadeTime_(1).play(vol: 0.25);
-			// 0.2.wait;
-			ndef.monitor.fadeTime_(0.3);
+			ndef.set(\amp, 0).fadeTime_(1).play(vol: 0.25, fadeTime: 0.5);
 		};
 
 		0.2.wait;
 
 		"*** folder % : \n".postf("3_interfaces");
-
 		q.load("3_interfaces/*scd");
 
 		"*** folder % : \n".postf("5_postres");
@@ -110,11 +101,19 @@ Task {
 		if (q.hasGui) {
 			"*** folder % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
-			0.2.wait;
-			q.makeGui.mainstage_adc;
+			// 0.2.wait;
+			// q.makeGui.mainstage_adc;
 		};
 
-		"\n*** NTMI SETUP loading finished! ***\n".postln;
-	};
-}.play(AppClock);
+		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
+		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
+		/*
+		"q.size: %\n".postf(q.size);
+		 q.keys.postcs;
+		 this.dump;
+		*/
+
+		};
+	}.play(AppClock);
 )
+
