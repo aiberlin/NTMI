@@ -1,6 +1,33 @@
+/*
+
+Hand/Rand-make 8 weights presets for influx,
+so we can step thru them for different instrument feel.
+
+
+----- ToDo / Ideas
+- outOffsets,
+- offsetsFromProxy
+- inScaler for controller zooming effect
+
+- maybe a mix of inScaler, weights and outOffsets, all in one saveable preset?
+- a fine, simple way to generate new ones and store beloved ones?
+e.g. 4 buttons:
+- propose new
+- store (auto-generated name (date))
+- recall previous preset
+- recall next preset
+
+*/
 /* tests
-MFdef(\setInphWPre).(100.rand.postln);
-MFdef(\stepInphWPre).value;
+// attach these functions to your (HW/SW) Buttons:
+MFdef(\stepInphWPre).value(1); // next
+MFdef(\stepInphWPre).value(1); // prev
+MFdef(\setInphWPre).value;   // rand
+MFdef(\setInphWPre).value(5);   // jump to specific
+
+q.inphlux.weights.round(0.0001); // get current ones
+q.inphlux.outOffsets;
+
 */
 // setup
 q = q? ();
@@ -41,7 +68,7 @@ MFdef(\setInphWPre).add(\set, { |index|
 	q.inph.currPresetCol = q.inph.presetCols @@ q.inph.at(\presIndex);
 	// send this to OSC/Modality device ! (RGB Col)
 	"curr Color: ".post; (q.inph.currPresetCol.asArray * 255).keep(3).asInteger.postln;
-	try{
+	try {
 		x.elAt(\led, \6).value_(nuIndex / q.inph.randSeeds.size );
 		x.elAt(\led, \7).value_(nuIndex / q.inph.randSeeds.size );
 	};
@@ -52,47 +79,3 @@ MFdef(\stepInphWPre).add(\inc, { |inc = 1|
 	MFdef(\setInphWPre).value(nuIndex.postln);
 });
 );
-
-// // // dynamic - iterates over ALL CURRENTLY existing presets.
-// // q.stepWeights = {|q, inc=1|
-// // 	var nuIndex = q.inph.at(\presIndex) + inc % q.inph.randSeeds.size;
-// // 	var nuPres = q.inphlux.presets.keys.asArray.sort @@ nuIndex;
-// // 	">>> setting inphlux to preset % with magic Number %\n".postf(nuIndex, nuPres);
-// // 	q.inphlux.setwPre(nuPres);
-// //
-// // 	q.currPresetCol = q.inph.presetCols @@ q.inph.at(\presIndex);
-// // 	// send this to OSC/Modality device ! (RGB Col)
-// // 	"curr Color: ".post; (q.currPresetCol.asArray * 255).keep(3).asInteger.postln;
-// // 	try{
-// // 		x.elAt(\led, \6).value_(nuIndex / q.inph.randSeeds.size );
-// // 		x.elAt(\led, \7).value_(nuIndex / q.inph.randSeeds.size );
-// // 	};
-// // };
-// // );
-//
-//
-// q.inphlux.weights.round(0.0001); // get current ones
-// q.inphlux.outOffsets;
-// // attach these 2 functions to your (HW/SW) Button
-// q.stepWeights(1);
-// q.stepWeights(-1);
-
-/*q.currPresetCol.addDependant{|o| "flitz!!".postcln; };
-SimpleController*/
-
-/*
-
-ToDo / Ideas
-- outOffsets,
-- offsetsFromProxy
-- inScaler for controller zooming effect
-
-- maybe a mix of inScaler, weights and outOffsets, all in one saveable preset?
-- a fine, simple way to generate new ones and store beloved ones?
-e.g. 4 buttons:
-- propose new
-- store (auto-generated name (date))
-- recall previous preset
-- recall next preset
-
-*/
