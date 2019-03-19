@@ -7,5 +7,5 @@ g.utilWin = Window("q.makeGui",
 ).userCanClose_(false).alwaysOnTop_(true).front;
 g.utilWin.addFlowLayout;
 g.makeGui.keys(SortedList).do { |key|
-	Button(g.utilWin, 160@30).states_([[key]]).action_ { g.makeGui[key.postcs].value }
+	Button(g.utilWin, 160@25).states_([[key]]).action_ { g.makeGui[key.postcs].value }
 };

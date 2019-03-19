@@ -25,3 +25,8 @@ g.makeGui.mfx = {
 	g.guiMaFX = q.mFX.gui('ma master', 40);
 	g.guiMaFX.moveTo(790, 1200);
 };
+
+g.makeGui.nanoKontrol2 = { q.midi.ktl.gui };
+
+// g.makeGui[\cLOSEaLL] = { };
+

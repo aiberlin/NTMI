@@ -23,8 +23,7 @@ should be CC 85, not 2
 q = q ? ();
 q.midi = ();
 q.active = q.active ? ();
-fork {
-	0.2.wait;
+forkIfNeeded {
 
 	q.midi.ktl = MKtl('nanoKtl', "korg-nanokontrol");
 
