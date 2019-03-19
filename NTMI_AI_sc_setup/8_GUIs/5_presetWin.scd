@@ -1,9 +1,10 @@
 ////// function to make a presetWin if needed
 
 (
-q.makeGui.ndefPresetWin = { |q, height= 450, left = 0|
-	var pxs = q.ndefs;//q.getInfluxDestins; // could also be q.ndefs
-	var px = q.active.presWin.asArray.first ? pxs[0];
+g.makeGui.ndefPresetWin = { |dict, height= 450, left = 0|
+//	var pxs = Ndef.dictFor(s).arProxyNames.collect(Ndef(_);
+	var pxs = q.ndefs;
+	var px = q.currxoscPx ? pxs[0];
 	var currPreset, switchPxINGui;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
 	w = Window("basic_presets", Rect(left, 5, 387+100, height)).front;

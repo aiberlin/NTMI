@@ -62,7 +62,7 @@ MFdef('guiSlots').add(\set, {
 });
 q.currMode = q.currMode ? \move;
 
-q.makeGui.mainstage_adc = {
+g.makeGui.mainstage_adc = {
 	var font = Font("Monaco", 36);
 	var center, centPadsL, padsLPos, centPadsR, padsRPos;
 	var bounds = Window.screenBounds;

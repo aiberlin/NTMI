@@ -2,7 +2,7 @@
 /*
 Window.getAll.postcs;
 */
-q.makeGui.setAll = {
+g.makeGui.setAll = {
 	Window.setAll(
 		[ [ "NdefMixer_p", Rect(5.0, 5.0, 684.0, 165.0) ],
 			[ "Stethoscope", Rect(0.0, 755.0, 264.0, 250.0) ],

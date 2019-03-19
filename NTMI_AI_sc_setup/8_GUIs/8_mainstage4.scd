@@ -1,7 +1,7 @@
 // mainstage3 rewritten all to responsive Layout with PaneView Quark andLayouts. Maybe get rid of Panes again..
 // ver 4: with rec but
 
-q.makeGui.mainStage4 = {
+g.makeGui.mainStage4 = {
 	var p, w, scope, scopeV, modeBut, sliders, zoomTxt, zoomSl, clockTxt, clockBut, fontt;
 	fontt = Font("Monaco", 66);
 
@@ -24,12 +24,12 @@ q.makeGui.mainStage4 = {
 
 
 
-	try{q.mainstage.close};
+	try{ g.mainstage.close};
 	w = Window("NTMI.1",
 		Rect.aboutPoint(Window.availableBounds.center, Window.availableBounds.width/2, Window.availableBounds.height/2)
 	).front;
 	w.bounds = Window.availableBounds;
-	q.mainstage = w;
+	g.mainstage = w;
 	w.alpha = 0.85;
 	/*w.background = (
 	'laVulega': Color.magenta(0.9),

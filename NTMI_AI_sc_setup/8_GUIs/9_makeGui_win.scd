@@ -1,9 +1,11 @@
-var numButs = q.makeGui.size;
+/// maybe put this in mainstage?
 
-q.utilWin = Window("q.makeGui",
+var numButs = g.makeGui.size;
+
+g.utilWin = Window("q.makeGui",
 	Rect(5, Window.screenBounds.height - (numButs * 35) - 350, 170, 350)
-).front.userCanClose_(false).alwaysOnTop_(true);
-q.utilWin.addFlowLayout;
-q.makeGui.keys(SortedList).do { |key|
-	Button(q.utilWin, 160@30).states_([[key]]).action_ { q.makeGui[key.postcs].value }
+).userCanClose_(false).alwaysOnTop_(true).front;
+g.utilWin.addFlowLayout;
+g.makeGui.keys(SortedList).do { |key|
+	Button(g.utilWin, 160@30).states_([[key]]).action_ { g.makeGui[key.postcs].value }
 };

@@ -1,37 +1,27 @@
-q.makeGui = q.makeGui ? ();
+g.makeGui = g.makeGui ? ();
 
-q.closeGuis = { |q, name|
+g.closeGuis = { |q, name|
 	Window.allWindows.do { |w| if (w.name.contains(name)) { try { w.close } } }
 };
 
-q.makeGui.pxmix = {
-	q.closeGuis ("NdefMixer");
-	q.pxmix = NdefMixer(s, 12);
-	q.pxmix.skipjack.dt = 0.5;
-	q.pxmix.moveTo(5, 5);
+g.makeGui.pxmix = {
+	g.closeGuis ("NdefMixer");
+	g.pxmix = NdefMixer(s, 12);
+	g.pxmix.skipjack.dt = 0.5;
+	g.pxmix.moveTo(5, 5);
 	// set popupmenu to 'activeProxies'
-	q.pxmix.parent.view.children.first.children.first.children[0].valueAction_(1);
-	ProxyMeter.addMixer(q.pxmix);
+	g.pxmix.parent.view.children.first.children.first.children[0].valueAction_(1);
+	ProxyMeter.addMixer(g.pxmix);
 	defer ({ ProxyMeter.hideKrs }, 1);
 };
 
-// s.scope(q.numChans).window.bounds_(Rect(00, 1000, 261, 250));
-
-
-q.makeGui.inputGui = {
-	q.closeGuis ("liveInput");
-	q.liveGui = q.liveInput.gui.name_(\liveInput).moveTo(600, 5)
+g.makeGui.inputGui = {
+	g.closeGuis ("liveInput");
+	g.liveGui = q.liveInput.gui.name_(\liveInput).moveTo(600, 5)
 };
 
-q.makeGui.mfx = {
-	q.closeGuis ("ma master");
-	q.guiMaFX = q.mFX.gui('ma master', 40);
-	q.guiMaFX.moveTo(790, 1200);
+g.makeGui.mfx = {
+	g.closeGuis ("ma master");
+	g.guiMaFX = q.mFX.gui('ma master', 40);
+	g.guiMaFX.moveTo(790, 1200);
 };
-
-// q.makeGui.xosc is in separate file
-
-////// entangled GUI and logic:
-// q.inphluxGui - needs separation of logic from attachButtons
-/// "3_4wins.scd" <-this could load later
-// "ndef-menu-choice.scd" <- this too?
