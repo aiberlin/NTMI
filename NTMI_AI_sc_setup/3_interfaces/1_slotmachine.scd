@@ -66,13 +66,13 @@ q.slots.checkIndex = { |sl, index|
 	res;
 };
 
+// super defensive
 q.slots.addActive = { |sl, index, obj|
 	case
-	{ obj.isNil } { "addActive: cannot add nil".postln }
-	// is not a valid process ...
-	// is already used at a different index ...
-	{ q.slots.checkIndex(index) } {
-		// all is well
+	{ q.slots.checkIndex(index).not } { "q.slots.addActive - index not valid: %\n".postf(index) }
+	{ obj.respondsTo(\key).not } { "q.slots.addActive - obj has no key: %\n".postf(obj) }
+	{ q.slots.choices[index].includes(obj.key).not } { "q.slots.addActive - obj is not in choices: %\n".postf(obj) }
+	{		// all is well
 		q.slots.stopAt(index);
 		q.slots.actives.put(index, obj);
 		q.slots.playAt(index);
@@ -117,20 +117,24 @@ q.slots.stepNext = { |sl, index, incr = 1|
 q.slots.updateChoices;
 
 q.slots.test = {
+	var passed = true;
 	q.slots.actives.do { |ndef, i|
 		q.slots.choices.do { |choices, j|
 			if (i == j) {
 				if (choices.includes(ndef.key).not) {
 					"ndef not in its own choices".warn;
+					passed = false;
 					[i, j, ndef].postln
 				}
 			} {
 				if (choices.includes(ndef.key)) {
 					"ndef is available in wrong choices".warn;
+					passed = false;
 					[i, j, ndef].postln
 				}
 			}
 		}
 	};
+	passed
 };
 
