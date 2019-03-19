@@ -1,14 +1,9 @@
 (
+// use this dict for everything osc related
+q.osc = q.osc ? ();
+
 thisProcess.openUDPPort(8000);
 thisProcess.openPorts;
-
-q = q ? ();
-q.keys;   // synonymous:  q = if(q.isNil){ () }{ q };
-q.x= ();
-q.x.keys;
-q.active = q.active? ();
-q.active.x = Set.new;
-q.active.x.add(q.ndefs.first); // we  Ndefs must be loaded first
 
 MKtl.all[\xosc].free;
 x = MKtl(\xosc, "xosc*");
@@ -70,32 +65,30 @@ x.elAt(\sw, (0..3)).do { | bt, i|
 	});
 };
 
-
 // switch mode - analog in vs. IMU /// touch vs move mode
-q.influxWhich = true;
-
+q.inph.modes = [\move, \touch];
+q.inph.mode = \move;
+q.inph.modeIndex = { q.inph.modes.indexOf(q.inph.mode) };
 
 x.elAt(\sw, \5).action.add(\front, {|bt|
 	if (bt.value <=0) {
-		if(  q.influxWhich )
+		if(  q.inph.mode == \move )
 		{
+			q.inph.mode = \touch;
 			"*** enable TOUCH".postln;
-			8.do{ |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
+			8.do { |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
 			MFdef(\imuFunc).disable( \setInphlux );
 			x.elAt(\led, \5).value_(0.0);
 
 		}{
+			q.inph.mode = \move;
 			"*** enable MOVE (IMU) ".postln;
-			8.do{ |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
+			8.do { |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
 			MFdef(\imuFunc).enable( \setInphlux );
 			x.elAt(\led, \5).value_(1/2);
 		};
-		q.influxWhich = q.influxWhich.not;
-
 	}
 });
-
-
 
 
 // switch thru the list of Influx weights
@@ -103,7 +96,7 @@ x.elAt(\sw, [\6, \7]).do { |bt, i|
 	bt.action.add(\front, {|bt|
 		defer {
 			if (bt.value <=0) {
-				q.stepWeights( [-1, 1] @ i);
+				MFdef(\stepInphWPre).( [-1, 1] @ i);
 				// reply to OSC device: which LED which Color!
 			}
 		}
@@ -160,19 +153,17 @@ MFdef(\imuFunc).add(\setInphlux, {
 // hack for xosc gui: all element actions trigger imuFunc!
 x.elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\imuFunc)));
 
-
+/*
 MFdef(\imuFunc).disable( \setInphlux );
 MFdef(\imuFunc).enable( \setInphlux );
-
+*/
 
 
 // for monitoring the incoming osc activity by timetag
-q.osc = q.osc ? ();
 q.osc.lastInTime = 0;
 q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 OSCdef(\imuAlive, { |msg, time|
 	q.osc.lastInTime = time;
-
 }, "/imu").permanent_(true);
 
 
