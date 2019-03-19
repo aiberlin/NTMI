@@ -19,9 +19,23 @@ q.slots.stopAt(1)
 q.slots.playAt(3)
 q.slots.stepNext(3)
 
+////// new tests:
+
+"testing slots ...".postln;
+q.slots.choices.collect(_.size);
+
+q.slots.actives;
+q.slots.addActive(0, Ndef(\dog));
+
+q.slots.actives.put(0, Ndef(\revFB));
+q.slots.addActive(0, Ndef(\revFB));
+q.slots.addActive(0, Ndef(\cat));
+
+q.slots.updateChoices;
+q.slots.choices;
 
 
-q.slots.addActive(4, \x)
+q.slots.addActive(4,)
 q.slots.addActive(3, Ndef(\kiteHi))
 
 q.slots.chooseNext(0);
@@ -55,6 +69,8 @@ q.slots.checkIndex = { |sl, index|
 q.slots.addActive = { |sl, index, obj|
 	case
 	{ obj.isNil } { "addActive: cannot add nil".postln }
+	// is not a valid process ...
+	// is already used at a different index ...
 	{ q.slots.checkIndex(index) } {
 		// all is well
 		q.slots.stopAt(index);
@@ -66,12 +82,13 @@ q.slots.addActive = { |sl, index, obj|
 
 q.slots.updateChoices = {
 	q.slots.choices = q.slots.actives.collect { |ndef, i|
-		q.allSoundNames.reject { |name|
+		q.process.allNames.reject { |name|
 			var takenKeys = q.slots.actives.collect(_.key);
 			takenKeys.remove(ndef.key);
 			takenKeys.includes(name)
 		}
-	}
+	};
+	q.slots.choices;
 };
 
 q.slots.chooseNext = { |sl, index|
@@ -98,4 +115,22 @@ q.slots.stepNext = { |sl, index, incr = 1|
 
 // init
 q.slots.updateChoices;
+
+q.slots.test = {
+	q.slots.actives.do { |ndef, i|
+		q.slots.choices.do { |choices, j|
+			if (i == j) {
+				if (choices.includes(ndef.key).not) {
+					"ndef not in its own choices".warn;
+					[i, j, ndef].postln
+				}
+			} {
+				if (choices.includes(ndef.key)) {
+					"ndef is available in wrong choices".warn;
+					[i, j, ndef].postln
+				}
+			}
+		}
+	};
+};
 
