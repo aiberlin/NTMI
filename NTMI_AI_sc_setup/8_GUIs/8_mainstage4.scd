@@ -169,7 +169,7 @@ q.makeGui.mainStage4 = {
 				};
 
 				// update modeBut according to mode
-				modeBut.value = q.influxWhich.not.binaryValue;
+				modeBut.value = q.inph.modes.indexOf(q.inph.mode);
 
 				// update q.zoom
 				zoomSl.value = q.zoom;

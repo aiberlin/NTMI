@@ -11,7 +11,6 @@ grey if move mode, bright
 
 q.keys(SortedList).postcs
 
-SortedList[ 'active', 'allSoundNames', 'allSoundPaths', 'broad', 'centerToCurrent', 'centerToNewRandSeed', 'centerToPreset', 'centerToRandPreset', 'choice', 'choiceNewNdefFunc', 'choiseNdefs_storePath', 'currPresetCol', 'currxoscPx', 'dirnames', 'fulldirnames', 'fx', 'getActivePxsAsList', 'getInfluxDestins', 'getMyIPs', 'getNdefs', 'getPdefs', 'getTdefs', 'gpad', 'guiMaFX', 'guiXOSC', 'incZoom', 'incrementSeed', 'influxWhich', 'inphGui', 'inphlux', 'inphscale', 'lastOSCactivity', 'liveInput', 'loadFolder', 'loadRel', 'mFX', 'mainStageSkippa', 'mainstage', 'makeCurr', 'makeMeAPreset', 'makePast', 'me', 'mfx', 'midi', 'mySoundPaths', 'mySoundsIndex', 'ndefGuis', 'ndefPresetWin', 'ndefs', 'ndgwin', 'numChans', 'padCols', 'postServerOptions', 'presetCols', 'pxmix', 'resetInphl', 'seedRandInfl', 'setZoom', 'slOffset', 'sliders', 'soundsPerPlayer', 'stepNdefPreInf', 'stepWeights', 'timeText', 'timerButton', 'topDir', 'utilDir', 'warnWin', 'x', 'zoom' ]
 
 
 /// move mode, touch pads off:
