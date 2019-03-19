@@ -29,11 +29,11 @@ q.load = { |q, filename, wait = 0.05, dirsup = 0, preText = "", postText = ""|
 		if (paths.size > 1) { "*** loading matching files for % :\n".postf(filename.cs) };
 
 		paths.do { |path|
-			"*** loading file % : %\n".postf(path.basename, preText);
+			"*** loading % : %".postf(path.basename, preText);
 			path.load;
 			if (s.serverRunning) { try { s.sync } };
 			loadDur = (Main.elapsedTime - t0).round(0.001);
-			"--- took % secs. % ---\n".postf(loadDur, postText);
+			" % secs. %\n".postf(loadDur, postText);
 			wait.wait;
 		};
 
@@ -101,8 +101,8 @@ Task {
 		if (q.hasGui) {
 			"*** folder % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
-			// 0.2.wait;
-			// q.makeGui.mainstage_adc;
+			0.2.wait;
+			g.makeGui.main_adc;
 		};
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
