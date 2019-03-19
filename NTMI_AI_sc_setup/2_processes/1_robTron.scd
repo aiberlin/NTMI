@@ -41,7 +41,7 @@ Ndef(\robTron).source =  {
 	x, y, z, s, r, t, u, w, ef_freq, tri, fb, xor, s2sig,
 	outFLT, out, out_freq, stOut, localin, gh_freq;
 	var wiiNAxLim, wiiAxLim, wiiNJoy, buf ;
-	var a, b, c, d, e, f, g, h, rampsig, trigt, latcht, slope, dir, timet;
+	var a, b, c, d, e, f, g, h, i, rampsig, trigt, latcht, slope, dir, timet;
 
 	buf = LocalBuf.newFrom( 0! (numReadHeads+1) );
 

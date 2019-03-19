@@ -47,7 +47,7 @@ Ndef('xf-jetSet', { | amp=0.1, freqMul=1, dGain=1, fFreq=200, wCut=2200, cclip=1
 	// and spot of reverb
 	dry = sig;
 	5.do {
-		d = 0.5.rand;
+		var d = 0.5.rand;
 		sig = AllpassN.ar(sig, d, d * delT.lag(0.2), 1);
 	};
 	sig = (dry + sig) * amp;
