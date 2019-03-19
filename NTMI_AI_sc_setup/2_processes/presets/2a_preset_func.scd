@@ -1,54 +1,68 @@
 /*
+NdefPresetGui(NdefPreset(\allArm), 20);
+q.pre.userSettingsDir.openOS;
+q.pre.incrementSeed(Ndef(\allArm));
+
 */
-// replaced by 	q.mtx.actives
-q.active = q.active ?? {()};
-q.active.presWin = Set.new;
-try{ q.active.presWin.add(q.ndefs.first) };
-// here, we need a bloody single item, not a set !
-// try{ q.active.presWin = (q.ndefs.first) };
+q.pre = q.pre ? ();
+q.pre.appSettingsDir = thisProcess.nowExecutingPath.dirname;
+q.pre.userSettingsDir = Platform.userAppSupportDir +/+ "presets/";
+File.mkdir(q.pre.userSettingsDir);
+// where to store presets?
+q.pre.settingsDir = q.pre.userSettingsDir;
 
-// (global func to get all playable Proxies ) // but there is also q.getInfluxDestins and q.ndefs == q.getInfluxDestins
-q.getActivePxsAsList = { |q, space|
-	var names = space.envir.select { |px| px.rate == \audio }.keys.asArray.sort;
-	// names.collect({|n| p[n]});
-	names
-};
-
+// // replaced by 	q.mtx.actives
+// q.active = q.active ?? {()};
+// q.active.presWin = Set.new;
+// try { q.active.presWin.add(q.ndefs.first) };
+// // here, we need a bloody single item, not a set !
+// // try{ q.active.presWin = (q.ndefs.first) };
 
 (
-q.makeMeAPreset = { |q, px|
+q.pre.makePreset = { |pre, proxy|
 
-	var namesToStoreNoAmp = px.controlKeys.reject( _ == \amp); // everything except amp
-	var name = px.key;
-	var presPath = (thisProcess.nowExecutingPath.dirname +/+
-		"2_processes/presets/" +/+ name ++ ".pxpreset.scd");
+	var name = proxy.key;
+	var namesToStore = proxy.controlKeys.reject( _ == \amp); // everything except amp
+	var preset = NdefPreset(proxy, namesToStore);	// <- dont store amp along
+	var userPresPath = (q.pre.userSettingsDir +/+ name ++ ".pxpreset.scd");
+	var appPresPath = (q.pre.appSettingsDir +/+ name ++ ".pxpreset.scd");
 
-	var preset = NdefPreset(px, namesToStoreNoAmp);	// <- dont store amp along
-	px.addHalo(\orderedNames, namesToStoreNoAmp); // take amp out of influx names
+	proxy.addHalo(\orderedNames, namesToStore); // use same names, no amp for influx names
 
-	// must be in folder of preset file or fails... or link to preset file loc.!
-	if(File.exists(presPath)){"\n** going to load preset % from file %\n".postf(name, presPath)};
-	preset.storePath_(presPath); // <<<< this solves it !!!!
-	preset.loadSettings(presPath);
+	// try to read from local user path:
+	if(File.exists(userPresPath)){
+		"--- loading preset % from user dir.\n".postf(name);
+		preset.loadSettings(userPresPath);
+	} {
+		// or else read from default path inside project dir.
+		if(File.exists(appPresPath)){
+			"--- loading preset % from app dir. \n".postf(name, appPresPath);
+			preset.loadSettings(appPresPath);
+		} {
+			"*** preset %: no user or app preset file yet! \n".postf(name);
+		};
+	};
+	preset.storePath_(userPresPath);
+
 	if(preset.settings.notNil){ // load first real preset ...
 		preset.setCurr(preset.settings.wrapAt(1).key);
 	}{ "sorry, no settings there yet".warn };
-	px.addHalo(\ndefPreset, preset);
-}
-);
+	proxy.addHalo(\ndefPreset, preset);
+};
 
 // making all the presets here
-q.getInfluxDestins.do({|px, i|	q.makeMeAPreset(px); 0.1.wait; });
+q.getInfluxDestins.do { |proxy, i|	q.pre.makePreset(proxy) };
+);
 
 // increments and stores a ransom seed per ndefPreset.
-q.incrementSeed = {|q, px, inc=1|
-	var preset = px.getHalo(\ndefPreset);
-	var seed = px.getHalo(\seed) ? 0;
+q.pre.incrementSeed = {|q, proxy, inc=1|
+	var preset = proxy.getHalo(\ndefPreset);
+	var seed = proxy.getHalo(\seed) ? 0;
 	if(preset.notNil){
 		seed = seed + inc;
-		postf("nu seed: %\n", seed);
-		px.addHalo(\seed, seed);
+		postf("% has nu seed: %\n", preset, seed);
+		proxy.addHalo(\seed, seed);
 		seed;
-	}{ "%: sorry, no preset present.\n".postf(px) }
+	}{ "%: sorry, no preset present.\n".postf(proxy) }
 };
 
