@@ -52,6 +52,10 @@ q.pre.makePreset = { |pre, proxy|
 
 // making all the presets here
 q.getInfluxDestins.do { |proxy, i|	q.pre.makePreset(proxy) };
+// ****** preset.loadSettings(appPresPath); with xFMSH
+/// somehow creates a global var l - a List of settings - why?
+// quick fix: set it to nil
+l = nil;
 );
 
 // increments and stores a ransom seed per ndefPreset.
