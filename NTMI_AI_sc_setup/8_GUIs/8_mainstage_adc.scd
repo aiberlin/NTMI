@@ -25,8 +25,8 @@ q.inph.mode = \move;
 n[3].label_('touch').value_('touch');
 n[3].label_('move').value_('move');
 
-	g.main.movevals = { 1.0.rand2 }!9;
-	g.main.movevals = { 1.0 }!9; u.refresh;
+g.main.movevals = { 1.0.rand2 }!9;
+g.main.movevals = { 1.0 }!9; u.refresh;
 
 NdefMixer(s)
 
@@ -174,20 +174,17 @@ g.makeGui.main_adc = {
 		emmy;
 	};
 
-	n[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
-	n[1].label_(\preset).value_(0).putDict(\myspec, [0, 7, \lin, 1]);
-	n[2].label_('¿-?').value_('¿-?').mode_(\code);
-	n[3].label_('move').value_('move').mode_(\code);
-
-	n[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
-
-	n[3].uv.mouseDownAction.add(\toggle, { |x|
-		var vals = [ \touch, \move];
-		var currVal = vals.indexOf(n[3].value) ? 0;
-		var newval = vals[1-currVal];
-		n[3].label_(newval).valueAction_(newval);
-		q.inph.mode = newval;
+	n[0].label_('move').value_('move').mode_(\code);
+	n[0].uv.mouseDownAction.add(\toggle, { |x|
+		MFdef(\imuMode).value;
+		n[3].label_(q.inph.mode).valueAction_(q.inph.mode);
 	});
+
+	n[1].label_(\preDown).value_(45).mode_(\code);
+	n[2].label_(\preUp).value_(42).mode_(\code);
+	n[3].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
+
+	n[3].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
 
 	// circle shape in the background
 	(
@@ -269,7 +266,7 @@ g.makeGui.main_adc = {
 			// check if new ndefs, and update if needed
 			if (
 				(q.slots.actives.collect(_.key) ==
-				q.slots.pops.collect { |pair| pair[0].item }).not
+					q.slots.pops.collect { |pair| pair[0].item }).not
 			) { MFdef('guiSlots').value };
 
 			// always check volumes?
@@ -323,17 +320,16 @@ g.makeGui.main_adc = {
 
 	Tdef(\clocK, { |envir|
 		var dt = 1;
-		var timeStr;
 		inf.do { |i|
+			envir.timeStr =
+			// "Runtime :\n" +
+			envir.runtime.asTimeString.drop(-4);
+			defer { envir.timeUV.refresh };
 			if (envir.isRunning == true) {
 				envir.runtime = envir.runtime ? 0 + dt;
 			} {
 				envir.runtime = 0;
 			};
-			envir.timeStr =
-			// "Runtime :\n" +
-			envir.runtime.asTimeString.drop(-4);
-			defer { envir.timeUV.refresh };
 			dt.wait;
 		}
 	}).play;
