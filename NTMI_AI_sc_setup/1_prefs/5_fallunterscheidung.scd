@@ -1,5 +1,6 @@
-// obsolete
-// for anything else than our private setups' masterFX.
+// ////////// --------- this should go into post preferences!
+
+// obsolete for anything else than our private setups' masterFX.
 
 // ~trioPlayers = ["arik", "laVulega", "isakhan"];
 q.me = q.me ??  {unixCmdGetStdOut("whoami").split(Char.nl).first.asSymbol}; // got it at 00_loadMe
