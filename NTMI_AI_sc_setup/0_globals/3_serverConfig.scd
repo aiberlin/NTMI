@@ -33,7 +33,7 @@ if (s.serverRunning) {
 
 // recording options:
 s
-.recChannels_(2)			// record stereo out only
+.recChannels_(q.numChans ? 2)			// record numChans
 .recSampleFormat_("float"); // in float to recover from clipping
 
 q.postServerOptions = {
