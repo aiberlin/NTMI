@@ -3,8 +3,19 @@
 Hand/Rand-make 8 weights presets for influx,
 so we can step thru them for different instrument feel.
 
+////////  tests
+// attach these functions to your (HW/SW) Buttons:
+MFdef(\stepInphWPre).value(1); // next
+q.inphlux.presets.findKeyForValue(q.inphlux.weights);
+MFdef(\stepInphWPre).value(-1); // prev
+MFdef(\setInphWPre).value;   // rand
+MFdef(\setInphWPre).value(5);   // jump to specific
 
------ ToDo / Ideas
+q.inphlux.weights.round(0.0001); // get current ones
+q.inphlux.outOffsets;
+
+
+************ ToDo / Ideas ***********
 - outOffsets,
 - offsetsFromProxy
 - inScaler for controller zooming effect
@@ -18,17 +29,7 @@ e.g. 4 buttons:
 - recall next preset
 
 */
-/* tests
-// attach these functions to your (HW/SW) Buttons:
-MFdef(\stepInphWPre).value(1); // next
-MFdef(\stepInphWPre).value(1); // prev
-MFdef(\setInphWPre).value;   // rand
-MFdef(\setInphWPre).value(5);   // jump to specific
 
-q.inphlux.weights.round(0.0001); // get current ones
-q.inphlux.outOffsets;
-
-*/
 // setup
 q = q? ();
 q.inph = q.inph ? ();
@@ -64,7 +65,7 @@ MFdef(\setInphWPre).add(\set, { |index|
 	">>> setting inphlux to preset % with magic Number %:\n".postf(nuIndex, nuPreKey);
 	// nuPreset.round(0.001).printAll;
 	q.inph.put(\presIndex, nuIndex);
-	q.inphlux.setwPre(nuPreset);
+	q.inphlux.setwPre(nuPreKey);
 	q.inph.currPresetCol = q.inph.presetCols @@ q.inph.at(\presIndex);
 	// send this to OSC/Modality device ! (RGB Col)
 	"curr Color: ".post; (q.inph.currPresetCol.asArray * 255).keep(3).asInteger.postln;
