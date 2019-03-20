@@ -81,18 +81,6 @@ g.makeGui.main_adc = {
 	v.background_(Color.red);
 	u.background_(Color.red);
 
-	// maybe put this in mainstage?
-
-	g.utilWin = CompositeView(w, Rect(5, Window.screenBounds.height - (g.makeGui.size + 4 * 35) - 350, 170, (g.makeGui.size + 4 * 35)));
-	g.utilWin.addFlowLayout;
-	g.makeGui.keys(SortedList).do { |key|
-		Button(g.utilWin, 160@30)
-		.font_(Font("Monaco", 18))
-		.states_([[key, Color.white, Color.grey(0.8, 0.4) ]]).action_ { g.makeGui[key.postcs].value }
-	};
-	// TdefGui(Tdef(\xoscSim), 3, g.utilWin);
-
-
 	g.main.padCols = Color.grey(0.5) ! 8;
 
 	g.main.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
