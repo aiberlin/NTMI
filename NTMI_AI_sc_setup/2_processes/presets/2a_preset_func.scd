@@ -27,7 +27,10 @@ q.pre.makePreset = { |pre, proxy|
 	var userPresPath = (q.pre.userSettingsDir +/+ name ++ ".pxpreset.scd");
 	var appPresPath = (q.pre.appSettingsDir +/+ name ++ ".pxpreset.scd");
 
-	proxy.addHalo(\orderedNames, namesToStore); // use same names, no amp for influx names
+	//////// enable this line to tell influx to use same names;
+	//////// so Influx will not set amp values.
+	//////// e.g. if amp comes from overall interface activity etc...
+	// proxy.addHalo(\orderedNames, namesToStore);
 
 	// try to read from local user path:
 	if(File.exists(userPresPath)){
