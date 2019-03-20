@@ -1,3 +1,5 @@
+/****** OFF FOR NOW ***********
+
 // mainstage3 rewritten all to responsive Layout with PaneView Quark andLayouts. Maybe get rid of Panes again..
 // ver 4: with rec but
 
@@ -202,3 +204,5 @@ g.makeGui.mainStage4 = {
 	Tdef(\clocK).reset;
 
 };
+
+****** OFF FOR NOW ***********/
