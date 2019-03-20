@@ -28,5 +28,7 @@ g.makeGui.mfx = {
 
 g.makeGui.nanoKontrol2 = { q.midi.ktl.gui };
 
+g.makeGui.simulator = { Tdef(\xoscSim).gui };
+
 // g.makeGui[\cLOSEaLL] = { };
 
