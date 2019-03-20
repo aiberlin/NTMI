@@ -174,17 +174,45 @@ g.makeGui.main_adc = {
 		emmy;
 	};
 
+	MFdef('stepInphWPre').add(\updateMain, {
+		defer { protect {
+			n[1].value_(q.inph.presIndex);
+			n[2].value_("seed" + q.inph.randSeeds[q.inph.presIndex]);
+		} }
+	});
+
 	n[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
 	n[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
 
-	n[1].label_(\preDown).value_(45).mode_(\code);
-	n[2].label_(\preUp).value_(42).mode_(\code);
+	n[1].label_(\preDown).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
+	n[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
 
-	n[3].label_(q.inph.mode);
+	n[2].label_(\preUp).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
+	n[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
+
+	n[3].label_(q.inph.mode).mode_(\code);
 	n[3].uv.mouseDownAction.add(\toggle, { |x|
 		MFdef(\imuMode).value;
 		n[3].label_(q.inph.mode).valueAction_(q.inph.mode);
 	});
+
+	[m.collect(_[1]), n].flat.do { |mv|
+
+		mv.dict.font.size = 48 * scrscale;
+
+		mv.uv.drawFunc.add(\prep, { |uv|
+			var dict = mv.dict;
+			dict[\bounds] = uv.bounds;
+			dict[\height] = dict[\bounds].height;
+			dict[\width] = dict[\bounds].width;
+
+			dict[\bounds00] = dict[\bounds].moveTo(0,0);
+			dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
+			dict[\boundsValues] = dict[\bounds00].copy.top_(dict[\height] * 0.62).height_(dict[\height] * 0.38);
+			dict[\hiRect] = dict[\bounds00].copy
+			.width_(dict[\width] * 0.5);
+		});
+	};
 
 	// circle shape in the background
 	(
