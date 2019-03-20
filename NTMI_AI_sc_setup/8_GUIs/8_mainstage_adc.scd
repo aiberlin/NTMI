@@ -186,17 +186,17 @@ g.makeGui.main_adc = {
 		emmy;
 	};
 
-	n[0].label_('move').value_('move').mode_(\code);
-	n[0].uv.mouseDownAction.add(\toggle, { |x|
-		MFdef(\imuMode).value;
-		n[3].label_(q.inph.mode).valueAction_(q.inph.mode);
-	});
+	n[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
+	n[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
 
 	n[1].label_(\preDown).value_(45).mode_(\code);
 	n[2].label_(\preUp).value_(42).mode_(\code);
-	n[3].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
 
-	n[3].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
+	n[3].label_(q.inph.mode);
+	n[3].uv.mouseDownAction.add(\toggle, { |x|
+		MFdef(\imuMode).value;
+		n[3].label_(q.inph.mode).valueAction_(q.inph.mode);
+	});
 
 	// circle shape in the background
 	(
