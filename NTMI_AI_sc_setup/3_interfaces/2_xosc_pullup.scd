@@ -52,7 +52,8 @@ x.elAt(\sw, (0..7)).do (_.valueAction_(1));
 
 
 // // switch one of 4 ndefs to front
-
+////////// IS THIS CORRECT????
+////////// OR SHOULD IT BE TOGGLE ON VALUE 0 ONLY????
 x.elAt(\sw, (0..3)).do { | bt, i|
 	bt.action.add(\front, {|bt|
 		if (bt.value <= 0) {

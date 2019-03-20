@@ -58,11 +58,14 @@ Tdef(\xoscSim, { |ev|
 });
 
 //////// start simulation from xosc GUI:
-x.elAt(\sw, \16).action = { |bt|
+x.elAt(\sw, \15).action = { |bt|
 	if (bt.value > 0) {
 		"*** starting sim: ".post;
 		Tdef(\xoscSim).postln.play;
-	} {
+	}
+};
+x.elAt(\sw, \16).action = { |bt|
+	if (bt.value > 0) {
 		"*** stopping sim: ".post;
 		Tdef(\xoscSim).stop;
 	}

@@ -1,5 +1,12 @@
+/*
+
+// which views have which elements?
+g.guiXOSC.views.do { |vw, i| [i, vw.element.name ].postln };
+
+*/
+
 g.makeGui.xosc = {
-	var simView;
+	var simButStart, simButStop;
 	g.closeGuis ("xosc");
 	g.guiXOSC = x.gui;
 
@@ -10,15 +17,19 @@ g.makeGui.xosc = {
 	g.guiXOSC.views.keep(-16).do{|v| v.view.visible_(false)};      // hide unused Comparator Buttons
 
 	// make add on/off switch for OSC Simulator
-	simView = g.guiXOSC.views[18 + 8];
-	simView.view.visible_(true)
-	.states_([[ "SIM!", Color.white, Color.red() ], ["SIM", Color.black, Color.green ]]);
+	simButStart = g.guiXOSC.views[18 + 7];
+	simButStop = g.guiXOSC.views[18 + 8];
+
+	simButStart.view.visible_(true).states_([ "SIM!", Color.white, Color.red() ]!2);
+	simButStop .view.visible_(true).states_(["stop", Color.black, Color.green ]!2);
+
+	// set all switches to snapback mode:
+	// g.guiXOSC.views[(11..26)].do(_.snapback = true);
 
 	// switch off unused analog sliders!
 
 	///////////// should work but does not?
 	/*
-	g.guiXOSC.views[(11..14)].do(_.snapback = true);
 	*/
 
 
