@@ -81,6 +81,9 @@ g.makeGui.main_adc = {
 	v.background_(Color.red);
 	u.background_(Color.red);
 
+	g.main.bigUV = u;
+	g.main.imuUV = v;
+
 	g.main.padCols = Color.grey(0.5) ! 8;
 
 	g.main.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
@@ -236,6 +239,9 @@ g.makeGui.main_adc = {
 			var centPadsL, padsLPos, centPadsR, padsRPos;
 			var star;
 
+			// q.inph.currPresetCol = q.inph.presetCols @@ q.inph.at(\presIndex);
+			// uv.background_(q.inph.currPresetCol);
+
 			if (q.inph.mode == \touch) {
 				centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 				centPadsR = center.copy.x_(center.x + (center.y * 1.8));
@@ -278,6 +284,14 @@ g.makeGui.main_adc = {
 
 		z.stop;
 		z = SkipJack({
+
+			if (g.main.backCol != q.inph.currPresetCol) {
+				u.background_(q.inph.currPresetCol);
+				v.background_(q.inph.currPresetCol);
+			};
+
+			// q.inph.currPresetCol = q.inph.presetCols @@ q.inph.at(\presIndex);
+			// uv.background_(q.inph.currPresetCol);
 
 			// g.main.padCols = { Color.yellow(rrand(0.2, 1.0)).red_(1) } ! 8;
 			// g.main.movevals = { 1.0.rand }!9;

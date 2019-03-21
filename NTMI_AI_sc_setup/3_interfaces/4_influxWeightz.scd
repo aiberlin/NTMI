@@ -55,7 +55,12 @@ q.inph.put(\presIndex, 0);
 q.inphlux.setwPre(0);
 
 // colors attributed to the n presets
-q.inph.presetCols = q.inph.randSeeds.size.collect{|i| Color.hsv(i/ q.inph.randSeeds.size + 0.0, 1, 1, 1)};
+q.inph.presetCols = q.inph.randSeeds.size.collect {|i|
+	var col = Color.hsv(i/ q.inph.randSeeds.size + 0.0, 1, 1, 1);
+	var sum = col.red + col.blue + col.green;
+	// tone down mixed colors for eye comfort
+	Color.fromArray(col.asArray * (sum ** -0.38))
+};
 
 MFdef(\setInphWPre).add(\set, { |index|
 	var numPres = q.inph.randSeeds.size;
@@ -75,8 +80,13 @@ MFdef(\setInphWPre).add(\set, { |index|
 	};
 });
 
+
 MFdef(\stepInphWPre).add(\inc, { |inc = 1|
 	var nuIndex = q.inph.at(\presIndex) + inc % q.inph.randSeeds.size;
 	MFdef(\setInphWPre).value(nuIndex.postln);
 });
+
+/// INIT!
+MFdef(\setInphWPre).value(q.inph.at(\presIndex));
+
 );
