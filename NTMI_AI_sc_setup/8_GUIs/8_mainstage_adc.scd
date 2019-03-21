@@ -296,7 +296,7 @@ g.makeGui.main_adc = {
 			// g.main.padCols = { Color.yellow(rrand(0.2, 1.0)).red_(1) } ! 8;
 			// g.main.movevals = { 1.0.rand }!9;
 			g.main.movevals = x.elAt(['accel', 'gyro', 'magnet']).flat.collect(_.value);
-			g.main.padCols = x.elAt('inA').value.keep(8).collect { |val|
+			g.main.padCols = x.elAt('inA').value.drop(8).collect { |val|
 				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
 			};
 			v.refresh;
