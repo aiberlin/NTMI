@@ -49,6 +49,9 @@ Tdef(\xoscSim, { |ev|
 
 		anavals = anavals.collectInPlace { |val, i| (val + 0.05.rand2 * 0.95).fold(0, 1).round(0.01) };
 
+		// zoom - pretend pot rand jitter to be filtered
+		anavals.put(7, q.zoom);
+
 		q.addr.sendMsg(\imu, *(imuvals ++ tempval));
 		q.addr.sendMsg('/inputs/analogue', *anavals);
 
