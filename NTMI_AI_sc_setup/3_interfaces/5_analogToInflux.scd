@@ -40,7 +40,7 @@ OSCdef(\xana,{ |msg|
 MFdef(\xoscFunc).add(\setInphlux, {
 var values = x.elAt(\accel).value.unibi ++ x.elAt(\gyro).value.unibi ++ x.elAt(\magnet).value.unibi ;
 var names = q.inphlux.inNames;
-var keysvals = [names, values * q.inphscale].flop.flat;
+var keysvals = [names, values * q.inph.scale].flop.flat;
 q.inphlux.set(*keysvals);
 });
 

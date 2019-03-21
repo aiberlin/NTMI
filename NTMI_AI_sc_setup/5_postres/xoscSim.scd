@@ -1,4 +1,4 @@
-q.addr = NetAddr.localAddr;
+q.addrSC = NetAddr.localAddr;
 
 OSCdef.trace(false);
 // turn off the internal ones for now;
@@ -9,28 +9,28 @@ OSCdef(\imu).enable;
 
 /* TEST IMU
 // - very different ranges on these, accels very low - why?
-q.addr.sendMsg(\imu, * ({ 1.0.rand } ! 9 ++ 100.rand));
+q.addrSC.sendMsg(\imu, * ({ 1.0.rand } ! 9 ++ 100.rand));
 */
 
 OSCdef(\imuAlive).enable;
 /*
 OSCdef.trace(true, true);
-q.addr.sendMsg(\imuAlive, );
+q.addrSC.sendMsg(\imuAlive, );
 */
 
 /* test buttons from remote:
-q.addr.sendMsg('/inputs/digital', 0, 2.rand);
-q.addr.sendMsg('/inputs/digital', 1, 2.rand);
-q.addr.sendMsg('/inputs/digital', 2, 2.rand);
-q.addr.sendMsg('/inputs/digital', 3, 2.rand);
+q.addrSC.sendMsg('/inputs/digital', 0, 2.rand);
+q.addrSC.sendMsg('/inputs/digital', 1, 2.rand);
+q.addrSC.sendMsg('/inputs/digital', 2, 2.rand);
+q.addrSC.sendMsg('/inputs/digital', 3, 2.rand);
 */
 
 OSCdef(\xana).enable;
 /*
 // has weird crosstalk compensation and bending curve on values
-q.addr.sendMsg('/inputs/analogue', *(0!16));
-q.addr.sendMsg('/inputs/analogue', *(0.5!16));
-q.addr.sendMsg('/inputs/analogue', *({0.75.rand}!16));
+q.addrSC.sendMsg('/inputs/analogue', *(0!16));
+q.addrSC.sendMsg('/inputs/analogue', *(0.5!16));
+q.addrSC.sendMsg('/inputs/analogue', *({0.75.rand}!16));
 */
 
 Tdef(\xoscSim).set(\dt, 0.2);
@@ -52,8 +52,8 @@ Tdef(\xoscSim, { |ev|
 		// zoom - pretend pot rand jitter to be filtered
 		anavals.put(7, q.zoom);
 
-		q.addr.sendMsg(\imu, *(imuvals ++ tempval));
-		q.addr.sendMsg('/inputs/analogue', *anavals);
+		q.addrSC.sendMsg(\imu, *(imuvals ++ tempval));
+		q.addrSC.sendMsg('/inputs/analogue', *anavals);
 
 		ev.dt.wait;
 

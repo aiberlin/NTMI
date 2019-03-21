@@ -139,15 +139,16 @@ OSCdef(\imu, { |msg|
 	//gyro.round(0.001).postln;
 }, "/imu").permanent_(true);
 
-q.inphscale = 1;
-q.inphscale = 0.4;
-q.inphscale = 0.6;
+// permanent tweak factor???
+q.inph.scale = 1;
+q.inph.scale = 0.4;
+q.inph.scale = 0.6;
 
 
 MFdef(\imuFunc).add(\setInphlux, {
 	var values = x.elAt(\accel).value.unibi ++ x.elAt(\gyro).value.unibi ++ x.elAt(\magnet).value.unibi;
 	var names = q.inphlux.inNames;
-	var keysvals = [names, values * q.inphscale].flop.flat;
+	var keysvals = [names, values * q.inph.scale].flop.flat;
 	q.inphlux.set(*keysvals);
 });
 

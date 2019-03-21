@@ -46,9 +46,9 @@ forkIfNeeded {
 
 	// switch bank of 8 sliders: << is 1-8, >> is 9 - 16
 
-	q.slOffset = 0;
-	q.midi.ktl.elAt(\tr, \rew).action = { q.slOffset = 0 };
-	q.midi.ktl.elAt(\tr, \fwd).action = { q.slOffset = 8 };
+	q.midi.slOffset = 0;
+	q.midi.ktl.elAt(\tr, \rew).action = { q.midi.slOffset = 0 };
+	q.midi.ktl.elAt(\tr, \fwd).action = { q.midi.slOffset = 8 };
 
 
 
@@ -96,7 +96,7 @@ forkIfNeeded {
 
 				sl.action.add(\setNdefs, { |el|
 					var ndef = q.active.nano;
-					var param = ndef.controlKeys[i + q.slOffset ];
+					var param = ndef.controlKeys[i + q.midi.slOffset ];
 					var paramValue = sl.value;
 					if (param.notNil) {
 						// [param, paramValue].postln;

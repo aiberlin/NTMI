@@ -1,3 +1,13 @@
+/*
+
+"--- contents of q: ---".postln;
+q.size.postln;
+q.keys(SortedList).do("q.% : %\n".postf(_, _, _));
+"--- contents of q: ---".postln;
+"";
+
+*/
+
 (
 "*** startup file for NTMI_AI_sc_setup loading...".postln;
 
@@ -107,13 +117,8 @@ Task {
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
-		/*
-		"q.size: %\n".postf(q.size);
-		 q.keys.postcs;
-		 this.dump;
-		*/
 
-		};
-	}.play(AppClock);
+	};
+}.play(AppClock);
 )
 
