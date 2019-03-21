@@ -302,6 +302,7 @@ g.makeGui.main_adc = {
 			v.refresh;
 			// zoom
 			n[0].value = q.zoom;
+			n[3].label_(q.inph.mode);
 			// OSC status
 			oscBut.value = q.osc.timeSinceLast < 1;
 
