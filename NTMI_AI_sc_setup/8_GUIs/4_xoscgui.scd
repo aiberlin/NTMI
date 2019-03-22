@@ -23,7 +23,8 @@ g.makeGui.xosc = {
 	simButStart.view.visible_(true).states_([ "SIM!", Color.white, Color.red() ]!2);
 	simButStop .view.visible_(true).states_(["stop", Color.black, Color.green ]!2);
 
-	// set all switches to snapback mode:
+	//// // set all switches to snapback mode
+	///// FIXME: snapback mode triggers twice in modality, so fix it there!
 	// g.guiXOSC.views[(11..26)].do(_.snapback = true);
 
 	// switch off unused analog sliders!
