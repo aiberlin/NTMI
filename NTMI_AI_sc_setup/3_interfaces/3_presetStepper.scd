@@ -11,11 +11,19 @@
 
 q.stepNdefPreInf = { |q, ndef, inc = 1|
 	var pre = NdefPreset(ndef.key);
-	var nextSetName;
-	pre.stepCurr(inc);
-	nextSetName = pre.currSet.key;
-	q.inphlux.offsetsFromPreset(*[pre, nextSetName].postcs);
-	"";
+	var nextNames = pre.getSetNames.reject(_ == \curr);
+	var currName, currIndex, nextIndex, nextName;
+	if (nextNames.isEmpty) {
+		"*** % has no settings yet, so it cannot switch.\n".postf(pre);
+	} {
+		currName = pre.currSet.key;
+		currIndex = nextNames.indexOf(currName) ? 0;
+		nextIndex = currIndex + inc % nextNames.size;
+		nextName = nextNames[nextIndex];
+		"*** % next: % for preset and inphlux offsets.% %\n\n".postf(pre, nextName.cs);
+		pre.setCurr(nextName);
+		q.inphlux.offsetsFromPreset(*[pre, nextName]);
+	};
 };
 
 /*
