@@ -1,6 +1,6 @@
 
 
-"\n**********  Network Config:  **********\n".postln;
+// "\n**********  Network Config:  **********\n".postln;
 
 q.getMyIPs = {
 		var confstr = unixCmdGetStdOut("ifconfig");
@@ -26,8 +26,8 @@ if (NetAddr.langPort != 57120) {
 
 q.broad = NetAddr("255.255.255.255", NetAddr.langPort);
 
-"network setup : \n"
-"IP addresses : % \n".postf(q.myIPs);
+// "network setup : \n"
+// "IP addresses : % \n".postf(q.myIPs);
 "NetAddr.langPort : % \n".postf(NetAddr.langPort);
-"q.broad : % \n".postf(q.broad);
-"\n********************\n".postln;
+// "q.broad : % \n".postf(q.broad);
+// "\n********************\n".postln;

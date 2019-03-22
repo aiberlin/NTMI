@@ -71,7 +71,8 @@ Ndef(\bleepo, { arg amp = 0,
 
 Ndef(\bleepo).supplementNodeMap;
 );
-NdefPreset( Ndef(\bleepo) ).loadSettings;
+
+// NdefPreset( Ndef(\bleepo) ).loadSettings;
 
 // q.makeBleepoGui = {
 // 	var w, m, z, k, sc;

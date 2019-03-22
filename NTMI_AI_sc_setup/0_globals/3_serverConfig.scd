@@ -1,7 +1,7 @@
 
-"\n**********  loading serverConfig:  **********".postln;
+// "\n**********  loading serverConfig:  **********".postln;
 
-Server.default = s = Server.local;
+// Server.default = s = Server.local;
 
 // tweak for fast response and rare complaints:
 // default is 0.2 secs, which feels slow;
@@ -20,7 +20,7 @@ s.options
 .memSize_(8192 * 16)
 ;
 
-"Setting server options: ".postln;
+// "Setting server options: ".postln;
 if (s.serverRunning) {
 	q.warnWin(
 		"Server options were set when s was running already!"
@@ -35,6 +35,8 @@ if (s.serverRunning) {
 s
 .recChannels_(q.numChans ? 2)			// record numChans
 .recSampleFormat_("float"); // in float to recover from clipping
+
+"*** to see server settings, do: \nq.postServerOptions;\n".postln;
 
 q.postServerOptions = {
 	"********** Server info : **********".postln;
