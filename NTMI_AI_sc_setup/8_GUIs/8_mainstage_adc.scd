@@ -55,7 +55,7 @@ g.makeGui.main_adc = {
 
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
-	var oscBut, midiBut, recBut;
+	var oscBut, midiBut, recBut, batView;
 	var w;
 	var bigUV, imuUV;
 	var popMVs, ndefPops, ndefMViews, rMViews, skipper;
@@ -81,7 +81,7 @@ g.makeGui.main_adc = {
 	ServerMeterView(s, w, 250@0, 4, 4);
 
 	oscBut = Button(w,
-		Rect(rightCol, 10 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
+		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
 		["¿¿OSC??", Color.white, Color.red],
 		["¡OSC OK!", Color.black, Color.green]
 	]).font_(font).value_(0);
@@ -91,6 +91,11 @@ g.makeGui.main_adc = {
 		["¿¿MIDI??", Color.white, Color.red],
 		["MIDI OK!", Color.black, Color.green]
 	]).font_(font).value_(0);
+
+	batView = StaticText(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 30 * scrscale))
+	.string_("battery: ??")
+	.font_(font.copy.size_(font.size * 0.8))
+	.stringColor_(Color.white).align_(\center);
 
 	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
 		["RECORD?", Color.white, Color.red],
@@ -315,6 +320,10 @@ g.makeGui.main_adc = {
 				oscBut.value = q.osc.timeSinceLast < 1;
 			};
 
+			if (q.osc.batval != q.osc.oldbatval) {
+				batView.string = "battery: %".format(q.osc.batval.round(0.001));
+			};
+
 			MFdef('guiSlots').value;
 
 			// "mainUV skip runs".postln;
@@ -344,7 +353,7 @@ g.makeGui.main_adc = {
 
 	/// add gui parent here:
 	Tdef(\clocK).set(\timeUV, UserView(w,
-		Rect(rightCol, 110 * scrscale, 300 * scrscale, 200 * scrscale)
+		Rect(rightCol, 160 * scrscale, 300 * scrscale, 200 * scrscale)
 	).front);
 	Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
 	Tdef(\clocK).set(\color, Color.white);

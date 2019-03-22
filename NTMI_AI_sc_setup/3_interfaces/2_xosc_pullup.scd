@@ -28,6 +28,16 @@ try { x.device.destination.sendMsg("tralala") } {
 
 x.device.oscFuncDictionary.do(_.disable);
 
+
+////////////// get battery value:
+OSCdef(\bat, { |msg, time|
+	q.osc.oldbatval = q.osc.batval;
+	q.osc.batval = msg[1];
+	q.osc.batvaltime = time;
+}, "battery").permanent_(true);
+
+
+
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 //// DIGITAL INS
