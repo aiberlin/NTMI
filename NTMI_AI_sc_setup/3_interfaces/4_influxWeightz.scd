@@ -31,7 +31,7 @@ e.g. 4 buttons:
 */
 
 // setup
-q = q? ();
+q = q ? ();
 q.inph = q.inph ? ();
 
 // find your favorite numbers for making weights by trying them out
@@ -54,12 +54,13 @@ q.inph.put(\numPres, q.inph.randSeeds.size);
 q.inph.put(\presIndex, 0);
 q.inphlux.setwPre(0);
 
+q.inph.alpha = 0.8;
 // colors attributed to the n presets
 q.inph.presetCols = q.inph.randSeeds.size.collect {|i|
 	var col = Color.hsv(i/ q.inph.randSeeds.size + 0.0, 1, 1, 1);
 	var sum = col.red + col.blue + col.green;
 	// tone down mixed colors for eye comfort
-	Color.fromArray(col.asArray * (sum ** -0.38))
+	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [q.inph.alpha])
 };
 
 MFdef(\setInphWPre).add(\set, { |index|
