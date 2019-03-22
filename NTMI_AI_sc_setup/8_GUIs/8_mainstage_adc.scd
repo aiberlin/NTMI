@@ -28,8 +28,8 @@ MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') runs".postln;
 
 	q.slots.actives.do { |ndef, i|
-		var pop = q.slots.popups[i];
-		var mview = q.slots.ndefMViews[i];
+		var pop = g.main.popups[i];
+		var mview = g.main.ndefMViews[i];
 		var vol = ndef.vol;
 		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
 
@@ -135,6 +135,14 @@ g.makeGui.main_adc = {
 		emmy.action.add(\setVol,  { |em|
 			q.slots.actives[i].vol_(em.value)
 		});
+		emmy.uv.keyDownAction = { |uv, char, mod = 0|
+			"emmy keydown action - char: % mod: % \n".postf(char.cs, mod);
+			switch(char,
+				$ , { q.slots.playAt(i) },
+				$., { q.slots.stopAt(i) }
+			);
+		};
+
 		emmy.drawFunc.add(\label, {
 			Pen.stringCenteredIn(
 				q.ndefs[i].key.asString,
@@ -146,8 +154,8 @@ g.makeGui.main_adc = {
 		[pop,emmy];
 	};
 
-	q.slots.popups = popMVs.flop[0];
-	q.slots.ndefMViews = popMVs.flop[1];
+	g.main.popups = popMVs.flop[0];
+	g.main.ndefMViews = popMVs.flop[1];
 
 	////// the 4 mviews on the right -  remove n eventually
 	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
@@ -156,7 +164,6 @@ g.makeGui.main_adc = {
 		var initval = [1.0, \pre_1, '¿-?', \move][i];
 		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150));
 		emmy.dict[\knobCol] = Color.grey(0, 0.6);
-		emmy.dict[\backCol] = Color.grey(1.0, 0.6);
 		emmy.uv.alpha = 0.8;
 		emmy.uv.resize_(1);
 		emmy.drawFunc.add(\label, {
@@ -168,6 +175,31 @@ g.makeGui.main_adc = {
 			)
 		});
 		emmy;
+	};
+	g.main.rMViews = rMViews;
+
+	///// unify all mview behaviours :
+
+	[g.main.ndefMViews, rMViews].flat.do { |mv|
+
+		mv.dict.font.size = 48 * scrscale;
+
+		mv.uv.drawFunc.add(\prep, { |uv|
+			var dict = mv.dict;
+			dict[\bounds] = uv.bounds;
+			dict[\height] = dict[\bounds].height;
+			dict[\width] = dict[\bounds].width;
+			dict[\focusCol] = Color.grey(1.0, 0.8);
+			dict[\backCol] = Color.grey(1.0, 0.6);
+
+			dict[\bounds00] = dict[\bounds].moveTo(0,0);
+			dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
+			dict[\boundsValues] = dict[\bounds00].copy.top_(dict[\height] * 0.62)
+			.height_(dict[\height] * 0.38);
+			dict[\hiRect] = dict[\bounds00].copy
+			.width_(dict[\width] * 0.5);
+		});
+		mv.refresh;
 	};
 
 	MFdef('stepInphWPre').add(\updateMain, {
@@ -193,30 +225,10 @@ g.makeGui.main_adc = {
 	});
 
 
-	///// unify all mview behaviours :
-
-	[q.slots.ndefMViews, rMViews].flat.do { |mv|
-
-		mv.dict.font.size = 48 * scrscale;
-
-		mv.uv.drawFunc.add(\prep, { |uv|
-			var dict = mv.dict;
-			dict[\bounds] = uv.bounds;
-			dict[\height] = dict[\bounds].height;
-			dict[\width] = dict[\bounds].width;
-
-			dict[\bounds00] = dict[\bounds].moveTo(0,0);
-			dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
-			dict[\boundsValues] = dict[\bounds00].copy.top_(dict[\height] * 0.62).height_(dict[\height] * 0.38);
-			dict[\hiRect] = dict[\bounds00].copy
-			.width_(dict[\width] * 0.5);
-		});
-	};
-
 	// circle shape in the background
 	(
 		bigUV.drawFunc = { |uv|
-			var center = uv.bounds.center;
+			var center = uv.bounds.extent * 0.5;
 
 			"bigUV should never refresh...".postln;
 
