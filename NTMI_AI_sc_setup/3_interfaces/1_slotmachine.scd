@@ -117,10 +117,10 @@ q.slots.stepNext = { |sl, index, incr = 1|
 };
 
 ///// init - maybe too often.
+q.slots.updateChoices;
 q.slots.actives.do { |ndef, i|
 	q.slots.addActive(i, ndef);
 };
-q.slots.updateChoices;
 
 q.slots.test = {
 	var passed = true;
