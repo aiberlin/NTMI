@@ -8,7 +8,11 @@ thisProcess.openPorts;
 MKtl.all[\xosc].free;
 x = MKtl(\xosc, "xosc*");
 
-//// q.guiXOSC = x.gui; // moved to gui section
+x.addNamed(\imu9, MKtlElementGroup(\imu9, x, x.elAt([0, 1, 2]).flat));
+x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
+x.elAt(\imu9);
+x.elAt(\pads8);
+
 
 //  x.device.destination.hostname = "127.0.0.1";
 
@@ -60,10 +64,8 @@ x.elAt(\sw, (0..3)).do { | bt, i|
 		if (bt.value == 0) {
 			// toggle when .press down:
 			if (ndef.monitor.isPlaying) {
-				"% stops\n".postf(ndef);
 				q.slots.stopAt(i);
 			} {
-				"% plays\n".postf(ndef);
 				q.slots.playAt(i);
 			}
 		}
