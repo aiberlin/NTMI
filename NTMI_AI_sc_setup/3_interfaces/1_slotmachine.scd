@@ -48,17 +48,20 @@ q.inphlux.action.disable(q.inphlux.action.activeNames.copy);
 q.slots = q.slots ? ();
 q.slots.actives = q.ndefs;
 // use this global fadeoutTime for ndef.stop(fadeoutTime);
-q.slots.fadeoutTime = 3;
+q.slots.fadeoutTime = 1;
+q.slots.defaultVol = 0.25;
+
 
 q.slots.playAt = { |sl, index|
 	var obj = q.slots.actives[index];
-	"% plays now.\n".postf(obj);
-	obj.play;
+	var vol = if (obj.monitor.isNil, q.slots.defaultVol, { obj.vol });
+	"% at % plays now.\n".postf(obj, index);
+	obj.play(vol: vol);
 	q.inphlux.attachMapped(obj);
 };
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
-	"% stops now.\n".postf(obj);
+	"% at % stops now.\n".postf(obj, index);
 	obj.stop(q.slots.fadeoutTime);
 	try { q.inphlux.removeMapped(obj.key) };
 };
