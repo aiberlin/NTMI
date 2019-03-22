@@ -47,6 +47,9 @@ q.inphlux.action.disable(q.inphlux.action.activeNames.copy);
 
 q.slots = q.slots ? ();
 q.slots.actives = q.ndefs;
+// use this global fadeoutTime for ndef.stop(fadeoutTime);
+q.slots.fadeoutTime = 3;
+
 q.slots.playAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	"% plays now.\n".postf(obj);
@@ -56,7 +59,7 @@ q.slots.playAt = { |sl, index|
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	"% stops now.\n".postf(obj);
-	obj.stop;
+	obj.stop(q.slots.fadeoutTime);
 	try { q.inphlux.removeMapped(obj.key) };
 };
 
@@ -75,7 +78,7 @@ q.slots.addActive = { |sl, index, obj|
 	{		// all is well
 		q.slots.stopAt(index);
 		q.slots.actives.put(index, obj);
-		q.slots.playAt(index);
+		q.slots.stopAt(index);
 		q.slots.updateChoices;
 	}
 };
@@ -113,7 +116,10 @@ q.slots.stepNext = { |sl, index, incr = 1|
 	};
 };
 
-// init
+///// init - maybe too often.
+q.slots.actives.do { |ndef, i|
+	q.slots.addActive(i, ndef);
+};
 q.slots.updateChoices;
 
 q.slots.test = {

@@ -57,18 +57,19 @@ x.elAt(\sw, (0..7)).do (_.valueAction_(1));
 x.elAt(\sw, (0..3)).do { | bt, i|
 	var ndef = q.slots.actives[i];
 	bt.action.add(\front, {|bt|
-		if (bt.value <= 0) {
+		if (bt.value == 0) {
 			// toggle when .press down:
 			if (ndef.monitor.isPlaying) {
 				"% stops\n".postf(ndef);
-				ndef.stop
+				q.slots.stopAt(i);
 			} {
 				"% plays\n".postf(ndef);
-				ndef.play
+				q.slots.playAt(i);
 			}
 		}
 	});
 };
+
 
 // switch mode - analog in vs. IMU /// touch vs move mode
 q.inph.modes = [\move, \touch];
