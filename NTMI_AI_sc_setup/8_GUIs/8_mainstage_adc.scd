@@ -44,7 +44,7 @@ q.slots.actives[0].vol;
 */
 
 MFdef('guiSlots').add(\set, {
-	"MFdef('guiSlots') runs".postln;
+	// "MFdef('guiSlots') runs".postln;
 	q.slots.actives.do { |ndef, i|
 		var pair = q.slots.pops[i];
 		var pop = pair[0], mview = pair[1];
@@ -53,14 +53,14 @@ MFdef('guiSlots').add(\set, {
 		mview.label = ndef.key;
 		mview.value = ndef.vol;
 	};
-	"MFdef('guiSlots') done.".postln;
+	// "MFdef('guiSlots') done.".postln;
 });
 
 g.main = g.main ? ();
 
 g.makeGui.main_adc = {
 	var bounds = Window.availableBounds;
-	var scrscale = min(bounds.width / 1920, bounds.height / 1200);
+	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
 	var font = Font("Monaco", (36 * scrscale).round);
 	var fatfont = Font("Monaco", (72 * scrscale).round);
 	var center, centPadsL, padsLPos, centPadsR, padsRPos;
@@ -70,7 +70,6 @@ g.makeGui.main_adc = {
 	var oscBut, midiBut, movevals;
 	var w, u, v, z, m, n;
 
-	[scrscale].postln;
 	try { g.main.w.close };
 	w = Window("N T M I MainStage", bounds).front;
 	w.background_(Color.black);
@@ -315,8 +314,10 @@ g.makeGui.main_adc = {
 			// always check volumes?
 			q.slots.actives.do { |ndef, i|
 				var vol = ndef.vol;
+				var playCol = if (ndef.monitor.isPlaying, Color.green, Color.grey(0.62));
 				var mview = q.slots.pops[i][1];
 				if (mview.value != vol) { mview.value = vol };
+				if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
 			};
 			// "mainUV skip runs".postln;
 		}, 0.2, { w.isClosed }, name: \mainUV);

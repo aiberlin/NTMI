@@ -34,15 +34,15 @@ q.pre.makePreset = { |pre, proxy|
 
 	// try to read from local user path:
 	if(File.exists(userPresPath)){
-		"--- loading preset % from user dir.\n".postf(name);
 		preset.loadSettings(userPresPath);
+		"  *  userDir preset % loaded.\n".postf(name);
 	} {
 		// or else read from default path inside project dir.
 		if(File.exists(appPresPath)){
-			"--- loading preset % from app dir. \n".postf(name, appPresPath);
 			preset.loadSettings(appPresPath);
+			"  + default preset % loaded. \n".postf(name);
 		} {
-			"*** preset %: no user or app preset file yet! \n".postf(name);
+			"--- PRESET %: no user or app preset found! \n".postf(name);
 		};
 	};
 	preset.storePath_(userPresPath);
