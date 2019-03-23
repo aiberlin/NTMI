@@ -13,12 +13,20 @@ s.latency = 0.05;
 // // hardware setup first
 s.options
 //.device_("2882 [3712]")	// device name
-.numInputBusChannels_(18)		//
-.numOutputBusChannels_(18)		//
+.numInputBusChannels_(8)		//
+.numOutputBusChannels_(8)		//
 .blockSize_(64)					//  .kr bus rate, default is 64 samples
 .hardwareBufferSize_(64*2)		// take fastest power of two hardware allows
 .memSize_(8192 * 16)
 ;
+
+///// set plugins path to very self-contained: read internal plugins
+///// PLUS any plugins found in the Standalone's internal Extensions dir:
+///// so if we use any sc3-plugins, put them there ...
+s.options.ugenPluginsPath =
+([ String.scDir +/+ "plugins" ]
+++ [Standalone.internalExtDir]).join($:);
+
 
 // "Setting server options: ".postln;
 if (s.serverRunning) {
