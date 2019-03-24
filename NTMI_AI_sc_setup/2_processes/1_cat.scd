@@ -8,12 +8,12 @@ Ndef(\cat).addSpec(\q, [1, 1000, \exp]);
 Ndef(\cat).addSpec(\modFreq, [0, 200, 7]);
 Ndef(\cat).addSpec(\moDepth, [0, 12*8]);
 
-Spec.add(\pFreq, [20, 400, \exp]);
-Spec.add(\pWidth, [0.01, 0.5, \exp]);
-Spec.add(\filt, [1, 32, \exp]);
-Spec.add(\q, [1, 1000, \exp]);
-Spec.add(\modFreq, [0, 200, 7]);
-Spec.add(\moDepth, [0, 12*8]);
+Ndef(\cat).addSpec(\pFreq, [20, 400, \exp]);
+Ndef(\cat).addSpec(\pWidth, [0.01, 0.5, \exp]);
+Ndef(\cat).addSpec(\filt, [1, 32, \exp]);
+Ndef(\cat).addSpec(\q, [1, 1000, \exp]);
+Ndef(\cat).addSpec(\modFreq, [0, 200, 7]);
+Ndef(\cat).addSpec(\moDepth, [0, 12*8]);
 
 // a Synth with 6 control parameters
 (

@@ -12,6 +12,14 @@ Ndef(\etude).getSpec.keys
 Ndef(\etude).edit(8);
 Ndef(\etude).play;
 
+// gobal for old NanoKtl
+Spec.add(\bpm, [12, 1200, \exp, 1]);
+Spec.add(\att, [0, 0.2, 5]);
+Spec.add(\dcy, [0.01, 1, 5]);
+Spec.add(\ffreq, \freq);
+Spec.add(\reso, [1, 100, \exp]);
+Spec.add(\mod, \amp);
+
 */
 
 
@@ -23,12 +31,12 @@ Ndef(\etude).addSpec(\reso, [1, 100, \exp]);
 Ndef(\etude).addSpec(\mod, \amp);
 
 // gobal for old NanoKtl
-Spec.add(\bpm, [12, 1200, \exp, 1]);
-Spec.add(\att, [0, 0.2, 5]);
-Spec.add(\dcy, [0.01, 1, 5]);
-Spec.add(\ffreq, \freq);
-Spec.add(\reso, [1, 100, \exp]);
-Spec.add(\mod, \amp);
+Ndef(\etude).addSpec(\bpm, [12, 1200, \exp, 1]);
+Ndef(\etude).addSpec(\att, [0, 0.2, 5]);
+Ndef(\etude).addSpec(\dcy, [0.01, 1, 5]);
+Ndef(\etude).addSpec(\ffreq, \freq);
+Ndef(\etude).addSpec(\reso, [1, 100, \exp]);
+Ndef(\etude).addSpec(\mod, \amp);
 
 
 // the Ndef iself
