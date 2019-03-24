@@ -19,42 +19,44 @@ g.makeGui.inphluxWeights = {
 };
 
 g.makeGui.inphlux = {
+	if (g.foundToFront("inphluxWeights").not) {
 
-	var w, e, f, insc;
+		var w, e, f, insc;
 
-	w = Window("inphluxWeights", Rect(200, 200, 350, 350)).front;
-	w.view.addFlowLayout;
+		w = Window("inphluxWeights", Rect(200, 200, 350, 350)).front;
+		w.view.addFlowLayout;
 
-	f = Font("Monaco", 13);
-	StaticText(w, 330@24).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(f);
-	e = EZSlider(w, 330@30, \preset, [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
-		q.inphlux.setwPre(q.inph.randSeeds[ez.value.asInteger]);
-		q.inphlux.calcOutVals;
-	}, q.inph.presIndex, labelWidth: 60, numberWidth: 30);
-	e.font_(f);
-	insc = EZSlider(w, 330@30, \inScaler, [0.05, 1, \lin, 0.05], { |ez|
-		q.setZoom(ez.value);
-		ez.value_(q.zoom);
-	}, labelWidth: 60, numberWidth: 40).font_(f);
+		f = Font("Monaco", 13);
+		StaticText(w, 330@24).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(f);
+		e = EZSlider(w, 330@30, \preset, [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
+			q.inphlux.setwPre(q.inph.randSeeds[ez.value.asInteger]);
+			q.inphlux.calcOutVals;
+		}, q.inph.presIndex, labelWidth: 60, numberWidth: 30);
+		e.font_(f);
+		insc = EZSlider(w, 330@30, \inScaler, [0.05, 1, \lin, 0.05], { |ez|
+			q.setZoom(ez.value);
+			ez.value_(q.zoom);
+		}, labelWidth: 60, numberWidth: 40).font_(f);
 
-	q.inph.ktlgui = InfluxKtlGui(q.inphlux, 5, w, Rect(0,0,300, 280));
+		q.inph.ktlgui = InfluxKtlGui(q.inphlux, 5, w, Rect(0,0,300, 280));
 
-	// call this somewhere in skipjack, or when changes happen
-	q.inph.updateGui = {
-		q.ndefs.do { |ndef, i|
-			// compare names of current q.ndefs with gui labels
-			var but = g.inphGui.attachButtons[i];
-			var key = ndef.key;
-			var isOnValue = q.inphlux.action.activeNames.includes(key).binaryValue;
-			if (but.states[0][0].asSymbol != key) {
-				g.inphGui.attachToButton(i, ndef);
-			};
+		// call this somewhere in skipjack, or when changes happen
+		q.inph.updateGui = {
+			q.ndefs.do { |ndef, i|
+				// compare names of current q.ndefs with gui labels
+				var but = g.inphGui.attachButtons[i];
+				var key = ndef.key;
+				var isOnValue = q.inphlux.action.activeNames.includes(key).binaryValue;
+				if (but.states[0][0].asSymbol != key) {
+					g.inphGui.attachToButton(i, ndef);
+				};
 
-			if (but.value != isOnValue) {
-				but.value_(isOnValue)
+				if (but.value != isOnValue) {
+					but.value_(isOnValue)
+				};
 			};
 		};
-	};
+	}
 };
 
 /*
