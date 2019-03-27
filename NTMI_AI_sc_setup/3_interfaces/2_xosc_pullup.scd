@@ -69,11 +69,11 @@ x.elAt(\sw, (0..7)).do (_.valueAction_(1));
 ////////// IS THIS CORRECT????
 ////////// OR SHOULD IT BE TOGGLE ON VALUE 0 ONLY????
 x.elAt(\sw, (0..3)).do { | bt, i|
-	var ndef = q.slots.actives[i];
 	bt.action.add(\front, {|bt|
+		var ndef = q.slots.actives[i];
 		if (bt.value == 0) {
 			// toggle when .press down:
-			if (ndef.monitor.isPlaying) {
+			if (ndef.postln.monitor.isPlaying.postln) {
 				q.slots.stopAt(i);
 			} {
 				q.slots.playAt(i);
