@@ -114,7 +114,7 @@ x.elAt(\sw, [\6, \7]).do { |bt, i|
 	bt.action.add(\front, {|bt|
 		defer {
 			if (bt.value <=0) {
-				MFdef(\stepInphWPre).( [-1, 1] @ i);
+				MFdef(\stepInphWPre).( [1, -1] @ i);
 				// reply to OSC device: which LED which Color!
 			}
 		}
@@ -126,7 +126,7 @@ x.elAt(\sw, [\6, \7]).do { |bt, i|
 		if (bt.value <=0) {
 			var whichNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
 			whichNdefs.do { |nd, j|
-				q.stepNdefPreInf( nd, [-1, 1] @ i );
+				q.stepNdefPreInf( nd, [1, -1] @ i );
 			};
 		}
 	});

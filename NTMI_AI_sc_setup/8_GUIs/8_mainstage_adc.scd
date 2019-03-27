@@ -219,11 +219,11 @@ g.makeGui.main_adc = {
 		rMViews[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
 		rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
 
-		rMViews[1].label_(\preDown).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
-		rMViews[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
+		rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
+		rMViews[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
 
-		rMViews[2].label_(\preUp).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
-		rMViews[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
+		rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
+		rMViews[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
 
 		rMViews[3].label_(q.inph.mode).mode_(\code);
 		rMViews[3].uv.mouseDownAction.add(\toggle, { |x|
