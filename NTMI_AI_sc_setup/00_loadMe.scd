@@ -64,7 +64,9 @@ Task {
 	q.numChans = q.prefs.active.numChans ? 2;
 	"*** q.numChans is: %\n".postf(q.numChans);
 
-	// dont find HIDs by default, for more stability
+	///////// dont load HIDs by default, for more stability
+	/// MKtl.find(\hid); 0.5.wait;
+	///////// do load MIDI devices
 	MKtl.find(\midi);
 
 	s.quit; "".postln;
