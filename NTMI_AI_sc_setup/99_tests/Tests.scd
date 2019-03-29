@@ -52,27 +52,22 @@ Tdef('zz_tests', {
 		prevSlots[0] != q.slots.actives[0];
 	}, "q.slots.addActive failed to change ndef", "q.slots.addActive changed ok.");
 
-	"\n --- XOSC Play BUTTONS ---".postln;
-	[0, 1, 2, 3].do { |i|
-		t.({
-			x.elAt(\sw, 0).valueAction_(0);
-			q.slots.actives[0].monitor.isPlaying;
-		}, "xosc on/off button failed", "xosc on/off buttons OK.");
-	};
 
-	"\n --- XOSC Stop BUTTONS ---".postln;
-	[0, 1, 2, 3].do { |i|
-		t.({
-			x.elAt(\sw, i).valueAction_(1);
-			q.slots.actives[0].monitor.isPlaying.not;
-		}, "xosc on/off button failed", "xosc on/off buttons OK.");
+	"\n --- XOSC Play/Stop BUTTONS ---".postln;
+	2.do {
+		q.slots.actives.do { |ndef, i|
+			t.({
+				var wasPlaying = ndef.monitor.isPlaying;
+				x.elAt(\sw, i).valueAction_(0);
+				ndef.monitor.isPlaying != wasPlaying;
+			}, "xosc on/off button failed", "xosc on/off buttons OK.");
+		};
 	};
-
 
 	"\n --- XOSC MODE BUTTON ---".postln;
 	t.({
 		var prevMode = q.inph.mode;
-		x.elAt(\sw, 4).valueAction_(0);
+		x.elAt(\sw, \5).valueAction_(0);
 		prevMode != q.inph.mode;
 	}, "xosc mode switch broken", "xosc mode but OK.");
 
@@ -87,9 +82,18 @@ Tdef('zz_tests', {
 	// buttons 6 and 7 step ndef presets and inphlux weights presets down/up
 	t.({
 		var prevNdefPreIndex = NdefPreset(q.ndefs[3]).currIndex;
-		x.elAt(\sw, \4).valueAction_(0);
 		x.elAt(\sw, \6).valueAction_(0);
 		prevNdefPreIndex != NdefPreset(q.ndefs[3]).currIndex;
+	}, "xosc ndef preset switch not working", "xosc preset but OK.");
+	t.({
+		var slotIndex = 3;
+		var presetToTest = NdefPreset(q.ndefs[slotIndex]);
+		var prevNdefPreIndex = presetToTest.currIndex;
+		q.slots.playAt(slotIndex);
+		x.elAt(\sw, \7).valueAction_(0);
+		0.1.wait;
+		q.slots.stopAt(slotIndex);
+		prevNdefPreIndex != presetToTest.currIndex;
 	}, "xosc ndef preset switch not working", "xosc preset but OK.");
 
 	0.2.wait;
@@ -104,6 +108,5 @@ Tdef('zz_tests', {
 		"prev key: % new key: %\n".postf(prevInphWeightsKey, postSwitchKey);
 		prevInphWeightsKey != postSwitchKey;
 	}, "xosc influx preset switch not working", "xosc preset but OK.");
-
 
 }).stop.play;
