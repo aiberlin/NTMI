@@ -44,348 +44,363 @@ MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') done.".postln;
 });
 
-g.makeGui.main_adc = {
-	if (g.foundToFront("MainStage").not) {
-
-		var bounds = Window.availableBounds;
-		var wheight = bounds.height, wwidth = bounds.width;
-		var scrscale = min(bounds.width / 1920, bounds.height / 1177);
-
-		var font = Font("Monaco", (36 * scrscale).round);
-		var fatfont = Font("Monaco", (72 * scrscale).round);
-		var center, centPadsL, padsLPos, centPadsR, padsRPos;
-
-		var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
-
-		var oscBut, midiBut, recBut, batView;
-		var w;
-		var bigUV, imuUV;
-		var popMVs, ndefPops, ndefMViews, rMViews, skipper;
+q.osc.batSpec = [3.425, 3.715].asSpec;
+q.osc.batString = "battery ?";
 
 
-		try { g.main.w.close };
-		w = Window("N T M I MainStage", bounds).front;
-		g.main.w = w;
-		g.main.w.background_(q.inph.currPresetCol);
+g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
-		bigUV = UserView(w, Rect.aboutPoint( bounds.center, wheight * 0.5, wheight * 0.5));
-		bigUV.background_(Color.clear);
-		g.main.bigUV = u;
+	var bounds = Window.availableBounds;
+	var wheight = bounds.height, wwidth = bounds.width;
+	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
 
-		imuUV = v = UserView(w, Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale));
-		imuUV.background_(Color.clear);
-		g.main.imuUV = v;
+	var font = Font("Monaco", (36 * scrscale).round);
+	var fatfont = Font("Monaco", (72 * scrscale).round);
+	var center, centPadsL, padsLPos, centPadsR, padsRPos;
 
-		g.main.padCols = MKtl('xosc').elAt(\inA, (8..15)).collect(_.value);
-		g.main.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
+	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
-		Stethoscope(s, 4, view: w.view);
-		ServerMeterView(s, w, 250@0, 4, 4);
+	var oscBut, midiBut, recBut, batView;
+	var w;
+	var bigUV, imuUV;
+	var popMVs, ndefPops, ndefMViews, rMViews, skipper;
 
-		oscBut = Button(w,
-			Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-			["¿¿OSC??", Color.white, Color.red],
-			["¡OSC OK!", Color.black, Color.green]
-		]).font_(font).value_(0);
-		g.main.oscBut = oscBut;
+	try { g.main.w.close };
+	w = Window(name, bounds).front;
+	g.main.w = w;
+	g.main.w.background_(q.inph.currPresetCol);
 
-		midiBut = Button(w, Rect(rightCol, 80 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-			["¿¿MIDI??", Color.white, Color.red],
-			["MIDI OK!", Color.black, Color.green]
-		]).font_(font).value_(0);
+	bigUV = UserView(w, Rect.aboutPoint( bounds.center, wheight * 0.5, wheight * 0.5));
+	bigUV.background_(Color.clear);
+	g.main.bigUV = u;
 
-		batView = StaticText(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 30 * scrscale))
-		.string_("battery: ??")
-		.font_(font.copy.size_(font.size * 0.8))
-		.stringColor_(Color.white).align_(\center);
+	imuUV = v = UserView(w, Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale));
+	imuUV.background_(Color.clear);
+	g.main.imuUV = v;
 
-		recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
-			["RECORD?", Color.white, Color.red],
-			["Recording!", Color.black, Color.green]
-		]).font_(font)
-		.action_({ |bt|
-			if (bt.value > 0) {
-				s.recChannels_(q.numChans ? 2);
-				s.record;
-			} {
-				s.stopRecording;
-			}
+	g.main.padCols = MKtl('xosc').elAt(\inA, (8..15)).collect(_.value);
+	g.main.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
+
+	Stethoscope(s, 4, view: w.view);
+	ServerMeterView(s, w, 250@0, 4, 4);
+
+	oscBut = Button(w,
+		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
+		["¿¿OSC??", Color.white, Color.red],
+		["¡OSC OK!", Color.black, Color.green]
+	]).font_(font).value_(0);
+	g.main.oscBut = oscBut;
+
+	midiBut = Button(w, Rect(rightCol, 80 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
+		["¿¿MIDI??", Color.white, Color.red],
+		["MIDI OK!", Color.black, Color.green]
+	]).font_(font).value_(0);
+
+	batView = UserView(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 40 * scrscale));
+	batView.background_(Color.clear);
+	batView.drawFunc_({ |uv|
+		var bounds = uv.bounds.extent.asRect;
+		Pen.addRect(bounds).color_(Color.white).stroke;
+		Pen.addRect(bounds.copy.width_(bounds.width * (q.osc.batPercent ? 0 * 0.01)));
+		Pen.color_(Color.green(0.75, 0.8)).fill;
+		Pen.stringCenteredIn(q.osc.batString,
+			bounds,
+			font.copy.size_(font.size * 0.8),
+			Color.white
+		);
+	});
+	batView.refresh;
+	g.main.batView = batView;
+
+	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
+		["RECORD?", Color.white, Color.red],
+		["Recording!", Color.black, Color.green]
+	]).font_(font)
+	.action_({ |bt|
+		if (bt.value > 0) {
+			s.recChannels_(q.numChans ? 2);
+			s.record;
+		} {
+			s.stopRecording;
+		}
+	});
+
+	Button(w, Rect(rightCol, 610 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
+		["Reset Clock", Color.white, Color.red],
+	]).font_(font)
+	.action_({
+		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
+	});
+
+
+	// 4 popups to select sounds, 4 mviews for volume levels
+	// add play buttons?
+	popMVs = [ 3, 1, -1, -3].collect { |offset, i|
+		var top = w.bounds.center.y + (offset + 1 * -80 * scrscale);
+		var left = 200 - (offset.abs * 0) * scrscale;
+		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150));
+		var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
+		.items_(q.process.allNames)
+		.value_(q.slots.actives[i].key).font_(font);
+		pop.alpha_(0.8);
+		pop.action = { |pop|
+			q.slots.addActive(i, Ndef(pop.item));
+			MFdef('guiSlots').value;
+			emmy.refresh;
+		};
+		emmy.uv.resize_(1);
+		emmy.uv.alpha = 0.8;
+		emmy.dict[\knobCol] = Color.grey(0, 0.7);
+		emmy.putDict(\myspec, \amp);
+		emmy.action.add(\setVol,  { |em|
+			q.slots.actives[i].vol_(em.value)
 		});
+		emmy.uv.keyDownAction = { |uv, char, mod = 0|
+			"emmy keydown action - char: % mod: % \n".postf(char.cs, mod);
+			switch(char,
+				$ , { q.slots.playAt(i) },
+				$., { q.slots.stopAt(i) }
+			);
+		};
 
-		Button(w, Rect(rightCol, 610 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
-			["Reset Clock", Color.white, Color.red],
-		]).font_(font)
-		.action_({
-			Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
+		emmy.drawFunc.add(\label, {
+			Pen.stringCenteredIn(
+				q.ndefs[i].key.asString,
+				emmy.bounds.moveTo(0,0),
+				fatfont,
+				Color.blue
+			)
 		});
+		[pop,emmy];
+	};
+
+	g.main.popups = popMVs.flop[0];
+	g.main.ndefMViews = popMVs.flop[1];
+
+	////// the 4 mviews on the right -  remove n eventually
+	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
+		var top = bounds.center.y + (offset + 1 * -80 * scrscale);
+		var left = bounds.width * 0.64 + (offset.abs * 0 * scrscale);
+		var initval = [1.0, \pre_1, '¿-?', \move][i];
+		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150));
+		emmy.dict[\knobCol] = Color.grey(0, 0.6);
+		emmy.uv.alpha = 0.8;
+		emmy.uv.resize_(1);
+		emmy.drawFunc.add(\label, {
+			Pen.stringCenteredIn(
+				emmy.label ? emmy.value,
+				emmy.bounds.moveTo(0,0),
+				fatfont,
+				Color.blue
+			)
+		});
+		emmy;
+	};
+	g.main.rMViews = rMViews;
+
+	///// unify all mview behaviours :
+
+	[g.main.ndefMViews, rMViews].flat.do { |mv|
+
+		mv.dict.font.size = 48 * scrscale;
+
+		mv.uv.drawFunc.add(\prep, { |uv|
+			var dict = mv.dict;
+			dict[\bounds] = uv.bounds;
+			dict[\height] = dict[\bounds].height;
+			dict[\width] = dict[\bounds].width;
+			dict[\focusCol] = Color.grey(1.0, 0.8);
+			dict[\backCol] = Color.grey(1.0, 0.6);
+
+			dict[\bounds00] = dict[\bounds].moveTo(0,0);
+			dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
+			dict[\boundsValues] = dict[\bounds00].copy.top_(dict[\height] * 0.62)
+			.height_(dict[\height] * 0.38);
+			dict[\hiRect] = dict[\bounds00].copy
+			.width_(dict[\width] * 0.5);
+		});
+		mv.refresh;
+	};
+
+	MFdef('stepInphWPre').add(\updateMain, {
+		defer { protect {
+			rMViews[1].value_(q.inph.presIndex);
+			rMViews[2].value_("seed" + q.inph.randSeeds[q.inph.presIndex]);
+		} }
+	});
+
+	rMViews[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
+	rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
+
+	rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
+	rMViews[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
+
+	rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
+	rMViews[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
+
+	rMViews[3].label_(q.inph.mode).mode_(\code);
+	rMViews[3].uv.mouseDownAction.add(\toggle, { |x|
+		MFdef(\imuMode).value;
+		rMViews[3].label_(q.inph.mode).valueAction_(q.inph.mode);
+	});
 
 
-		// 4 popups to select sounds, 4 mviews for volume levels
-		// add play buttons?
-		popMVs = [ 3, 1, -1, -3].collect { |offset, i|
-			var top = w.bounds.center.y + (offset + 1 * -80 * scrscale);
-			var left = 200 - (offset.abs * 0) * scrscale;
-			var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150));
-			var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
-			.items_(q.process.allNames)
-			.value_(q.slots.actives[i].key).font_(font);
-			pop.alpha_(0.8);
-			pop.action = { |pop|
-				q.slots.addActive(i, Ndef(pop.item));
-				MFdef('guiSlots').value;
-				emmy.refresh;
+	// circle shape in the background
+	(
+		bigUV.drawFunc = { |uv|
+			var center = uv.bounds.extent * 0.5;
+
+			"bigUV should only refresh when making NTMI_Main window.".postln;
+
+			Pen.addArc(center, center.y * 0.9, 0, 2pi);
+			// shape:
+			Pen.color_(Color.white);
+			Pen.width = 3;
+			Pen.stroke;
+		};
+		bigUV.refresh;
+	);
+
+	// small UV in the middle for cheaper pads/axes drawing
+	(
+		imuUV.drawFunc = { |uv|
+			var bounds = uv.bounds.moveTo(0,0);
+			var center = bounds.center;
+			var centPadsL, padsLPos, centPadsR, padsRPos;
+			var star;
+
+			if (q.inph.mode == \touch) {
+				centPadsL = center.copy.x_(center.x - (center.y * 1.8));
+				centPadsR = center.copy.x_(center.x + (center.y * 1.8));
+				padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
+					Polar(center.y * 1.5, angle * 0.8).asPoint + centPadsL;
+				};
+
+				padsRPos = [ 0.6, 0.2, -0.2, -0.6].collect { |angle|
+					Polar(center.y * -1.5 + pi, angle * 0.8).asPoint + centPadsR;
+				};
+
+				// 4 left, 4 right touchpads
+				(padsLPos ++ padsRPos).collect { |pt, i|
+					Pen.addArc(pt, 60, 0, 2pi);
+					Pen.color_(g.main.padCols[i]);
+					Pen.fill;
+					// Pen.stringCenteredIn(i.asString, Rect.aboutPoint(pt, 60, 60),
+					// 	font: Font("Monaco", 96),
+					// color: Color.black);
+				};
 			};
-			emmy.uv.resize_(1);
-			emmy.uv.alpha = 0.8;
-			emmy.dict[\knobCol] = Color.grey(0, 0.7);
-			emmy.putDict(\myspec, \amp);
-			emmy.action.add(\setVol,  { |em|
-				q.slots.actives[i].vol_(em.value)
-			});
-			emmy.uv.keyDownAction = { |uv, char, mod = 0|
-				"emmy keydown action - char: % mod: % \n".postf(char.cs, mod);
-				switch(char,
-					$ , { q.slots.playAt(i) },
-					$., { q.slots.stopAt(i) }
-				);
-			};
 
-			emmy.drawFunc.add(\label, {
-				Pen.stringCenteredIn(
-					q.ndefs[i].key.asString,
-					emmy.bounds.moveTo(0,0),
-					fatfont,
-					Color.blue
-				)
-			});
-			[pop,emmy];
-		};
-
-		g.main.popups = popMVs.flop[0];
-		g.main.ndefMViews = popMVs.flop[1];
-
-		////// the 4 mviews on the right -  remove n eventually
-		rMViews = [ 3, 1, -1, -3].collect { |offset, i|
-			var top = bounds.center.y + (offset + 1 * -80 * scrscale);
-			var left = bounds.width * 0.64 + (offset.abs * 0 * scrscale);
-			var initval = [1.0, \pre_1, '¿-?', \move][i];
-			var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150));
-			emmy.dict[\knobCol] = Color.grey(0, 0.6);
-			emmy.uv.alpha = 0.8;
-			emmy.uv.resize_(1);
-			emmy.drawFunc.add(\label, {
-				Pen.stringCenteredIn(
-					emmy.label ? emmy.value,
-					emmy.bounds.moveTo(0,0),
-					fatfont,
-					Color.blue
-				)
-			});
-			emmy;
-		};
-		g.main.rMViews = rMViews;
-
-		///// unify all mview behaviours :
-
-		[g.main.ndefMViews, rMViews].flat.do { |mv|
-
-			mv.dict.font.size = 48 * scrscale;
-
-			mv.uv.drawFunc.add(\prep, { |uv|
-				var dict = mv.dict;
-				dict[\bounds] = uv.bounds;
-				dict[\height] = dict[\bounds].height;
-				dict[\width] = dict[\bounds].width;
-				dict[\focusCol] = Color.grey(1.0, 0.8);
-				dict[\backCol] = Color.grey(1.0, 0.6);
-
-				dict[\bounds00] = dict[\bounds].moveTo(0,0);
-				dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
-				dict[\boundsValues] = dict[\bounds00].copy.top_(dict[\height] * 0.62)
-				.height_(dict[\height] * 0.38);
-				dict[\hiRect] = dict[\bounds00].copy
-				.width_(dict[\width] * 0.5);
-			});
-			mv.refresh;
-		};
-
-		MFdef('stepInphWPre').add(\updateMain, {
-			defer { protect {
-				rMViews[1].value_(q.inph.presIndex);
-				rMViews[2].value_("seed" + q.inph.randSeeds[q.inph.presIndex]);
-			} }
-		});
-
-		rMViews[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
-		rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
-
-		rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
-		rMViews[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
-
-		rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
-		rMViews[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
-
-		rMViews[3].label_(q.inph.mode).mode_(\code);
-		rMViews[3].uv.mouseDownAction.add(\toggle, { |x|
-			MFdef(\imuMode).value;
-			rMViews[3].label_(q.inph.mode).valueAction_(q.inph.mode);
-		});
-
-
-		// circle shape in the background
-		(
-			bigUV.drawFunc = { |uv|
-				var center = uv.bounds.extent * 0.5;
-
-				"bigUV should never refresh...".postln;
-
-				Pen.addArc(center, center.y * 0.9, 0, 2pi);
-				// shape:
-				Pen.color_(Color.white);
-				Pen.width = 3;
+			// visualize move mode as star of 9;
+			if (q.inph.mode == \move) {
+				// "move mode vis".postln;
+				star = g.main.movevals.collect { |val, i|
+					Polar(val.linlin( 0, 1, 40, 240), i / 9 * 2pi).asPoint + center;
+				};
+				// star.postln;
+				Pen.color = Color.yellow; Pen.width = 3;
+				star.wrapExtend(10).doAdjacentPairs { |p1, p2| Pen.line(p1, p2); };
+				Pen.stroke;
+				star.do { |p1| Pen.line(p1, center); };
+				Pen.color = Color.white; Pen.width = 1.5;
 				Pen.stroke;
 			};
-			bigUV.refresh;
-		);
 
-		// small UV in the middle for cheaper pads/axes drawing
-		(
-			imuUV.drawFunc = { |uv|
-				var bounds = uv.bounds.moveTo(0,0);
-				var center = bounds.center;
-				var centPadsL, padsLPos, centPadsR, padsRPos;
-				var star;
+		};
+		imuUV.refresh;
 
-				if (q.inph.mode == \touch) {
-					centPadsL = center.copy.x_(center.x - (center.y * 1.8));
-					centPadsR = center.copy.x_(center.x + (center.y * 1.8));
-					padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
-						Polar(center.y * 1.5, angle * 0.8).asPoint + centPadsL;
-					};
+		skipper.stop;
+		skipper = SkipJack({
 
-					padsRPos = [ 0.6, 0.2, -0.2, -0.6].collect { |angle|
-						Polar(center.y * -1.5 + pi, angle * 0.8).asPoint + centPadsR;
-					};
-
-					// 4 left, 4 right touchpads
-					(padsLPos ++ padsRPos).collect { |pt, i|
-						Pen.addArc(pt, 60, 0, 2pi);
-						Pen.color_(g.main.padCols[i]);
-						Pen.fill;
-						// Pen.stringCenteredIn(i.asString, Rect.aboutPoint(pt, 60, 60),
-						// 	font: Font("Monaco", 96),
-						// color: Color.black);
-					};
-				};
-
-				// visualize move mode as star of 9;
-				if (q.inph.mode == \move) {
-					// "move mode vis".postln;
-					star = g.main.movevals.collect { |val, i|
-						Polar(val.linlin( 0, 1, 40, 240), i / 9 * 2pi).asPoint + center;
-					};
-					// star.postln;
-					Pen.color = Color.yellow; Pen.width = 3;
-					star.wrapExtend(10).doAdjacentPairs { |p1, p2| Pen.line(p1, p2); };
-					Pen.stroke;
-					star.do { |p1| Pen.line(p1, center); };
-					Pen.color = Color.white; Pen.width = 1.5;
-					Pen.stroke;
-				};
-
+			if (g.main.backCol != q.inph.currPresetCol) {
+				// "refresh win color.".postln;
+				g.main.backCol = q.inph.currPresetCol;
+				g.main.w.background_(q.inph.currPresetCol);
 			};
+
+			g.main.movevals = x.elAt(\imu9).value;
+			g.main.padCols = x.elAt('pads8').value.collect { |val|
+				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
+			};
+
+			// only of values changed? hmmm.
 			imuUV.refresh;
 
-			skipper.stop;
-			skipper = SkipJack({
+			// zoom
+			if (q.zoom != rMViews[0].value) { rMViews[0].value = q.zoom };
+			if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
 
-				if (g.main.backCol != q.inph.currPresetCol) {
-					// "refresh win color.".postln;
-					g.main.backCol = q.inph.currPresetCol;
-					g.main.w.background_(q.inph.currPresetCol);
-				};
+			// OSC status
+			if (oscBut.value != (q.osc.timeSinceLast < 1)) {
+				oscBut.value = q.osc.timeSinceLast < 1;
+			};
 
-				g.main.movevals = x.elAt(\imu9).value;
-				g.main.padCols = x.elAt('pads8').value.collect { |val|
-					Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
-				};
+			if (q.osc.batval != q.osc.oldbatval) {
+				q.osc.batPercent = (q.osc.batSpec.unmap(q.osc.batval ? 0) * 100).round(0.1);
+				q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
+				q.osc.oldbatval = q.osc.batval;
+				batView.refresh;
+			};
 
-				// only of values changed? hmmm.
-				imuUV.refresh;
+			MFdef('guiSlots').value;
 
-				// zoom
-				if (q.zoom != rMViews[0].value) { rMViews[0].value = q.zoom };
-				if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
+			// "mainUV skip runs".postln;
+		}, 0.2, { w.isClosed }, name: \mainUV);
+		g.main.skipper = skipper;
 
-				// OSC status
-				if (oscBut.value != (q.osc.timeSinceLast < 1)) {
-					oscBut.value = q.osc.timeSinceLast < 1;
-				};
+	);
 
-				if (q.osc.batval != q.osc.oldbatval) {
-					batView.string = "battery: %".format(q.osc.batval.round(0.001));
-				};
+	/////// Clock display shows how long something has been running
+	/*
+	Tdef(\clocK).set(\isRunning, true);
+	// jumps back to zero when stopped
+	Tdef(\clocK).set(\isRunning, false);
 
-				MFdef('guiSlots').value;
+	// watch some Tdef to see how long a piece has been running
+	Tdef(\clocK).set(\isRunning, { Tdef(\watchMe).isPlaying });
 
-				// "mainUV skip runs".postln;
-			}, 0.2, { w.isClosed }, name: \mainUV);
-			g.main.skipper = skipper;
-
-		);
-
-		/////// Clock display shows how long something has been running
-		/*
-		Tdef(\clocK).set(\isRunning, true);
-		// jumps back to zero when stopped
-		Tdef(\clocK).set(\isRunning, false);
-
-		// watch some Tdef to see how long a piece has been running
-		Tdef(\clocK).set(\isRunning, { Tdef(\watchMe).isPlaying });
-
-		Tdef(\watchMe).play;
-		Tdef(\watchMe).stop;
-		*/
+	Tdef(\watchMe).play;
+	Tdef(\watchMe).stop;
+	*/
 
 
-		Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 0.1]);
-		Tdef(\clocK).set(\runtime, 0, \isRunning, true);
+	Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 0.1]);
+	Tdef(\clocK).set(\runtime, 0, \isRunning, true);
 
-		//	Tdef(\clocK).gui;
+	//	Tdef(\clocK).gui;
 
-		/// add gui parent here:
-		Tdef(\clocK).set(\timeUV, UserView(w,
-			Rect(rightCol, 160 * scrscale, 300 * scrscale, 200 * scrscale)
-		).front);
-		Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
-		Tdef(\clocK).set(\color, Color.white);
+	/// add gui parent here:
+	Tdef(\clocK).set(\timeUV, UserView(w,
+		Rect(rightCol, 160 * scrscale, 300 * scrscale, 200 * scrscale)
+	).front);
+	Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
+	Tdef(\clocK).set(\color, Color.white);
 
-		Tdef(\clocK).get(\timeUV).drawFunc = { |uv|
-			var font = fatfont.copy.size_(60 * scrscale);
-			var timeStr = Tdef(\clocK).get(\timeStr);
-			Pen.stringCenteredIn(timeStr,
-				Rect(0,0, uv.bounds.width, uv.bounds.height),
-				Tdef(\clocK).get(\font),
-				Tdef(\clocK).get(\color)
-			)
-		};
-
-		Tdef(\clocK).get(\timeUV).refresh;
-
-		Tdef(\clocK, { |envir|
-			var dt = 1;
-			inf.do { |i|
-				envir.timeStr =
-				// "Runtime :\n" +
-				envir.runtime.asTimeString.drop(-4);
-				defer { envir.timeUV.refresh };
-				if (envir.isRunning == true) {
-					envir.runtime = envir.runtime ? 0 + dt;
-				} {
-					envir.runtime = 0;
-				};
-				dt.wait;
-			}
-		}).play;
+	Tdef(\clocK).get(\timeUV).drawFunc = { |uv|
+		var font = fatfont.copy.size_(60 * scrscale);
+		var timeStr = Tdef(\clocK).get(\timeStr);
+		Pen.stringCenteredIn(timeStr,
+			Rect(0,0, uv.bounds.width, uv.bounds.height),
+			Tdef(\clocK).get(\font),
+			Tdef(\clocK).get(\color)
+		)
 	};
+
+	Tdef(\clocK).get(\timeUV).refresh;
+
+	Tdef(\clocK, { |envir|
+		var dt = 1;
+		inf.do { |i|
+			envir.timeStr =
+			// "Runtime :\n" +
+			envir.runtime.asTimeString.drop(-4);
+			defer { envir.timeUV.refresh };
+			if (envir.isRunning == true) {
+				envir.runtime = envir.runtime ? 0 + dt;
+			} {
+				envir.runtime = 0;
+			};
+			dt.wait;
+		}
+	}).play;
 };
