@@ -1,19 +1,18 @@
 (
+// use this dict for everything osc related
+q.osc = q.osc ? ();
+
 thisProcess.openUDPPort(8000);
 thisProcess.openPorts;
-
-q = q ? ();
-q.keys;   // synonymous:  q = if(q.isNil){ () }{ q };
-q.x= ();
-q.x.keys;
-q.active = q.active? ();
-q.active.x = Set.new;
-q.active.x.add(q.ndefs.first); // we  Ndefs must be loaded first
 
 MKtl.all[\xosc].free;
 x = MKtl(\xosc, "xosc*");
 
-//// q.guiXOSC = x.gui; // moved to gui section
+x.addNamed(\imu9, MKtlElementGroup(\imu9, x, x.elAt([0, 1, 2]).flat));
+x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
+x.elAt(\imu9);
+x.elAt(\pads8);
+
 
 //  x.device.destination.hostname = "127.0.0.1";
 
@@ -24,6 +23,19 @@ try { x.device.destination.sendMsg("tralala") } {
 	"... replacing x.device.destination.hostname_(\"localhost\");".postln;
 	x.device.destination.hostname_("localhost");
 };
+
+"*** XOSC - FOR NOW, TURN XOSC RESPONDERS OFF, ONLY USE hand-written OSCdefs!".postln;
+
+x.device.oscFuncDictionary.do(_.disable);
+
+
+////////////// get battery value:
+OSCdef(\bat, { |msg, time|
+	q.osc.oldbatval = q.osc.batval;
+	q.osc.batval = msg[1];
+	q.osc.batvaltime = time;
+}, "battery").permanent_(true);
+
 
 
 ///////////////////////////////////////////////////////////////
@@ -41,7 +53,7 @@ OSCdef(\xdig, { |msg|
 			elem.valueAction_(val);
 		}
 	}
-}, '/inputs/digital');
+}, '/inputs/digital').permanent_(true);
 
 
 x.elementsDict.do(_.action_(MFunc()));
@@ -54,54 +66,47 @@ x.elAt(\sw, (0..7)).do (_.valueAction_(1));
 
 
 // // switch one of 4 ndefs to front
-
+////////// IS THIS CORRECT????
+////////// OR SHOULD IT BE TOGGLE ON VALUE 0 ONLY????
 x.elAt(\sw, (0..3)).do { | bt, i|
 	bt.action.add(\front, {|bt|
-		defer {
-			if (bt.value <= 0) {
-
-				/////////// DIRTY! goes thru influx gui FIXME ! :
-				if(q.inphGui.attachButtons[i].value < 1)
-				{
-					q.makeCurr(i, false); // function from 0_inphlux.scd
-					x.elAt(\led)[i].value_(1/2);
-
-				}{
-					q.makePast(i);
-					x.elAt(\led)[i].value_(0);
-				}
+		var ndef = q.slots.actives[i];
+		if (bt.value == 0) {
+			// toggle when .press down:
+			if (ndef.postln.monitor.isPlaying.postln) {
+				q.slots.stopAt(i);
+			} {
+				q.slots.playAt(i);
 			}
 		}
 	});
 };
 
 
-
 // switch mode - analog in vs. IMU /// touch vs move mode
-q.influxWhich = true;
+q.inph.modes = [\move, \touch];
+q.inph.mode = \move;
+q.inph.modeIndex = { q.inph.modes.indexOf(q.inph.mode) };
 
-
-x.elAt(\sw, \5).action.add(\front, {|bt|
-	if (bt.value <=0) {
-		if(  q.influxWhich )
-		{
-			"*** enable TOUCH".postln;
-			8.do{ |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
-			MFdef(\imuFunc).disable( \setInphlux );
-			x.elAt(\led, \5).value_(0.0);
-
-		}{
-			"*** enable MOVE (IMU) ".postln;
-			8.do{ |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
-			MFdef(\imuFunc).enable( \setInphlux );
-			x.elAt(\led, \5).value_(1/2);
-		};
-		q.influxWhich = q.influxWhich.not;
-
-	}
+MFdef(\imuMode).add(\toggle, {
+	if(  q.inph.mode == \move ) {
+		q.inph.mode = \touch;
+		"*** enable TOUCH".postln;
+		8.do { |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
+		MFdef(\imuFunc).disable( \setInphlux );
+		x.elAt(\led, \5).value_(0.0);
+	}{
+		q.inph.mode = \move;
+		"*** enable MOVE (IMU) ".postln;
+		8.do { |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
+		MFdef(\imuFunc).enable( \setInphlux );
+		x.elAt(\led, \5).value_(1/2);
+	};
 });
 
-
+x.elAt(\sw, \5).action.add(\front, {|bt|
+	if (bt.value <=0) { MFdef(\imuMode).value }
+});
 
 
 // switch thru the list of Influx weights
@@ -109,7 +114,7 @@ x.elAt(\sw, [\6, \7]).do { |bt, i|
 	bt.action.add(\front, {|bt|
 		defer {
 			if (bt.value <=0) {
-				q.stepWeights( [-1, 1] @ i);
+				MFdef(\stepInphWPre).( [1, -1] @ i);
 				// reply to OSC device: which LED which Color!
 			}
 		}
@@ -121,7 +126,7 @@ x.elAt(\sw, [\6, \7]).do { |bt, i|
 		if (bt.value <=0) {
 			var whichNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
 			whichNdefs.do { |nd, j|
-				q.stepNdefPreInf( nd, [-1, 1] @ i );
+				q.stepNdefPreInf( nd, [1, -1] @ i );
 			};
 		}
 	});
@@ -151,32 +156,35 @@ OSCdef(\imu, { |msg|
 	//gyro.round(0.001).postln;
 }, "/imu").permanent_(true);
 
-q.inphscale = 1;
-q.inphscale = 0.4;
-q.inphscale = 0.6;
+// permanent tweak factor???
+q.inph.scale = 1;
+q.inph.scale = 0.4;
+q.inph.scale = 0.6;
 
 
 MFdef(\imuFunc).add(\setInphlux, {
 	var values = x.elAt(\accel).value.unibi ++ x.elAt(\gyro).value.unibi ++ x.elAt(\magnet).value.unibi;
 	var names = q.inphlux.inNames;
-	var keysvals = [names, values * q.inphscale].flop.flat;
+	var keysvals = [names, values * q.inph.scale].flop.flat;
 	q.inphlux.set(*keysvals);
 });
 
 // hack for xosc gui: all element actions trigger imuFunc!
 x.elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\imuFunc)));
 
-
+/*
 MFdef(\imuFunc).disable( \setInphlux );
 MFdef(\imuFunc).enable( \setInphlux );
+*/
 
 
 // for monitoring the incoming osc activity by timetag
-q.lastOSCactivity = 0;
+q.osc.lastInTime = 0;
+q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 OSCdef(\imuAlive, { |msg, time|
-	// (time - q.lastOSCactivity ).postc;
-	q.lastOSCactivity = time;
+	q.osc.lastInTime = time;
 }, "/imu").permanent_(true);
+
 
 // ///////////////////////////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////

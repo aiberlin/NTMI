@@ -1,12 +1,12 @@
 ////// function to make a presetWin if needed
 
 (
-q.ndefPresetWin = { |q, height= 450, left = 0|
-	var pxs = q.ndefs;//q.getInfluxDestins; // could also be q.ndefs
-	var px = q.active.presWin.asArray.first ? pxs[0];
+g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
+	var pxs = q.ndefs;
+	var px = q.currxoscPx ? pxs[0];
 	var currPreset, switchPxINGui;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
-	w = Window("basic_presets", Rect(left, 5, 387+100, height)).front;
+	w = Window(name, Rect(450, 5, 387+100, 400)).front;
 	// q.ndefPresetGlobalWin = w; // glob main win!
 	hlv = HLayoutView(w, w.bounds.moveTo(0,0));
 	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height)).background_(Color.green.alpha_(0.2));
@@ -37,26 +37,26 @@ q.ndefPresetWin = { |q, height= 450, left = 0|
 		})
 	});
 
-/*
+	/*
 	// RandomOrbits Stuff here, kick out!
 	Button(vlv1, Rect(0,0, 48, 30))
 	.states_([['- - - - - -']])
-//	.action( 	q.uniWin.getHalo(\ndefGui).object_(Ndef(\nix)) ) // erase sliders....
+	//	.action( 	q.uniWin.getHalo(\ndefGui).object_(Ndef(\nix)) ) // erase sliders....
 	;
 	randerButs = 4.collect({|i|
-		Button(vlv1, Rect(0,0, 48, 30))
-		.states_([
-			[\rand ++ (#[10, 1, -1, -10].wrapAt(i))],
-		])
+	Button(vlv1, Rect(0,0, 48, 30))
+	.states_([
+	[\rand ++ (#[10, 1, -1, -10].wrapAt(i))],
+	])
 	});
 	randerButs.do({|but, i|
-		but.action_({|b|
-			var nuSeed = q.incrementSeed(px, #[10, 1, -1, -10].wrapAt(i) );
-//			currPreset.setRand(1, except: [\amp, \direct], seed: nuSeed); // except still broken !!!
-			currPreset.setRand(1, seed: nuSeed);
-		})
+	but.action_({|b|
+	var nuSeed = q.incrementSeed(px, #[10, 1, -1, -10].wrapAt(i) );
+	//			currPreset.setRand(1, except: [\amp, \direct], seed: nuSeed); // except still broken !!!
+	currPreset.setRand(1, seed: nuSeed);
+	})
 	});
-*/
+	*/
 	pp = px.getHalo(\ndefPreset); // assumes there is! ToDo: default to making it!
 	ppg = NdefPresetGui(pp, 0, vlv2);
 	ng = NdefGui(px, 19, vlv2);
@@ -91,7 +91,7 @@ q.ndefPresetWin = { |q, height= 450, left = 0|
 );
 
 /*
-q.ndefPresetWin;
+q.makeGui.ndefPresetWin;
 q.uniWin.getHalo(\active1);
 q.uniWin.getHalo(\active1sy);
 

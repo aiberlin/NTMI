@@ -50,7 +50,7 @@ Ndef('RJKchaos', { arg amp = 0.1, in = 0.01, cutoff = 2000, phase1 = 2, phase2 =
 		mixedSignal = RLPF.ar((delayedSignal) + input, 10000);
 		fout = RLPF.ar(mixedSignal, cutoff, 0.5);
 		[delayedSignal, fout];
-	}).postln;
+	});
 	LocalOut.ar(outs.flop.last);
 	LeakDC.ar(outs.flop.first, mul: amp)
 })

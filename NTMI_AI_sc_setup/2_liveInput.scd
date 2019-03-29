@@ -13,7 +13,8 @@ q.liveInput.source = { |inChanA=0, inAmpA=1, inChanB=1, inAmpB=0, threshG=0.1|
 	Limiter.ar(in);
 };
 
-q.liveInput.playN( (1..q.numChans)-1, vol: 0);
+// q.liveInput.playN( (1..q.numChans)-1, vol: 0);
+
 Spec.add(\inChanA, [0, 7, 0, 1]);
 Spec.add(\inChanB, \inChanA.asSpec);
 Spec.add(\inAmpA, [0, 8, \amp] );

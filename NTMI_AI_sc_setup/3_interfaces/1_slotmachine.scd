@@ -1,0 +1,149 @@
+//
+/*
+slotmachine has 4 slots with playable objects
+We assume these are all Ndefs for now.
+When an object is added,
+- the old one stops, and is removed from influx,
+- and the new one plays and is attached to influx.
+
+
+NdefMixer(s, 24);
+q.ndefs;
+q.slots.actives;
+q.slots.playAt(0)
+q.slots.stopAt(0)
+
+q.slots.playAt(1)
+q.slots.stopAt(1)
+
+q.slots.playAt(3)
+q.slots.stepNext(3)
+
+////// new tests:
+
+"testing slots ...".postln;
+q.slots.choices.collect(_.size);
+
+q.slots.actives;
+q.slots.addActive(0, Ndef(\dog));
+
+q.slots.actives.put(0, Ndef(\revFB));
+q.slots.addActive(0, Ndef(\revFB));
+q.slots.addActive(0, Ndef(\cat));
+
+q.slots.updateChoices;
+q.slots.choices;
+
+
+q.slots.addActive(4,)
+q.slots.addActive(3, Ndef(\kiteHi))
+
+q.slots.chooseNext(0);
+
+q.inphlux.action.activeNames;
+q.inphlux.action.disable(q.inphlux.action.activeNames.copy);
+
+*/
+
+q.slots = q.slots ? ();
+q.slots.actives = q.ndefs;
+// use this global fadeoutTime for ndef.stop(fadeoutTime);
+q.slots.fadeoutTime = 1;
+q.slots.defaultVol = 0.25;
+
+
+q.slots.playAt = { |sl, index|
+	var obj = q.slots.actives[index];
+	var vol = if (obj.monitor.isNil, q.slots.defaultVol, { obj.vol });
+	"% at % plays now.\n".postf(obj, index);
+	obj.play(vol: vol);
+	q.inphlux.attachMapped(obj);
+};
+q.slots.stopAt = { |sl, index|
+	var obj = q.slots.actives[index];
+	"% at % stops now.\n".postf(obj, index);
+	obj.stop(q.slots.fadeoutTime);
+	try { q.inphlux.removeMapped(obj.key) };
+};
+
+q.slots.checkIndex = { |sl, index|
+	var res = index.isNumber and: { index.inclusivelyBetween(0, q.slots.actives.lastIndex) };
+	if (res.not) { "slots index must be between 0 and 3".postln };
+	res;
+};
+
+// super defensive
+q.slots.addActive = { |sl, index, obj|
+	case
+	{ q.slots.checkIndex(index).not } { "q.slots.addActive - index not valid: %\n".postf(index) }
+	{ obj.respondsTo(\key).not } { "q.slots.addActive - obj has no key: %\n".postf(obj) }
+	{ q.slots.choices[index].includes(obj.key).not } { "q.slots.addActive - obj is not in choices: %\n".postf(obj) }
+	{		// all is well
+		q.slots.stopAt(index);
+		q.slots.actives.put(index, obj);
+		q.slots.stopAt(index);
+		q.slots.updateChoices;
+	}
+};
+
+q.slots.updateChoices = {
+	q.slots.choices = q.slots.actives.collect { |ndef, i|
+		q.process.allNames.reject { |name|
+			var takenKeys = q.slots.actives.collect(_.key);
+			takenKeys.remove(ndef.key);
+			takenKeys.includes(name)
+		}
+	};
+	q.slots.choices;
+};
+
+q.slots.chooseNext = { |sl, index|
+	if (q.slots.checkIndex(index)) {
+		var candidates = q.slots.choices[index];
+		var nextname = candidates.choose;
+		"next  sound in slot % : % \n".postf(index, nextname);
+		// ndef is dogy here, hmmm
+		q.slots.addActive(index, Ndef(nextname));
+	};
+};
+
+q.slots.stepNext = { |sl, index, incr = 1|
+	if (q.slots.checkIndex(index)) {
+		var candidates = q.slots.choices[index];
+		var myindex = candidates.indexOf(q.slots.actives[index].key);
+		var nextindex = myindex + incr;
+		var nextname = candidates[nextindex];
+		"next  sound in slot % : % \n".postf(index, nextname);
+		// ndef is dogy here, hmmm
+		q.slots.addActive(index, Ndef(nextname));
+	};
+};
+
+///// init - maybe too often.
+q.slots.updateChoices;
+q.slots.actives.do { |ndef, i|
+	q.slots.addActive(i, ndef);
+};
+
+q.slots.test = {
+	var passed = true;
+	q.slots.actives.do { |ndef, i|
+		q.slots.choices.do { |choices, j|
+			if (i == j) {
+				if (choices.includes(ndef.key).not) {
+					"ndef not in its own choices".warn;
+					passed = false;
+					[i, j, ndef].postln
+				}
+			} {
+				if (choices.includes(ndef.key)) {
+					"ndef is available in wrong choices".warn;
+					passed = false;
+					[i, j, ndef].postln
+				}
+			}
+		}
+	};
+	passed
+};
+

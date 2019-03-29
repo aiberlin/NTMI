@@ -1,117 +1,144 @@
-"*** startup file for NTMI_AI_sc_setup loading...".postln;
+/*
 
-q = q ? ();
-
-// ~trioPlayers = ["arik", "laVulega", "isakhan"];
-q.me = unixCmdGetStdOut("whoami").split(Char.nl).first.asSymbol;
-q.myname = Platform.userHomeDir.basename.asSymbol;
-q.hasGui = \View.asClass.notNil;
-
-// read early prefs if there
-(Platform.userAppSupportDir +/+ "preprefs.scd").loadPaths;
-
-// should move to preprefs ?
-q.numChans = q.numChans ? 4;
-
-q.soundsPerPlayer = ( // a dict for filename beginnings
-	\arik: 3,
-	\laVulega: 2,
-	\isakhan: 1,
-	\adc: 1,
-);
-
-q.choiseNdefs_storePath = thisProcess.nowExecutingPath.dirname +/+ "presets/choiceNdefs.scd";
-
-"*** loading globals: ".postln;
-"0_globals/*.scd".resolveRelative.pathMatch.do { |path|
-	path.basename.postln;
-	path.loadPaths;
+(
+var types = ();
+q.keysValuesDo { |key, val|
+	var class = val.class;
+	types.put(class, (types[class] ?? { List[] }).add(key))
 };
+types
+)
 
-q[\load];
+"--- contents of q: ---".postln;
+q.size.postln;
+q.keys(SortedList).do("q.% : %\n".postf(_, _, _));
+"--- end contents of q ---".postln;
+"";
 
-p = Ndef.dictFor(s); // p.push;
+*/
 
-MKtl.find;
+(
+/// wait for SC Welcome post ...
 
 Task {
-	s.quit;
-	1.wait;
+	0.1.wait;
+
+	"\n\n*** startup file for NTMI_AI_sc_setup loading...\n\n".postln;
+
+	q = q ? ();  // <- dict for most everything
+	g = g ? ();  // <- gui stuff goes here!
+
+
+	//// Generally useful globals:
+	q.time0 = Main.elapsedTime;
+	q.myname = Platform.userHomeDir.basename.asSymbol;
+	q.hasGui = \View.asClass.notNil;
+	if (q.hasGui) { "9_optionals/warnWin.scd".loadRelative };
+
+	q.dir = q.dir ? ();
+	q.dir.base = thisProcess.nowExecutingPath.dirname;
+
+	// function to load code files or folders which can wait and posts loading time info:
+	q.load = { |q, filename, wait = 0.05, dirsup = 0, preText = "", postText = ""|
+		forkIfNeeded ({
+			var here = "".resolveRelative;
+			var paths;
+			var loadDur, t0 = Main.elapsedTime;
+
+			dirsup.do { here = here.dirname };
+			paths = (here +/+ filename).pathMatch;
+
+			if (paths.size == 0) { "*** no files found for % :\n".postf(filename.cs) };
+
+			if (paths.size > 1) { "****** matching files for % :\n".postf(filename.cs) };
+
+			paths.do { |path|
+				"*** loading % : %".postf(path.basename, preText);
+				path.load;
+				if (s.serverRunning) { try { s.sync } };
+				loadDur = (Main.elapsedTime - t0).round(0.001);
+				" % secs. %\n".postf(loadDur, postText);
+				wait.wait;
+			};
+
+			"";
+		}, AppClock)
+	};
+
+
+	//******* PREFERENCES
+	///// read user prefs (if there) or default prefs early on:
+	"1_prefs/1_prefs.scd".loadRelative;
+	// set q.numChans from prefs
+	q.numChans = q.prefs.active.numChans ? 2;
+	"*** q.numChans is: %\n".postf(q.numChans);
+
+	///////// dont load HIDs by default, for more stability
+	/// MKtl.find(\hid); 0.5.wait;
+	///////// do load MIDI devices
+	MKtl.find(\midi);
+
+	s.quit; "".postln;
+
+	0.2.wait;
+
+	"\n\n*** *** *** FOLDER globals: ".postln;
+	q.load("0_globals/*.scd");
+
+	// preload all sounds while server is off!
+	q.load("2_liveInput.scd");
+
+	"\n\n*** *** *** FOLDER % : \n".postf("2_processes");
+	q.process = q.process ? ();
+	q.process.allPaths = "2_processes/*_*.scd".resolveRelative.pathMatch;
+	q.process.allNames = q.process.allPaths.collect { |p|
+		p.basename.split($.)[0].reject {|c| (c == $_) }.reject(_.isDecDigit)
+	}.collectInPlace(_.asSymbol).asSet.asArray.sort;
+
+	q.load("2_processes/*scd");
+
+	0.2.wait;
+
+	q.load("2_processes/presets/2a_preset_func.scd");
 
 	s.waitForBoot {
-		"*** server booted, plays 3 pings.".postln;
-		fork{ 3.do { Env.perc.test; 0.3.wait } };
 
-		"*** folder % : \n".postf("2_processes");
+		"*** server booted, plays 3 pings left.".postln;
+		fork { 3.do { Env.perc.test; 0.3.wait } };
 
-		q.load("2_liveInput.scd");
+		"\n".postln;
 
 		0.2.wait;
-
-		///////// adc: dont understand all of this,
-		///////// looks like it could be simpler
-		q.mySoundsIndex = q.soundsPerPlayer[q.me]  ? 1; // attribute a group of sounds to each player, else just 1
-		q.allSoundPaths = "2_processes/*.scd".resolveRelative.pathMatch;
-
-		q.allSoundNames = q.allSoundPaths.collect{|p| p.basename.split($.)[0].reject{|c| c == $_}.reject(_.isDecDigit) }.asSet.asArray.sort;
-
-
-		q.mySoundPaths =
-		q.allSoundPaths//.select{ |path| path.basename.first == ( q.mySoundsIndex.asDigit) }
-		.sort.reverse
-		.wrapExtend(4);  // we ALWAYS want 4
-
-		// assume file existing !!!
-		/*betteR:
-		- if File.exists
-		{
-		load it. if all 4 keys are found,
-		{load em all}{load existing, replace others}
-		}{ replace with SOME 4}
-		*/
-
-		if( File.exists(q.choiseNdefs_storePath) ){
-			q.choice = q.choiseNdefs_storePath.load.postcln;
-			q.mySoundPaths = q.choice.collect{|key| q.allSoundPaths.detect{|path| path.contains(key.asString) } };
-		}{"no preset file".error};
-		q.mySoundPaths.do { |path|
-			"***      loading file %\n".postf(path.basename);
-			path.load;
-			0.2.wait;
-		};
-
-		q.ndefs = q.getNdefs;
+		// activate the ndefs given in prefs:
+		q.ndefs = q.prefs.active.defaultActives.collect(Ndef(_));
+		//
+		// and only wake up my selected sounds:
 		q.ndefs.do {|ndef|
-			ndef.set(\amp, 0).fadeTime_(1).play;
-			ndef.vol_(0.25).monitor.fadeTime_(0.3);
+			ndef.set(\amp, 0).fadeTime_(1).vol_(0.25);
 		};
+
 		0.2.wait;
 
+		"\n\n*** *** *** FOLDER % : \n".postf("3_interfaces");
+		q.load("3_interfaces/*scd");
 
+		"\n\n*** *** *** FOLDER % : \n".postf("5_postres");
 
-		"*** folder % : \n".postf("3_interfaces");
-		"3_interfaces/*.scd".resolveRelative.pathMatch.do { |path|
-			"***      loading file %\n".postf(path.basename);
-			path.load;
-			0.2.wait;
-		};
-
-		"*** folder % : \n".postf("5_postres");
-		"5_postres/*.scd".resolveRelative.pathMatch.do { |path|
-			"***      loading file %\n".postf(path.basename);
-			path.load;
-			0.2.wait;
-		};
+		q.load("5_postres/*scd");
 
 		if (q.hasGui) {
-			"*** folder % : \n".postf("5_postres");
-			"8_GUIs/*.scd".resolveRelative.pathMatch.do { |path|
-				"***      loading file %\n".postf(path.basename);
-				path.load;
-				0.2.wait;
-			};
+			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
+			q.load("8_GUIs/*scd");
+			0.2.wait;
+			MFdef(\makeGui).(\MakeGui);
+			MFdef(\makeGui).(\NTMI_Main);
+
 		};
 
+		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
+		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
 
 	};
 }.play(AppClock);
+)
+

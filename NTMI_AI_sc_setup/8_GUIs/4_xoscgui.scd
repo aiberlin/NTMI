@@ -1,22 +1,41 @@
-q.makeGui.xosc = {
-	q.closeGuis ("xosc");
-	q.guiXOSC = x.gui;
+/*
 
-	// // tweak q.guiXOSC to display correct stuff only
-	q.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // unused Digi ins
-	q.guiXOSC.views[(0..8)+18+8+8].do{|v| v.view.visible_(false)}; // unused LEDS
-	q.guiXOSC.views.keep(-16).do{|v| v.view.visible_(false)};      // unused Comparator Buttons
+// which views have which elements?
+g.guiXOSC.views.do { |vw, i| [i, vw.element.name ].postln };
+
+*/
+
+g.makeGui.xosc = { |dict, name = \xosc|
+	var simButStart, simButStop;
+	g.guiXOSC = x.gui;
+
+	// // tweak g.guiXOSC to display correct stuff only
+	g.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // hide unused Digi ins
+
+	g.guiXOSC.views[(0..8)+18+8+8].do{|v| v.view.visible_(false)}; // hide unused LEDS
+	g.guiXOSC.views.keep(-16).do{|v| v.view.visible_(false)};      // hide unused Comparator Buttons
+
+	// make add on/off switch for OSC Simulator
+	simButStart = g.guiXOSC.views[18 + 7];
+	simButStop = g.guiXOSC.views[18 + 8];
+
+	simButStart.view.visible_(true).states_([ "SIM!", Color.white, Color.red() ]!2);
+	simButStop .view.visible_(true).states_(["stop", Color.black, Color.green ]!2);
+
+	//// // set all switches to snapback mode
+	///// FIXME: snapback mode triggers twice in modality, so fix it there!
+	// g.guiXOSC.views[(11..26)].do(_.snapback = true);
+
 	// switch off unused analog sliders!
 
 	///////////// should work but does not?
 	/*
-	q.guiXOSC.views[(11..14)].do(_.snapback = true);
 	*/
 
 
 	/// hack in led displays:
 	// orig
-	// q.guiXOSC.views[27 + (0..15)].do { |elvw, i|
+	// g.guiXOSC.views[27 + (0..15)].do { |elvw, i|
 	// 	elvw.view.view.drawFunc = { |vw|
 	// 		var value = elvw.element.value;
 	// 		var color = Color.hsv(value, 1, 1, 1);
@@ -24,32 +43,32 @@ q.makeGui.xosc = {
 	// 	};
 	// };
 
-	q.guiXOSC.views[27 + (0..3)].do { |elvw, i|
+	g.guiXOSC.views[27 + (0..3)].do { |elvw, i|
 		var mappe = ItemsSpec( [Color.grey, Color.green] );
 		elvw.view.view.drawFunc = { |vw|
 			var value = elvw.element.value;
-			var color = mappe.map(value).postcs;
+			var color = mappe.map(value);
 			vw.background_(color);
 		};
 	};
 
-	q.guiXOSC.views[27 + [4]].do { |elvw, i|
+	g.guiXOSC.views[27 + [4]].do { |elvw, i|
 		var mappe = ItemsSpec( [Color.new255(251, 145, 167), Color.green] );
 		elvw.view.view.drawFunc = { |vw|
 			var value = elvw.element.value;
-			var color = mappe.map(value).postcs;
+			var color = mappe.map(value);
 			vw.background_(color);
 		};
 	};
 
-	q.guiXOSC.views[27 + (5..7)].do { |elvw, i|
-		var mappe = ItemsSpec( q.presetCols );
+	g.guiXOSC.views[27 + (5..7)].do { |elvw, i|
+		var mappe = ItemsSpec( q.inph.presetCols );
 		elvw.view.view.drawFunc = { |vw|
 			var value = elvw.element.value;
-			var color = mappe.map(value).postcs;
+			var color = mappe.map(value);
 			vw.background_(color);
 		};
-	};
+	}
 };
 
 /*

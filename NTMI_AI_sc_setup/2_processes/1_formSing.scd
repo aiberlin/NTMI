@@ -33,13 +33,13 @@ Ndef(\formSing).addSpec(\ndiv, [0.01, 1, \exp]);
 Ndef(\formSing).addSpec(\fdev, [0, 24, \amp]);
 Ndef(\formSing).addSpec(\round, [0, 3, \amp, 0.05]);
 
-Spec.add(\root, [20, 500, 6]);
-Spec.add(\formfrq, [50, 5000, \exp]);
-Spec.add(\harm, [1, 256, \exp]);
-Spec.add(\formLag, [0.01, 100, \exp]);
-Spec.add(\ndiv, [0.01, 1, \exp]);
-Spec.add(\fdev, [0, 24, \amp]);
-Spec.add(\round, [0, 3, \amp, 0.05]);
+Ndef(\formSing).addSpec(\root, [20, 500, 6]);
+Ndef(\formSing).addSpec(\formfrq, [50, 5000, \exp]);
+Ndef(\formSing).addSpec(\harm, [1, 256, \exp]);
+Ndef(\formSing).addSpec(\formLag, [0.01, 100, \exp]);
+Ndef(\formSing).addSpec(\ndiv, [0.01, 1, \exp]);
+Ndef(\formSing).addSpec(\fdev, [0, 24, \amp]);
+Ndef(\formSing).addSpec(\round, [0, 3, \amp, 0.05]);
 
 Ndef(\formSing).addHalo(\orderedNames, [\amp, \root, \formfrq, \harm, \fdev, \ndiv, \formLag, \round]);
 
