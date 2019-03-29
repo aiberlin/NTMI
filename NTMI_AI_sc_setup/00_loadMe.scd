@@ -1,9 +1,18 @@
 /*
 
+(
+var types = ();
+q.keysValuesDo { |key, val|
+	var class = val.class;
+	types.put(class, (types[class] ?? { List[] }).add(key))
+};
+types
+)
+
 "--- contents of q: ---".postln;
 q.size.postln;
 q.keys(SortedList).do("q.% : %\n".postf(_, _, _));
-"--- contents of q: ---".postln;
+"--- end contents of q ---".postln;
 "";
 
 */
@@ -121,7 +130,9 @@ Task {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
 			0.2.wait;
-			g.makeGui.main_adc;
+			MFdef(\makeGui).(\MakeGui);
+			MFdef(\makeGui).(\NTMI_Main);
+
 		};
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
