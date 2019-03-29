@@ -1,0 +1,42 @@
+processes/
+	allArm.scd		// sound + default specs
+	allArm_presets/
+		allArm.specs.scd  /// personalized specs/ranges
+		allArm_adc.specs.scd
+
+		allArm.pxpreset.scd		// default preset file
+		allArm_funky.pxpreset.scd // personalized preset files ...
+		allArm_bongo.pxpreset.scd
+	cat.scd
+	cat_presets/
+		...
+masterfx/
+	00_in.scd 	// ProxyChain.add3( ... );
+	0OnePolBal.scd
+	0_DBComp.scd
+	0_comp.scd
+	0_gate.scd
+	0freqBal.scd
+	1holz.scd
+	1ixiDist.scd
+	3AdCVerb.scd
+	3ring.scd
+	3thrasher.scd
+	4ixiVerb.scd
+	5HPF.scd
+	5LPF.scd
+	6roto.scd
+	7Delay.scd
+	9endFilt.scd
+	9monofy.scd
+	9stereofy.scd
+	ampFin.scd
+	ntmi.mfx.scd // MasterFX(s, slotNames, ...);
+	theology.mfxpreset.scd
+	cybernetics.mfxpreset.scd
+
+influx/
+	diagL.infpreset.scd
+	diagR.infpreset.scd
+	23.infpreset.scd
+	666.infpreset.scd
