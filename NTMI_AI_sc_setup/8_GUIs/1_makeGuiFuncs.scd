@@ -3,7 +3,7 @@
 g.makeGui = ();
 
 // this func reuses or rebuilds existing windows
-MFdef(\makeGui).add(\FrontOrRemake, { |name, remake = false|
+MFdef(\makeGui).add(\frontOrRemake, { |name, remake = false|
 	var foundWins = Window.findAll(name);
 	var newWin;
 	remake = remake or: { foundWins.isNil or: { foundWins.isEmpty } };
@@ -11,7 +11,11 @@ MFdef(\makeGui).add(\FrontOrRemake, { |name, remake = false|
 		// "closing: ".post; foundWins.postln;
 		foundWins.do(_.close);
 		g.makeGui[name.asSymbol].value(g.makeGui, name);
-		protect { Window.find(name).bounds = g.defaultWinBounds[name] };
+		if (name.notNil) {
+			try {
+				Window.findAll(name).do(_.bounds = g.defaultWinBounds[name])
+			};
+		};
 	} {
 		// "to front: ".post; foundWins.postln;
 		foundWins.do(_.front)
@@ -45,10 +49,12 @@ g.defaultWinBoundsList.do { |pair|
 
 g.makeGui.z_setAll = {
 	Window.setAll(g.defaultWinBoundsList);
+	nil;
 };
 
 g.makeGui.z_CLOSEALL = {
-	Window.allWindows.do { |w| if (w != g[\MakeGui]) { try { w.close } } }
+	Window.allWindows.do { |w| if (w != g[\MakeGui]) { try { w.close } } };
+	nil;
 };
 
 
