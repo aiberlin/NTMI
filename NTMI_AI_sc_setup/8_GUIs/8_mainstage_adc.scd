@@ -1,11 +1,5 @@
-/**** Experiments for new maistage window: *****
+/**** New mainstage window: *****
 
-g.makeGui.main_adc
-
-- add ProxyMeter on top of MView?
-
-q.inph.mode = \move;
-q.inph.mode = \touch;
 
 // test gui update
 MFdef('guiSlots').value;
@@ -96,7 +90,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	]).font_(font).value_(0);
 
 	batView = UserView(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 40 * scrscale));
-	batView.background_(Color.clear);
+	batView.background_(Color.red(1.0));
 	batView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
 		Pen.addRect(bounds).color_(Color.white).stroke;
@@ -111,7 +105,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	batView.refresh;
 	g.main.batView = batView;
 
-	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
+	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["RECORD?", Color.white, Color.red],
 		["Recording!", Color.black, Color.green]
 	]).font_(font)
@@ -124,7 +118,12 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		}
 	});
 
-	Button(w, Rect(rightCol, 610 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
+	Button(w, Rect(rightCol, 510 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+		["SET ZERO for\ntouch + move", Color.white, Color.red],
+	]).font_(font)
+	.action_({ MFdef('ZERO').value });
+
+	Button(w, Rect(rightCol, 660 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["Reset Clock", Color.white, Color.red],
 	]).font_(font)
 	.action_({
@@ -332,6 +331,11 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			// OSC status
 			if (oscBut.value != (q.osc.timeSinceLast < 1)) {
 				oscBut.value = q.osc.timeSinceLast < 1;
+				if (q.osc.timeSinceLast >= 1) {
+					q.osc.batval = 0;
+					q.osc.batPercent = 0;
+					q.osc.batString = "battery ?";
+				};
 			};
 
 			if (q.osc.batval != q.osc.oldbatval) {
