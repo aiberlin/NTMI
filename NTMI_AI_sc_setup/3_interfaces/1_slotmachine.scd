@@ -59,11 +59,26 @@ q.slots.playAt = { |sl, index|
 	obj.play(vol: vol);
 	q.inphlux.attachMapped(obj);
 };
+
+// maybe make a flag for stop or end?
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
-	"% at % stops now.\n".postf(obj, index);
-	obj.stop(q.slots.fadeoutTime);
+	"% at % ends now.\n".postf(obj, index);
+	obj.end(q.slots.fadeoutTime);
 	try { q.inphlux.removeMapped(obj.key) };
+};
+
+q.slots.toggleAt = { |sl, index|
+	var obj = q.slots.actives[index];
+	var isPlaying = if (obj.isKindOf(NodeProxy))
+		{ obj.monitor.isPlaying }
+		{ obj.isPlaying };
+
+	if (isPlaying) {
+		q.slots.stopAt(index);
+	} {
+		q.slots.playAt(index);
+	}
 };
 
 q.slots.checkIndex = { |sl, index|
@@ -111,7 +126,7 @@ q.slots.stepNext = { |sl, index, incr = 1|
 	if (q.slots.checkIndex(index)) {
 		var candidates = q.slots.choices[index];
 		var myindex = candidates.indexOf(q.slots.actives[index].key);
-		var nextindex = myindex + incr;
+		var nextindex = myindex + incr % candidates.size;
 		var nextname = candidates[nextindex];
 		"next  sound in slot % : % \n".postf(index, nextname);
 		// ndef is dogy here, hmmm
