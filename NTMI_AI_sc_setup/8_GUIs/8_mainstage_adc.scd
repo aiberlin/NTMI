@@ -44,8 +44,7 @@ MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') done.".postln;
 });
 
-q.osc.batSpec = [3.425, 3.715].asSpec;
-q.osc.batString = "battery ?";
+
 
 
 g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
@@ -336,9 +335,6 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			};
 
 			if (q.osc.batval != q.osc.oldbatval) {
-				q.osc.batPercent = (q.osc.batSpec.unmap(q.osc.batval ? 0) * 100).round(0.1);
-				q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
-				q.osc.oldbatval = q.osc.batval;
 				batView.refresh;
 			};
 

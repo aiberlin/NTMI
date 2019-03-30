@@ -28,12 +28,18 @@ try { x.device.destination.sendMsg("tralala") } {
 
 x.device.oscFuncDictionary.do(_.disable);
 
+q.osc.batSpec = [3.45, 3.82].asSpec; //
+q.osc.batString = "battery ?";
+q.osc.batval = 0;
+q.osc.batPercent = 0;
 
 ////////////// get battery value:
 OSCdef(\bat, { |msg, time|
 	q.osc.oldbatval = q.osc.batval;
 	q.osc.batval = msg[1];
 	q.osc.batvaltime = time;
+	q.osc.batPercent = (q.osc.batSpec.unmap(q.osc.batval ? 0) * 100).round(0.1);
+	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
 }, "battery").permanent_(true);
 
 
