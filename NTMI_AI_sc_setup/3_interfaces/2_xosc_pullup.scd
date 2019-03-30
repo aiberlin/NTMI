@@ -13,6 +13,18 @@ x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
 x.elAt(\imu9);
 x.elAt(\pads8);
 
+q.zero = q.zero ? ();
+q.zero.imu = 0;
+q.zero.pad = 0;
+
+MFdef(\ZERO).add(\set, {
+	q.zero.imu = MKtl(\xosc).elAt(\imu9).value;
+	q.zero.pads = MKtl(\xosc).elAt(\pads8).value;
+});
+/*
+// get
+MFdef(\ZERO).value;
+*/
 
 //  x.device.destination.hostname = "127.0.0.1";
 
@@ -324,7 +336,7 @@ q.inph.scale = 0.6;
 
 
 MFdef(\imuFunc).add(\setInphlux, {
-	var values = x.elAt(\accel).value.unibi ++ x.elAt(\gyro).value.unibi ++ x.elAt(\magnet).value.unibi;
+	var values = (x.elAt(\imu9).value - (q.zero.imu ? 0)).unibi;
 	var names = q.inphlux.inNames;
 	var keysvals = [names, values * q.inph.scale].flop.flat;
 	q.inphlux.set(*keysvals);
