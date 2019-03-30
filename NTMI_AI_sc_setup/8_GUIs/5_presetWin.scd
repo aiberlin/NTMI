@@ -1,9 +1,10 @@
 ////// function to make a presetWin if needed
 
 (
+
 g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	var pxs = q.ndefs;
-	var px = q.currxoscPx ? pxs[0];
+	var px = q.currxoscPx ? q.ndefs[0];
 	var currPreset, switchPxINGui;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
 	w = Window(name, Rect(450, 5, 387+100, 400)).front;
@@ -12,7 +13,9 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height)).background_(Color.green.alpha_(0.2));
 	vlv2 = VLayoutView(hlv, Rect.new(0,0, 410, hlv.bounds.height));
 
-	butrow = pxs.collect({|px|
+	Button(vlv1, Rect(0,0,100, 30)).states_([["UPDATE"]]).action_(MFdef('preButUpdate'));
+
+	butrow = q.ndefs.collect({|px|
 		var name = px.key;
 		Button(vlv1, Rect(0,0,100, 30))
 		.states_([
@@ -26,7 +29,7 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 
 	butrow.do({|but, i|
 		but.action_({|b|
-			px = pxs[i];
+			px = q.ndefs[i];
 			q.active.presWin.clear.add(px); // using Set
 			// q.active.presWin = px; // not using Set but single instance...
 			px.resume.play;
@@ -61,6 +64,17 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	ppg = NdefPresetGui(pp, 0, vlv2);
 	ng = NdefGui(px, 19, vlv2);
 	ng.skipjack.dt=0.1;
+
+	MFdef('preButUpdate').add(\set, {
+		var butNames = butrow.collect { |but| but.states[0][0] }.postcs;
+		var newNames = q.slots.actives.collect(_.key);
+		if (newNames != butNames) {
+			butrow.do { |but, i|
+				var newstates = but.states.do(_.put(0, newNames[i]));
+				but.states = newstates;
+			}
+		}
+	});
 
 	q.uniWin = w;
 	q.uniWin.addHalo(\proxyPresetGui, ppg);
