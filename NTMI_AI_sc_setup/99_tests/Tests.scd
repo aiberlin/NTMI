@@ -1,3 +1,9 @@
+/********
+
+With modal buttons, tests are confused ...
+q.osc.leftDown.clear; q.osc.rightDown.clear;
+
+**********/
 
 Tdef('zz_tests', {
 	var postOK = false;
@@ -14,6 +20,8 @@ Tdef('zz_tests', {
 	};
 
 	"Tdef('zz_tests') runs.".postln;
+
+	q.osc.leftDown.clear; q.osc.rightDown.clear;
 
 	"--- GENERAL SANITY ---".postln;
 	// Tdef('xoscSim').stop;
@@ -55,18 +63,25 @@ Tdef('zz_tests', {
 
 	"\n --- XOSC Play/Stop BUTTONS ---".postln;
 	2.do {
+		var oldFadetime = q.slots.fadeoutTime;
+		q.slots.fadeoutTime = 0.01;
+
 		q.slots.actives.do { |ndef, i|
 			t.({
 				var wasPlaying = ndef.monitor.isPlaying;
-				x.elAt(\sw, i).valueAction_(0);
+				x.elAt(\sw, i).valueAction_(1);
+				0.1.wait;
 				ndef.monitor.isPlaying != wasPlaying;
 			}, "xosc on/off button failed", "xosc on/off buttons OK.");
 		};
+		q.slots.fadeoutTime = oldFadetime;
+		q.osc.leftDown.clear; q.osc.rightDown.clear;
 	};
 
 	"\n --- XOSC MODE BUTTON ---".postln;
 	t.({
 		var prevMode = q.inph.mode;
+		x.elAt(\sw, \5).valueAction_(1);
 		x.elAt(\sw, \5).valueAction_(0);
 		prevMode != q.inph.mode;
 	}, "xosc mode switch broken", "xosc mode but OK.");
@@ -74,6 +89,7 @@ Tdef('zz_tests', {
 	// and toggle back
 	t.({
 		var prevMode = q.inph.mode;
+		x.elAt(\sw, 4).valueAction_(1);
 		x.elAt(\sw, 4).valueAction_(0);
 		prevMode != q.inph.mode;
 	}, "xosc mode switch broken", "xosc mode but OK.");
@@ -81,18 +97,32 @@ Tdef('zz_tests', {
 	"\n --- XOSC preset step BUTTONS ---".postln;
 	// buttons 6 and 7 step ndef presets and inphlux weights presets down/up
 	t.({
-		var prevNdefPreIndex = NdefPreset(q.ndefs[3]).currIndex;
+		var slotIndex = 1;
+		var presetToTest = NdefPreset(q.ndefs[slotIndex]);
+		var prevNdefPreIndex = presetToTest.currIndex;
+		q.slots.playAt(slotIndex);
+		0.15.wait;
 		x.elAt(\sw, \6).valueAction_(0);
-		prevNdefPreIndex != NdefPreset(q.ndefs[3]).currIndex;
+		0.15.wait;
+		q.slots.stopAt(slotIndex);
+		x.elAt(\sw, \6).valueAction_(1);
+		q.osc.leftDown.clear; q.osc.rightDown.clear;
+
+		prevNdefPreIndex != presetToTest.currIndex;
 	}, "xosc ndef preset switch not working", "xosc preset but OK.");
+
 	t.({
 		var slotIndex = 3;
 		var presetToTest = NdefPreset(q.ndefs[slotIndex]);
 		var prevNdefPreIndex = presetToTest.currIndex;
 		q.slots.playAt(slotIndex);
+		0.15.wait;
 		x.elAt(\sw, \7).valueAction_(0);
-		0.1.wait;
+		0.15.wait;
 		q.slots.stopAt(slotIndex);
+		x.elAt(\sw, \7).valueAction_(1);
+		q.osc.leftDown.clear; q.osc.rightDown.clear;
+
 		prevNdefPreIndex != presetToTest.currIndex;
 	}, "xosc ndef preset switch not working", "xosc preset but OK.");
 
@@ -105,6 +135,7 @@ Tdef('zz_tests', {
 		x.elAt(\sw, \7).valueAction_(0);
 		0.02.wait;
 		postSwitchKey = q.inphlux.presets.findKeyForValue(q.inphlux.weights);
+		x.elAt(\sw, \7).valueAction_(1);
 		"prev key: % new key: %\n".postf(prevInphWeightsKey, postSwitchKey);
 		prevInphWeightsKey != postSwitchKey;
 	}, "xosc influx preset switch not working", "xosc preset but OK.");
