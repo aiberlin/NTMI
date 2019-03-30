@@ -10,8 +10,8 @@ x = MKtl(\xosc, "xosc*");
 
 x.addNamed(\imu9, MKtlElementGroup(\imu9, x, x.elAt([0, 1, 2]).flat));
 x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
-x.elAt(\imu9);
-x.elAt(\pads8);
+// init imu values to center:
+x.elAt(\imu9).value_(0.5!9);
 
 q.zero = q.zero ? ();
 q.zero.imu = 0;

@@ -33,9 +33,9 @@ q.addrSC.sendMsg('/inputs/analogue', *(0.5!16));
 q.addrSC.sendMsg('/inputs/analogue', *({0.75.rand}!16));
 */
 
-Tdef(\xoscSim).set(\dt, 0.2);
+Tdef(\xoscSimulator).set(\dt, 0.2);
 
-Tdef(\xoscSim, { |ev|
+Tdef(\xoscSimulator, { |ev|
 	var imuvals = 0 ! 9;
 	var anavals = 0 ! 16;
 	var tempval = 20;
@@ -64,12 +64,12 @@ Tdef(\xoscSim, { |ev|
 x.elAt(\sw, \15).action = { |bt|
 	if (bt.value > 0) {
 		"*** starting sim: ".post;
-		Tdef(\xoscSim).postln.play;
+		Tdef(\xoscSimulator).postln.play;
 	}
 };
 x.elAt(\sw, \16).action = { |bt|
 	if (bt.value > 0) {
 		"*** stopping sim: ".post;
-		Tdef(\xoscSim).stop;
+		Tdef(\xoscSimulator).stop;
 	}
 };
