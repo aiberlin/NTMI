@@ -7,14 +7,27 @@
 x.elementsDict.keys;
 //neu - remove weird crosstalk from each input to next
 (
-OSCdef(\xana,{ |msg|
+OSCdef(\xana, { |msg|
 	var values = msg.drop(1);
 	var xtalkFactor = 0.5;// andere sensor vieleicht passt andere nummer
 	// value[1] = value[1].linlin(value[0] * 0.5, 1, 0, 1);
 	// MAGIC crosstalk compensation of
+	//////// adc Mar 2019 - still seems an improvement
 	(15..1).do { |i|
 		values[i] = values[i].linlin(values[i - 1] * xtalkFactor, 1, 0, 1);
 	};
+
+	q.osc.rawPads = values[8..];
+
+	// q.zero.pads is the rest state of the pads
+	// use it to stretch to a range of 0-1
+	(8..15).do { |i|
+		var rawval = values[i];
+		var zeroOffset = q.zero.pads.asArray.wrapAt(i);
+		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
+		values.put(i,stretched);
+	};
+
 	// values.round(0.001).postln;
 	//values.reverse??.do
 	values.do { |val, index|
