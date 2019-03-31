@@ -144,11 +144,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	popMVs = [ 3, 1, -1, -3].collect { |offset, i|
 		var top = w.bounds.center.y + (offset + 1 * -80 * scrscale);
 		var left = 200 - (offset.abs * 0) * scrscale;
-		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150));
+		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150 * scrscale));
 		var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
 		.items_(q.process.allNames)
 		.value_(q.slots.actives[i].key).font_(font);
-		pop.alpha_(0.8);
+
+		pop.background_(Color.grey(1.0, 0.7));
+
 		pop.action = { |pop|
 			q.slots.addActive(i, Ndef(pop.item));
 			MFdef('guiSlots').value;
@@ -191,7 +193,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		var top = bounds.center.y + (offset + 1 * -80 * scrscale);
 		var left = bounds.width * 0.64 + (offset.abs * 0 * scrscale);
 		var initval = [1.0, \pre_1, '¿-?', \move][i];
-		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150));
+		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150 * scrscale));
 		emmy.dict[\knobCol] = Color.grey(0, 0.6);
 		emmy.uv.alpha = 0.8;
 		emmy.uv.resize_(1);
@@ -228,7 +230,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			dict[\hiRect] = dict[\bounds00].copy
 			.width_(dict[\width] * 0.5);
 		});
-		mv.refresh;
+		// force it to use transparency
+		mv.uv.focus(false).refresh;
 	};
 
 	MFdef('stepInphWPre').add(\updateMain, {
