@@ -12,6 +12,8 @@ q.slots.chooseNext(3); MFdef('guiSlots').value;
 q.slots.addActive(0, Ndef(\kiteHi));
 q.slots.actives[0].vol;
 
+g.main.ndefMViews[0].label_(\test).refresh;
+g.main.ndefMViews[0].label;
 */
 
 g.main = g.main ? ();
@@ -27,19 +29,25 @@ MFdef('guiSlots').add(\set, {
 		var vol = ndef.vol;
 		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
 
-		if (ndef.key != pop.item) {
+		var presetName = NdefPreset(ndef).currSet.key;
+		var newLabel;
+		if (presetName == \curr) {
+			newLabel = ndef.key
+		} {
+			newLabel = ndef.key.asString + presetName
+		};
+
+		if (ndef.key != pop.item or: { newLabel != mview.label }) {
 			pop.items = q.slots.choices[i];
 			pop.value = pop.items.indexOf(ndef.key);
-			mview.label_(ndef.key);
+
+			mview.label_( newLabel.postcs );
 		};
 		if (mview.value != vol) { mview.value = vol };
 		if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
 	};
 	// "MFdef('guiSlots') done.".postln;
 });
-
-
-
 
 g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
@@ -162,10 +170,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		};
 
 		emmy.drawFunc.add(\label, {
+			var labelStr = emmy.label.asString;
+			var labelStrSize = labelStr.size;
+			var fontSize = fatfont.size * (11 / labelStrSize.max(12));
 			Pen.stringCenteredIn(
-				q.ndefs[i].key.asString,
+				emmy.label.asString,
 				emmy.bounds.moveTo(0,0),
-				fatfont,
+				fatfont.copy.size_(fontSize),
 				Color.blue
 			)
 		});
