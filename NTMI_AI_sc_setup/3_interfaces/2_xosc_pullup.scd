@@ -12,14 +12,19 @@ x.addNamed(\imu9, MKtlElementGroup(\imu9, x, x.elAt([0, 1, 2]).flat));
 x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
 // init imu values to center:
 x.elAt(\imu9).value_(0.5!9);
+x.elAt(\pads8).value;
 
 q.zero = q.zero ? ();
 q.zero.imu = 0;
-q.zero.pad = 0;
+q.zero.pads = 0;
+q.osc.rawPads = (0!8);
 
 MFdef(\ZERO).add(\set, {
 	q.zero.imu = MKtl(\xosc).elAt(\imu9).value;
-	q.zero.pads = MKtl(\xosc).elAt(\pads8).value;
+	q.zero.pads = q.osc.rawPads;
+	"*** ZERO was set: ".postln;
+	"imu: %\n".postf(q.zero.imu.round(0.001));
+	"pads: %\n".postf(q.zero.imu.round(0.001));
 });
 /*
 // get
@@ -221,11 +226,13 @@ MFdef(\imuMode).add(\toggle, {
 		"*** enable TOUCH".postln;
 		8.do { |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
 		MFdef(\imuFunc).disable( \setInphlux );
+		q.inphlux.set(*q.inphlux.inNames.keep(9).collect([_, 0]).flat);
 		x.elAt(\led, \5).value_(0.0);
 	}{
 		q.inph.mode = \move;
 		"*** enable MOVE (IMU) ".postln;
-		8.do { |i|	x.elAt('inA').at(i + 8).action.disable(\setInflux) };
+		x.elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
+		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
 		MFdef(\imuFunc).enable( \setInphlux );
 		x.elAt(\led, \5).value_(1/2);
 	};
@@ -336,9 +343,12 @@ q.inph.scale = 0.6;
 
 
 MFdef(\imuFunc).add(\setInphlux, {
-	var values = (x.elAt(\imu9).value - (q.zero.imu ? 0)).unibi;
-	var names = q.inphlux.inNames;
+	// set the first 9 values of the inphlux from the imu params:
+	var values = (x.elAt(\imu9).value - (q.zero.imu ? 0) + 0.5).unibi;
+	var names = q.inphlux.inNames.keep(values.size);
 	var keysvals = [names, values * q.inph.scale].flop.flat;
+	// "*** imufunc".postln;
+	// keysvals.round(0.001).postln;
 	q.inphlux.set(*keysvals);
 });
 
