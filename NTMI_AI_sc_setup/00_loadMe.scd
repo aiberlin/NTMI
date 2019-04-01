@@ -90,7 +90,7 @@ Task {
 
 	"\n\n*** *** *** FOLDER % : \n".postf("2_processes");
 	q.process = q.process ? ();
-	q.process.allPaths = "2_processes/*_*.scd".resolveRelative.pathMatch;
+	q.process.allPaths = "2_processes/*.scd".resolveRelative.pathMatch;
 	q.process.allNames = q.process.allPaths.collect { |p|
 		p.basename.split($.)[0].reject {|c| (c == $_) }.reject(_.isDecDigit)
 	}.collectInPlace(_.asSymbol).asSet.asArray.sort;
