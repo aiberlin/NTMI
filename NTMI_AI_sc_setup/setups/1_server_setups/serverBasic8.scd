@@ -18,7 +18,7 @@ if (s.serverRunning) {
 };
 
 /////// set to a specific device here by name
-s.options.device_("Fireface 400 (297)");
+// s.options.device_("Fireface 400 (297)");
 
 // set number of hardware input and output bus channels
 s.options.numInputBusChannels_(8);		//

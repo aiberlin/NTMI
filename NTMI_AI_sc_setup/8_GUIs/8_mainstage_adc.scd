@@ -230,7 +230,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			dict[\hiRect] = dict[\bounds00].copy
 			.width_(dict[\width] * 0.5);
 		});
-		// force it to use transparency
+		// force right side mviews to use lightly transparent colors
+		mv.uv.focus(true).refresh;
 		mv.uv.focus(false).refresh;
 	};
 
