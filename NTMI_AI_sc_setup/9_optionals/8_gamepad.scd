@@ -18,7 +18,7 @@ ends with big gui window
 --- PLAYING:
 == on GUI:
 - select 4 front sounds in the 4 big GUI slots
-- default is RJKchaos, kiteHi, moogSing, xFMSH
+- default is rjkChaos, kiteHi, moogSing, xFMSH
 
 == on Ferrari:
 

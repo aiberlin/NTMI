@@ -1,5 +1,5 @@
 /*
-RJKChaos.sc
+rjkChaos.sc
 @author Ron Kuivila, C. Ramakrishnan
 
 A port of Ron Kuivila's "Homage to Toshi Ichiyanagi" patch from SC2 to SC3.
@@ -25,7 +25,7 @@ q.numChans=2
 */
 
 (
-Ndef('RJKchaos', { arg amp = 0.1, in = 0.01, cutoff = 2000, phase1 = 2, phase2 = 2, phase3 = 2,
+Ndef('rjkChaos', { arg amp = 0.1, in = 0.01, cutoff = 2000, phase1 = 2, phase2 = 2, phase3 = 2,
 	p1Vol = 0, p2Vol = 0, p3Vol = 1, formant = 500, fbk = 0.9, rfbk = 0, qu = 1, rfq = 1;
 	var fin = LocalIn.ar(q.numChans);
 	var outs = q.numChans.collect({|i|
@@ -56,25 +56,25 @@ Ndef('RJKchaos', { arg amp = 0.1, in = 0.01, cutoff = 2000, phase1 = 2, phase2 =
 })
 );
 
-Ndef('RJKchaos').addSpec(\in, [0.000001, 1.0,\exp, 0, 0.01]);
-Ndef('RJKchaos').addSpec(\cutoff, [2, 20000, \exp, 1, 2000]);
-Ndef('RJKchaos').addSpec(\phase1, [2, 1000, \exp, 0, 2]);
-Ndef('RJKchaos').addSpec(\phase2, [2, 1000, \exp, 0, 2]);
-Ndef('RJKchaos').addSpec(\phase3, [2, 1000, \exp, 0, 2]);
-Ndef('RJKchaos').addSpec(\p1Vol, [-1, 1, \lin, 0, 0]);
-Ndef('RJKchaos').addSpec(\p2Vol,  [-1, 1, \lin, 0, 0]);
-Ndef('RJKchaos').addSpec(\p3Vol,  [-1, 1, \lin, 0, 1]);
-Ndef('RJKchaos').addSpec(\formant, [1, 8000, \exp, 1, 500]);
-Ndef('RJKchaos').addSpec(\fbk, [0, 4, \lin, 0, 0.9]);
-Ndef('RJKchaos').addSpec(\rfbk, [0, 4, \lin, 0, 0]);
-Ndef('RJKchaos').addSpec(\qu, [0.001, 1, \lin, 0, 1]);
-Ndef('RJKchaos').addSpec(\rfq, [0.001, 1, \lin, 0, 1]);
-Ndef('RJKchaos').addSpec(\gain, [0.001, 2, \lin, 0, 1]);
+Ndef('rjkChaos').addSpec(\in, [0.000001, 1.0,\exp, 0, 0.01]);
+Ndef('rjkChaos').addSpec(\cutoff, [2, 20000, \exp, 1, 2000]);
+Ndef('rjkChaos').addSpec(\phase1, [2, 1000, \exp, 0, 2]);
+Ndef('rjkChaos').addSpec(\phase2, [2, 1000, \exp, 0, 2]);
+Ndef('rjkChaos').addSpec(\phase3, [2, 1000, \exp, 0, 2]);
+Ndef('rjkChaos').addSpec(\p1Vol, [-1, 1, \lin, 0, 0]);
+Ndef('rjkChaos').addSpec(\p2Vol,  [-1, 1, \lin, 0, 0]);
+Ndef('rjkChaos').addSpec(\p3Vol,  [-1, 1, \lin, 0, 1]);
+Ndef('rjkChaos').addSpec(\formant, [1, 8000, \exp, 1, 500]);
+Ndef('rjkChaos').addSpec(\fbk, [0, 4, \lin, 0, 0.9]);
+Ndef('rjkChaos').addSpec(\rfbk, [0, 4, \lin, 0, 0]);
+Ndef('rjkChaos').addSpec(\qu, [0.001, 1, \lin, 0, 1]);
+Ndef('rjkChaos').addSpec(\rfq, [0.001, 1, \lin, 0, 1]);
+Ndef('rjkChaos').addSpec(\gain, [0.001, 2, \lin, 0, 1]);
 
-//Ndef('RJKchaos').play(vol: 0.0);
+//Ndef('rjkChaos').play(vol: 0.0);
 /*(
-NdefPreset(Ndef('RJKchaos'));
-NdefPresetGui(NdefPreset(Ndef('RJKchaos')), 15);
-NdefPreset(Ndef('RJKchaos')).setRand(0.75);
-NdefPreset(Ndef('RJKchaos')).setRand(0.05);
+NdefPreset(Ndef('rjkChaos'));
+NdefPresetGui(NdefPreset(Ndef('rjkChaos')), 15);
+NdefPreset(Ndef('rjkChaos')).setRand(0.75);
+NdefPreset(Ndef('rjkChaos')).setRand(0.05);
 )*/

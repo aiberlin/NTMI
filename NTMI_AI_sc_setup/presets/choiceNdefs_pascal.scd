@@ -1,1 +1,1 @@
-[ 'bleepo', 'RJKchaos', 'filterFB', 'xFMSH' ]
+[ 'bleepo', 'rjkChaos', 'filterFB', 'xFMSH' ]

@@ -5,19 +5,19 @@
 // 	path.basename.splitext[0].asSymbol;
 // }.postcs;
 
-// [ 'RJKchaos', 'allArm', 'bleepo', 'brushes', 'cat', 'dog', 'etude', 'filterFB', 'formSing', 'frya', 'kiteHi', 'moogSing', 'revFB', 'robTron', 'test', 'varsawFB', 'vowel', 'xFMSH', 'xf-bufFun', 'xf-ringMod' ].collect { |key| key -> key }.cs;
+// [ 'rjkChaos', 'allArm', 'bleepo', 'brushes', 'cat', 'dog', 'etude', 'filterFB', 'formSing', 'frya', 'kiteHi', 'moogSing', 'revFB', 'robTron', 'test', 'varsawFB', 'vowel', 'xFMSH', 'xf-bufFun', 'xf-ringMod' ].collect { |key| key -> key }.cs;
 
 
 (
 /// processes: preload all found processes
-processNames: [ 'RJKchaos', 'allArm', 'bleepo', 'brushes', 'cat', 'dog', 'etude', 'filterFB', 'formSing', 'frya', 'kiteHi', 'moogSing', 'revFB', 'robTron', 'test', 'varsawFB', 'vowel', 'xFMSH', 'xf-bufFun', 'xf-ringMod' ],
+processNames: [ 'rjkChaos', 'allArm', 'bleepo', 'brushes', 'cat', 'dog', 'etude', 'filterFB', 'formSing', 'frya', 'kiteHi', 'moogSing', 'revFB', 'robTron', 'test', 'varsawFB', 'vowel', 'xFMSH', 'xf-bufFun', 'xf-ringMod' ],
 
 //// write out the default preset names for each process:
 //// replace when people use multiple presets files,
 processPresets: [
 	// modify like this:
-//  ('RJKchaos' -> 'RJKchaosMine')
-	('RJKchaos' -> 'RJKchaos'),
+//  ('rjkChaos' -> 'rjkChaosMine')
+	('rjkChaos' -> 'rjkChaos'),
 	('allArm' -> 'allArm'),
 	('bleepo' -> 'bleepo'),
 	('brushes' -> 'brushes'),
