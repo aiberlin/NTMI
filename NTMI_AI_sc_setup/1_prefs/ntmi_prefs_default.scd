@@ -1,8 +1,13 @@
+/* this is the default ntmi prefs file
+- you can modify it as you like!
+*/
+
 (
-'name': 'adc',
+'name': 'default', // <- user name here
 'numChans': 2,
 'serverSetup': "serverBasic2.scd",
 
+// the choices of processes to play
 processNames: [
 	'allArm', 'bleepo', 'brushes', 'cat', 'dog',
 	'etude', 'filterFB', 'formSing', 'frya', 'kiteHi',
@@ -10,6 +15,7 @@ processNames: [
 	'varsawFB', 'vowel', 'xFMSH',
 	// 'xf-bufFun', 'xf-ringMod'
 ],
+// the 4 to load into the slots
 'defaultActives': [ 'allArm', 'dog', 'cat', 'revFB' ],
 
 // /// TODO: preset names different from ndef names ...
@@ -19,13 +25,13 @@ processNames: [
 
 // /// TODO: influxPresets from files if not numbers ...
 influxPresets: [ 3, 12, 37, 42, 45, 86, 666, 1000.rand ],
-// the one to set it to
+// the preset key/name to set it to
 influxPreset: 3,
 
-// just filenames with collections for now
+// these are just filenames with collections of funcs for now
 effects: [ "allFX.scd" ],
 
-// all slotNames in q.mFX
+// the slotNames to put into q.mFX
 mfxSlotNames: [
 	'00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal',
 	'1holz', '1ixiDist',
@@ -34,9 +40,10 @@ mfxSlotNames: [
 	'6roto', '7Delay',
 	'9endFilt', '9monofy', '9stereofy',
 	'ampFin' ],
-// all stored presets , theology etc
+
+// TODO: put all stored presets here, theology etc
 mfxPresets: [ ],
 
-// the first MFX preset to switch to
+// TODO: the first MFX preset to switch to
 mfxPreset: \cybernetics
 )
