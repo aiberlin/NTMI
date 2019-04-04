@@ -7,14 +7,15 @@
 'numChans': 2,
 'serverSetup': "serverBasic2.scd",
 
-// the choices of processes to play
-processNames: [
-	'allArm', 'bleepo', 'brushes', 'cat', 'dog',
-	'etude', 'filterFB', 'formSing', 'frya', 'kiteHi',
-	'moogSing', 'revFB', 'rjkChaos', 'robTron', 'test',
-	'varsawFB', 'vowel', 'xFMSH',
-	// 'xf-bufFun', 'xf-ringMod'
-],
+// // the choices of processes to play
+///// uncomment to restrict to these:
+// processNames: [
+// 	'allArm', 'bleepo', 'brushes', 'cat', 'dog',
+// 	'etude', 'filterFB', 'formSing', 'frya', 'kiteHi',
+// 	'moogSing', 'revFB', 'rjkChaos', 'robTron', 'test',
+// 	'varsawFB', 'vowel', 'xFMSH',
+// 	// 'xf-bufFun', 'xf-ringMod'
+// ],
 // the 4 to load into the slots
 'defaultActives': [ 'allArm', 'dog', 'cat', 'revFB' ],
 
