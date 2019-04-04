@@ -20,12 +20,13 @@ q.pre.makePreset = { |pre, proxy|
 	//////// e.g. if amp comes from overall interface activity etc...
 	// proxy.addHalo(\orderedNames, namesToStore);
 
-		if(File.exists(presPath)){
-			preset.loadSettings(presPath);
-			"  + default preset % loaded. \n".postf(name);
-		} {
-			"--- PRESET %: no preset found! \n".postf(name);
-		};
+	if(File.exists(presPath)){
+		preset.loadSettings(presPath);
+		"  + preset % with % settings loaded. \n"
+		.postf(name, preset.settings.size);
+	} {
+		"--- PRESET %: no preset found! \n".postf(name);
+	};
 	preset.storePath_(presPath);
 
 	// if(preset.settings.size < 2){
@@ -36,13 +37,17 @@ q.pre.makePreset = { |pre, proxy|
 };
 
 // making all the presets here
-q.getInfluxDestins.do { |proxy, i|	q.pre.makePreset(proxy) };
-// ****** preset.loadSettings(presPath); with xFMSH
+q.getNdefs.do { |proxy, i|	q.pre.makePreset(proxy) };
+// FIXME /////// ****** preset.loadSettings(presPath); with xFMSH
 /// somehow creates a global var l - a List of settings - why?
-// quick fix: set it to nil
+// quick and dirty fix: set it to nil
 l = nil;
 );
 
+// init to first preset if there are any saved ones
+NdefPreset.all.do { |pre|
+	if (pre.settings.size > 1) { pre.setCurr(pre.settings[1].key) };
+};
 
 // increments and stores a random seed per ndefPreset.
 q.pre.incrementSeed = {|q, proxy, inc=1|

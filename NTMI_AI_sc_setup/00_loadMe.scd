@@ -128,7 +128,7 @@ Task {
 		q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process")
 	};
 
-	q.load("2_process/presets/2a_preset*.scd", q.dir.userPOOL);
+	q.load("2a_preset*.scd");
 
 	s.waitForBoot {
 
