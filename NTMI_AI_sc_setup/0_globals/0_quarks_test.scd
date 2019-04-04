@@ -10,10 +10,10 @@ if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 		"Influx",
 		// "KtlLoop",
 		"Modality-toolkit",
-		// "MultiTouchPad",
-		// "Standalone",
+		"MultiTouchPad",
+		"Standalone",
 		"Vowel",
-		"PaneView",
+		// "PaneView",
 		// "TabbedView", "TabbedView2_QT", "TabbedView2"
 	].collect(_.asSymbol);
 
