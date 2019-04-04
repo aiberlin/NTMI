@@ -1,7 +1,3 @@
-/*
-Ndef(\envelo).gui
-*/
-
 (
 Ndef(\envelo, { |amp=0.1, freq=250, intv=19, timescale=1, curve=0, loopnode=0, formfact=2, widfact=0.5, spread=1|
 		var env = EnvGen.kr(
@@ -24,3 +20,4 @@ Ndef(\envelo).addSpec(\formfact, [0.1, 10, \exp]);
 Ndef(\envelo).addSpec(\widfact, [0.1, 10, \exp]);
 Ndef(\envelo).addSpec(\spread, \unipolar);
 );
+//Ndef(\envelo).gui

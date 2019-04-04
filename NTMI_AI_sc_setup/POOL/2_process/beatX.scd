@@ -1,12 +1,16 @@
 
 /*
 // Hannes example for writing Ndefs step by step
+
 Ndef(\beatX).document;
+
 // compare that we have all the specs, except globals like \amp:
 Ndef(\beatX).controlKeys
 Ndef(\beatX).getSpec.keys
+
 Ndef(\beatX).edit(8);
 Ndef(\beatX).play;
+
 */
 
 
@@ -48,4 +52,5 @@ Ndef(\beatX, { arg amp=0, /*bpm=120, */att=0.002, dcy=0.05, ffreq=5000, reso=2, 
 	Limiter.ar(sig, amp);
 });
 );
+
 
