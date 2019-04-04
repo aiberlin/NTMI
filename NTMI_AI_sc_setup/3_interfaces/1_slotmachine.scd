@@ -113,9 +113,10 @@ q.slots.updateChoices = {
 };
 
 q.slots.chooseNext = { |sl, index|
+	var candidates, nextname;
 	if (q.slots.checkIndex(index)) {
-		var candidates = q.slots.choices[index];
-		var nextname = candidates.choose;
+		candidates = q.slots.choices[index];
+		nextname = candidates.choose;
 		"next  sound in slot % : % \n".postf(index, nextname);
 		// ndef is dogy here, hmmm
 		q.slots.addActive(index, Ndef(nextname));
@@ -123,11 +124,12 @@ q.slots.chooseNext = { |sl, index|
 };
 
 q.slots.stepNext = { |sl, index, incr = 1|
+	var candidates, myindex, nextindex, nextname;
 	if (q.slots.checkIndex(index)) {
-		var candidates = q.slots.choices[index];
-		var myindex = candidates.indexOf(q.slots.actives[index].key);
-		var nextindex = myindex + incr % candidates.size;
-		var nextname = candidates[nextindex];
+		candidates = q.slots.choices[index];
+		myindex = candidates.indexOf(q.slots.actives[index].key);
+		nextindex = myindex + incr % candidates.size;
+		nextname = candidates[nextindex];
 		"next  sound in slot % : % \n".postf(index, nextname);
 		// ndef is dogy here, hmmm
 		q.slots.addActive(index, Ndef(nextname));
