@@ -109,7 +109,7 @@ Task {
 	// preload all sounds while server is off!
 	q.load("2_liveInput.scd");
 
-	"\n\n*** *** *** Loading Processes % : \n".postf("2_processes");
+	"\n\n*** *** *** Loading Processes % : \n".postf("2_process");
 	// list all candidate files
 	if (q.prefs.active.processNames.isNil) {
 		(q.dir.userPOOL +/+ "*process/*.scd").pathMatch
