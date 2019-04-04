@@ -4,51 +4,6 @@
 q = q ? ();
 q.inph = q.inph ? ();
 q.inphlux = Influx(9+8, 18);
-// x, y, x,  w, v, u //
-
-///////// Unused I think:
-// q.resetInphl = { |q, infl|
-// 	infl.set(*infl.inNames.collect([_, 0]).flat);
-// };
-//
-// q.inph.actives = q.ndefs;
-//
-// q.makeCurr = { |q, index, othersOff = true|
-// 	defer {
-// 		q.currxoscPx = q.ndefs[index];
-// 		"q.currxoscPx: %\n".postf(q.currxoscPx);
-// 		q.currxoscPx.play(0);
-// 		if(othersOff) {
-// 			q.ndefs.do { |ndef| if (ndef == q.currxoscPx) { ndef.stop } };
-// 		};
-//
-// 		q.inphlux.attachMapped(q.currxoscPx);
-// 	};
-// };
-//
-// /*
-// q.makeCurr(4.rand, true);
-// */
-// q.makeCurr(0);
-//
-//
-// q.makePast = { |q, index|
-// 	defer { var others;
-// 		var thisPx = q.ndefs[index];
-// 		"sw off thisPx: %\n".postf(thisPx);
-// 		thisPx.stop(0.1);
-// 		q.inphGui.attachButtons[index].valueAction_(0);
-// 	};
-// };
-/*
-q.makePast(4.rand.postln);
-*/
-
-// q.resetInphl(q.inphlux);
-// q.inphlux.resetInvals;
-
-// fi a Start ...
-///// are these used anywhere?
 
 q.inph.seedRand = {|q, infl, seed=2011|
 	var d = thisThread.randData;
