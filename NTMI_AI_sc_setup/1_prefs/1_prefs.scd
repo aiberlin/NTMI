@@ -5,9 +5,12 @@
 q.prefs.readUser;
 ... then use it in setup ...
 q.prefs.writeUser;
+
+q.prefs.userPrefPath.openOS;
 */
 
 q.prefs = q.prefs ? ();
+
 ////// multiple example prefs with app?
 // q.prefs.found = "ntmi_prefs_*".resolveRelative.pathMatch;
 q.prefs.default = "ntmi_prefs_default.scd".loadRelative[0];

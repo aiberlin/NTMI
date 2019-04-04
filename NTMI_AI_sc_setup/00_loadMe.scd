@@ -1,10 +1,12 @@
 /*
+* this loadme file reamins inside the app,
+* and is not intended for user-introduced changes.
 
 (
 var types = ();
 q.keysValuesDo { |key, val|
-	var class = val.class;
-	types.put(class, (types[class] ?? { List[] }).add(key))
+var class = val.class;
+types.put(class, (types[class] ?? { List[] }).add(key))
 };
 types
 )
@@ -18,10 +20,9 @@ q.keys(SortedList).do("q.% : %\n".postf(_, _, _));
 */
 
 (
-/// wait for SC Welcome post ...
 
 Task {
-	0.1.wait;
+	0.1.wait; /// wait for SC Welcome post ...
 
 	"\n\n*** startup file for NTMI_AI_sc_setup loading...\n\n".postln;
 
@@ -29,21 +30,40 @@ Task {
 	g = g ? ();  // <- gui stuff goes here!
 
 
-	//// Generally useful globals:
+	//// Set generally useful globals:
 	q.time0 = Main.elapsedTime;
 	q.myname = Platform.userHomeDir.basename.asSymbol;
 	q.hasGui = \View.asClass.notNil;
 	if (q.hasGui) { "9_optionals/warnWin.scd".loadRelative };
 
+	//////// DIRECTORIES:
 	q.dir = q.dir ? ();
 	q.dir.base = thisProcess.nowExecutingPath.dirname;
+	q.dir.fullNames = (q.dir.base +/+ "*/").pathMatch;
+	q.dir.names = q.dir.fullNames.collect { |path| path.basename };
 
-	// function to load code files or folders which can wait and posts loading time info:
-	q.load = { |q, filename, wait = 0.05, dirsup = 0, preText = "", postText = ""|
+	// check user dir, make it and migrate pool there if needed
+	q.dir.user = Platform.userHomeDir +/+ "NTMI";
+	///////////// WHILE DEVELOPING:
+	// q.dir.user = q.dir.base;
+	q.dir.userPOOL = q.dir.base +/+ "POOL";
+
+	///////////// OFF WHILE DEVELOPING
+	// if (File.exists(q.dir.user).not) {
+	// 	"NTMI: making user home dir".postln;
+	// 	unixCmd("mkdir" + quote(q.dir.user));
+	// 	unixCmd("cp -nR" + quote(q.dir.base +/+ "POOL") + quote(q.dir.user +/+ "POOL"));
+	// };
+	// q.dir.user.openOS;
+	// q.dir.userPOOL = q.dir.user +/+ "POOL";
+
+
+	// loads code files or folders with wait and posts load time info:
+	q.load = { |q, filename, here, wait = 0.05, dirsup = 0, preText = "", postText = ""|
 		forkIfNeeded ({
-			var here = "".resolveRelative;
-			var paths;
 			var loadDur, t0 = Main.elapsedTime;
+			var paths;
+			here = here ? q.dir.base;
 
 			dirsup.do { here = here.dirname };
 			paths = (here +/+ filename).pathMatch;
@@ -74,32 +94,41 @@ Task {
 	"*** q.numChans is: %\n".postf(q.numChans);
 
 	///////// dont load HIDs by default, for more stability
-	/// MKtl.find(\hid); 0.5.wait;
+	///// MKtl.find(\hid); 0.5.wait;
 	///////// do load MIDI devices
 	MKtl.find(\midi);
 
 	s.quit; "".postln;
 
 	0.2.wait;
-
 	"\n\n*** *** *** FOLDER globals: ".postln;
 	q.load("0_globals/*.scd");
 
+	"/Users/adc/NTMI/POOL/1_server_setups/serverBasic2.scd".pathMatch;
+	q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
 	// preload all sounds while server is off!
 	q.load("2_liveInput.scd");
 
-	"\n\n*** *** *** FOLDER % : \n".postf("2_processes");
-	q.process = q.process ? ();
-	q.process.allPaths = "2_processes/*.scd".resolveRelative.pathMatch;
-	q.process.allNames = q.process.allPaths.collect { |p|
-		p.basename.split($.)[0].reject {|c| (c == $_) }.reject(_.isDecDigit)
-	}.collectInPlace(_.asSymbol).asSet.asArray.sort;
+	"\n\n*** *** *** Loading Processes % : \n".postf("2_processes");
+	// list all candidate files
+	if (q.prefs.active.processNames.isNil) {
+		(q.dir.userPOOL +/+ "*process/*.scd").pathMatch
+		.collect {|pa| pa.basename.splitext[0].asSymbol }.postcs;
+	};
 
-	q.load("2_processes/*scd");
+	q.process = q.process ? ();
+	q.process.allPaths = (q.dir.userPOOL +/+ "*process/*.scd").pathMatch;
+	q.process.allNames = q.process.allPaths.collect { |p|
+		p.basename.splitext[0].asSymbol
+	};
 
 	0.2.wait;
+	// load preferred processNames, or all:
+	(q.prefs.active.processNames ? q.process.allNames).do { |name|
+		q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process")
+	};
 
-	q.load("2_processes/presets/2a_preset_func.scd");
+	q.load("2_process/presets/2a_preset*.scd", q.dir.userPOOL);
 
 	s.waitForBoot {
 
