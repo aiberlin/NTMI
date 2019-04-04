@@ -108,7 +108,7 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 	w.addFlowLayout;
 
 	g.makeGui.keys(Array).sort.do { |key|
-		Button(w, 160@30)
+		Button(w, 160@28)
 		.font_(Font("Monaco", 18))
 		.states_([[key, Color.white, Color.grey(0.8, 0.4) ]]).action_ { |but, mod = 0|
 			defer ({ MFdef(\makeGui).value(key.asSymbol, mod.isAlt) }, 0.1);
