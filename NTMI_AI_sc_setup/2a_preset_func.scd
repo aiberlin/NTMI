@@ -61,3 +61,11 @@ q.pre.incrementSeed = {|q, proxy, inc=1|
 	}{ "%: sorry, no preset present.\n".postf(proxy) }
 };
 
+///// add a preset on the fly while playing
+MFdef(\snapshot).add(\getset, { |proxy|
+	var setty = proxy.getKeysValues(proxy.getHalo.namesToStore).postcs;
+	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol.postcs;
+	var presy = NdefPreset(proxy);
+	presy.addSet(name, setty);
+});
+

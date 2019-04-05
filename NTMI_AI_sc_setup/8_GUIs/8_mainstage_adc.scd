@@ -126,6 +126,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		}
 	});
 
+	Button(w, Rect(rightCol, 950 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
+		["show recordings", Color.white, Color.red]
+	]).font_(font.copy.size_(font.size * 0.62))
+	.action_({ |bt|
+		Platform.recordingsDir.openOS;
+	});
+
 	Button(w, Rect(rightCol, 510 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["SET ZERO for\ntouch + move", Color.white, Color.red],
 	]).font_(font)
