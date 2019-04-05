@@ -8,7 +8,7 @@ q.keysValuesDo { |key, val|
 var class = val.class;
 types.put(class, (types[class] ?? { List[] }).add(key))
 };
-types
+types.postcs
 )
 
 "--- contents of q: ---".postln;
@@ -44,18 +44,26 @@ Task {
 
 	// check user dir, make it and migrate pool there if needed
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
-	///////////// WHILE DEVELOPING:
-	// q.dir.user = q.dir.base;
-	q.dir.userPOOL = q.dir.base +/+ "POOL";
 
-	///////////// OFF WHILE DEVELOPING
-	// if (File.exists(q.dir.user).not) {
-	// 	"NTMI: making user home dir".postln;
-	// 	unixCmd("mkdir" + quote(q.dir.user));
-	// 	unixCmd("cp -nR" + quote(q.dir.base +/+ "POOL") + quote(q.dir.user +/+ "POOL"));
-	// };
-	// q.dir.user.openOS;
-	// q.dir.userPOOL = q.dir.user +/+ "POOL";
+
+	if (q.myname == \adc) {
+		q.dev = true;
+	};
+
+	if(q.dev) {
+		///////////// WHILE DEVELOPING, direct back to dev/project dir!
+		q.dir.user = q.dir.base;
+		q.dir.userPOOL = q.dir.base +/+ "POOL";
+	} {
+		///////////// non-dev: copy pool to user home dir
+		if (File.exists(q.dir.user).not) {
+			"NTMI: making user home dir".postln;
+			unixCmd("mkdir" + quote(q.dir.user));
+			unixCmd("cp -nR" + quote(q.dir.base +/+ "POOL") + quote(q.dir.user +/+ "POOL"));
+		};
+		q.dir.userPOOL = q.dir.user +/+ "POOL";
+		q.dir.user.openOS;
+	};
 
 
 	// loads code files or folders with wait and posts load time info:
