@@ -6,7 +6,7 @@ Instructions to run this setup with SuperCollider:
 
 1. install quarks:
 
-[ "JITLibExtensions", "adclib", "Influx", "Modality-toolkit", "Vowel", "PaneView" ].do(Quarks.install(_));
+[ "JITLibExtensions", "adclib", "Influx", "Modality-toolkit", "MultiTouchPad", "Standalone", "Vowel" ].do(Quarks.install(_));
 
 2. install SC3-plugins (some sounds require SVF and RLPFD UGens)
 
