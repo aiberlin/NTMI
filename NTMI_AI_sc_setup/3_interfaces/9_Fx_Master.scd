@@ -1,6 +1,6 @@
 // add all global filter functions to use - these are then available by name.
 q=q?();
-q.vfx = q.vfx ? ();
+q.mfx = q.mfx ? ();
 q.numChans = q.numChans ? 2;
 
 (q.prefs.active.effects ? ["*.scd" ]).do { |filename|
@@ -19,32 +19,32 @@ q.mFX = MasterFX.new(server: s,
 );
 
 // tweak
-q.vfxCh = q.mFX.proxyChain;
-q.vfxCh.proxy.fadeTime = 2;
+q.mfx.chain = q.mFX.proxyChain;
+q.mfx.chain.proxy.fadeTime = 2;
 
 // apply all know specs to proxy just in case:
 ProxyChain.sourceDicts.do { |dict|
-	dict.specs.do { |spec| q.vfxCh.proxy.addSpec(spec) }
+	dict.specs.do { |spec| q.mfx.chain.proxy.addSpec(spec) }
 };
 
 ////////// experimental:
-q.vfx.pcPre = ProxyChainPreset(\say);
+q.mfx.pcPre = ProxyChainPreset(\say);
 
-q.vfx.pxPres = ();
+q.mfx.pxPres = ();
 
 /*
-q.vfx.pxPres['3AdCVerb'].setRand(0.25);
+q.mfx.pxPres['3AdCVerb'].setRand(0.25);
 */
 
 fork ({
 	0.1.wait;
-	q.vfxCh.add('00_in', 1);
+	q.mfx.chain.add('00_in', 1);
 	0.1.wait;
-	q.vfxCh.add('0_DBComp', 1);
+	q.mfx.chain.add('0_DBComp', 1);
 	0.1.wait;
-	q.vfxCh.add('3AdCVerb', 0.05);
+	q.mfx.chain.add('3AdCVerb', 0.05);
 	0.1.wait;
-	q.vfxCh.add('ampFin', 1);
+	q.mfx.chain.add('ampFin', 1);
 	0.1.wait;
 
 }, AppClock);
@@ -54,7 +54,7 @@ fork ({
 ////////// MFX presets taken from Ars Brevis ///////////////
 //// to be replaced with ProxyChainPreset when done ... ////
 
-q.vfx.preNames = [
+q.mfx.preNames = [
 	'baseset',
 	'theology',
 	'magic',
@@ -68,7 +68,7 @@ q.vfx.preNames = [
 ];
 
 (
-q.vfx.preMap = (
+q.mfx.preMap = (
 	'baseset': (
 		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.1], \ampFin],
 		settings: [\postAmp, 1, \ampLimit, 0.8],
@@ -127,32 +127,53 @@ q.vfx.preMap = (
 
 (
 MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
-	var chain = q.vfxCh;
-	var dict = q.vfx.preMap[domainName] ? q.vfx.preMap['baseset'];
+	var chain = q.mfx.chain;
+	var dict = q.mfx.preMap[domainName];
 
-	// remove all but...
-	q.vfx.srcKeys
-	.reject({|it| q.vfx.preMap.baseset.chainElements.includes(it) })
-	.reject({|it| (dict.chainElements ? []).includes(it) })
-	.do( chain.remove(_));
-	// add all
-	dict.chainElements.do{|el, i|
-		if(el.isKindOf(SequenceableCollection))
-		{chain.add(el[0], el[1]) }
-		{chain.add(el, 1)};
-	};
-	// set
-	if(dict.settings.notNil){
-		chain.proxy.set( *dict.settings );
-	};
-	// rand
-	if(dict.randomize.notNil){
-		chain.proxy.setUni( *[dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat );
-	};
-	// looks better with cleanNodeMap, but better that nodeMap remembers last settings!
-	// chain.proxy.cleanNodeMap;
+	if (dict.isNil) {
+		"*** MastaPre: no domain %, not switching.".postf(domainName);
+	} {
+		q.mfx.prevDomain = q.mfx.currDomain;
+		q.mfx.currDomain =  domainName;
+		q.mfx.domainIndex = q.mfx.preNames.indexOf(domainName);
 
-	"[ [voiceFX: % - %\n".postf(domainName, dict.chainElements);
+
+		// remove all but...
+		q.mfx.srcKeys
+		.reject({|it| q.mfx.preMap.baseset.chainElements.includes(it) })
+		.reject({|it| (dict.chainElements ? []).includes(it) })
+		.do( chain.remove(_));
+		// add all
+		dict.chainElements.do{|el, i|
+			if(el.isKindOf(SequenceableCollection))
+			{ chain.add(el[0], el[1]) }
+			{ chain.add(el, 1)};
+		};
+		// set
+		if(dict.settings.notNil){
+			chain.proxy.set( *dict.settings );
+		};
+		// rand
+		if(dict.randomize.notNil){
+			chain.proxy.setUni(
+				*[dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat
+			);
+		};
+		// looks better with cleanNodeMap, but better that nodeMap remembers last settings!
+		// chain.proxy.cleanNodeMap;
+
+		"[ [voiceFX: % - %\n".postf(domainName, dict.chainElements);
+	};
+});
+
+MFdef(\mastaPre).value(\baseset);
+
+MFdef(\mastaPreStep).add(\inc, { |inc|
+	var nextIndex, nextName;
+	inc = inc ?? { rrand(1, q.mfx.preNames.lastIndex) };
+	nextIndex = q.mfx.domainIndex + inc % q.mfx.preNames.size;
+	nextName = q.mfx.preNames[nextIndex];
+	MFdef(\mastaPre).(nextName);
 });
 );
 
