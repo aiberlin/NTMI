@@ -16,7 +16,7 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	Button(vlv1, Rect(0,0,100, 30)).states_([["UPDATE"]]).action_(MFdef('preButUpdate'));
 
 	MFdef('preButUpdate').add(\set, {
-		var butNames = butrow.collect { |but| but.states[0][0] }.postcs;
+		var butNames = butrow.collect { |but| but.states[0][0] };
 		var newNames = q.slots.actives.collect(_.key);
 		if (newNames != butNames) {
 			butrow.do { |but, i|
@@ -37,8 +37,8 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 		// px.resume.play;
 		currPreset = px.getHalo(\ndefPreset);
 		MFdef('setPxInPreWin').value(px.postcln);
-		// w.addHalo(\active, px); //
-		// w.addHalo(\active1, i);
+		w.addHalo(\active, px); //
+		w.addHalo(\active1, i);
 	});
 
 	butrow = q.ndefs.collect({|px|
@@ -96,13 +96,14 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 		var playStates = pxs.collect({|px| p[px].monitor.isPlaying
 			and: {p[px].paused.not } and: {p[px].monitor.vol > 0}
 		});
+		MFdef('preButUpdate').value;
 		// butrow.collect({|but, i|  if(playStates[i]){but.value_(2)} });
 		butrow /*.reject({|b, i| i == active1 })*/
 		.do({|b, i|
 			b.value_( playStates[i].binaryValue )
 		});
 		butrow[active1].value_(playStates[active1].binaryValue + 2)
-	}, 0.2, w.isClosed, "checkplayin");
+	}, 0.2, { w.isClosed }, \presetWin);
 	w;
 }
 );

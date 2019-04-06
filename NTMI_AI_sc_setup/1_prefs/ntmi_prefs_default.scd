@@ -35,7 +35,7 @@ effects: [ "allFX.scd" ],
 // the slotNames to put into q.mFX
 mfxSlotNames: [
 	'00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal',
-	'1holz', '1ixiDist',
+	'1comby', '1holz', '1ixiDist',
 	'3AdCVerb', '3ring', '3thrasher',
 	'4ixiVerb', '5HPF', '5LPF',
 	'6roto', '7Delay',

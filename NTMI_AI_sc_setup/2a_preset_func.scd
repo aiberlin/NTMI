@@ -64,10 +64,16 @@ q.pre.incrementSeed = {|q, proxy, inc=1|
 };
 
 ///// add a preset on the fly while playing
-MFdef(\snapshot).add(\getset, { |proxy|
-	var setty = proxy.getKeysValues(proxy.getHalo.namesToStore).postcs;
-	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol.postcs;
+MFdef(\snapshot1).add(\getset, { |proxy|
 	var presy = NdefPreset(proxy);
+	var setty = proxy.getKeysValues(presy.namesToStore).postcs;
+	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol.postcs;
 	presy.addSet(name, setty);
+});
+
+MFdef(\snapshot).add(\getset, { |proxy|
+	q.slots.nowPlaying.do { |proxy|
+		MFdef(\snapshot1).(proxy);
+	};
 });
 
