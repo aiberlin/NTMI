@@ -140,4 +140,11 @@ g.makeGui.xoscMTPads = {
 			);
 		};
 	};
+	// main win responds to same commands as MTP:
+
+	g.main.w.view.keyDownAction = { |view, key|
+		MTP.keydownDict[key].value(view, key);
+	};
+
 };
+
