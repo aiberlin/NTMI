@@ -39,19 +39,4 @@ s
 .recChannels_(q.numChans ? 8)			// record numChans
 .recSampleFormat_("float"); // in float to recover from clipping
 
-"*** to see server settings, do: \nq.postServerOptions;\n".postln;
-
-q.postServerOptions = {
-	"********** Server info : **********".postln;
-	"s.name: % \n"
-	"s.address: % \n"
-	"s.latency: % \n"
-	.postf(s.name, s.addr, s.latency);
-	"server options:".postln;
-	s.options.dump;
-	"********************".postln;
-	"serverConfig loaded.".postln;
-	"********************".postln;
-};
-
-
+"\n/// to see server settings, do: \nq.postServerOptions;".postln;

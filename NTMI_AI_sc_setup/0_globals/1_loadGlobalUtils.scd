@@ -11,3 +11,17 @@ q.getInfluxDestins = {
 	// automagically attach all existing proxies to GUI Buttons. (max. 5 for now..)
 	q.getNdefs ++ q.getTdefs ++ q.getPdefs
 };
+
+q.postServerOptions = {
+	"********** Server info : **********".postln;
+	"s.name: % \n"
+	"s.address: % \n"
+	"s.latency: % \n"
+	.postf(s.name, s.addr, s.latency);
+	"server options:".postln;
+	s.options.dump;
+	"********************".postln;
+	"serverConfig loaded.".postln;
+	"********************".postln;
+};
+
