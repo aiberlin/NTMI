@@ -59,11 +59,26 @@ q.slots.playAt = { |sl, index|
 	obj.play(vol: vol);
 	q.inphlux.attachMapped(obj);
 };
+
+// maybe make a flag for stop or end?
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
-	"% at % stops now.\n".postf(obj, index);
-	obj.stop(q.slots.fadeoutTime);
+	"% at % ends now.\n".postf(obj, index);
+	obj.end(q.slots.fadeoutTime);
 	try { q.inphlux.removeMapped(obj.key) };
+};
+
+q.slots.toggleAt = { |sl, index|
+	var obj = q.slots.actives[index];
+	var isPlaying = if (obj.isKindOf(NodeProxy))
+		{ obj.monitor.isPlaying }
+		{ obj.isPlaying };
+
+	if (isPlaying) {
+		q.slots.stopAt(index);
+	} {
+		q.slots.playAt(index);
+	}
 };
 
 q.slots.checkIndex = { |sl, index|
@@ -79,9 +94,11 @@ q.slots.addActive = { |sl, index, obj|
 	{ obj.respondsTo(\key).not } { "q.slots.addActive - obj has no key: %\n".postf(obj) }
 	{ q.slots.choices[index].includes(obj.key).not } { "q.slots.addActive - obj is not in choices: %\n".postf(obj) }
 	{		// all is well
-		q.slots.stopAt(index);
+		if (q.slots.actives[index] != obj) {
+			q.slots.stopAt(index); // stop the old one
+		};
 		q.slots.actives.put(index, obj);
-		q.slots.stopAt(index);
+		q.slots.stopAt(index); // stop the new one
 		q.slots.updateChoices;
 	}
 };
@@ -98,9 +115,10 @@ q.slots.updateChoices = {
 };
 
 q.slots.chooseNext = { |sl, index|
+	var candidates, nextname;
 	if (q.slots.checkIndex(index)) {
-		var candidates = q.slots.choices[index];
-		var nextname = candidates.choose;
+		candidates = q.slots.choices[index];
+		nextname = candidates.choose;
 		"next  sound in slot % : % \n".postf(index, nextname);
 		// ndef is dogy here, hmmm
 		q.slots.addActive(index, Ndef(nextname));
@@ -108,18 +126,19 @@ q.slots.chooseNext = { |sl, index|
 };
 
 q.slots.stepNext = { |sl, index, incr = 1|
+	var candidates, myindex, nextindex, nextname;
 	if (q.slots.checkIndex(index)) {
-		var candidates = q.slots.choices[index];
-		var myindex = candidates.indexOf(q.slots.actives[index].key);
-		var nextindex = myindex + incr;
-		var nextname = candidates[nextindex];
+		candidates = q.slots.choices[index];
+		myindex = candidates.indexOf(q.slots.actives[index].key);
+		nextindex = myindex + incr % candidates.size;
+		nextname = candidates[nextindex];
 		"next  sound in slot % : % \n".postf(index, nextname);
 		// ndef is dogy here, hmmm
 		q.slots.addActive(index, Ndef(nextname));
 	};
 };
 
-///// init - maybe too often.
+//// init just to make sure
 q.slots.updateChoices;
 q.slots.actives.do { |ndef, i|
 	q.slots.addActive(i, ndef);

@@ -18,7 +18,7 @@ numChans: 6,
 // filename = name ++ ".scd";
 // -- look first in userdir, then in appbasedir
 processesToLoad: [
-	'RJKchaos', 'allArm', 'bleepo', 'brushes', 'cat',
+	'rjkChaos', 'allArm', 'bleepo', 'brushes', 'cat',
 	'dog', 'etude', 'filterFB', 'formSing', 'frya',
 	'kiteHi', 'moogSing', 'revFB', 'robTron', 'test',
 	'varsawFB', 'vowel', 'xFMSH', 'xf-bufFun', 'xf-ringMod'
@@ -28,7 +28,7 @@ processesToLoad: [
 // -- look first in userdir, then in appbasedir
 //
 presetsToLoad: [
-	'RJKchaos', 'allArm', 'bleepo', 'brushes', 'cat',
+	'rjkChaos', 'allArm', 'bleepo', 'brushes', 'cat',
 	'dog', 'etude', 'filterFB', 'formSing', 'frya',
 	'kiteHi', 'moogSing', 'revFB', 'robTron', 'test',
 	'varsawFB', 'vowel', 'xFMSH', 'xf-bufFun', 'xf-ringMod'

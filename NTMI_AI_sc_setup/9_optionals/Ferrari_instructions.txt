@@ -13,7 +13,7 @@ with a scope, 4 big sliders, etc ...
 --- PLAYING:
 == on GUI:
 - select 4 front sounds in the 4 big GUI slots
-- default is RJKchaos, kiteHi, moogSing, xFMSH
+- default is rjkChaos, kiteHi, moogSing, xFMSH
 
 == on Ferrari:
 

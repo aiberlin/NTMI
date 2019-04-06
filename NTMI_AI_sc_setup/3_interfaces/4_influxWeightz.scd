@@ -36,7 +36,9 @@ q.inph = q.inph ? ();
 
 // find your favorite numbers for making weights by trying them out
 // q.inph.put(\randSeeds, [ 3, 12, 45, 42, 37, 86, 98, 111, 151, rrand(0, 1000).postln]);
-q.inph.randSeeds = [ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)];
+q.inph.randSeeds = q.prefs.active.influxPresets ?? {
+	[ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)]
+};
 
 // create a number of seeded random weights and store them in presets
 // keys are integers 0..n-1
@@ -51,8 +53,8 @@ q.inph.randSeeds.do { |i|
 
 // store num pres and current
 q.inph.put(\numPres, q.inph.randSeeds.size);
-q.inph.put(\presIndex, 0);
-q.inphlux.setwPre(0);
+q.inph.put(\presIndex, q.inph.randSeeds.indexOf(q.prefs.active.influxPreset) ? 0);
+q.inphlux.setwPre(q.prefs.active.influxPreset);
 
 q.inph.alpha = 0.8;
 // colors attributed to the n presets

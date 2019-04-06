@@ -1,5 +1,8 @@
 // all window making functions go here:
 
+g.screenScale = min(Window.availableBounds.width / 1920,
+	Window.availableBounds.height / 1177);
+
 g.makeGui = ();
 
 // this func reuses or rebuilds existing windows
@@ -29,7 +32,7 @@ Window.getAll.postcs;
 
 // these are the default positions:
 g.defaultWinBoundsList = [
-	[ "MakeGui", Rect(10, 340.0, 170.0, 490.0) ],
+	[ "MakeGui", Rect(10, 100, 170, 490) ],
 	[ "inphlux", Rect(212.0, 382.0, 350.0, 350.0) ],
 	[ "inphluxWeights", Rect(520.0, 0.0, 400.0, 960.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
@@ -93,17 +96,19 @@ g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
 };
 
 g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
+	var winHeight = (g.makeGui.size * 35);
 	var w = Window(name,
 		Rect(5,
-			Window.screenBounds.height - (g.makeGui.size * 35) - 350,
-			170, (g.makeGui.size * 35)
+			100,
+			170,
+			winHeight
 		)
 	);
 	w.alwaysOnTop_(true).background_(Color.red).front;
 	w.addFlowLayout;
 
 	g.makeGui.keys(Array).sort.do { |key|
-		Button(w, 160@30)
+		Button(w, 160@28)
 		.font_(Font("Monaco", 18))
 		.states_([[key, Color.white, Color.grey(0.8, 0.4) ]]).action_ { |but, mod = 0|
 			defer ({ MFdef(\makeGui).value(key.asSymbol, mod.isAlt) }, 0.1);

@@ -1,4 +1,4 @@
-// ////////// --------- this should go into post preferences!
+// ////////// --------- this should go into user-specific ntmi_prefs files.
 
 // obsolete for anything else than our private setups' masterFX.
 

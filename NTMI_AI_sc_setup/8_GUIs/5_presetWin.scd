@@ -3,38 +3,59 @@
 (
 g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	var pxs = q.ndefs;
-	var px = q.currxoscPx ? pxs[0];
-	var currPreset, switchPxINGui;
+	var px = q.currxoscPx ? q.ndefs[0];
+	var currPreset;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
 	w = Window(name, Rect(450, 5, 387+100, 400)).front;
 	// q.ndefPresetGlobalWin = w; // glob main win!
 	hlv = HLayoutView(w, w.bounds.moveTo(0,0));
-	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height)).background_(Color.green.alpha_(0.2));
+	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height))
+		.background_(Color.green.alpha_(0.2));
 	vlv2 = VLayoutView(hlv, Rect.new(0,0, 410, hlv.bounds.height));
 
-	butrow = pxs.collect({|px|
+	Button(vlv1, Rect(0,0,100, 30)).states_([["UPDATE"]]).action_(MFdef('preButUpdate'));
+
+	MFdef('preButUpdate').add(\set, {
+		var butNames = butrow.collect { |but| but.states[0][0] }.postcs;
+		var newNames = q.slots.actives.collect(_.key);
+		if (newNames != butNames) {
+			butrow.do { |but, i|
+				var newstates = but.states.do(_.put(0, newNames[i]));
+				but.states = newstates;
+			}
+		}
+	});
+
+	MFdef('setPxInPreWin').add(\set, { |proxy|
+		ng.object_(proxy);
+		ppg.object_(NdefPreset(proxy));
+	});
+
+	MFdef('preButAction').add(\set, { |i|
+		var but = butrow[i];
+		var px = q.ndefs[i];
+		// px.resume.play;
+		currPreset = px.getHalo(\ndefPreset);
+		MFdef('setPxInPreWin').value(px.postcln);
+		// w.addHalo(\active, px); //
+		// w.addHalo(\active1, i);
+	});
+
+	butrow = q.ndefs.collect({|px|
 		var name = px.key;
 		Button(vlv1, Rect(0,0,100, 30))
 		.states_([
-			[name], 								// state 0: grey;	stopped unconnected
-			[name, Color.black, Color.new255(132, 247, 132)],// state 1: lightgr	playing unconnected
+			[name], 			// state 0: grey;	stopped unconnected
+			[name, Color.black, Color.new255(132, 247, 132)],// state 1: lightgr playing unconnected
 			[name, Color.black, Color.new255(238, 118, 0)], // state 2: orange	st. connected
 			[name, Color.black, Color.green(0.62)], 		// state 3: green 	pl. connected
 		])
 	});
+
 	w.addHalo(\butrow, butrow);
 
-	butrow.do({|but, i|
-		but.action_({|b|
-			px = pxs[i];
-			q.active.presWin.clear.add(px); // using Set
-			// q.active.presWin = px; // not using Set but single instance...
-			px.resume.play;
-			currPreset = px.getHalo(\ndefPreset);
-			switchPxINGui.value(px.postcln);
-			w.addHalo(\active, px); //
-			w.addHalo(\active1, i);
-		})
+	butrow.do({ |but, i|
+		but.action_({ |b| MFdef('preButAction').value(i) })
 	});
 
 	/*
@@ -68,11 +89,7 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	q.uniWin.addHalo(\active, px);
 	q.uniWin.addHalo(\active1, 0);
 
-	switchPxINGui = {|px|
-		ng.object_(px);
-		ppg.object_(currPreset);
-	};
-	q.switchPxINGui = switchPxINGui;
+	butrow[0].doAction;
 
 	SkipJack({
 		var active1 = w.getHalo(\active1);
@@ -89,22 +106,3 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	w;
 }
 );
-
-/*
-q.makeGui.ndefPresetWin;
-q.uniWin.getHalo(\active1);
-q.uniWin.getHalo(\active1sy);
-
-Halo.at(q.uniWin);
-*/
-
-
-
-/*
-// let's save ressources -- we dont need this win at all!
-
-//make the win
-q.maPresetWin = q.ndefPresetWin;
-// q.switchPxINGui( q.ndefs[2] );
-q.maPresetWin.view.children.first.children.first.children.wrapAt(8.rand).valueAction_(1); // ugly switch
-*/

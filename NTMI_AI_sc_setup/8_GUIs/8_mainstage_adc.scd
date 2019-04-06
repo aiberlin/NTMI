@@ -1,11 +1,5 @@
-/**** Experiments for new maistage window: *****
+/**** New mainstage window: *****
 
-g.makeGui.main_adc
-
-- add ProxyMeter on top of MView?
-
-q.inph.mode = \move;
-q.inph.mode = \touch;
 
 // test gui update
 MFdef('guiSlots').value;
@@ -18,6 +12,8 @@ q.slots.chooseNext(3); MFdef('guiSlots').value;
 q.slots.addActive(0, Ndef(\kiteHi));
 q.slots.actives[0].vol;
 
+g.main.ndefMViews[0].label_(\test).refresh;
+g.main.ndefMViews[0].label;
 */
 
 g.main = g.main ? ();
@@ -33,19 +29,25 @@ MFdef('guiSlots').add(\set, {
 		var vol = ndef.vol;
 		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
 
-		if (ndef.key != pop.item) {
+		var presetName = NdefPreset(ndef).currSet.key;
+		var newLabel;
+		if (presetName == \curr) {
+			newLabel = ndef.key
+		} {
+			newLabel = ndef.key.asString + presetName
+		};
+
+		if (ndef.key != pop.item or: { newLabel != mview.label }) {
 			pop.items = q.slots.choices[i];
 			pop.value = pop.items.indexOf(ndef.key);
-			mview.label_(ndef.key);
+
+			mview.label_( newLabel.postcs );
 		};
 		if (mview.value != vol) { mview.value = vol };
 		if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
 	};
 	// "MFdef('guiSlots') done.".postln;
 });
-
-
-
 
 g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
@@ -96,7 +98,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	]).font_(font).value_(0);
 
 	batView = UserView(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 40 * scrscale));
-	batView.background_(Color.clear);
+	batView.background_(Color.red(1.0));
 	batView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
 		Pen.addRect(bounds).color_(Color.white).stroke;
@@ -111,7 +113,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	batView.refresh;
 	g.main.batView = batView;
 
-	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
+	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["RECORD?", Color.white, Color.red],
 		["Recording!", Color.black, Color.green]
 	]).font_(font)
@@ -124,7 +126,19 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		}
 	});
 
-	Button(w, Rect(rightCol, 610 * scrscale, 300 * scrscale, 150 * scrscale)).states_([
+	Button(w, Rect(rightCol, 950 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
+		["show recordings", Color.white, Color.red]
+	]).font_(font.copy.size_(font.size * 0.62))
+	.action_({ |bt|
+		Platform.recordingsDir.openOS;
+	});
+
+	Button(w, Rect(rightCol, 510 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+		["SET ZERO for\ntouch + move", Color.white, Color.red],
+	]).font_(font)
+	.action_({ MFdef('ZERO').value });
+
+	Button(w, Rect(rightCol, 660 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["Reset Clock", Color.white, Color.red],
 	]).font_(font)
 	.action_({
@@ -137,11 +151,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	popMVs = [ 3, 1, -1, -3].collect { |offset, i|
 		var top = w.bounds.center.y + (offset + 1 * -80 * scrscale);
 		var left = 200 - (offset.abs * 0) * scrscale;
-		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150));
+		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150 * scrscale));
 		var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
 		.items_(q.process.allNames)
 		.value_(q.slots.actives[i].key).font_(font);
-		pop.alpha_(0.8);
+
+		pop.background_(Color.grey(1.0, 0.7));
+
 		pop.action = { |pop|
 			q.slots.addActive(i, Ndef(pop.item));
 			MFdef('guiSlots').value;
@@ -163,10 +179,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		};
 
 		emmy.drawFunc.add(\label, {
+			var labelStr = emmy.label.asString;
+			var labelStrSize = labelStr.size;
+			var fontSize = fatfont.size * (11 / labelStrSize.max(12));
 			Pen.stringCenteredIn(
-				q.ndefs[i].key.asString,
+				emmy.label.asString,
 				emmy.bounds.moveTo(0,0),
-				fatfont,
+				fatfont.copy.size_(fontSize),
 				Color.blue
 			)
 		});
@@ -181,7 +200,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		var top = bounds.center.y + (offset + 1 * -80 * scrscale);
 		var left = bounds.width * 0.64 + (offset.abs * 0 * scrscale);
 		var initval = [1.0, \pre_1, '¿-?', \move][i];
-		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150));
+		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150 * scrscale));
 		emmy.dict[\knobCol] = Color.grey(0, 0.6);
 		emmy.uv.alpha = 0.8;
 		emmy.uv.resize_(1);
@@ -218,7 +237,9 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			dict[\hiRect] = dict[\bounds00].copy
 			.width_(dict[\width] * 0.5);
 		});
-		mv.refresh;
+		// force right side mviews to use lightly transparent colors
+		mv.uv.focus(true).refresh;
+		mv.uv.focus(false).refresh;
 	};
 
 	MFdef('stepInphWPre').add(\updateMain, {
@@ -332,6 +353,11 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			// OSC status
 			if (oscBut.value != (q.osc.timeSinceLast < 1)) {
 				oscBut.value = q.osc.timeSinceLast < 1;
+				if (q.osc.timeSinceLast >= 1) {
+					q.osc.batval = 0;
+					q.osc.batPercent = 0;
+					q.osc.batString = "battery ?";
+				};
 			};
 
 			if (q.osc.batval != q.osc.oldbatval) {
