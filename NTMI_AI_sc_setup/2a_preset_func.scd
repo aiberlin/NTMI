@@ -3,6 +3,8 @@ NdefPresetGui(NdefPreset(\allArm), 20);
 q.pre.userSettingsDir.openOS;
 q.pre.incrementSeed(Ndef(\allArm));
 */
+"\n... loading presets ...".postln;
+
 q.pre = q.pre ? ();
 q.pre.settingsDir = q.dir.userPOOL +/+ "2_process/presets/";
 q.pre.settingsDir.pathMatch;

@@ -11,6 +11,7 @@ q.numChans = q.numChans ? 2;
 ProxyChain.checkDicts;
 
 (
+q.mFX.clear;
 q.mFX = MasterFX.new(server: s,
 	numChannels: q.numChans,
 	slotNames: q.prefs.active.mfxSlotNames ? ProxyChain.allSources.keys(Array).sort,
@@ -18,7 +19,7 @@ q.mFX = MasterFX.new(server: s,
 );
 
 // tweak
-q.vfxCh = MasterFX(s).proxyChain;
+q.vfxCh = q.mFX.proxyChain;
 q.vfxCh.proxy.fadeTime = 2;
 
 // apply all know specs to proxy just in case:

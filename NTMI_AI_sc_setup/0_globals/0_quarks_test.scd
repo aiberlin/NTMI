@@ -1,7 +1,7 @@
 
 var requiredQuarks, installedQuarks, missingQuarks;
 
-"loading quarks test: ".postln;
+"".postln;
 
 if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 	requiredQuarks = [

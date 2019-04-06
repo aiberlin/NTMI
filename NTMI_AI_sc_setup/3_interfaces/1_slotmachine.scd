@@ -94,9 +94,11 @@ q.slots.addActive = { |sl, index, obj|
 	{ obj.respondsTo(\key).not } { "q.slots.addActive - obj has no key: %\n".postf(obj) }
 	{ q.slots.choices[index].includes(obj.key).not } { "q.slots.addActive - obj is not in choices: %\n".postf(obj) }
 	{		// all is well
-		q.slots.stopAt(index);
+		if (q.slots.actives[index] != obj) {
+			q.slots.stopAt(index); // stop the old one
+		};
 		q.slots.actives.put(index, obj);
-		q.slots.stopAt(index);
+		q.slots.stopAt(index); // stop the new one
 		q.slots.updateChoices;
 	}
 };
@@ -136,7 +138,7 @@ q.slots.stepNext = { |sl, index, incr = 1|
 	};
 };
 
-///// init - maybe too often.
+//// init just to make sure
 q.slots.updateChoices;
 q.slots.actives.do { |ndef, i|
 	q.slots.addActive(i, ndef);

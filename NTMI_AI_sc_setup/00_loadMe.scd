@@ -59,7 +59,10 @@ Task {
 		if (File.exists(q.dir.user).not) {
 			"NTMI: making user home dir".postln;
 			unixCmd("mkdir" + quote(q.dir.user));
-			unixCmd("cp -nR" + quote(q.dir.base +/+ "POOL") + quote(q.dir.user +/+ "POOL"));
+			unixCmd("cp -nR"
+				+ quote(q.dir.base +/+ "POOL")
+				+ quote(q.dir.user +/+ "POOL")
+			);
 		};
 		q.dir.userPOOL = q.dir.user +/+ "POOL";
 		q.dir.user.openOS;
@@ -109,7 +112,7 @@ Task {
 	s.quit; "".postln;
 
 	0.2.wait;
-	"\n\n*** *** *** FOLDER globals: ".postln;
+	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
 	q.load("0_globals/*.scd");
 
 	"/Users/adc/NTMI/POOL/1_server_setups/serverBasic2.scd".pathMatch;
@@ -117,7 +120,7 @@ Task {
 	// preload all sounds while server is off!
 	q.load("2_liveInput.scd");
 
-	"\n\n*** *** *** Loading Processes % : \n".postf("2_process");
+	"\n\n*** *** *** FOLDER %:\n".postf("2_process");
 	// list all candidate files
 	if (q.prefs.active.processNames.isNil) {
 		(q.dir.userPOOL +/+ "*process/*.scd").pathMatch
@@ -138,9 +141,11 @@ Task {
 
 	q.load("2a_preset*.scd");
 
+	"\n\n".postln;
+
 	s.waitForBoot {
 
-		"*** server booted, plays 3 pings left.".postln;
+		"*** server booted, plays 3 pings on left chan.".postln;
 		fork { 3.do { Env.perc.test; 0.3.wait } };
 
 		"\n".postln;
@@ -160,7 +165,6 @@ Task {
 		q.load("3_interfaces/*scd");
 
 		"\n\n*** *** *** FOLDER % : \n".postf("5_postres");
-
 		q.load("5_postres/*scd");
 
 		if (q.hasGui) {
