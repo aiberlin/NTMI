@@ -52,6 +52,10 @@ q.slots.fadeoutTime = 1;
 q.slots.defaultVol = 0.25;
 
 
+q.slots.nowPlaying = {
+	q.slots.actives.select { |ndef| ndef.monitor.isPlaying  };
+};
+
 q.slots.playAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	var vol = if (obj.monitor.isNil, q.slots.defaultVol, { obj.vol });
@@ -63,8 +67,10 @@ q.slots.playAt = { |sl, index|
 // maybe make a flag for stop or end?
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
-	"% at % ends now.\n".postf(obj, index);
-	obj.end(q.slots.fadeoutTime);
+	if (obj.isPlaying) {
+		"% at % ends now.\n".postf(obj, index);
+		obj.end(q.slots.fadeoutTime);
+	};
 	try { q.inphlux.removeMapped(obj.key) };
 };
 
