@@ -45,9 +45,11 @@ Task {
 	// check user dir, make it and migrate pool there if needed
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
-
+	///////// set for dev mode here :
 	if (q.myname == \adc) {
 		q.dev = true;
+	} {
+		q.dev = false;
 	};
 
 	if(q.dev) {
