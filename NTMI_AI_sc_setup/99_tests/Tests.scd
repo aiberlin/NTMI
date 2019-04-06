@@ -6,13 +6,17 @@ q.osc.leftDown.clear; q.osc.rightDown.clear;
 **********/
 
 Tdef('zz_tests', {
-	var postOK = false;
-	var failCount = 0;
+	~postOK = false;
+	~failCount = 0;
+	~testCount = 0;
+
 	t = { |func, failmess, passmess, dt = 0.1|
+		~testCount = ~testCount + 1;
 		if (func.value) {
-			if (postOK) { (passmess ? "").postln }
+
+			if (~postOK) { (passmess ? "").postln };
 		} {
-			failCount = failCount + 1;
+			~failCount = ~failCount + 1;
 			"*** FAIL: % \n".postf(failmess);
 			"code: % \n".postf(func.cs);
 			try { dt.wait };
@@ -140,4 +144,5 @@ Tdef('zz_tests', {
 		prevInphWeightsKey != postSwitchKey;
 	}, "xosc influx preset switch not working", "xosc preset but OK.");
 
+	"\n\n*** NTMI TESTS DONE: % tests with % failures.\n\n".postf(~testCount, ~failCount);
 }).stop.play;
