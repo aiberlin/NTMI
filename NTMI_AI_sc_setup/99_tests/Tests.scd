@@ -35,7 +35,7 @@ Tdef('zz_tests', {
 	t.({ MasterFX.all[s.name].notNil }, "MasterFX missing.", "MasterFX ok.");
 	t.({ q.inphlux.isKindOf(Influx) }, "q.inphlux not OK.", "inphlux ok.");
 
-	t.({ q.process.allNames.size >= 20 }, "less than 20 sounds?", "sounds ok.");
+	t.({ q.process.allNames.size >= 15 }, "less than 15 sounds?", "sounds ok.");
 	t.({ q.osc.timeSinceLast < 1.0 }, "xosc not sending.", "xosc ok.");
 
 	"\n --- SLOTS ---".postln;
@@ -143,6 +143,65 @@ Tdef('zz_tests', {
 		"prev key: % new key: %\n".postf(prevInphWeightsKey, postSwitchKey);
 		prevInphWeightsKey != postSwitchKey;
 	}, "xosc influx preset switch not working", "xosc preset but OK.");
+
+
+
+	"\n --- XOSC modal BUTTONS ---".postln;
+
+	// hold preUp button, press a slsot button:
+	/// volume on that slot goes up,
+	/// play state stays the same
+	t.({
+		var dt = 0.2;
+		var slot = 3;
+		var snd = q.ndefs[slot];
+		var playState = snd.monitor.isPlaying;
+		var oldvol = snd.vol;
+		[playState, oldvol].postln;
+
+		dt.wait;
+		// hold down a slot button
+		x.elAt(\sw, slot).valueAction_(0);
+		// press / release preUp
+		dt.wait;
+		x.elAt(\sw, 5).valueAction_(1);
+		dt.wait;
+		x.elAt(\sw, 5).valueAction_(0);
+		dt.wait;
+		x.elAt(\sw, slot).valueAction_(0);
+		dt.wait;
+		(snd.vol.postln > oldvol).postln and:
+
+		(playState == snd.monitor.isPlaying).postln;
+	}, "modal volume UP failed!", "modal volume UP OK.");
+
+	// hold preDown button, press a slsot button:
+	/// volume on that slot goes down,
+	/// play state stays the same
+	t.({
+		var dt = 0.2;
+		var slot = 3;
+		var snd = q.ndefs[slot];
+		var playState = snd.monitor.isPlaying;
+		var oldvol = snd.vol;
+		[playState, oldvol].postln;
+
+		dt.wait;
+		// hold down a slot button
+		x.elAt(\sw, slot).valueAction_(0);
+		// press / release preUp
+		dt.wait;
+		x.elAt(\sw, 6).valueAction_(1);
+		dt.wait;
+		x.elAt(\sw, 6).valueAction_(0);
+		dt.wait;
+		x.elAt(\sw, slot).valueAction_(0);
+		dt.wait;
+
+		(snd.vol.postln < oldvol).postln and:
+		(playState == snd.monitor.isPlaying).postln;
+	}, "modal volume DOWN failed!", "modal volume DOWN OK.");
+
 
 	"\n\n*** NTMI TESTS DONE: % tests with % failures.\n\n".postf(~testCount, ~failCount);
 }).stop.play;
