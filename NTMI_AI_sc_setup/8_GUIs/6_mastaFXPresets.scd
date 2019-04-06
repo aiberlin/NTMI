@@ -32,17 +32,19 @@ g.makeGui.masterFX = {
 	// .action_({ "deleting by name - select view ... ".postln; });
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
 
-	q.mfx.prepop = EZPopUpMenu(q.mfx.win, Rect(0,0, 350, 30), \mastaPresetz, q.mfx.preNames, { |ezp|
+	q.mfx.prepop = EZPopUpMenu(q.mfx.win, Rect(0,0, 320, 30), \mastaPresetz, q.mfx.preNames, { |ezp|
 		MFdef(\mastaPre).(ezp.item);
-	}, labelWidth: 140);
+	}, labelWidth: 120);
 	q.mfx.prepop.font_(q.mfx.font);
 
+	[ "¿x?", "prev", "next" ].collect { |label, i|
+		Button(q.mfx.win, Rect(0,0,50,30))
+		.states_([[label]]).font_(q.mfx.font)
+		.action_({
+			MFdef(\mastaPreStep).([nil, -1, 1]@i)
+		});
+	};
 
-	Button(q.mfx.win, Rect(0,0,60,30))
-	.states_([["¿x?"]]).font_(q.mfx.font)
-	.action_({
-		q.mfx.prepop.value_(q.mfx.prepop.items.size.rand);
-	});
 
 	// q.mfx.slotPrePop = EZPopUpMenu(q.mfx.win, Rect(0, 0, 100, 30), \, q.mFX.slotNames.array, { |ezp|
 	// 	var newpre = q.mfx.pxPres[ezp.item];

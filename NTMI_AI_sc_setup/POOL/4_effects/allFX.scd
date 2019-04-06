@@ -12,6 +12,18 @@ ProxyChain.addSpec(
 
 );
 
+
+ProxyChain.add3( '1comby',
+	\filterIn -> { |in, freqscale = 1, rtscale = 1|
+		CombletC.ar(in, 0.2,
+			(1/( (0, 7 .. 28) + 12)).collect { |del|
+				del * LFDNoise3.kr(0.2, 0.003, 1) },
+			3,
+			0.3,
+			[0.5, 0.4, 0.32, 0.25, 0.2]
+		).mean;
+}, 0.25);
+
 // .add3: name, func, level, [specs]
 ProxyChain.add3( '1klanky',
 	\filterIn -> { |in, freqscale = 1, rtscale = 1|

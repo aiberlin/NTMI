@@ -14,7 +14,8 @@ ProxyChain.checkDicts;
 q.mFX.clear;
 q.mFX = MasterFX.new(server: s,
 	numChannels: q.numChans,
-	slotNames: q.prefs.active.mfxSlotNames ? ProxyChain.allSources.keys(Array).sort,
+	slotNames: // q.prefs.active.mfxSlotNames ?
+		ProxyChain.allSources.keys(Array).sort,
 	busIndex: 0
 );
 
