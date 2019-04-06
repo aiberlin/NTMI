@@ -83,10 +83,12 @@ MFdef(\setInphWPre).add(\set, { |index|
 	};
 });
 
-
+// nil -> rand, -1 is down, 1 is up
 MFdef(\stepInphWPre).add(\inc, { |inc = 1|
-	var nuIndex = q.inph.at(\presIndex) + inc % q.inph.randSeeds.size;
-	MFdef(\setInphWPre).value(nuIndex.postln);
+	var nuIndex;
+	inc = inc ?? { rrand(1, q.inph.randSeeds.size) };
+	nuIndex = q.inph.at(\presIndex) + inc % q.inph.randSeeds.size;
+	MFdef(\setInphWPre).value(nuIndex);
 });
 
 /// INIT!

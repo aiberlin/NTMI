@@ -12,7 +12,7 @@ x.addNamed(\imu9, MKtlElementGroup(\imu9, x, x.elAt([0, 1, 2]).flat));
 x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
 // init imu values to center:
 x.elAt(\imu9).value_(0.5!9);
-x.elAt(\pads8).value;
+x.elAt(\pads8).valueAction_(0!8);
 
 q.zero = q.zero ? ();
 q.zero.imu = 0;
@@ -247,7 +247,7 @@ x.elAt(\sw, \5).action.add(\modal, {|bt|
 			MFdef(\imuMode),
 			{ |ndef|
 				"% - choose rand preset...\n".postf(ndef);
-				q.stepNdefPreInf( ndef, 10000.rand )
+				q.stepNdefPreInf( ndef, nil )
 			}
 		)
 	};
@@ -259,7 +259,9 @@ MFdef(\stepVol).(q.slots.actives[0], -1);
 */
 
 MFdef(\stepVol).add(\step, { |ndef, step = 1|
-	ndef.vol = (ndef.vol * step.dbamp).clip(0, 1);
+	var stepsize = 0.05; // 20 steps from 0 to 1
+	var ampspec = \amp.asSpec;
+	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * stepsize))
 });
 
 MFdef(\stepSlotPres).add(\step, { |step = 1|
@@ -273,8 +275,9 @@ MFdef(\stepSlotPres).add(\step, { |step = 1|
 x.elAt(\sw, [\6, \7]).do { |elem, index|
 	elem.action.add(\modal, {|bt|
 		var step = [1, -1]@index; // down, then up
+		// 0 is press, 1 is release:
 		// do modal action on release
-		if (bt.value == 0) {
+		if (bt.value == 1) {
 			MFdef(\rightMode).(bt,
 				{
 					// reply to OSC device: which LED which Color!
