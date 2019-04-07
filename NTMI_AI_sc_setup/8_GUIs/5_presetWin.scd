@@ -54,6 +54,11 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 
 	w.addHalo(\butrow, butrow);
 
+	Button(vlv1, Rect(0,0,100, 30)).states_([["Edit Preset"]]).action_({
+		Document( ppg.object.asString, ppg.object.settingsString);
+		unixCmd("open" + quote(Standalone.appPath));
+	});
+
 	butrow.do({ |but, i|
 		but.action_({ |b| MFdef('preButAction').value(i) })
 	});

@@ -45,12 +45,15 @@ Task {
 	// check user dir, make it and migrate pool there if needed
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
-	///////// set for dev mode here :
-	if (q.myname == \adc) {
-		q.dev = true;
-	} {
-		q.dev = false;
-	};
+	// ///////// set for dev mode here :
+	// if (q.myname == \adcxxx) {
+	// 	q.dev = true;
+	// } {
+	// 	q.dev = false;
+	// };
+
+	/// user mode not working yet, so switching to dev mode for now:
+	q.dev = true;
 
 	if(q.dev) {
 		///////////// WHILE DEVELOPING, direct back to dev/project dir!

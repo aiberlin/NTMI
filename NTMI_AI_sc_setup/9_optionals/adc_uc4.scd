@@ -15,6 +15,7 @@
 - bot but  5:		snapshot presets
 - bot buts 6 7 8:	rand, prev, next MasterFX preset
 
+- ( bot but  4 still unused ;-)
 
 
 ***********/
@@ -24,7 +25,8 @@
 // hold until running bars go away -> all encoders are now relative
 
 MKtlDesc.loadDescs;
-m.free; m = MKtl(\uc4, "*uc4_pg"); m.gui;
+m.free; m = MKtl(\uc4, "*uc4_pg");
+g.makeGui.uc4 = { m.gui };
 
 // add a spec to uc4, for relative use:
 // ccr2 is from 58 ... 63 down / 65 .. 70 up,
@@ -56,9 +58,8 @@ m.elAt('xfader').action = { |xf|
 };
 
 
-// what to use next four knobs for?
-// to select next sound?
-
+// normal: select next setting
+// hat down: select next sound
 m.elAt(\pgKn1, \kn, (4..7)).do { |el, i|
 	el.action = { |el|
 		var ndef = q.ndefs[i];
