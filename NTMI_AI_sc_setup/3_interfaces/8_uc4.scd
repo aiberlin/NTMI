@@ -106,10 +106,23 @@ g.uc4.elAt(\pgSl1, \bt, 4).action = { |el|
 	}
 };
 
-g.uc4.elAt(\pgSl1, \sl).do { |sl, i|
-	sl.action = { |sl|
-		var name = q.inphlux.inNames[i];
-		q.inphlux.set(name, sl.value.unibi);
+////////// sliders (hard-)set or SoftSet inphlux:
+if (q.inphlux.respondsTo(\get).not) {
+	"///////// sliders hard-set influx directly ".postln;
+	g.uc4.elAt(\pgSl1, \sl).do { |sl, i|
+		sl.action = { |sl|
+			var name = q.inphlux.inNames[i];
+			q.inphlux.set(name, sl.value.unibi)
+		};
+	}
+} {
+	///////// BETTER: SoftSet, works with current Influx update
+	"//// sliders SoftSet influx ".postln;
+	g.uc4.elAt(\pgSl1, \sl).do { |sl, i|
+		sl.action = { |sl|
+			var name = q.inphlux.inNames[i];
+			SoftSet(q.inphlux, name, sl.value.unibi, lastVal: sl.prevValue.unibi);
+		};
 	}
 };
 
