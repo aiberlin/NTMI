@@ -85,9 +85,11 @@ g.makeGui.masterFX = { |dict, name = \masterFX|
 };
 
 g.makeGui.nanoKtl = { |dict, name = \nanoKtl|
-	g.nanoKtl = q.midi.ktl.gui;
+	g.nanoKtl = q.nktl.gui;
 	g.nanoKtl;
 };
+
+g.makeGui.uc4 = { g.uc4.gui };
 
 g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
 	g.simulator = Tdef(\xoscSimulator).gui.moveTo(200, 400);
