@@ -49,9 +49,7 @@ g.uc4.elAt(\pgSl1, \bt, 5).elemDesc.label = "rand MFX";
 g.uc4.elAt(\pgSl1, \bt, 6).elemDesc.label = "prev MFX";
 g.uc4.elAt(\pgSl1, \bt, 7).elemDesc.label = "next MFX";
 
-g.uc4.gui;
-
-g.makeGui.uc4 = { g.uc4.gui };
+// g.makeGui.uc4 = { g.uc4.gui };
 
 // add a spec to uc4, for relative use:
 // ccr2 is from 58 ... 63 down / 65 .. 70 up,
@@ -89,16 +87,15 @@ g.uc4.elAt(\pgKn1, \kn, (4..7)).do { |el, i|
 	el.action = { |el|
 		var ndef = q.ndefs[i];
 		var relStep = (el.deviceValue - 64);
-		if (el.isOn) {
-			if (g.uc4.elAt(\pgKn1, \pbt, (4..7)[i]).isOn) {
-				// next sound
-				q.slots.stepNext(i, relStep);
-			} {
-				// next preset
-				q.stepNdefPreInf(ndef, relStep);
-			};
-			el.deviceValue = 64;
+
+		if (g.uc4.elAt(\pgKn1, \pbt, (4..7)[i]).isOn) {
+			// next sound
+			q.slots.stepNext(i, relStep);
+		} {
+			// next preset
+			q.stepNdefPreInf(ndef, relStep);
 		};
+		el.deviceValue = 64;
 	}
 };
 
