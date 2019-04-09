@@ -20,7 +20,6 @@ transport buttons:
 
 ***********/
 
-*/
 
 q = q ? ();
 q.nk = ();

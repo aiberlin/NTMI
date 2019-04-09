@@ -331,12 +331,13 @@ OSCdef(\imu, { |msg|
 	var accel = msg.copyRange(1, 3);
 	var gyro = msg.copyRange(4, 6);
 	var magnet = msg.copyRange(7, 9);
+	// just set all values, no action:
 	x.elAt(\accel).deviceValue = accel * 0.1;
 	x.elAt(\gyro).deviceValue = gyro * 8;
 	x.elAt(\magnet).deviceValue = magnet * 2 * 8;
-	// action that triggers
+	// trigger action only once
 	MFdef(\imuFunc).value;
-	//gyro.round(0.001).postln;
+
 }, "/imu").permanent_(true);
 
 // permanent tweak factor???

@@ -1,5 +1,11 @@
 // Quarks.install("MultiTouchPad");
 
+/*
+TODO / FIXME:
+imu values only set inphlux between 0 and 1 - why?
+
+*/
+
 g.makeGui.xoscMTPads = {
 	q = q ? ();
 	q.mtp = q.mtp ? ();
