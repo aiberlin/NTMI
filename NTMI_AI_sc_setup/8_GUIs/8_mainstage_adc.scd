@@ -51,6 +51,7 @@ MFdef('guiSlots').add(\set, {
 
 g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
+	var butRed = Color.red(1, 0.7), butGreen = Color.green(1, 0.7);
 	var bounds = Window.availableBounds;
 	var wheight = bounds.height, wwidth = bounds.width;
 	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
@@ -87,18 +88,18 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	oscBut = Button(w,
 		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-		["¿¿OSC??", Color.white, Color.red],
-		["¡OSC OK!", Color.black, Color.green]
+		["¿¿OSC??", Color.white, butRed],
+		["¡OSC OK!", Color.black, butGreen]
 	]).font_(font).value_(0);
 	g.main.oscBut = oscBut;
 
 	midiBut = Button(w, Rect(rightCol, 80 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-		["¿¿MIDI??", Color.white, Color.red],
-		["MIDI OK!", Color.black, Color.green]
+		["¿¿MIDI??", Color.white, butRed],
+		["MIDI OK!", Color.black, butGreen]
 	]).font_(font).value_(0);
 
 	batView = UserView(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 40 * scrscale));
-	batView.background_(Color.red(1.0));
+	batView.background_(butRed);
 	batView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
 		Pen.addRect(bounds).color_(Color.white).stroke;
@@ -114,8 +115,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.batView = batView;
 
 	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["RECORD?", Color.white, Color.red],
-		["Recording!", Color.black, Color.green]
+		["RECORD?", Color.white, butRed],
+		["Recording!", Color.black, butGreen]
 	]).font_(font)
 	.action_({ |bt|
 		if (bt.value > 0) {
@@ -127,19 +128,19 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 	Button(w, Rect(rightCol, 950 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
-		["show recordings", Color.white, Color.red]
+		["show recordings", Color.white, butRed]
 	]).font_(font.copy.size_(font.size * 0.62))
 	.action_({ |bt|
 		Platform.recordingsDir.openOS;
 	});
 
 	Button(w, Rect(rightCol, 510 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["SET ZERO for\ntouch + move", Color.white, Color.red],
+		["SET ZERO for\ntouch + move", Color.white, butRed],
 	]).font_(font)
 	.action_({ MFdef('ZERO').value });
 
 	Button(w, Rect(rightCol, 660 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["Reset Clock", Color.white, Color.red],
+		["Reset Clock", Color.white, butRed],
 	]).font_(font)
 	.action_({
 		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
