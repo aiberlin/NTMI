@@ -1,14 +1,25 @@
-/*
-// using q.ndefs as list of the 8 ndefs to control from nano scene 1
+/******* nanoKontrol 1 setup for NTMI, page 1
 
-MKtl.find(\midi);
-MIDIFunc.trace(true);
-MIDIFunc.trace(false);
+- left knobs 1-4  		change slots volume (with softVol takeover)
+- bottom buttons 1-4 	toggle sound slots on/off
 
-// MKtlDesc.postLoadable;
+- knobs 5-8 		select presets or sounds
+-- button 5-8 up	scroll thru presets
+-- button 5-8 down	scroll thru sounds
 
-!! conflict with slider 1, Scene 3
-should be CC 85, not 2
+- sliders 1-8: 		influx!
+
+- last slider 9:	masterVol via limDrive
+
+transport buttons:
+- rew, play, fwd:	rand, prev, next influx preset
+- loop, stop, rec:  rand, prev, next MasterFX preset
+- bot buts 6 7 8:
+
+- top row of buttons still unused.
+
+***********/
+
 */
 
 q = q ? ();
@@ -83,10 +94,3 @@ q.nktl.elAt( \kn, 0, (4..7)).do { |el, i|
 	};
 };
 
-
-/*
-q.nk.ktl.elements[2][0][0];// buttons
-q.nk.ktl.elements['button'], i).elements;
-q.nk.ktl.elementAt(\sl, 2).elements;
-q.nk.ktl.elementAt(\bt, 2, 0, 0)
-*/
