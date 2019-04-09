@@ -7,8 +7,18 @@
 x.elementsDict.keys;
 //neu - remove weird crosstalk from each input to next
 (
+MFdef(\touchToInph).add(\set, {
+	var influx = q.inphlux;
+	var pads = x.elAt(\pads8);
+	var keysValues = pads.collect { |pad, i|
+		[ influx.inNames[i], pad.value]
+	}.flat.postln;
+	q.inphlux.set(*keysValues);
+});
+
 OSCdef(\xana, { |msg|
 	var values = msg.drop(1);
+	var influxKeysVals;
 	var xtalkFactor = 0.5;// andere sensor vieleicht passt andere nummer
 	// value[1] = value[1].linlin(value[0] * 0.5, 1, 0, 1);
 	// MAGIC crosstalk compensation of
@@ -28,14 +38,9 @@ OSCdef(\xana, { |msg|
 		values.put(i,stretched);
 	};
 
-	// values.round(0.001).postln;
-	//values.reverse??.do
-	values.do { |val, index|
-		var elem = x.elAt('inA').at(index);
-		if (elem.value != val) {
-			elem.valueAction_(val);
-		}
-	}
+	x.elAt('inA').value_(values);
+	MFdef(\touchToInph).value;
+
 }, '/inputs/analogue').permanent_(true);
 );
 
