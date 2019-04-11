@@ -1,5 +1,12 @@
-/******* nanoKontrol 1 setup for NTMI, page 1
+/******* make the same control interface for the NTMI app for two devices:
 
+A nanoKontrol1 if present, or else a nanoKontrol2.
+
+It does that by giving the elements custom access names first,
+then given them the same actions, independently of which device they are on.
+The same concept also works for gamepads and other devices.
+
+-------- THE LAYOUT: ----------
 - left knobs 1-4  		change slots volume (with softVol takeover)
 - bottom buttons 1-4 	toggle sound slots on/off
 
@@ -7,16 +14,18 @@
 -- button 5-8 up	scroll thru presets
 -- button 5-8 down	scroll thru sounds
 
-- sliders 1-8: 		influx!
+- sliders 1-8/1-7: 	influx!
 
-- last slider 9:	masterVol via limDrive
+- last slider 8/9:	masterVol via limDrive
 
 transport buttons:
-- rew, play, fwd:	rand, prev, next influx preset
-- loop, stop, rec:  rand, prev, next MasterFX preset
-- bot buts 6 7 8:
+nk1: rew, play, fwd:	rand, prev, next influx preset
+nk2: cycle, rew, fwd 	rand, prev, next influx preset
 
-- top row of buttons still unused.
+nk1: loop, stop, rec:  rand, prev, next MasterFX preset
+nk2: stop, play, rec:  rand, prev, next MasterFX preset
+
+- top row(s) of buttons still unused.
 
 ***********/
 
@@ -24,47 +33,95 @@ transport buttons:
 q = q ? ();
 q.nk = ();
 
-q.nktl.free;
-q.nktl = MKtl('nanoKtl', "korg-nanokontrol");
+if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
+	q.nktl.free;
+	q.nktl = MKtl('nk1', "korg-nanokontrol");
 
+	// make all named elements first
+	q.nktl.addNamed(\masta, q.nktl.elAt(\sl, 0, 8));
+	q.nktl.addNamed(\inflx, q.nktl.elAt(\sl, 0, (0..7)));
+
+	q.nktl.addNamed(\vols, q.nktl.elAt(\kn, 0, (0..3)));
+	q.nktl.addNamed(\playBts, q.nktl.elAt(\bt, 0, 1, (0..3)));
+
+	// select preset or sounds
+	q.nktl.addNamed(\select, q.nktl.elAt(\kn, 0, (4..7)));
+	// if but up, select preset, if down, sound
+	q.nktl.addNamed(\selMode, q.nktl.elAt(\bt, 0, 1, (4..7)));
+
+	q.nktl.addNamed(\rand_inph, q.nktl.elAt(\tr, \rew));
+	q.nktl.addNamed(\prev_inph, q.nktl.elAt(\tr, \play));
+	q.nktl.addNamed(\next_inph, q.nktl.elAt(\tr, \fwd));
+
+	q.nktl.addNamed(\rand_pre, q.nktl.elAt(\tr, \loop));
+	q.nktl.addNamed(\prev_pre, q.nktl.elAt(\tr, \stop));
+	q.nktl.addNamed(\next_pre, q.nktl.elAt(\tr, \rec));
+
+
+} {
+	// if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size > 0) {
+	q.nktl.free;
+	q.nktl = MKtl('nk2', "korg-nanokontrol2");
+
+	// make all named elements first
+	q.nktl.addNamed(\masta, q.nktl.elAt(\sl, 7));
+	q.nktl.addNamed(\inflSet, q.nktl.elAt(\sl, (0..6)));
+
+	q.nktl.addNamed(\vols, q.nktl.elAt(\kn, (0..3)));
+	q.nktl.addNamed(\playBts, q.nktl.elAt(\bt, 2, (0..3)));
+
+	// select preset or sounds
+	q.nktl.addNamed(\select, q.nktl.elAt(\kn, (4..7)));
+	// if but up, select preset, if down, sound
+	q.nktl.addNamed(\selMode, q.nktl.elAt(\bt, 2, (4..7)));
+
+	q.nktl.addNamed(\rand_inph, q.nktl.elAt(\tr, \cycle));
+	q.nktl.addNamed(\prev_inph, q.nktl.elAt(\tr, \rew));
+	q.nktl.addNamed(\next_inph, q.nktl.elAt(\tr, \fwd));
+
+	q.nktl.addNamed(\rand_pre, q.nktl.elAt(\tr, \stop));
+	q.nktl.addNamed(\prev_pre, q.nktl.elAt(\tr, \play));
+	q.nktl.addNamed(\next_pre, q.nktl.elAt(\tr, \rec));
+
+	// };
+};
+
+q.nktl.elAt(\masta).elemDesc.label = "Main Vol";
+
+q.nktl.elAt(\rand_inph).elemDesc.label = "rand inph";
+q.nktl.elAt(\prev_inph).elemDesc.label = "prev inph";
+q.nktl.elAt(\next_inph).elemDesc.label = "next inph";
+
+q.nktl.elAt(\rand_pre).elemDesc.label = "rand MFX";
+q.nktl.elAt(\prev_pre).elemDesc.label = "prev MFX";
+q.nktl.elAt(\next_pre).elemDesc.label = "next MFX";
 
 // modify labels:
-q.nktl.elAt(\kn, 0, (0..3)).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
-q.nktl.elAt(\bt, 0, 1, (0..3)).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
+q.nktl.elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
+q.nktl.elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
 
-q.nktl.elAt(\kn, 0, (4..7)).do { |el, i| el.elemDesc.label = "slct %".format(i+1) };
-// q.nktl.elAt(\bt, 0, 0, (4..7)).do { |el, i| el.elemDesc.label = "slc % pre".format(i+1) };
-q.nktl.elAt(\bt, 0, 1, (4..7)).do { |el, i| el.elemDesc.label = "slc % snd".format(i+1) };
+q.nktl.elAt(\selMode).do { |el, i| el.elemDesc.label = "slct %".format(i+1) };
+q.nktl.elAt(\select).do { |el, i| el.elemDesc.label = "slc % snd".format(i+1) };
 
-q.nktl.elAt(\sl, 0, (0..7)).do { |sl, i| sl.elemDesc.label = "inf" + q.inphlux.inNames[i].cs };
-
-q.nktl.elAt(\sl, 0, 8).elemDesc.label = "Main Vol";
-
-q.nktl.elAt(\tr, \rew).elemDesc.label = "rand inph";
-q.nktl.elAt(\tr, \play).elemDesc.label = "prev inph";
-q.nktl.elAt(\tr, \fwd).elemDesc.label = "next inph";
-
-q.nktl.elAt(\tr, \loop).elemDesc.label = "rand MFX";
-q.nktl.elAt(\tr, \stop).elemDesc.label = "prev MFX";
-q.nktl.elAt(\tr, \rec).elemDesc.label = "next MFX";
+q.nktl.elAt(\inflSet).do { |sl, i| sl.elemDesc.label = "inf" + q.inphlux.inNames[i].cs };
 
 
 /// left top 4 knobs change slots volume
-q.nktl.elAt(\kn, 0, (0..3)).do { |el, i|
+q.nktl.elAt(\vols).do { |el, i|
 	el.action = { |el|
 		q.ndefs[i].softVol_(el.value.postln, lastVal: el.prevValue);
 	};
 };
 
 // left bottom 4 buttons toggle sound slots on/off
-q.nktl.elAt(\bt, 0, 1, (0..3)).do { |el, i|
+q.nktl.elAt(\playBts).do { |el, i|
 	el.action = { |el|
 		if (el.isOn) { q.slots.toggleAt(i) }
 	};
 };
 
 // sliders set influx inputs
-q.nktl.elAt(\sl, 0, (0..7)).do { |sl, i|
+q.nktl.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		var name = q.inphlux.inNames[i];
 		q.inphlux.set(name, sl.value.unibi);
@@ -72,18 +129,18 @@ q.nktl.elAt(\sl, 0, (0..7)).do { |sl, i|
 };
 
 // rightmost slider is master volume (into limiter)
-q.nktl.elAt(\sl, 0, 8).action = { |sl|
+q.nktl.elAt(\masta).action = { |sl|
 	q.mFX.pxChain.proxy.setUni(\limDrive, sl.value);
 };
 
 
 // normal: select next setting
 // hat down: select next sound
-q.nktl.elAt( \kn, 0, (4..7)).do { |el, i|
+q.nktl.elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = q.ndefs[i];
 		var relStep = (el.deviceValue - el.prevValue).sign;
-		if (q.nktl.elAt( \bt, 0, 1, (4..7)[i]).isOn) {
+		if (q.nktl.elAt(\selMode)[i].isOn) {
 			// next sound
 			q.slots.stepNext(i, relStep);
 		} {
@@ -93,3 +150,10 @@ q.nktl.elAt( \kn, 0, (4..7)).do { |el, i|
 	};
 };
 
+q.nktl.elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil) } };
+q.nktl.elAt(\prev_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(-1 ) } };
+q.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 ) } };
+
+q.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(nil) } };
+q.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(-1 ) } };
+q.nktl.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).( 1 ) } };
