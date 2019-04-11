@@ -2,7 +2,7 @@ q.addrSC = NetAddr.localAddr;
 
 OSCdef.trace(false);
 // turn off the internal ones for now;
-x.device.oscFuncDictionary.do(_.disable);
+MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
 
 // run just the external ones:
 OSCdef(\imu).enable;
@@ -61,13 +61,13 @@ Tdef(\xoscSimulator, { |ev|
 });
 
 //////// start simulation from xosc GUI:
-x.elAt(\sw, \15).action = { |bt|
+MKtl(\xosc).elAt(\sw, \15).action = { |bt|
 	if (bt.value > 0) {
 		"*** starting sim: ".post;
 		Tdef(\xoscSimulator).postln.play;
 	}
 };
-x.elAt(\sw, \16).action = { |bt|
+MKtl(\xosc).elAt(\sw, \16).action = { |bt|
 	if (bt.value > 0) {
 		"*** stopping sim: ".post;
 		Tdef(\xoscSimulator).stop;

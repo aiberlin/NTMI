@@ -75,15 +75,15 @@ g.makeGui.xosc = { |dict, name = \xosc|
 
 // send single hue value:
 
-x.elAt(\led, 0).value_(0.333); // green
-x.elAt(\led, 0).value_(0.5);
-x.elAt(\led, 0).value_(0.666); // blue
+MKtl(\xosc).elAt(\led, 0).value_(0.333); // green
+MKtl(\xosc).elAt(\led, 0).value_(0.5);
+MKtl(\xosc).elAt(\led, 0).value_(0.666); // blue
 
-x.elAt(\led).value_(0.0!16);
-x.elAt(\led).value_(0.1!16);
-x.elAt(\led).value_( { 0.5 }.dup(16))
-x.elAt(\led).value_( { 0.999 }.dup(16))
-x.elAt(\led).value_( { 1.0.rand }.dup(16))
+MKtl(\xosc).elAt(\led).value_(0.0!16);
+MKtl(\xosc).elAt(\led).value_(0.1!16);
+MKtl(\xosc).elAt(\led).value_( { 0.5 }.dup(16))
+MKtl(\xosc).elAt(\led).value_( { 0.999 }.dup(16))
+MKtl(\xosc).elAt(\led).value_( { 1.0.rand }.dup(16))
 */
 
 // q.guiXOSC.labelView.drawFunc.dump;

@@ -339,8 +339,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 				g.main.w.background_(q.inph.currPresetCol);
 			};
 
-			g.main.movevals = x.elAt(\imu9).value;
-			g.main.padCols = x.elAt('pads8').value.collect { |val|
+			g.main.movevals = MKtl('xosc').elAt(\imu9).value;
+			g.main.padCols = MKtl('xosc').elAt('pads8').value.collect { |val|
 				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
 			};
 

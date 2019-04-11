@@ -78,8 +78,8 @@ MFdef(\setInphWPre).add(\set, { |index|
 	// send this to OSC/Modality device ! (RGB Col)
 	"curr Color: ".post; (q.inph.currPresetCol.asArray * 255).keep(3).asInteger.postln;
 	try {
-		x.elAt(\led, \6).value_(nuIndex / q.inph.randSeeds.size );
-		x.elAt(\led, \7).value_(nuIndex / q.inph.randSeeds.size );
+		MKtl(\xosc).elAt(\led, \6).value_(nuIndex / q.inph.randSeeds.size );
+		MKtl(\xosc).elAt(\led, \7).value_(nuIndex / q.inph.randSeeds.size );
 	};
 });
 

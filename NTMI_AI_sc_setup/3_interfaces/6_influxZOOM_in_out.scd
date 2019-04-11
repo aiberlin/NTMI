@@ -19,7 +19,7 @@ q.incZoom = {|ev, inc=0.1|
 
 
 // set it to poti on ana in 8 (it was 7, not worked)
-x.elAt('inA').at(7).action.add(\setZoom, {|el|
+MKtl(\xosc).elAt('inA').at(7).action.add(\setZoom, {|el|
 	var val = el.value.clip(0.05, 1).round(0.05);
 	if (val != q.zoom) {
 		"zoom from xosc: %\n".postf(val);
