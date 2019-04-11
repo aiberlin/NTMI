@@ -7,7 +7,7 @@ g.guiXOSC.views.do { |vw, i| [i, vw.element.name ].postln };
 
 g.makeGui.xosc = { |dict, name = \xosc|
 	var simButStart, simButStop;
-	g.guiXOSC = x.gui;
+	g.guiXOSC = MKtl(\xosc).gui;
 
 	// // tweak g.guiXOSC to display correct stuff only
 	g.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // hide unused Digi ins

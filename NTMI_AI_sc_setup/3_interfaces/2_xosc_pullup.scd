@@ -321,13 +321,12 @@ OSCdef(\imu, { |msg|
 	var gyro = msg.copyRange(4, 6);
 	var magnet = msg.copyRange(7, 9);
 
-	msg.postcs;
 	//////////// FIXME: get proper minmax values
 	//////////// for 'accel', 'gyro', 'magnet'!
 	// just set all values, no action:
-	MKtl(\xosc).elAt(\accel).deviceValue = accel * 0.06;
-	MKtl(\xosc).elAt(\gyro).deviceValue = gyro * 4.8;
-	MKtl(\xosc).elAt(\magnet).deviceValue = magnet * 9.6;
+	MKtl(\xosc).elAt(\accel).deviceValue = accel;
+	MKtl(\xosc).elAt(\gyro).deviceValue = gyro;
+	MKtl(\xosc).elAt(\magnet).deviceValue = magnet;
 
 	// trigger the action only once (influx calc)
 	MFdef(\imuFunc).value;
