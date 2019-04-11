@@ -1,51 +1,83 @@
+// /*
+// OSCFunc.trace;
+// OSCFunc.trace (false);
+// */
+//
+
 (
 // use this dict for everything osc related
 q.osc = q.osc ? ();
 
+// xosc sends here:
 thisProcess.openUDPPort(8000);
-thisProcess.openPorts;
+thisProcess.openPorts.postln;
 
+// make xosc object
 MKtl.all[\xosc].free;
-x = MKtl(\xosc, "xosc*");
+MKtl(\xosc, "xosc*");
 
-x.addNamed(\imu9, MKtlElementGroup(\imu9, x, x.elAt([0, 1, 2]).flat));
-x.addNamed(\pads8, MKtlElementGroup(\pads8, x, x.elAt(\inA, (8..15))));
-// init imu values to center:
-x.elAt(\imu9).value_(0.5!9);
-x.elAt(\pads8).valueAction_(0!8);
 
+/// init all xosc actions as MFuncs, provide posting
+MKtl(\xosc).elementsDict.do(_.action_(MFunc()));
+MKtl(\xosc).elementsDict.do { |el| el.action.add(\post, { |el|
+	[el.name, el.value.round(0.0001)].postln
+}) };
+MKtl(\xosc).elementsDict.do { |el| el.action.enable(\post) };
+MKtl(\xosc).elementsDict.do { |el| el.action.disable(\post) };
+
+
+// create elementgroups for imu and pads:
+MKtl(\xosc).addNamed(\imu9, MKtlElementGroup(\imu9, x, MKtl(\xosc).elAt([0, 1, 2]).flat));
+MKtl(\xosc).addNamed(\pads8, MKtlElementGroup(\pads8, x, MKtl(\xosc).elAt(\inA, (8..15))));
+MKtl(\xosc).addNamed(\slots, MKtlElementGroup(\slots, x, MKtl(\xosc).elAt(\sw, (0..3))));
+MKtl(\xosc).addNamed(\modSw, MKtl(\xosc).elAt(\sw, \5));
+MKtl(\xosc).addNamed(\steps, MKtl(\xosc).elAt(\sw, [\6, \7]));
+
+// init imu values to center, pads to bottom
+MKtl(\xosc).elAt(\imu9).value_(0.5!9);
+MKtl(\xosc).elAt(\pads8).valueAction_(0!8);
+
+MKtl(\xosc).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
+MKtl(\xosc).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["-DOWN", "+UP"]@i  };
+MKtl(\xosc).elAt(\modSw).elemDesc.label_('touchMove');
+
+// init zero values
 q.zero = q.zero ? ();
-q.zero.imu = 0;
-q.zero.pads = 0;
+q.zero.imu = 0!9;
+q.zero.pads = 0!8;
 q.osc.rawPads = (0!8);
 
+// capture current zero position for imu and pads
 MFdef(\ZERO).add(\set, {
-	q.zero.imu = MKtl(\xosc).elAt(\imu9).value;
+	q.zero.imu = MKtl(\xosc).elAt(\imu9).value.unibi;
 	q.zero.pads = q.osc.rawPads;
 	"*** ZERO was set: ".postln;
 	"imu: %\n".postf(q.zero.imu.round(0.001));
 	"pads: %\n".postf(q.zero.imu.round(0.001));
 });
+
 /*
-// get
+// get zero values while xosc is running:
 MFdef(\ZERO).value;
 */
 
-//  x.device.destination.hostname = "127.0.0.1";
+//  MKtl(\xosc).device.destination.hostname = "127.0.0.1";
 
 /// try replacing destination ONLY if test send fails:
-try { x.device.destination.sendMsg("tralala") } {
+try { MKtl(\xosc).device.destination.sendMsg("tralala") } {
 	"*** cannot send to: ".postln;
-	x.device.destination.postcs;
-	"... replacing x.device.destination.hostname_(\"localhost\");".postln;
-	x.device.destination.hostname_("localhost");
+	MKtl(\xosc).device.destination.postcs;
+	"... replacing MKtl(\xosc).device.destination.hostname_(\"localhost\");".postln;
+	MKtl(\xosc).device.destination.hostname_("localhost");
 };
 
 "*** XOSC - FOR NOW, TURN XOSC RESPONDERS OFF, ONLY USE hand-written OSCdefs!".postln;
 
-x.device.oscFuncDictionary.do(_.disable);
+MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
 
-q.osc.batSpec = [3.45, 3.82].asSpec; // observed min,max of battery voltage
+
+// battery values and display
+q.osc.batSpec = [3.45, 3.85].asSpec; // observed min, max of battery voltage
 q.osc.batString = "battery ?";
 q.osc.batval = 0;
 q.osc.batPercent = 0;
@@ -70,7 +102,7 @@ OSCdef(\bat, { |msg, time|
 OSCdef(\xdig, { |msg|
 	// msg.postln;
 	msg.drop(1).do { |val, index|
-		var elem = x.elAt('sw').at(index);
+		var elem = MKtl(\xosc).elAt('sw').at(index);
 		if (elem.value != val) {
 			// elem.postln;
 			elem.valueAction_(val);
@@ -78,25 +110,12 @@ OSCdef(\xdig, { |msg|
 	}
 }, '/inputs/digital').permanent_(true);
 
-
-x.elementsDict.do(_.action_(MFunc()));
-x.elementsDict.do { |el| el.action.add(\post, { |el| [el.name, el.value].postln }) };
-x.elementsDict.do { |el| el.action.enable(\post) };
-x.elementsDict.do { |el| el.action.disable(\post) };
-
-// pullup hack //
-x.elAt(\sw, (0..7)).do (_.valueAction_(1));
+// pullup hack - switches are 1 when open, 2 when pressed
+MKtl(\xosc).elAt(\sw, (0..7)).do (_.valueAction_(1));
 
 
-/////////// // toggle play/stop on the 4 ndefs
-////// orig backup
-// x.elAt(\sw, (0..3)).do { | bt, i|
-// 	bt.action.add(\toggle, {|bt|
-// 		if (bt.value == 0) { q.slots.toggleAt(i) }
-// 	});
-// };
-
-// modalized:
+// prepare for modalization:
+// left buttons set up modes for right side and <>
 q.osc.leftDown = List[];
 q.osc.rightDown = List[];
 q.osc.shiftWasUsed = false;
@@ -109,9 +128,10 @@ q.osc.rightDown.clear.add(\touchMove);
 q.osc.rightDown.clear;
 */
 
-x.elAt(\sw, (0..3)).do { |but, i|
+// the slot switches:
+MKtl(\xosc).elAt(\sw, (0..3)).do { |but, i|
 	but.action.add(\shift, { |but|
-		// 0 is button pressed:
+		// 0 is button pressed: prep mode
 		if (but.value == 0) {
 			q.osc.leftDown.add(but.name);
 		} {
@@ -164,7 +184,7 @@ x.elAt(\sw, (0..3)).do { |but, i|
 	});
 };
 
-x.elAt(\sw, [\5, \6, \7]).do { |but, i|
+MKtl(\xosc).elAt(\sw, [\5, \6, \7]).do { |but, i|
 	///////// order seems wrong, but posts right - why?
 	var btname = [\touchMove, \preUp, \preDown][i];
 	but.action.add(\shift, { |but|
@@ -184,8 +204,8 @@ x.elAt(\sw, [\5, \6, \7]).do { |but, i|
 q.osc.leftDown.clear.add(\sw_1);
 q.osc.leftDown.clear.add(\sw_2);
 q.osc.leftDown.clear;
-x.elAt(\sw, \5).value_(0);
-MFdef(\rightMode).(x.elAt(\sw, \5), { "def".postln }, { "shift".postln });
+MKtl(\xosc).elAt(\sw, \5).value_(0);
+MFdef(\rightMode).(MKtl(\xosc).elAt(\sw, \5), { "def".postln }, { "shift".postln });
 */
 
 // modal action for the right side buttons:
@@ -224,25 +244,25 @@ MFdef(\imuMode).add(\toggle, {
 	if(  q.inph.mode == \move ) {
 		q.inph.mode = \touch;
 		"*** enable TOUCH".postln;
-		8.do { |i|	x.elAt('inA').at(i + 8).action.enable(\setInflux) };
+		8.do { |i|	MKtl(\xosc).elAt('inA').at(i + 8).action.enable(\setInflux) };
 		MFdef(\imuFunc).disable( \setInphlux );
+		/////// pads set inphlux in unipolar, 0-1 range!
 		q.inphlux.set(*q.inphlux.inNames.keep(9).collect([_, 0]).flat);
-		x.elAt(\led, \5).value_(0.0);
+		MKtl(\xosc).elAt(\led, \5).value_(0.0);
 	}{
 		q.inph.mode = \move;
 		"*** enable MOVE (IMU) ".postln;
-		x.elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
+		MKtl(\xosc).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
 		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
 		MFdef(\imuFunc).enable( \setInphlux );
-		x.elAt(\led, \5).value_(1/2);
+		MKtl(\xosc).elAt(\led, \5).value_(1/2);
 	};
 });
 
-x.elAt(\sw, \5).action.add(\modal, {|bt|
+MKtl(\xosc).elAt(\sw, \5).action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
 	if (bt.value > 0) {
-
 		MFdef(\rightMode).(bt,
 			MFdef(\imuMode),
 			{ |ndef|
@@ -272,7 +292,7 @@ MFdef(\stepSlotPres).add(\step, { |step = 1|
 });
 
 
-x.elAt(\sw, [\6, \7]).do { |elem, index|
+MKtl(\xosc).elAt(\sw, [\6, \7]).do { |elem, index|
 	elem.action.add(\modal, {|bt|
 		var step = [1, -1]@index; // down, then up
 		// 0 is press, 1 is release:
@@ -290,37 +310,6 @@ x.elAt(\sw, [\6, \7]).do { |elem, index|
 	})
 };
 
-
-
-/////////////// ORIG funcs for backup
-// // switch thru the list of Influx weights
-// x.elAt(\sw, [\6, \7]).do { |bt, i|
-// 	bt.action.add(\front, {|bt|
-// 		defer {
-// 			if (bt.value <=0) {
-// 				MFdef(\stepInphWPre).( [1, -1] @ i);
-// 			}
-// 		}
-// 	});
-// };
-//
-// x.elAt(\sw, [\6, \7]).do { |bt, i|
-// 	bt.action.add(\preStep, {|bt|
-// 		if (bt.value <=0) {
-// 			var whichNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
-// 			whichNdefs.do { |nd, j|
-// 				q.stepNdefPreInf( nd, [1, -1] @ i );
-// 			};
-// 		}
-// 	});
-// };
-
-
-// /*
-// OSCFunc.trace;
-// OSCFunc.trace (false);
-// */
-//
 // ///////////////////////////////////////////////////////////////
 // ///////////////////////////////////////////////////////////////
 // //// I M U
@@ -331,33 +320,35 @@ OSCdef(\imu, { |msg|
 	var accel = msg.copyRange(1, 3);
 	var gyro = msg.copyRange(4, 6);
 	var magnet = msg.copyRange(7, 9);
+
+	msg.postcs;
+	//////////// FIXME: get proper minmax values
+	//////////// for 'accel', 'gyro', 'magnet'!
 	// just set all values, no action:
-	x.elAt(\accel).deviceValue = accel * 0.1;
-	x.elAt(\gyro).deviceValue = gyro * 8;
-	x.elAt(\magnet).deviceValue = magnet * 2 * 8;
-	// trigger action only once
+	MKtl(\xosc).elAt(\accel).deviceValue = accel * 0.06;
+	MKtl(\xosc).elAt(\gyro).deviceValue = gyro * 4.8;
+	MKtl(\xosc).elAt(\magnet).deviceValue = magnet * 9.6;
+
+	// trigger the action only once (influx calc)
 	MFdef(\imuFunc).value;
 
 }, "/imu").permanent_(true);
 
-// permanent tweak factor???
-q.inph.scale = 1;
-q.inph.scale = 0.4;
-q.inph.scale = 0.6;
 
+// set the first 9 values of the inphlux from the imu params:
+q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
 
 MFdef(\imuFunc).add(\setInphlux, {
-	// set the first 9 values of the inphlux from the imu params:
-	var values = (x.elAt(\imu9).value - (q.zero.imu ? 0) + 0.5).unibi;
-	var names = q.inphlux.inNames.keep(values.size);
-	var keysvals = [names, values * q.inph.scale].flop.flat;
-	// "*** imufunc".postln;
-	// keysvals.round(0.001).postln;
+	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
+		var value = MKtl(\xosc).elAt(\imu9, i).value.unibi - q.zero.imu[i];
+		[name, value]
+	}.flat;
+	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	q.inphlux.set(*keysvals);
 });
 
 // hack for xosc gui: all element actions trigger imuFunc!
-x.elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\imuFunc)));
+MKtl(\xosc).elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\imuFunc)));
 
 /*
 MFdef(\imuFunc).disable( \setInphlux );
