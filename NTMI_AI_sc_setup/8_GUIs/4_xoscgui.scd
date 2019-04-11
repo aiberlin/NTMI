@@ -11,9 +11,12 @@ g.makeGui.xosc = { |dict, name = \xosc|
 
 	// // tweak g.guiXOSC to display correct stuff only
 	g.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // hide unused Digi ins
+	g.guiXOSC.views[(0..8)+18].do{|v| v.view.visible_(false)};     // hide unused Digi ins
 
 	g.guiXOSC.views[(0..8)+18+8+8].do{|v| v.view.visible_(false)}; // hide unused LEDS
 	g.guiXOSC.views.keep(-16).do{|v| v.view.visible_(false)};      // hide unused Comparator Buttons
+
+	g.guiXOSC.views[(43..49)].do{|v| v.view.enabled_(false)};     // dim unused analog ins
 
 	// make add on/off switch for OSC Simulator
 	simButStart = g.guiXOSC.views[18 + 7];
@@ -21,17 +24,6 @@ g.makeGui.xosc = { |dict, name = \xosc|
 
 	simButStart.view.visible_(true).states_([ "SIM!", Color.white, Color.red() ]!2);
 	simButStop .view.visible_(true).states_(["stop", Color.black, Color.green ]!2);
-
-	//// // set all switches to snapback mode
-	///// FIXME: snapback mode triggers twice in modality, so fix it there!
-	// g.guiXOSC.views[(11..26)].do(_.snapback = true);
-
-	// switch off unused analog sliders!
-
-	///////////// should work but does not?
-	/*
-	*/
-
 
 	/// hack in led displays:
 	// orig

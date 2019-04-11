@@ -77,7 +77,8 @@ MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
 
 
 // battery values and display
-q.osc.batSpec = [3.45, 3.85].asSpec; // observed min, max of battery voltage
+// MKtl(\xosc).elAt(\battery).deviceSpec;
+q.osc.batSpec = [3.4, 4.05].asSpec; // observed min, max of battery voltage
 q.osc.batString = "battery ?";
 q.osc.batval = 0;
 q.osc.batPercent = 0;
