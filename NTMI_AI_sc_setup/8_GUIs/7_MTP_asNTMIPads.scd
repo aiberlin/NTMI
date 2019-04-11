@@ -1,19 +1,25 @@
 // Quarks.install("MultiTouchPad");
 
 /*
-TODO / FIXME:
-imu values only set inphlux between 0 and 1 - why?
+
+OSCdef(\imu).func.value([\blabla] ++ (0.1!10)) ; // 8 times calcOutVals
+OSCdef(\xana).func.value([\qwer] ++ (0.2!16)); // only once
+
 
 */
+
+MTP.progpath = (q.dir.base +/+ "macos_binaries/");
 
 g.makeGui.xoscMTPads = {
 	q = q ? ();
 	q.mtp = q.mtp ? ();
 	q.mtp.skip.stop;
 	q.mtp.skip = SkipJack ({
-		x.elAt(\pads8).valueAction_(q.mtp.padvals)
-		.do(_.doAction);
-	}, 0.02);
+		if ( MTP.isRunning) {
+			MKtl(\xosc).elAt(\pads8).value_(q.mtp.padvals);
+			MFdef(\touchToInph).value;
+		};
+	}, 0.05);
 
 	MTP.start.gui;
 	MTP.resetActions;
@@ -25,6 +31,7 @@ g.makeGui.xoscMTPads = {
 	MFdef(\mtp).add(\pad, { |id, xys|
 		var mypadindex, myimukey, numfingers;
 		var imukeys = [ 'accel', 'gyro', 'magnet' ];
+		var convertedSize;
 
 		if (q.inph.mode == \touch) {
 			mypadindex = q.mtp.padmap[id];
@@ -50,12 +57,10 @@ g.makeGui.xoscMTPads = {
 				};
 			};
 
-			x.elAt(myimukey).deviceValueAction_(
-				[
-					xys[0].linlin(0, 1, -5, 5),
-					xys[1].linlin(0, 1, -5, 5),
-					xys[2] * 4 * (id % 2).unibi // random +-1
-			]);
+			convertedSize = xys[2] * 0.25 * (id % 2).unibi;
+
+			MKtl(\xosc).elAt(myimukey).valueAction_(xys.put(2, convertedSize));
+
 			MFdef(\imuFunc).value;
 		};
 	});
@@ -70,6 +75,7 @@ g.makeGui.xoscMTPads = {
 		myindex !? { q.mtp.padvals.put(myindex, 0) };
 		q.mtp.padmap[id] = nil;
 		q.mtp.imumap[id] = nil;
+		MTP.refresh;
 	};
 
 	q.mtp.pads = [0.1@0.2, 0.3@0.3, 0.4@0.5, 0.42@0.72];
