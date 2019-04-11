@@ -13,13 +13,13 @@ X preset number/name,
 --- numIns, numOuts => shape
 */
 
-g.makeGui.inphluxWeights = { |dict, name = \inphluxWeights|
-	q.inph.iow = InfluxIOWGui(q.inphlux, q.inphlux.weights.shape.reverse).moveTo(700, 20);
-	q.inph.iow.parent.name_(name);
-	defer ({ q.inph.iow.parent.bounds_(Rect(700, 20, 400, 960)) }, 0.3);
-	q.inph.iow.inValsGui.orderedNames = q.inphlux.inNames;
-	q.inph.iow.outValsGui.orderedNames = q.inphlux.outNames;
-};
+// g.makeGui.inphluxWeights = { |dict, name = \inphluxWeights|
+// 	q.inph.iow = InfluxIOWGui(q.inphlux, q.inphlux.weights.shape.reverse).moveTo(700, 20);
+// 	q.inph.iow.parent.name_(name);
+// 	defer ({ q.inph.iow.parent.bounds_(Rect(700, 20, 400, 960)) }, 0.3);
+// 	q.inph.iow.inValsGui.orderedNames = q.inphlux.inNames;
+// 	q.inph.iow.outValsGui.orderedNames = q.inphlux.outNames;
+// };
 
 g.makeGui.inphlux = { |dict, name = \inphlux|
 

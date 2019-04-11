@@ -32,9 +32,9 @@ Window.getAll.postcs;
 
 // these are the default positions:
 g.defaultWinBoundsList = [
-	[ "MakeGui", Rect(10, 100, 170, 490) ],
+	[ "MakeGui", Rect(10, 100, 170, 520) ],
 	[ "inphlux", Rect(212.0, 382.0, 350.0, 350.0) ],
-	[ "inphluxWeights", Rect(520.0, 0.0, 400.0, 960.0) ],
+//	[ "inphluxWeights", Rect(520.0, 0.0, 400.0, 960.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
 	[ "masterFX", Rect(966.0, 373.0, 524.0, 782.0) ],
 	[ "nanoKtl", Rect(435.0, 51.0, 913.0, 202.0) ],
@@ -98,10 +98,10 @@ g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
 };
 
 g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
-	var winHeight = (g.makeGui.size * 35);
+	var winHeight = (g.makeGui.size + 2 * 35);
 	var w = Window(name,
 		Rect(5,
-			100,
+			150,
 			170,
 			winHeight
 		)
