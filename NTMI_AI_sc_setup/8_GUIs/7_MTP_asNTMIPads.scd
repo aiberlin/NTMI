@@ -16,8 +16,14 @@ g.makeGui.xoscMTPads = {
 	q.mtp.skip.stop;
 	q.mtp.skip = SkipJack ({
 		if ( MTP.isRunning) {
-			MKtl(\xosc).elAt(\pads8).value_(q.mtp.padvals);
-			MFdef(\touchToInph).value;
+			if (q.inph.mode == \touch) {
+				MKtl(\xosc).elAt(\pads8).value_(q.mtp.padvals);
+				MFdef(\touchToInph).value;
+			} {
+				MKtl(\xosc).elAt(\imu9).value_(q.mtp.imuvals);
+
+			};
+
 		};
 	}, 0.05);
 
@@ -57,9 +63,10 @@ g.makeGui.xoscMTPads = {
 				};
 			};
 
-			convertedSize = xys[2] * 0.25 * (id % 2).unibi;
+			convertedSize = (xys[2] * 0.25 * (id % 2).unibi).biuni;
 
-			MKtl(\xosc).elAt(myimukey).valueAction_(xys.put(2, convertedSize));
+			MKtl(\xosc).elAt(myimukey).valueAction_(
+				xys.put(2, convertedSize));
 
 			MFdef(\imuFunc).value;
 		};
@@ -71,9 +78,15 @@ g.makeGui.xoscMTPads = {
 	MTP.keydownDict.put($m, { MFdef(\imuMode).value });
 	MTP.untouchAction = { |id|
 		// " stop id: %\n".postf(id);
-		var myindex = q.mtp.padmap[id];
-		myindex !? { q.mtp.padvals.put(myindex, 0) };
+		var mypadindex = q.mtp.padmap[id];
+		var myimukey = q.mtp.imumap[id];
+
+		mypadindex !? { q.mtp.padvals.put(mypadindex, 0) };
 		q.mtp.padmap[id] = nil;
+		myimukey !? {
+			MKtl(\xosc).elAt(myimukey).valueAction_([0.5, 0.5, 0.5]);
+			MFdef(\imuFunc).value;
+		};
 		q.mtp.imumap[id] = nil;
 		MTP.refresh;
 	};
@@ -82,6 +95,7 @@ g.makeGui.xoscMTPads = {
 	q.mtp.pads = q.mtp.pads ++ q.mtp.pads.collect { |pad| pad.copy.x = 1 - pad.x };
 	q.mtp.radius = 0.08;
 	q.mtp.padvals = 0 ! 8;
+	q.mtp.imuvals = 0.5 ! 9;
 	q.mtp.padmap = ();
 	q.mtp.imumap = ();
 
