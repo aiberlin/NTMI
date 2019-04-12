@@ -44,6 +44,8 @@ OSCdef(\xana, { |msg|
 	MKtl(\xosc).elAt('inA').value_(values);
 	MFdef(\touchToInph).value;
 
+	MKtl(\xosc).elAt('inA', 7).doAction;
+
 }, '/inputs/analogue').permanent_(true);
 );
 
