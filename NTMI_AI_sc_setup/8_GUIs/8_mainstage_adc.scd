@@ -357,7 +357,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 				if (q.osc.timeSinceLast >= 1) {
 					q.osc.batval = 0;
 					q.osc.batPercent = 0;
-					q.osc.batString = "battery ?";
+					q.osc.batString = "¿ battery ?";
 				};
 			};
 

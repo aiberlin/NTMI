@@ -14,7 +14,9 @@ thisProcess.openPorts.postln;
 
 // make xosc object
 MKtl.all[\xosc].free;
-MKtl(\xosc, "xosc*");
+MKtl(\xosc, "*x-osc");
+
+/// MKtl(\xosc).gui;
 
 
 /// init all xosc actions as MFuncs, provide posting
@@ -27,12 +29,17 @@ MKtl(\xosc).elementsDict.do { |el| el.action.disable(\post) };
 
 
 // create elementgroups for imu and pads:
-MKtl(\xosc).addNamed(\imu9, MKtlElementGroup(\imu9, x, MKtl(\xosc).elAt([0, 1, 2]).flat));
-MKtl(\xosc).addNamed(\pads8, MKtlElementGroup(\pads8, x, MKtl(\xosc).elAt(\inA, (8..15))));
-MKtl(\xosc).addNamed(\slots, MKtlElementGroup(\slots, x, MKtl(\xosc).elAt(\sw, (0..3))));
-MKtl(\xosc).addNamed(\modSw, MKtl(\xosc).elAt(\sw, \5));
-MKtl(\xosc).addNamed(\steps, MKtl(\xosc).elAt(\sw, [\6, \7]));
+MKtl(\xosc).addNamed(\imu9, MKtl(\xosc).elAt([0, 1, 2]).flat);
+MKtl(\xosc).addNamed(\pads8, MKtl(\xosc).elAt(\inA, (8..15)));
 
+/// and for switches:
+////////// NOT WORKING - rename inD to \sw, for clarity
+////// MKtl(\xosc).addNamed(\sw, MKtl(\xosc).elAt(\inD).asArray);
+MKtl(\xosc).addNamed(\slots, MKtl(\xosc).elAt(\inD, (0..3)));
+MKtl(\xosc).addNamed(\modSw, MKtl(\xosc).elAt(\inD, \5));
+MKtl(\xosc).addNamed(\steps, MKtl(\xosc).elAt(\inD, [\6, \7]));
+
+MKtl(\xosc).elAt(\slots);
 // init imu values to center, pads to bottom
 MKtl(\xosc).elAt(\imu9).value_(0.5!9);
 MKtl(\xosc).elAt(\pads8).valueAction_(0!8);
@@ -48,6 +55,9 @@ q.zero.pads = 0!8;
 q.osc.rawPads = (0!8);
 
 // capture current zero position for imu and pads
+/* // get zero values while xosc is running:
+MFdef(\ZERO).value;
+*/
 MFdef(\ZERO).add(\set, {
 	q.zero.imu = MKtl(\xosc).elAt(\imu9).value.unibi;
 	q.zero.pads = q.osc.rawPads;
@@ -56,41 +66,37 @@ MFdef(\ZERO).add(\set, {
 	"pads: %\n".postf(q.zero.imu.round(0.001));
 });
 
-/*
-// get zero values while xosc is running:
-MFdef(\ZERO).value;
-*/
 
 //  MKtl(\xosc).device.destination.hostname = "127.0.0.1";
 
-/// try replacing destination ONLY if test send fails:
-try { MKtl(\xosc).device.destination.sendMsg("tralala") } {
-	"*** cannot send to: ".postln;
-	MKtl(\xosc).device.destination.postcs;
-	"... replacing MKtl(\xosc).device.destination.hostname_(\"localhost\");".postln;
-	MKtl(\xosc).device.destination.hostname_("localhost");
-};
+// /// try replacing destination ONLY if test send fails:
+// try { MKtl(\xosc).device.destination.sendMsg("tralala") } {
+// 	"*** cannot send to: ".postln;
+// 	MKtl(\xosc).device.destination.postcs;
+// 	"... replacing MKtl(\xosc).device.destination.hostname_(\"localhost\");".postln;
+// 	MKtl(\xosc).device.destination.hostname_("localhost");
+// };
 
-"*** XOSC - FOR NOW, TURN XOSC RESPONDERS OFF, ONLY USE hand-written OSCdefs!".postln;
-
-MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
+// "*** XOSC - FOR NOW, TURN XOSC RESPONDERS OFF, ONLY USE hand-written OSCdefs!".postln;
+//
+// MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
 
 
 // battery values and display
 // MKtl(\xosc).elAt(\battery).deviceSpec;
-q.osc.batSpec = [3.4, 4.05].asSpec; // observed min, max of battery voltage
-q.osc.batString = "battery ?";
+q.osc.batString = "? battery ?";
 q.osc.batval = 0;
 q.osc.batPercent = 0;
 
 ////////////// get battery value:
-OSCdef(\bat, { |msg, time|
+MKtl(\xosc).elAt(\battery).action = { |bat|
 	q.osc.oldbatval = q.osc.batval;
-	q.osc.batval = msg[1];
-	q.osc.batvaltime = time;
-	q.osc.batPercent = (q.osc.batSpec.unmap(q.osc.batval ? 0) * 100).round(0.1);
+	q.osc.batval = bat.deviceValue;
+	q.osc.batvaltime = Main.elapsedTime;
+	q.osc.batPercent = (bat.value * 100).round(0.1);
 	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
-}, "battery").permanent_(true);
+	q.osc.batString.postcln;
+};
 
 
 
@@ -100,19 +106,8 @@ OSCdef(\bat, { |msg, time|
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-OSCdef(\xdig, { |msg|
-	// msg.postln;
-	msg.drop(1).do { |val, index|
-		var elem = MKtl(\xosc).elAt('sw').at(index);
-		if (elem.value != val) {
-			// elem.postln;
-			elem.valueAction_(val);
-		}
-	}
-}, '/inputs/digital').permanent_(true);
-
 // pullup hack - switches are 1 when open, 2 when pressed
-MKtl(\xosc).elAt(\sw, (0..7)).do (_.valueAction_(1));
+MKtl(\xosc).elAt(\inD, (0..7)).do (_.valueAction_(1));
 
 
 // prepare for modalization:
@@ -130,7 +125,7 @@ q.osc.rightDown.clear;
 */
 
 // the slot switches:
-MKtl(\xosc).elAt(\sw, (0..3)).do { |but, i|
+MKtl(\xosc).elAt(\inD, [\1, \2]).do { |but, i|
 	but.action.add(\shift, { |but|
 		// 0 is button pressed: prep mode
 		if (but.value == 0) {
@@ -185,7 +180,7 @@ MKtl(\xosc).elAt(\sw, (0..3)).do { |but, i|
 	});
 };
 
-MKtl(\xosc).elAt(\sw, [\5, \6, \7]).do { |but, i|
+MKtl(\xosc).elAt(\inD, [\5, \6, \7]).do { |but, i|
 	///////// order seems wrong, but posts right - why?
 	var btname = [\touchMove, \preUp, \preDown][i];
 	but.action.add(\shift, { |but|
@@ -205,8 +200,8 @@ MKtl(\xosc).elAt(\sw, [\5, \6, \7]).do { |but, i|
 q.osc.leftDown.clear.add(\sw_1);
 q.osc.leftDown.clear.add(\sw_2);
 q.osc.leftDown.clear;
-MKtl(\xosc).elAt(\sw, \5).value_(0);
-MFdef(\rightMode).(MKtl(\xosc).elAt(\sw, \5), { "def".postln }, { "shift".postln });
+MKtl(\xosc).elAt(\inD, \5).value_(0);
+MFdef(\rightMode).(MKtl(\xosc).elAt(\inD, \5), { "def".postln }, { "shift".postln });
 */
 
 // modal action for the right side buttons:
@@ -260,7 +255,7 @@ MFdef(\imuMode).add(\toggle, {
 	};
 });
 
-MKtl(\xosc).elAt(\sw, \5).action.add(\modal, {|bt|
+MKtl(\xosc).elAt(\inD, \5).action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
 	if (bt.value > 0) {
@@ -293,7 +288,7 @@ MFdef(\stepSlotPres).add(\step, { |step = 1|
 });
 
 
-MKtl(\xosc).elAt(\sw, [\6, \7]).do { |elem, index|
+MKtl(\xosc).elAt(\inD, [\6, \7]).do { |elem, index|
 	elem.action.add(\modal, {|bt|
 		var step = [1, -1]@index; // down, then up
 		// 0 is press, 1 is release:
@@ -312,28 +307,13 @@ MKtl(\xosc).elAt(\sw, [\6, \7]).do { |elem, index|
 };
 
 // ///////////////////////////////////////////////////////////////
-// ///////////////////////////////////////////////////////////////
 // //// I M U
 // ///////////////////////////////////////////////////////////////
-// ///////////////////////////////////////////////////////////////
 
-OSCdef(\imu, { |msg|
-	var accel = msg.copyRange(1, 3);
-	var gyro = msg.copyRange(4, 6);
-	var magnet = msg.copyRange(7, 9);
-
-	//////////// FIXME: get proper minmax values
-	//////////// for 'accel', 'gyro', 'magnet'!
-	// just set all values, no action:
-	MKtl(\xosc).elAt(\accel).deviceValue = accel;
-	MKtl(\xosc).elAt(\gyro).deviceValue = gyro;
-	MKtl(\xosc).elAt(\magnet).deviceValue = magnet;
-
+MKtl(\xosc).collectivesDict[\imu].action = {
 	// trigger the action only once (influx calc)
 	MFdef(\imuFunc).value;
-
-}, "/imu").permanent_(true);
-
+};
 
 // set the first 9 values of the inphlux from the imu params:
 q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
@@ -373,3 +353,4 @@ OSCdef(\imuAlive, { |msg, time|
 // ///////////////////////////////////////////////////////////////
 
 );
+

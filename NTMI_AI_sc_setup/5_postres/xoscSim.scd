@@ -1,22 +1,6 @@
-q.addrSC = NetAddr.localAddr;
+q.addrSC = NetAddr.localAddr.port_(8000);
 
 OSCdef.trace(false);
-// turn off the internal ones for now;
-MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
-
-// run just the external ones:
-OSCdef(\imu).enable;
-
-/* TEST IMU
-// - very different ranges on these, accels very low - why?
-q.addrSC.sendMsg(\imu, * ({ 1.0.rand } ! 9 ++ 100.rand));
-*/
-
-OSCdef(\imuAlive).enable;
-/*
-OSCdef.trace(true, true);
-q.addrSC.sendMsg(\imuAlive, );
-*/
 
 /* test buttons from remote:
 q.addrSC.sendMsg('/inputs/digital', 0, 2.rand);
@@ -25,7 +9,6 @@ q.addrSC.sendMsg('/inputs/digital', 2, 2.rand);
 q.addrSC.sendMsg('/inputs/digital', 3, 2.rand);
 */
 
-OSCdef(\xana).enable;
 /*
 // has weird crosstalk compensation and bending curve on values
 q.addrSC.sendMsg('/inputs/analogue', *(0!16));
@@ -33,9 +16,31 @@ q.addrSC.sendMsg('/inputs/analogue', *(0.5!16));
 q.addrSC.sendMsg('/inputs/analogue', *({0.75.rand}!16));
 */
 
+MFdef(\switchToSim).add(\mode, {
+	var oscdict = MKtl(\xosc).device.oscFuncDictionary;
+	oscdict.do { |oscfunc|
+		oscfunc.srcID.hostname_("127.0.0.1").port_(NetAddr.langPort)
+	};
+	"*** XOSC switchToSim: srcID is now % !\n\n".postf(oscdict.choose.srcID.cs);
+	Tdef(\xoscSimulator).stop.play;
+});
+
+
+MFdef(\switchToXOSC).add(\mode, {
+	var info = MKtl(\xosc).desc.fullDesc.netAddrInfo;
+	var oscdict = MKtl(\xosc).device.oscFuncDictionary;
+	oscdict.do { |oscfunc|
+		oscfunc.srcID.hostname_(info.ipAddress).port_(info.srcPort)
+	};
+	"*** XOSC switchToSim: srcID is now % !\n\n".postf(oscdict.choose.srcID.cs);
+	Tdef(\xoscSimulator).stop;
+});
+
+
 Tdef(\xoscSimulator).set(\dt, 0.2);
 
 Tdef(\xoscSimulator, { |ev|
+
 	var imuvals = 0 ! 9;
 	var anavals = 0 ! 16;
 	var tempval = 20;
@@ -61,15 +66,15 @@ Tdef(\xoscSimulator, { |ev|
 });
 
 //////// start simulation from xosc GUI:
-MKtl(\xosc).elAt(\sw, \15).action = { |bt|
+MKtl(\xosc).elAt(\inD, \15).action = { |bt|
 	if (bt.value > 0) {
 		"*** starting sim: ".post;
-		Tdef(\xoscSimulator).postln.play;
+		MFdef(\switchToSim).value;
 	}
 };
-MKtl(\xosc).elAt(\sw, \16).action = { |bt|
+MKtl(\xosc).elAt(\inD, \16).action = { |bt|
 	if (bt.value > 0) {
 		"*** stopping sim: ".post;
-		Tdef(\xoscSimulator).stop;
+		MFdef(\switchToXOSC).value;
 	}
 };

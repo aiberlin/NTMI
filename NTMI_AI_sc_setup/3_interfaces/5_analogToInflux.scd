@@ -18,14 +18,19 @@ MFdef(\touchToInph).add(\set, {
 	q.inphlux.set(*keysValues);
 });
 
-OSCdef(\xana, { |msg|
-	var values = msg.drop(1);
-	var influxKeysVals;
+////// this is the action that gets triggered
+////// when values come in from the xosc -
+////// use this to compensate for crosstalk,
+////// and sending the final values once.
+
+MKtl(\xosc).collAt('aIn').groupAction = nil;
+
+MKtl(\xosc).collAt('aIn').groupAction = { |coll|
+	var values = coll.value;
 	var xtalkFactor = 0.5;
-	// andere sensor vieleicht passt andere nummer
-	// value[1] = value[1].linlin(value[0] * 0.5, 1, 0, 1);
-	// MAGIC crosstalk compensation of
-	//////// adc Mar 2019 - still seems an improvement
+
+	// // MAGIC crosstalk compensation - adc Mar 2019 - seems an improvement
+	// // value[1] = value[1].linlin(value[0] * 0.5, 1, 0, 1);
 	(15..1).do { |i|
 		values[i] = values[i].linlin(values[i - 1] * xtalkFactor, 1, 0, 1);
 	};
@@ -41,13 +46,14 @@ OSCdef(\xana, { |msg|
 		values.put(i,stretched);
 	};
 
+	// set to the compensated values, no action
 	MKtl(\xosc).elAt('inA').value_(values);
+	// trigger touch to inphlux only once ...
 	MFdef(\touchToInph).value;
-
+	// and explicitly trigger zoom action
 	MKtl(\xosc).elAt('inA', 7).doAction;
 
-}, '/inputs/analogue').permanent_(true);
-);
+};
 
 // individual pad action - useful for guis
 /// do global set only once, from MFdef(\touchToInph)
