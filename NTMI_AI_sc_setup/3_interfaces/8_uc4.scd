@@ -24,7 +24,7 @@
 // select enc1 on knob 1, change ctlmode to Ccr2,
 // hold until running bars go away -> all encoders are now relative
 
-MKtlDesc.loadDescs;
+// MKtlDesc.loadDescs;
 g.uc4.free; g.uc4 = MKtl(\uc4, "*uc4_pg");
 
 

@@ -89,7 +89,9 @@ g.makeGui.nanoKtl = { |dict, name = \nanoKtl|
 	g.nanoKtl;
 };
 
-g.makeGui.uc4 = { g.uc4.gui };
+g.uc4 !? { g.makeGui.uc4 = { g.uc4.gui } };
+
+MKtl.all['ferr'] !? { g.makeGui.ferrari = { q.ferr.mktl.gui } };
 
 g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
 	g.simulator = Tdef(\xoscSimulator).gui.moveTo(200, 400);

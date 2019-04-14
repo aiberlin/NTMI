@@ -4,7 +4,6 @@
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-//neu - remove weird crosstalk from each input to next
 (
 q.inphlux.addHalo(\padNames, q.inphlux.inNames.copyRange(9, 16));
 
@@ -67,22 +66,5 @@ MKtl(\xosc).elAt(\pads8).do { |pad, i|
 	})
 };
 
+);
 
-/*
-
-MFdef(\xoscFunc).add(\setInphlux, {
-var values = MKtl(\xosc).elAt(\accel).value.unibi ++ MKtl(\xosc).elAt(\gyro).value.unibi ++ MKtl(\xosc).elAt(\magnet).value.unibi ;
-var names = q.inphlux.inNames;
-var keysvals = [names, values * q.inph.scale].flop.flat;
-q.inphlux.set(*keysvals);
-});
-
-q.ndefs.do { |ndef, i|
-MKtl(\xosc).elAt(\inA, [8,9,10,11][i]).action.add(\setNdef, { |ana|
-ndef.vol_( (ana.value - 0.0).cubed.clip(0, 1))
-});
-};
-
-[8,9,10,11].do{|i|	MKtl(\xosc).elAt(\inA, i).action.disable(\setNdef) };
-[8,9,10,11].do{|i|	MKtl(\xosc).elAt(\inA, i).action.enable(\setNdef) };
-*/
