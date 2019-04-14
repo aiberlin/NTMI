@@ -114,6 +114,20 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	batView.refresh;
 	g.main.batView = batView;
 
+	Button(w, Rect(rightCol, 320 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+		["Reset Clock", Color.white, butRed],
+	]).font_(font)
+	.action_({
+		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
+	});
+
+
+	Button(w, Rect(rightCol, 660 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+		["SET ZERO for\ntouch + move", Color.white, butRed],
+	]).font_(font)
+	.action_({ MFdef('ZERO').value });
+
+
 	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["RECORD?", Color.white, butRed],
 		["Recording!", Color.black, butGreen]
@@ -134,18 +148,17 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		Platform.recordingsDir.openOS;
 	});
 
-	Button(w, Rect(rightCol, 510 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["SET ZERO for\ntouch + move", Color.white, butRed],
+	Button(w,
+		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 60 * scrscale)
+	).states_([
+		["MasterFX\n<<  RAND  >>", Color.white, butRed],
 	]).font_(font)
-	.action_({ MFdef('ZERO').value });
-
-	Button(w, Rect(rightCol, 660 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["Reset Clock", Color.white, butRed],
-	]).font_(font)
-	.action_({
-		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
+	.mouseDownAction_({ |bt, x, y, mod|
+		var zone = x div: (bt.bounds.width div: 3);
+		var stepVal = [-1, nil, 1][zone];
+		MFdef('mastaPreStep').value(stepVal);
+		// [bt, x, y, mod].postcs;
 	});
-
 
 	// 4 popups to select sounds, 4 mviews for volume levels
 	// add play buttons?
@@ -270,17 +283,32 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	(
 		bigUV.drawFunc = { |uv|
 			var center = uv.bounds.extent * 0.5;
+			var mastaIndex = q.mfx.domainIndex;
+			var domainName = q.mfx.preNames[mastaIndex];
 
 			"bigUV should only refresh when making NTMI_Main window.".postln;
+			Pen.translate(center.x, center.y);
 
-			Pen.addArc(center, center.y * 0.9, 0, 2pi);
+			Pen.addArc(0@0, center.y * 0.9, 0, 2pi);
 			// shape:
 			Pen.color_(Color.white);
 			Pen.width = 3;
 			Pen.stroke;
+
+
+			Pen.rotate(mastaIndex.linlin(-1, q.mfx.preNames.size, 0.5pi, -0.5pi));
+			Pen.scale(1.618, 1.618);
+			Pen.stringCenteredIn(domainName,
+				Rect.aboutPoint(0@0, center.x, 40),
+				fatfont,
+				Color.grey(1.0, 0.5)
+
+			);
 		};
 		bigUV.refresh;
 	);
+
+	MFdef('mastaPreStep').add(\updateMain, { bigUV.refresh });
 
 	// small UV in the middle for cheaper pads/axes drawing
 	(
