@@ -27,6 +27,19 @@ MKtl(\xosc).elementsDict.do { |el| el.action.add(\post, { |el|
 MKtl(\xosc).elementsDict.do { |el| el.action.enable(\post) };
 MKtl(\xosc).elementsDict.do { |el| el.action.disable(\post) };
 
+// on the collective input of the switches:
+// trigger the individual action on the button whose state has changed;
+// dont use doAction, because that triggers all group actions -> loop
+MKtl(\xosc).collAt(\dIn).action = { |coll|
+	coll.do { |bt|
+		if (bt.value != bt.prevValue) {
+			bt.action.value(bt);
+		};
+	};
+};
+
+MKtl(\xosc).collAt(\dIn).elements[0].dump
+
 
 // create elementgroups for imu and pads:
 MKtl(\xosc).addNamed(\imu9, MKtl(\xosc).elAt([0, 1, 2]).flat);
