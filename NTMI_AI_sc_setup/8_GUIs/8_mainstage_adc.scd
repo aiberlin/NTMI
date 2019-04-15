@@ -301,14 +301,14 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			Pen.stringCenteredIn(domainName,
 				Rect.aboutPoint(0@0, center.x, 40),
 				fatfont,
-				Color.grey(1.0, 0.5)
+				Color.grey(1.0, 0.3)
 
 			);
 		};
 		bigUV.refresh;
 	);
 
-	MFdef('mastaPreStep').add(\updateMain, { bigUV.refresh });
+	MFdef('mastaPreStep').add(\updateMain, { defer { bigUV.refresh } });
 
 	// small UV in the middle for cheaper pads/axes drawing
 	(
