@@ -136,7 +136,7 @@ q.osc.rightDown.clear;
 */
 
 // the slot switches:
-MKtl(\xosc).elAt(\inD, [\1, \2]).do { |but, i|
+MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 	but.action.add(\shift, { |but|
 		// 0 is button pressed: prep mode
 		if (but.value == 0) {
