@@ -219,7 +219,7 @@ MFdef(\rightMode).(MKtl(\xosc).elAt(\inD, \5), { "def".postln }, { "shift".postl
 MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 	var btval = but.value;
 	var btname = (sw_5: \touchMove, sw_6: \preDown, sw_7: \preUp)[but.name];
-	var leftButNames = [\sw_1, \sw_2, \sw_3, \sw_4];
+	var leftButNames = [\inD_1, \inD_2, \inD_3, \inD_4 ];
 	var slotIndex, player;
 	if (q.osc.leftDown.size == 0) {
 		// if we just left a mode, just reset
