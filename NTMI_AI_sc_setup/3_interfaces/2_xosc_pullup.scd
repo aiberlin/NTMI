@@ -38,8 +38,6 @@ MKtl(\xosc).collAt(\dIn).action = { |coll|
 	};
 };
 
-MKtl(\xosc).collAt(\dIn).elements[0].dump
-
 
 // create elementgroups for imu and pads:
 MKtl(\xosc).addNamed(\imu9, MKtl(\xosc).elAt([0, 1, 2]).flat);
