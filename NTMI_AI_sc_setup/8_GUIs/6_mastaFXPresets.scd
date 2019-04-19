@@ -60,6 +60,8 @@ g.makeGui.masterFX = {
 	q.mfx.win.bounds_(q.mfx.win.bounds.moveTo(790, 1200));
 	q.mfx.win.alpha_(0.85);
 
+	q.tuneNameView(q.mfx.mgui.editGui);
+
 	// not fully working yet - needs to be triggered
 	q.mfx.setHighKeys = { |dict, highKeys|
 		q.mfx.highKeys = highKeys;
@@ -77,6 +79,6 @@ g.makeGui.masterFX = {
 			q.mfx.prepop.value = q.mfx.domainIndex
 		};
 		q.mFX.proxyChain.proxy.cleanNodeMap;
-	}, 0.5);
+	}, 0.5, { q.mfx.win.isClosed });
 
 };

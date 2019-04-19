@@ -94,6 +94,8 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	q.uniWin.addHalo(\active, px);
 	q.uniWin.addHalo(\active1, 0);
 
+	g.tuneNameView(ng);
+
 	butrow[0].doAction;
 
 	SkipJack({

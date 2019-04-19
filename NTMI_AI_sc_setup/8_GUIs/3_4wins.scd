@@ -9,6 +9,7 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 		var gui = NdefGui(px, 8, w);
 		w.view.decorator.nextLine.shift(0, 10);
 		gui.skipjack.dt = 0.03;
+		g.tuneNameView(gui);
 		gui;
 	};
 	g[name] = w;

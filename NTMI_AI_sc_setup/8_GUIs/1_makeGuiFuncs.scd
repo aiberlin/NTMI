@@ -25,6 +25,22 @@ MFdef(\makeGui).add(\frontOrRemake, { |name, remake = false|
 	};
 });
 
+/*
+z = NdefGui(Ndef(\allArm));
+g.tuneNameView(s);
+*/
+
+g.tuneNameView = { |q, obj|
+	if (obj.respondsTo(\nameView)) {
+		obj.nameView.font_(Font("Helvetica", 16))
+		.stringColor_(Color.white)
+		.background_(Color.blue)
+	} {
+		"g.tuneNameView: obj % has no nameView.".postf(obj.cs)
+	};
+	obj
+};
+
 // catch all windows positions
 /*
 Window.getAll.postcs;
@@ -68,7 +84,7 @@ g.makeGui.ndefMixer = { |dict, name = \ndefMixer|
 	ndefMixer.skipjack.dt = 0.5;
 	ndefMixer.moveTo(5, 5);
 	// set popupmenu to 'activeProxies'
-	ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
+	// ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
 	ProxyMeter.addMixer(ndefMixer);
 	defer ({ ProxyMeter.hideKrs }, 1);
 	ndefMixer
@@ -76,6 +92,7 @@ g.makeGui.ndefMixer = { |dict, name = \ndefMixer|
 
 g.makeGui.liveInput = { |dict, name = \liveInput|
 	g.liveGui = q.liveInput.gui.name_(name).moveTo(600, 5);
+	g.tuneNameView(g.liveGui);
 	g.liveGui;
 };
 
@@ -98,6 +115,7 @@ g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
 	g.simulator.parent.name_(name);
 	g.simulator
 };
+
 
 g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 	var winHeight = (g.makeGui.size + 2 * 35);
