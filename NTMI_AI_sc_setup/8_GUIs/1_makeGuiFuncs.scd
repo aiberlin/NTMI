@@ -83,10 +83,13 @@ g.makeGui.ndefMixer = { |dict, name = \ndefMixer|
 	g[name] = ndefMixer;
 	ndefMixer.skipjack.dt = 0.5;
 	ndefMixer.moveTo(5, 5);
-	// set popupmenu to 'activeProxies'
+	g[\ndefMixer].arGuis.do(q.tuneNameView(_));
+	q.tuneNameView(g[\ndefMixer].editGui);
+	// set popupmenu to 'activeProxies' ?
 	// ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
 	ProxyMeter.addMixer(ndefMixer);
-	defer ({ ProxyMeter.hideKrs }, 1);
+	defer ({ ProxyMeter.hideKrs }, 2);
+
 	ndefMixer
 };
 

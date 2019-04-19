@@ -82,3 +82,4 @@ g.makeGui.masterFX = {
 	}, 0.5, { q.mfx.win.isClosed });
 
 };
+
