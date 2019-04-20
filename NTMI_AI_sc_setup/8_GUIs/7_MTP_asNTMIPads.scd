@@ -75,7 +75,11 @@ g.makeGui.xoscMTPads = {
 	MTP.touchAction = MFdef(\mtp);
 	MTP.setAction = MFdef(\mtp);
 
-	MTP.keydownDict.put($m, { MFdef(\imuMode).value });
+	MTP.keydownDict.put($m, {
+		MFdef(\imuMode).value;
+		try { MTP.uview.refresh };
+	});
+
 	MTP.untouchAction = { |id|
 		// " stop id: %\n".postf(id);
 		var mypadindex = q.mtp.padmap[id];
@@ -111,11 +115,12 @@ g.makeGui.xoscMTPads = {
 		var black = Color.black.alpha_(0.6);
 
 		[
+			"simulate xosc input:",
 			"'.' to stop",
 			"[space] to start",
-			"M for Touch/Move"
+			"M toggles Touch/Move"
 		].do { |string, i|
-			var hiunit = extent.y * 0.12;
+			var hiunit = extent.y * 0.13;
 			Pen.stringCenteredIn(string,
 				bounds.copy.top_(hiunit * i).height_(hiunit),
 				font,
