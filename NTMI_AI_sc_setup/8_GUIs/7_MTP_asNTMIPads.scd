@@ -64,11 +64,14 @@ g.makeGui.xoscMTPads = {
 			};
 
 			convertedSize = (xys[2] * 0.25 * (id % 2).unibi).biuni;
+			xys.put(2, convertedSize);
 
-			MKtl(\xosc).elAt(myimukey).valueAction_(
-				xys.put(2, convertedSize));
+			// [myimukey, xys.round(0.001)].postln;
 
-			MFdef(\imuFunc).value;
+			if(myimukey.notNil) {
+				MKtl(\xosc).elAt(myimukey).valueAction_(xys);
+				MFdef(\imuFunc).value;
+			};
 		};
 	});
 
@@ -115,10 +118,11 @@ g.makeGui.xoscMTPads = {
 		var black = Color.black.alpha_(0.6);
 
 		[
-			"simulate xosc input:",
-			"'.' to stop",
+			"Simulate xosc input",
+			"by MultiTouchPad:",
 			"[space] to start",
-			"M toggles Touch/Move"
+			"M toggle Touch/Move",
+			"'.' to stop",
 		].do { |string, i|
 			var hiunit = extent.y * 0.13;
 			Pen.stringCenteredIn(string,

@@ -48,7 +48,7 @@ Window.getAll.postcs;
 
 // these are the default positions:
 g.defaultWinBoundsList = [
-	[ "MakeGui", Rect(10, 100, 170, 520) ],
+	[ "MakeGui", Rect(0.0, 202.0, 170.0, 520.0) ],
 	[ "inphlux", Rect(465.0, 665.0, 680.0, 340.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
 	[ "masterFX", Rect(966.0, 373.0, 524.0, 782.0) ],
@@ -57,7 +57,7 @@ g.defaultWinBoundsList = [
 	[ "ndefPresets", Rect(5.0, 755.0, 487.0, 400.0) ],
 	[ "slotSounds", Rect(587.0, 354.0, 400.0, 800.0) ],
 	[ "xosc", Rect(965.0, 15.0, 910.0, 380.0) ],
-	[ "xoscSimulator", Rect(1491.0, 423.0, 274.0, 180.0) ]
+	// [ "xoscSimulator", Rect(1380.0, 824.0, 262.0, 100) ]
 ];
 
 g.defaultWinBounds = ();
@@ -113,9 +113,17 @@ g.uc4 !? { g.makeGui.uc4 = { g.uc4.gui } };
 MKtl.all['ferr'] !? { g.makeGui.ferrari = { q.ferr.mktl.gui } };
 
 g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
-	g.simulator = Tdef(\xoscSimulator).gui.moveTo(200, 400);
-	g.simulator.parent.name_(name);
-	g.simulator
+	var bounds = Window.flipY(g.main.oscBut.absoluteBounds).height_(100).moveBy(0, -120);
+	var win = Window(\xoscSimulator, bounds).front;
+	win.view.addFlowLayout;
+	StaticText(win, (bounds.extent * (0.99@0.38)).asRect)
+	.string_("Simulate random OSC signals from an xosc, to test that OSC is working:");
+
+	[ MFdef(\switchToSim), MFdef(\switchToXOSC) ].do { |mfdef|
+		Button(win, bounds.extent * (0.45@0.3))
+		.states_([[mfdef.key]])
+		.action_(mfdef);
+	};
 };
 
 
@@ -131,7 +139,21 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 	w.alwaysOnTop_(true).background_(Color.red).front;
 	w.addFlowLayout;
 
-	g.makeGui.keys(Array).sort.do { |key|
+	// g.makeGui.keys(Array).sort.do ...
+	[
+		'MakeGui',
+		'NTMI_Main',
+		'xosc', 'xoscMTPads', 'xoscSimulator',
+		'inphlux',
+		'liveInput',
+		'ndefPresets', 'slotSounds',
+		'ndefMixer',
+		'masterFX',
+		'nanoKtl',
+		'uc4',
+		'z_CLOSEALL',
+		'z_setAll'
+	].do { |key|
 		Button(w, 160@28)
 		.font_(Font("Monaco", 18))
 		.states_([[key, Color.white, Color.grey(0.8, 0.4) ]]).action_ { |but, mod = 0|

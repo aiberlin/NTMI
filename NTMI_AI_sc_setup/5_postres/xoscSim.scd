@@ -41,9 +41,10 @@ Tdef(\xoscSimulator).set(\dt, 0.2);
 
 Tdef(\xoscSimulator, { |ev|
 
-	var imuvals = 0 ! 9;
+	var imuvals = 0.5 ! 9, imuRawVals;
 	var anavals = 0 ! 16;
 	var tempval = 20;
+	var imuspecs = MKtl(\xosc).elAt(\imu9).collect(_.deviceSpec);
 
 	inf.do { |i|
 		// send OSC messages for analog and imu at typical rates,
@@ -52,29 +53,33 @@ Tdef(\xoscSimulator, { |ev|
 		imuvals = imuvals.collectInPlace { |val| (val + 0.2.rand2 * 0.95).fold2(8.0).round(0.01) };
 		tempval = (tempval + 3.rand2).fold(0, 100);
 
-		anavals = anavals.collectInPlace { |val, i| (val + 0.05.rand2 * 0.95).fold(0, 1).round(0.01) };
+		anavals = anavals.collectInPlace { |val, i| (val + 0.05.rand2).fold(0, 1).round(0.01) };
 
 		// zoom - pretend pot rand jitter to be filtered
 		anavals.put(7, q.zoom);
 
-		q.addrSC.sendMsg(\imu, *(imuvals ++ tempval));
+		imuvals.round(0.001).postln;
+		imuRawVals = imuvals.collect { |val,i| imuspecs[i].map(val) };
+		imuRawVals.round(0.001).postln;
+		"".postln;
+		q.addrSC.sendMsg(\imu, *(imuRawVals ++ tempval));
 		q.addrSC.sendMsg('/inputs/analogue', *anavals);
 
 		ev.dt.wait;
 
 	}
 });
-
-//////// start simulation from xosc GUI:
-MKtl(\xosc).elAt(\inD, \15).action = { |bt|
-	if (bt.value > 0) {
-		"*** starting sim: ".post;
-		MFdef(\switchToSim).value;
-	}
-};
-MKtl(\xosc).elAt(\inD, \16).action = { |bt|
-	if (bt.value > 0) {
-		"*** stopping sim: ".post;
-		MFdef(\switchToXOSC).value;
-	}
-};
+//
+// //////// start simulation from xosc GUI:
+// MKtl(\xosc).elAt(\inD, \15).action = { |bt|
+// 	if (bt.value > 0) {
+// 		"*** starting sim: ".post;
+// 		MFdef(\switchToSim).value;
+// 	}
+// };
+// MKtl(\xosc).elAt(\inD, \16).action = { |bt|
+// 	if (bt.value > 0) {
+// 		"*** stopping sim: ".post;
+// 		MFdef(\switchToXOSC).value;
+// 	}
+// };
