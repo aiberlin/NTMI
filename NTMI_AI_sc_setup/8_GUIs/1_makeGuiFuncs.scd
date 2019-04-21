@@ -49,13 +49,13 @@ Window.getAll.postcs;
 // these are the default positions:
 g.defaultWinBoundsList = [
 	[ "MakeGui", Rect(0.0, 202.0, 170.0, 520.0) ],
-	[ "inphlux", Rect(465.0, 665.0, 680.0, 340.0) ],
+	[ "inphlux", Rect(100, 665.0, 680.0, 340.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
 	[ "masterFX", Rect(966.0, 373.0, 524.0, 782.0) ],
 	[ "nanoKtl", Rect(435.0, 51.0, 913.0, 202.0) ],
 	[ "ndefMixer", Rect(28.0, 14.0, 684.0, 273.0) ],
-	[ "ndefPresets", Rect(5.0, 755.0, 487.0, 400.0) ],
-	[ "slotSounds", Rect(587.0, 354.0, 400.0, 800.0) ],
+//	[ "ndefPresets", Rect(5.0, 755.0, 487.0, 400.0) ],
+	[ "slotSounds", Rect(880.0, 367.0, 782.0, 610.0) ],
 	[ "xosc", Rect(965.0, 15.0, 910.0, 380.0) ],
 	// [ "xoscSimulator", Rect(1380.0, 824.0, 262.0, 100) ]
 ];
@@ -145,12 +145,13 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 		'NTMI_Main',
 		'xosc', 'xoscMTPads', 'xoscSimulator',
 		'inphlux',
+		'slotSounds',
 		'liveInput',
-		'ndefPresets', 'slotSounds',
 		'ndefMixer',
 		'masterFX',
 		'nanoKtl',
 		'uc4',
+	//	'ndefPresets',
 		'z_CLOSEALL',
 		'z_setAll'
 	].do { |key|
