@@ -83,8 +83,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.padCols = MKtl('xosc').elAt(\inA, (8..15)).collect(_.value);
 	g.main.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
 
-	Stethoscope(s, 4, view: w.view);
-	ServerMeterView(s, w, 250@0, 4, 4);
+	Stethoscope(s, q.numChans, view: w.view);
+	ServerMeterView(s, w, 250@0, q.numIns ? q.numChans, q.numChans);
 
 	oscBut = Button(w,
 		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
@@ -114,6 +114,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	batView.refresh;
 	g.main.batView = batView;
 
+
 	Button(w, Rect(rightCol, 320 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["Reset Clock", Color.white, butRed],
 	]).font_(font)
@@ -121,14 +122,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
 	});
 
-
-	Button(w, Rect(rightCol, 660 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["SET ZERO for\ntouch + move", Color.white, butRed],
-	]).font_(font)
-	.action_({ MFdef('ZERO').value });
-
-
-	recBut = Button(w, Rect(rightCol, 810 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+	recBut = Button(w, Rect(rightCol, 450 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["RECORD?", Color.white, butRed],
 		["Recording!", Color.black, butGreen]
 	]).font_(font)
@@ -141,12 +135,18 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		}
 	});
 
-	Button(w, Rect(rightCol, 950 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
+	Button(w, Rect(rightCol, 580 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
 		["show recordings", Color.white, butRed]
 	]).font_(font.copy.size_(font.size * 0.62))
 	.action_({ |bt|
 		Platform.recordingsDir.openOS;
 	});
+
+	Button(w, Rect(rightCol, 800 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+		["SET ZERO for\ntouch + move", Color.white, butRed],
+	]).font_(font)
+	.action_({ MFdef('ZERO').value });
+
 
 	Button(w,
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 60 * scrscale)
