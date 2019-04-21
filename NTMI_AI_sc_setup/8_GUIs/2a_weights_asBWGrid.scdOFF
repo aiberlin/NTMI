@@ -16,7 +16,8 @@ bench { u.refresh };
 
 */
 
-g.makeGui.inphluxInOut = {
+g.makeGui.inphluxInOut = { |mgDict, parent|
+
 	q.inph.ioWin = Window("inphluxInOut", {
 		var bnds = Window.availableBounds;
 		var size = bnds.width * 0.1;

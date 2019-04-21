@@ -49,8 +49,7 @@ Window.getAll.postcs;
 // these are the default positions:
 g.defaultWinBoundsList = [
 	[ "MakeGui", Rect(10, 100, 170, 520) ],
-	[ "inphlux", Rect(212.0, 382.0, 350.0, 350.0) ],
-//	[ "inphluxWeights", Rect(520.0, 0.0, 400.0, 960.0) ],
+	[ "inphlux", Rect(465.0, 665.0, 680.0, 340.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
 	[ "masterFX", Rect(966.0, 373.0, 524.0, 782.0) ],
 	[ "nanoKtl", Rect(435.0, 51.0, 913.0, 202.0) ],
