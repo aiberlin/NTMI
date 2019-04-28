@@ -274,7 +274,7 @@ MKtl(\xosc).elAt(\inD, \5).action.add(\modal, {|bt|
 			MFdef(\imuMode),
 			{ |ndef|
 				"% - choose rand preset...\n".postf(ndef);
-				q.stepNdefPreInf( ndef, nil )
+				q.pre.stepNdefInf( ndef, nil )
 			}
 		)
 	};
@@ -294,7 +294,7 @@ MFdef(\stepVol).add(\step, { |ndef, step = 1|
 MFdef(\stepSlotPres).add(\step, { |step = 1|
 	var activeNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
 	activeNdefs.do { |nd, j|
-		q.stepNdefPreInf( nd, step );
+		q.pre.stepNdefInf( nd, step );
 	};
 });
 

@@ -145,7 +145,7 @@ q.nktl.elAt(\select).do { |el, i|
 			q.slots.stepNext(i, relStep);
 		} {
 			// next preset
-			q.stepNdefPreInf(ndef, relStep);
+			q.pre.stepNdefInf(ndef, relStep);
 		};
 	};
 };
