@@ -107,6 +107,7 @@ Task {
 	"1_prefs/1_prefs.scd".loadRelative;
 	// set q.numChans from prefs
 	q.numChans = q.prefs.active.numChans ? 2;
+	q.numIns = q.prefs.active.numIns ? q.numChans;
 	"*** q.numChans is: %\n".postf(q.numChans);
 
 	///////// dont load HIDs by default, for more stability

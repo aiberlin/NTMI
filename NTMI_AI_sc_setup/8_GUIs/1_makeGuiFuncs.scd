@@ -110,7 +110,7 @@ g.makeGui.nanoKtl = { |dict, name = \nanoKtl|
 
 g.uc4 !? { g.makeGui.uc4 = { g.uc4.gui } };
 
-MKtl.all['ferr'] !? { g.makeGui.ferrari = { q.ferr.mktl.gui } };
+MKtl.all['ferrari'] !? { g.makeGui.ferrari = { q.ferr.mktl.gui } };
 
 g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
 	var bounds = Window.flipY(g.main.oscBut.absoluteBounds).height_(100).moveBy(0, -120);
@@ -150,6 +150,7 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 		'ndefMixer',
 		'masterFX',
 		'nanoKtl',
+		'ferrari',
 		'uc4',
 	//	'ndefPresets',
 		'z_CLOSEALL',
