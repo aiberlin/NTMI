@@ -167,6 +167,11 @@ MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
 	};
 });
 
+
+MFdef(\mastaVol).add(\masta, { |univol = 0.5|
+	q.mFX.pxChain.proxy.setUni(\mastaVol, univol);
+});
+
 MFdef(\mastaPre).value(\baseset);
 
 MFdef(\mastaPreStep).add(\inc, { |inc|

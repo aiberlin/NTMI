@@ -16,7 +16,7 @@ The same concept also works for gamepads and other devices.
 
 - sliders 1-8/1-7: 	influx!
 
-- last slider 8/9:	masterVol via limDrive
+- last slider 8/9:	masterVol via mastaVol
 
 transport buttons:
 nk1: rew, play, fwd:	rand, prev, next influx preset
@@ -129,9 +129,7 @@ q.nktl.elAt(\inflSet).do { |sl, i|
 };
 
 // rightmost slider is master volume (into limiter)
-q.nktl.elAt(\masta).action = { |sl|
-	q.mFX.pxChain.proxy.setUni(\limDrive, sl.value);
-};
+q.nktl.elAt(\masta).action = { |sl| MFdef(\mastaVol).value(sl.value) };
 
 
 // normal: select next setting

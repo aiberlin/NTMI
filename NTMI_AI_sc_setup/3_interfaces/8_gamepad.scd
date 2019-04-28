@@ -268,11 +268,10 @@ if (q.ferr.mktl.isNil) {
 			if (q.ferr.mktl.elAt(\bt, \10).isOn) {
 				"set masterVolume center:".post;
 				q.ferr.uniMasterVolOffset = (wheel.value - 0.5).postln;
-				try { q.mFX.pxChain.proxy.setUni(\limDrive, wheel.value) };
+				MFdef(\mastaVol).value( wheel.value);
 			} {
 				// "masterVol: ".postln;
-				try { q.mFX.pxChain.proxy.setUni(\limDrive,
-					q.ferr.uniMasterVolOffset + wheel.value) };
+				MFdef(\mastaVol).value(q.ferr.uniMasterVolOffset + wheel.value);s
 			};
 		};
 	});

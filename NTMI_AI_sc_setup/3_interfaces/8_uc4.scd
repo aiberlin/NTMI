@@ -9,7 +9,7 @@
 
 - 8 sliders: 		influx!
 
-- xfader:           masterVol via limDrive
+- xfader:           masterVol via mastaVol param
 
 - bot buts 1 2 3:	rand, prev, next influx preset
 - bot but  5:		snapshot presets
@@ -73,6 +73,13 @@ g.uc4.elAt(\rand_pre).elemDesc.label = "rand MFX";
 g.uc4.elAt(\prev_pre).elemDesc.label = "prev MFX";
 g.uc4.elAt(\next_pre).elemDesc.label = "next MFX";
 
+
+// init values
+g.uc4.elAt('pgKn1', \kn).value = 0.5;
+g.uc4.elAt('pgSl1', \sl).value = 0.5;
+g.uc4.elAt('masta').value = 0.5;
+
+
 // g.makeGui.uc4 = { g.uc4.gui };
 
 // add a spec to uc4, for relative use:
@@ -102,7 +109,7 @@ g.uc4.elAt(\playBts).do { |el, i|
 // xfader is master volume before limiter
 g.uc4.elAt('masta').action = { |xf|
 	// 	s.volume.volume_(\svol.asSpec.map(xf.value))
-	q.mFX.pxChain.proxy.setUni(\limDrive, xf.value);
+	MFdef(\mastaVol).value(xf.value);
 };
 
 // normal: select next setting
