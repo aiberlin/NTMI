@@ -323,7 +323,8 @@ ProxyChain.add3( '6roto',
 );
 
 ProxyChain.add3( '9endFilt',
-	\filterIn -> { arg in, higCut=15000, lowCut=40; var l, h;
+	\filterIn -> { arg in, higCut=15000, lowCut=40;
+		var l, h;
 		l = LPF.ar( in, lowCut);
 		h = LPF.ar( in, higCut);
 		h-l;

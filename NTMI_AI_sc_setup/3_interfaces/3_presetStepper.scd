@@ -15,7 +15,7 @@ q.stepNdefPreInf = { |q, ndef, inc|
 		};
 		nextIndex = currIndex + inc % nextNames.size;
 		nextName = nextNames[nextIndex];
-		">>> % setting: %\n\n".postf(pre, nextName.cs);
+		">>> % setting: % at index: % \n\n".postf(pre, nextName.cs, nextIndex);
 		pre.setCurr(nextName);
 		q.inphlux.offsetsFromPreset(*[pre, nextName]);
 	};

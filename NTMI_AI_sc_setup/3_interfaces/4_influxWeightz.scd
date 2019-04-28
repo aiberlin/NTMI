@@ -65,9 +65,10 @@ q.inph.presetCols = q.inph.randSeeds.size.collect {|i|
 	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [q.inph.alpha])
 };
 
+// set weights preset by index: number is wrapped index in q.inph.randSeeds
 MFdef(\setInphWPre).add(\set, { |index|
 	var numPres = q.inph.randSeeds.size;
-	var nuIndex = (index ? numPres.rand).asInteger % numPres;
+	var nuIndex = (index ? q.inph.at(\presIndex) ? 0).asInteger % numPres;
 	var nuPreKey = q.inph.randSeeds[nuIndex];
 	var nuPreset = q.inphlux.presets[nuPreKey];
 	">>> setting inphlux to preset % with magic Number %:\n".postf(nuIndex, nuPreKey);
