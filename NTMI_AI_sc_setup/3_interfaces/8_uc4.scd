@@ -43,6 +43,7 @@ g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (4..7)));
 g.uc4.addNamed(\rand_inph, g.uc4.elAt(\pgSl1, \bt, 0));
 g.uc4.addNamed(\prev_inph, g.uc4.elAt(\pgSl1, \bt, 1));
 g.uc4.addNamed(\next_inph, g.uc4.elAt(\pgSl1, \bt, 2));
+g.uc4.addNamed(\zero_inph, g.uc4.elAt(\pgSl1, \bt, 3));
 
 g.uc4.addNamed(\snap, g.uc4.elAt(\pgSl1, \bt, 4));
 
@@ -65,10 +66,10 @@ g.uc4.elAt(\masta).elemDesc.label = "Main Vol";
 g.uc4.elAt(\rand_inph).elemDesc.label = "rand inph";
 g.uc4.elAt(\prev_inph).elemDesc.label = "prev inph";
 g.uc4.elAt(\next_inph).elemDesc.label = "next inph";
+g.uc4.elAt(\zero_inph).elemDesc.label = "zero inph";
 
-g.uc4.elAt(\pgSl1, \bt, 3).elemDesc.label = "noch nix";
+
 g.uc4.elAt(\snap).elemDesc.label = "snap pre!";
-
 g.uc4.elAt(\rand_pre).elemDesc.label = "rand MFX";
 g.uc4.elAt(\prev_pre).elemDesc.label = "prev MFX";
 g.uc4.elAt(\next_pre).elemDesc.label = "next MFX";
@@ -161,6 +162,7 @@ if (q.inphlux.respondsTo(\get).not) {
 g.uc4.elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil) } };
 g.uc4.elAt(\prev_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(-1 ) } };
 g.uc4.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 ) } };
+g.uc4.elAt(\zero_inph).action = { |el| if (el.isOn) { q.inphlux.resetInvals } };
 
 
 // Right 3 bottom buttons: masterfx preset rand, -1, +1

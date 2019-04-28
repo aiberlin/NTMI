@@ -168,14 +168,14 @@ if (q.ferr.mktl.isNil) {
 
 	////////// 4 joyaxes set influx inputs
 	q.ferr.mktl.elAt(\joyAxes).do { |el, i|
-		var inName = q.inphlux.inNames[i];
+		var inName = q.inphlux.inNames[i + 9];
 		el.elemDesc.label = "infl" + inName.cs;
 		el.action = { |el| q.inphlux.set(inName, el.value.unibi) };
 	};
 
 	////////// 2 throttles set influx inputs
 	q.ferr.mktl.elAt(\throt).do { |el, i|
-		var inName = q.inphlux.inNames[i + 4];
+		var inName = q.inphlux.inNames[i + 9 + 4];
 		el.elemDesc.label = "infl" + inName.cs;
 		el.action = { |el| q.inphlux.set(inName, el.value) };
 	};
