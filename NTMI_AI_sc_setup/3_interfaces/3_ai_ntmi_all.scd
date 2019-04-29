@@ -3,16 +3,38 @@ OSCFunc.trace;
 OSCFunc.trace (false);
 
 TODO:
-- buttons are 0 when open, and 1 when pressed!
+- button polarity NOT like xosc!
+-- buttons are 0 when open, and 1 when pressed!
 
-- Program encoder:
+- ADD FULL mode: touch and move together!
 
--- basemode: inc/dev master volume
--- slot mode: inc/dec slot volume
--- hat press mode - use? for what? inc.dec MasterFX presets?
--- slot+hat mode ?? inc/dec sounds?
+Controller Mapping:
 
--- step buttons: inc/dec/rand preset
++ IMU to inphlux  in  move mode [and full mode]
++ CAP to inphlux in touch mode [and full mode]
+
+*** MODE - But8:
++ touch
++ move
+- full
+-- off?
+-- hold down for mode?
+
+*** SLOT buttons 1-4:
++ base mode: sound on/off
++ pressing shifts to slot mode!
+
+*** STEP buttons 6 7:
++ base mode: step inphlux presets
+-- slot mode: inc/dec/rand presets
+-- hat mode: step mfx presets
+
+*** ENCODER:
+-- base mode -> inc/dev master volume
+-- hat  mode -> zoom!
+-- slot mode -> inc/dec slot volume
+-- sl+hat mode -> inc/dec sounds?
+
 
 */
 
@@ -28,10 +50,6 @@ MKtl(\ntmi).device.updateDstAddr("169.254.1.1", 57120);
 MKtl(\ntmi).device.updateSrcAddr("169.254.1.1", 57120);
 
 MKtl(\ntmi).elAt(\enc).value_(0.5);
-
-///////// is this still the same as in xosc????
-///////// that buttons are 1 when open, and 0 when pressed?
-MKtl(\ntmi).elAt(\bt).value_(1!8);
 
 
 /// init all xosc actions as MFuncs, provide posting
@@ -53,7 +71,7 @@ MKtl(\ntmi).addNamed(\modSw, MKtl(\ntmi).elAt(\bt, \8));
 MKtl(\ntmi).elAt(\slots);
 // init imu values to center, caps to bottom
 MKtl(\ntmi).elAt(\imu9).value_(0.5!9);
-MKtl(\ntmi).elAt(\caps).valueAction_(0!8);
+MKtl(\ntmi).elAt(\cap).valueAction_(0!8);
 
 /// name the elements
 MKtl(\ntmi).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
@@ -112,8 +130,8 @@ q.osc.rightDown.clear;
 // the slot switches:
 MKtl(\ntmi).elAt(\slots).do { |but, i|
 	but.action.add(\shift, { |but|
-		// 0 is button pressed: prep mode
-		if (but.value == 0) {
+		// 1 is button pressed: prep mode
+		if (but.isOn) {
 			q.osc.leftDown.add(but.name);
 		} {
 			// button was released: remove shifter
@@ -123,7 +141,7 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 	});
 
 	// on button release, do modal action:
-	but.action.add(\modal, {
+	but.action.add(\modal, { |but|
 		var btval = but.value;
 		var btnum = 1 + i;
 		var btname = but.name;
@@ -131,7 +149,7 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 
 		[btname, btnum, btval].postln;
 
-		if (btval > 0) {
+		if (but.isOn.not) {
 			// determine whether we are in a mode
 			if (q.osc.rightDown.size == 0) {
 				// reset if we just left a mode
@@ -225,7 +243,7 @@ MFdef(\imuMode).add(\toggle, {
 	if(  q.inph.mode == \move ) {
 		q.inph.mode = \touch;
 		"*** enable TOUCH".postln;
-		MKtl(\ntmi).elAt('caps').do { |cap| cap.action.enable(\setInflux) };
+		MKtl(\ntmi).elAt('cap').do { |cap| cap.action.enable(\setInflux) };
 		MFdef(\imuFunc).disable( \setInphlux );
 		/////// pads set inphlux in unipolar, 0-1 range!
 		q.inphlux.set(*q.inphlux.inNames.keep(9).collect([_, 0]).flat);
@@ -257,7 +275,14 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 /*
 MFdef(\stepVol).(q.slots.actives[0]);
 MFdef(\stepVol).(q.slots.actives[0], -1);
+
+MFdef(\mastaStepVol).(1);
+
 */
+
+MFdef(\mastaStepVol).add(\step, { |inc=0|
+	RelSet(q.mFX.pxChain.proxy, \mastaVol, inc * 0.01);
+});
 
 MFdef(\stepVol).add(\step, { |ndef, step = 1|
 	var stepsize = 0.01; // 100 steps from 0 to 1
@@ -272,8 +297,45 @@ MFdef(\stepSlotPres).add(\step, { |step = 1|
 	};
 });
 
+// -- base mode -> inc/dev master volume
+// -- hat  mode -> zoom!
+// -- slot mode -> inc/dec slot volume
+// -- sl+hat mode -> inc/dec sounds?
 
-MKtl(\ntmi).elAt(\bt, [\6, \7]).do { |elem, index|
+MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
+	var slotDown = (q.osc.leftDown.size > 0).binaryValue;
+	var hatDown = MKtl(\ntmi).elAt(\encHat).isOn.binaryValue;
+	var modeNum = slotDown * 2 + hatDown;
+
+	modeNum.postln.switch(
+		0, {
+			"base: mastaStepVol".postln;
+			MFdef(\mastaStepVol).(enc.deviceValue);
+		},
+		1, {
+			"hat: zoom".postln;
+			q.incZoom(enc.deviceValue * 0.05);
+		},
+		2, {
+			"slot: slot volume".postln;
+			q.osc.leftDown.do { |btname|
+				var slotIndex = MKtl(\ntmi).dictAt(btname).indexInGroup;
+				MFdef(\stepVol).(q.slots.actives[slotIndex], enc.deviceValue);
+			};
+		},
+		3, {
+			"slotHat: sound selection".postln;
+			q.osc.leftDown.do { |btname|
+				var slotIndex = MKtl(\ntmi).dictAt(btname).indexInGroup;
+				q.slots.stepNext(slotIndex);
+			};
+
+		}
+	);
+	enc.deviceValue = 0;
+});
+
+MKtl(\ntmi).elAt(\steps).do { |elem, index|
 	elem.action.add(\modal, {|bt|
 		var step = [1, -1]@index; // down, then up
 		// 0 is press, 1 is release:
@@ -333,7 +395,7 @@ OSCdef(\imuAlive, { |msg, time|
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
-//// ANALOG INS Touchmod
+//// Caps
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
@@ -342,7 +404,7 @@ q.inphlux.addHalo(\padNames, q.inphlux.inNames.copyRange(9, 16));
 
 MFdef(\capsToInph).add(\set, {
 	var influx = q.inphlux;
-	var pads = MKtl(\ntmi).elAt(\caps);
+	var pads = MKtl(\ntmi).elAt(\cap);
 	var padInNames = q.inphlux.getHalo(\padNames);
 	var keysValues = pads.collect { |pad, i|
 		[ padInNames[i], pad.value]
@@ -371,14 +433,14 @@ MKtl(\ntmi).collAt('caps').groupAction = { |coll|
 	};
 
 	// set to the compensated values, no action
-	MKtl(\ntmi).elAt('caps').value_(values);
+	MKtl(\ntmi).elAt('cap').value_(values);
 	// trigger touch to inphlux only once ...
 	MFdef(\capsToInph).value;
 };
 
 // individual pad action - useful for guis only
 /// do global set only once, from MFdef(\touchToInph)
-MKtl(\ntmi).elAt(\caps).do { |pad, i|
+MKtl(\ntmi).elAt(\cap).do { |pad, i|
 	pad.action.add(\setInflux, {|ana|
 		var name = 	q.inphlux.getHalo(\padNames).clipAt(i);
 		q.inphlux.set(name, ana.value.pow(3));

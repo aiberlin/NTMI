@@ -132,7 +132,7 @@ MKtlDesc.fromDict(
 			caps: (
 				oscPath: '/ntmi/caps',
 				elements: 8.collect {|i|
-					[\caps, (i + 1).asSymbol]
+					[\cap, (i + 1).asSymbol]
 				},
 				ioType: \in
 			)
@@ -242,4 +242,4 @@ MKtlDesc.fromDict(
 //////// for testing layout:
 // Window.closeAll;
 // x.free; x = MKtl(\ntmi, "ai-ntmi"); x.gui;
-// x.elAt(\caps).value;
+// x.elAt(\cap).value;
