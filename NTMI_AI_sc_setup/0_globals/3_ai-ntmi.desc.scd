@@ -30,6 +30,7 @@ x.device.updateSrcAddr("169.254.1.1", 57120);
 // -> and change clearly when you move the xosc!
 
 
+x.getSpec;
 
 OSCdef.trace;
 OSCdef.trace(false);
@@ -69,161 +70,176 @@ n.sendMsg("/ntmi/enc", rrand(1, 6) * [-1, 1].choose);
 */
 
 
-
-//
 MKtlDesc.fromDict(
 	(
 		descName: "ai-ntmi",
-	deviceName: "ntmi",
-	protocol: \osc,
-	deviceType: \multiController,
-	elementTypes: [\accelerometer, \sensor, \serial],
-	status: (
-		linux: "unknown",
-		osx: "unknown",
-		win: "unknown"
-	),
-
-	idInfo: "ntmi",
-	// netAddrInfo: ( /*ipAddress: "169.254.1.1", */srcPort: 9000, recvPort: 8000 ), // ip for adhoc mode
-
-	deviceInfo: (
-		vendorURI: "http://www.airborneinstruments.eu",
-		//	manualURI: "http://www.x-io.co.uk/downloads/x-OSC-User-Manual-v0.4.pdf",
-		description: "nontrivial musical instrument sending by OSC",
-		// features: [
-		// 	"16× analogue/digital inputs",
-		// 	"16× digital/PWM outputs (up to 50 mA per channel)",
-		// 	"13-bit ADC with 400 Hz update rate per channel",
-		// 	"Up to 16-bit PWM resolution for 5 Hz to 250 kHz",
-		// 	"Control up to 400 RGB LEDs (NeoPixel)",
-		// 	"4× serial communication channels"
-		// ],
-		longName: "AI-NTMI_esp32",
-		notes: "",
-	),
-
-	specs: (
-		\switch: [0, 1, \lin, 1],
-		\pass: PassSpec,
-		// measured degrees of rotation at 100 Hz sendrate:
-		gyroAxis: [-1.0, 1.0],
-		// measured max accel with fast shaking:
-		accelAxis: [-8, 8],
-		// guessing, usually more between +-0.5:
-		magnetAxis: [-0.8, 0.8],
-		// gyro temperature
-		temp: [0, 100],
-		// min and max working battery voltage
-		batVolt: [3.4, 3.9],
-		enc: [-7, 7, \lin, 1]
-	),
-
-	collectives: (
-		imu: (
-			oscPath: '/ntmi/imu',
-			elements: [
-				[\accel, \x], [\accel, \y], [\accel, \z],
-				[\gyro, \pitch], [\gyro, \roll], [\gyro, \yaw],
-				[\magnet, \pitch], [\magnet, \roll], [\magnet, \yaw],
-				[\temp]
-			],
-			ioType: \in
+		deviceName: "ntmi",
+		protocol: \osc,
+		deviceType: \multiController,
+		elementTypes: [\accelerometer, \sensor, \serial],
+		status: (
+			linux: "unknown",
+			osx: "unknown",
+			win: "unknown"
 		),
-		caps: (
-			oscPath: '/ntmi/caps',
-			elements: 8.collect {|i|
-				[\caps, (i + 1).asSymbol]
-			},
-			ioType: \in
-		)
-	),
 
-	elementsDesc: (
-		// input elements:
+		idInfo: "ntmi",
+		// netAddrInfo: ( /*ipAddress: "169.254.1.1", */srcPort: 9000, recvPort: 8000 ), // ip for adhoc mode
 
-		elements: [
+		deviceInfo: (
+			vendorURI: "http://www.airborneinstruments.eu",
+			//	manualURI: "http://www.x-io.co.uk/downloads/x-OSC-User-Manual-v0.4.pdf",
+			description: "nontrivial musical instrument sending by OSC",
+			// features: [
+			// 	"16× analogue/digital inputs",
+			// 	"16× digital/PWM outputs (up to 50 mA per channel)",
+			// 	"13-bit ADC with 400 Hz update rate per channel",
+			// 	"Up to 16-bit PWM resolution for 5 Hz to 250 kHz",
+			// 	"Control up to 400 RGB LEDs (NeoPixel)",
+			// 	"4× serial communication channels"
+			// ],
+			longName: "AI-NTMI_esp32",
+			notes: "",
+		),
 
-			// 10 floating-point arguments indicating the current readings of the on board sensors.
-			/// Arguments 1 – 3 gyroscope (°/s) x, y, z; arguments 4 – 6 accelerometer (g), x, y ,z;
-			// arguments 7 – 9 magnetometer (Ga) x, y ,z; argument 10 gyroscope temperature (°C)
-			(
-				key: \accel,
-				shared: (elementType: 'accelAxis', ioType: \collectiveIn,
-					\spec: 'accelAxis' ),
-				elements: [\x, \y, \z].collect { |name, i|
-					(key: name, style: (row: 0, column: i * 0.9 + 0, height: 2))
-				}
+		specs: (
+			\switch: [0, 1, \lin, 1],
+			\pass: PassSpec,
+			// measured degrees of rotation at 100 Hz sendrate:
+			gyroAxis: [-1.0, 1.0],
+			// measured max accel with fast shaking:
+			accelAxis: [-8, 8],
+			// guessing, usually more between +-0.5:
+			magnetAxis: [-0.8, 0.8],
+			// gyro temperature
+			temp: [0, 100],
+			// min and max working battery voltage
+			batVolt: [3.4, 3.9],
+			enc: [-7, 7, \lin, 1]
+		),
+
+		collectives: (
+			imu: (
+				oscPath: '/ntmi/imu',
+				elements: [
+					[\accel, \x], [\accel, \y], [\accel, \z],
+					[\gyro, \pitch], [\gyro, \roll], [\gyro, \yaw],
+					[\magnet, \pitch], [\magnet, \roll], [\magnet, \yaw],
+					[\temp]
+				],
+				ioType: \in
 			),
-			(
-				key: \gyro,
-				shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
-					\spec: 'gyroAxis' ),
-				elements: [\pitch, \roll, \yaw].collect{ |name, i|
-					(key: name, style: (row: 0, column: i * 0.9 + 3, height: 2))
-				}
-			),
-			(
-				key: \magnet,
-				shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
-					\spec: 'magnetAxis' ),
-				elements: [\pitch, \roll, \yaw].collect { |name, i|
-					(key: name, style: (row: 0, column: i* 0.9  + 6, height: 2))
-				}
-			),
-
-			//// 8 floating-point analog values from the capsensors. Sent at analogue input message rate
-			(
-				key: \caps,
-				shared: (elementType: \slider, spec: \lin1, ioType: \collectiveIn),
-				elements:  (1..8).collect { |num|  (key: num.asSymbol, style: (height: 2)) }
-			),
-
-			(
-				key: \temp, elementType: 'slider', ioType: \collectiveIn,
-				\spec: 'temp', style: (column: 8.5, height: 2) ),
-
-			// 1 float indicating the current battery voltage
-			(
-				key: \battery, oscPath: '/ntmi/batt', ioType: \in,
-				elementType: \slider, spec: \batVolt, style: (column: 9.5, height: 2)),
-
-			// dont know where to declare the led set message!
-			(
-				key: \led,
-				shared: (elementType: \button, spec: \but, ioType: \out),
-				elements:  [
-					(key: \fr, elements: (1..8).collect { |num, i|
-						(
-							key: num.asSymbol,
-							oscPath: '/ntmi/led/front',
-							argTemplate: [ i ]
-						)
-					}),
-					(key: \bk, elements: (1..8).collect { |num|
-						(
-							key: num.asSymbol,
-							oscPath: '/ntmi/led/back',
-							argTemplate: [ i ]
-						)
-					}),
-				]
-			),
-
-			(
-				key: \bt,
-					shared: (elementType: \switch, spec: \switch, \oscPath: '/ntmi/btns'),
-				elements:  (1..8).collect { |num, i|
-					( key: num.asSymbol, argTemplate: [ i ] )
-				}
-			),
-
-			(
-				key: \enc, oscPath: '/ntmi/enc', ioType: \in,
-				elementType: \encoder, spec: \enc
-
+			caps: (
+				oscPath: '/ntmi/caps',
+				elements: 8.collect {|i|
+					[\caps, (i + 1).asSymbol]
+				},
+				ioType: \in
 			)
-		]
+		),
+
+		elementsDesc: (
+			// input elements:
+
+			elements: [
+
+				// 10 floating-point arguments indicating the current readings of the on board sensors.
+				/// Arguments 1 – 3 gyroscope (°/s) x, y, z; arguments 4 – 6 accelerometer (g), x, y ,z;
+				// arguments 7 – 9 magnetometer (Ga) x, y ,z; argument 10 gyroscope temperature (°C)
+				(
+					key: \accel,
+					shared: (elementType: 'accelAxis', ioType: \collectiveIn,
+						\spec: 'accelAxis' ),
+					elements: [\x, \y, \z].collect { |name, i|
+						(key: name, style: (row: 0, column: i * 0.9 + 0, height: 2))
+					}
+				),
+				(
+					key: \gyro,
+					shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
+						\spec: 'gyroAxis' ),
+					elements: [\pitch, \roll, \yaw].collect{ |name, i|
+						(key: name, style: (row: 0, column: i * 0.9 + 3, height: 2))
+					}
+				),
+				(
+					key: \magnet,
+					shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
+						\spec: 'magnetAxis' ),
+					elements: [\pitch, \roll, \yaw].collect { |name, i|
+						(key: name, style: (row: 0, column: i* 0.9  + 6, height: 2))
+					}
+				),
+
+				//// 8 floating-point analog values from the capsensors. Sent at analogue input message rate
+				(
+					key: \caps,
+					shared: (elementType: \slider, spec: \lin1, ioType: \collectiveIn),
+					elements:  (1..8).collect { |num, i|
+						(key: num.asSymbol,
+							style: (column: [2,5][i div: 4], row: i % 4 + 3, width: 1, height: 1.2)
+						)
+
+					}
+				),
+
+				(
+					key: \bt,
+					shared: (elementType: \switch, spec: \switch, \oscPath: '/ntmi/btns'),
+					elements:  (1..8).collect { |num, i|
+						( key: num.asSymbol, argTemplate: [ i ],
+							style: (column: [1,6][i div: 4], row: i % 4 + 3)
+						)
+					}
+				),
+
+				(
+					key: \enc, oscPath: '/ntmi/enc', ioType: \in,
+					elementType: \encoder, spec: \enc,
+					style: (column: 6, row: 2)
+
+				),
+
+				(
+					key: \temp, elementType: 'slider', ioType: \collectiveIn,
+					\spec: 'temp', style: (column: 9.5, height: 2) ),
+
+				// 1 float indicating the current battery voltage
+				(
+					key: \battery, oscPath: '/ntmi/batt', ioType: \in,
+					elementType: \slider, spec: \batVolt, style: (column: 10.5, height: 2)),
+
+
+				////// leds are out elements
+				(
+					key: \led,
+					shared: (elementType: \button, spec: \but, ioType: \out),
+					elements:  [
+						(key: \fr, elements: (1..8).collect { |num, i|
+							(
+								key: num.asSymbol,
+								oscPath: '/ntmi/led/front',
+								argTemplate: [ i ],
+								style: (column: [3, 4][i div: 4], row: i % 4 + 3)
+							)
+						}),
+						(key: \bk, elements: (1..8).collect { |num, i|
+							(
+								key: num.asSymbol,
+								oscPath: '/ntmi/led/back',
+								argTemplate: [ i ],
+								style: (column: [0,7][i div: 4], row: i % 4 + 3)
+							)
+						}),
+					]
+				),
+
+			]
+		)
 	)
-)
 );
+
+//////// for testing layout:
+// Window.closeAll;
+// x.free; x = MKtl(\ntmi, "ai-ntmi"); x.gui;
+// x.elAt(\caps).value;
