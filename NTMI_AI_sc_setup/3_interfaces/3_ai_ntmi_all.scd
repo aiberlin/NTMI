@@ -317,5 +317,66 @@ OSCdef(\imuAlive, { |msg, time|
 	q.osc.lastInTime = time;
 }, "/imu").permanent_(true);
 
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+//// ANALOG INS Touchmod
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+(
+q.inphlux.addHalo(\padNames, q.inphlux.inNames.copyRange(9, 16));
+
+MFdef(\capsToInph).add(\set, {
+	var influx = q.inphlux;
+	var pads = MKtl(\ntmi).elAt(\pads8);
+	var padInNames = q.inphlux.getHalo(\padNames);
+	var keysValues = pads.collect { |pad, i|
+		[ padInNames[i], pad.value]
+	}.flat;
+	q.inphlux.set(*keysValues);
+});
+
+////// this is the action that gets triggered
+////// when values come in from the xosc -
+////// use this to compensate for crosstalk,
+////// and sending the final values once.
+
+MKtl(\ntmi).collAt('caps').groupAction = nil;
+
+MKtl(\ntmi).collAt('caps').groupAction = { |coll|
+	var values = coll.value;
+
+	q.osc.rawPads = values;
+
+	// q.zero.pads is the rest state of the pads
+	// use it to stretch to a range of 0-1
+	values.do { |rawval, i|
+		var zeroOffset = q.zero.pads.asArray.wrapAt(i);
+		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
+		values.put(i, stretched);
+	};
+
+	// set to the compensated values, no action
+	MKtl(\ntmi).elAt('caps').value_(values);
+	// trigger touch to inphlux only once ...
+	MFdef(\capsToInph).value;
+};
+
+// individual pad action - useful for guis only
+/// do global set only once, from MFdef(\touchToInph)
+MKtl(\ntmi).elAt(\caps).do { |pad, i|
+	pad.action.add(\setInflux, {|ana|
+		var name = 	q.inphlux.getHalo(\padNames).clipAt(i);
+		q.inphlux.set(name, ana.value.pow(3));
+		//.pow(6));
+		// the pow(6) helps toflatten the steep curve of the FSRs as they are now.
+		ana.value
+	})
+};
+
+);
+
+
 );
 
