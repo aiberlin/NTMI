@@ -173,7 +173,7 @@ MKtlDesc.fromDict(
 
 				//// 8 floating-point analog values from the capsensors. Sent at analogue input message rate
 				(
-					key: \caps,
+					key: \cap,
 					shared: (elementType: \slider, spec: \lin1, ioType: \collectiveIn),
 					elements:  (1..8).collect { |num, i|
 						(key: num.asSymbol,

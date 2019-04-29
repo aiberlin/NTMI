@@ -1,8 +1,21 @@
-// /*
-// OSCFunc.trace;
-// OSCFunc.trace (false);
-// */
-//
+/*
+OSCFunc.trace;
+OSCFunc.trace (false);
+
+TODO:
+- buttons are 0 when open, and 1 when pressed!
+
+- Program encoder:
+
+-- basemode: inc/dev master volume
+-- slot mode: inc/dec slot volume
+-- hat press mode - use? for what? inc.dec MasterFX presets?
+-- slot+hat mode ?? inc/dec sounds?
+
+-- step buttons: inc/dec/rand preset
+
+*/
+
 
 (
 // use this dict for everything osc related
@@ -16,6 +29,10 @@ MKtl(\ntmi).device.updateSrcAddr("169.254.1.1", 57120);
 
 MKtl(\ntmi).elAt(\enc).value_(0.5);
 
+///////// is this still the same as in xosc????
+///////// that buttons are 1 when open, and 0 when pressed?
+MKtl(\ntmi).elAt(\bt).value_(1!8);
+
 
 /// init all xosc actions as MFuncs, provide posting
 MKtl(\ntmi).elementsDict.do(_.action_(MFunc()));
@@ -26,23 +43,19 @@ MKtl(\ntmi).elementsDict.do { |el| el.action.enable(\post) };
 MKtl(\ntmi).elementsDict.do { |el| el.action.disable(\post) };
 
 
-// create elementgroups for imu and pads:
-MKtl(\ntmi).addNamed(\imu9, MKtl(\ntmi).elAt([0, 1, 2]).flat);
-MKtl(\ntmi).addNamed(\pads8, MKtl(\ntmi).elAt(\caps));
-
-/// and for switches:
-////////// NOT WORKING - rename inD to \sw, for clarity
-////// MKtl(\ntmi).addNamed(\sw, MKtl(\ntmi).elAt(\inD).asArray);
+// create named elements/groups for imu and pads etc:
+MKtl(\ntmi).addNamed(\imu9, MKtl(\ntmi).elAt([\accel, \gyro, \magnet]).flat);
 MKtl(\ntmi).addNamed(\slots, MKtl(\ntmi).elAt(\bt, (0..3)));
-MKtl(\ntmi).addNamed(\modSw, MKtl(\ntmi).elAt(\bt, \8));
-MKtl(\ntmi).addNamed(\steps, MKtl(\ntmi).elAt(\bt, [\6, \7]));
 MKtl(\ntmi).addNamed(\encHat, MKtl(\ntmi).elAt(\bt, \5));
+MKtl(\ntmi).addNamed(\steps, MKtl(\ntmi).elAt(\bt, [\6, \7]));
+MKtl(\ntmi).addNamed(\modSw, MKtl(\ntmi).elAt(\bt, \8));
 
 MKtl(\ntmi).elAt(\slots);
-// init imu values to center, pads to bottom
+// init imu values to center, caps to bottom
 MKtl(\ntmi).elAt(\imu9).value_(0.5!9);
-MKtl(\ntmi).elAt(\pads8).valueAction_(0!8);
+MKtl(\ntmi).elAt(\caps).valueAction_(0!8);
 
+/// name the elements
 MKtl(\ntmi).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
 MKtl(\ntmi).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
 MKtl(\ntmi).elAt(\modSw).elemDesc.label_('touchMove');
@@ -192,8 +205,8 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 			defaultAction.value;
 		}
 	} {
-		// lest is held down, and right was pressed,
-		// so now we are in shoft mode:
+		// left is held down, and right was pressed,
+		// so now we are in shift mode:
 		q.osc.shiftWasUsed = true;
 		slotIndex = leftButNames.indexOf(q.osc.leftDown.first);
 		player = q.slots.actives[slotIndex];
@@ -268,7 +281,7 @@ MKtl(\ntmi).elAt(\bt, [\6, \7]).do { |elem, index|
 		if (bt.value == 1) {
 			MFdef(\rightMode).(bt,
 				{
-					// reply to OSC device: which LED which Color!
+					// reply to OSC device: which LED os which Color!
 					MFdef(\stepInphWPre).(step);
 					MFdef(\stepSlotPres).(step);
 				},
@@ -329,7 +342,7 @@ q.inphlux.addHalo(\padNames, q.inphlux.inNames.copyRange(9, 16));
 
 MFdef(\capsToInph).add(\set, {
 	var influx = q.inphlux;
-	var pads = MKtl(\ntmi).elAt(\pads8);
+	var pads = MKtl(\ntmi).elAt(\caps);
 	var padInNames = q.inphlux.getHalo(\padNames);
 	var keysValues = pads.collect { |pad, i|
 		[ padInNames[i], pad.value]
@@ -374,9 +387,6 @@ MKtl(\ntmi).elAt(\caps).do { |pad, i|
 		ana.value
 	})
 };
-
 );
-
-
 );
 
