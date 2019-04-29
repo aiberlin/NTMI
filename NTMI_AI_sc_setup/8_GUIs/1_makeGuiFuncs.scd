@@ -108,6 +108,14 @@ g.makeGui.nanoKtl = { |dict, name = \nanoKtl|
 	g.nanoKtl;
 };
 
+g.makeGui.ntmi = {
+	try { Window.find("ntmi").close };
+	try {
+		var ntg = MKtl(\ntmi).gui;
+		ntg.views.detect { |vw| vw.element.name == \enc }.view.centered_(true);
+	};
+};
+
 g.uc4 !? { g.makeGui.uc4 = { g.uc4.gui } };
 
 MKtl.all['ferrari'] !? { g.makeGui.ferrari = { q.ferr.mktl.gui } };
@@ -143,6 +151,7 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 	[
 		'MakeGui',
 		'NTMI_Main',
+		'ntmi',
 		'xosc', 'xoscMTPads', 'xoscSimulator',
 		'inphlux',
 		'slotSounds',
