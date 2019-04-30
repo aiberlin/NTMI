@@ -26,14 +26,14 @@ Controller Mapping:
 
 *** STEP buttons 6 7:
 + base mode: step inphlux presets
--- slot mode: inc/dec/rand presets
--- hat mode: step mfx presets
++ slot mode: inc/dec/rand presets
++ hat mode: step mfx presets
 
 *** ENCODER:
--- base mode -> inc/dev master volume
--- hat  mode -> zoom!
--- slot mode -> inc/dec slot volume
--- sl+hat mode -> inc/dec sounds?
++ base mode -> inc/dev master volume
++ hat  mode -> zoom!
++ slot mode -> inc/dec slot volume
++ sl+hat mode -> inc/dec sounds?
 
 
 */
@@ -132,10 +132,10 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 	but.action.add(\shift, { |but|
 		// 1 is button pressed: prep mode
 		if (but.isOn) {
-			q.osc.leftDown.add(but.name);
+			q.osc.leftDown.add(but.indexInGroup);
 		} {
 			// button was released: remove shifter
-			q.osc.leftDown.remove(but.name);
+			q.osc.leftDown.remove(but.indexInGroup);
 			// q.osc.leftDown.postln;
 		}
 	});
@@ -200,10 +200,6 @@ MKtl(\ntmi).elAt(\bt, [\6, \7, \8]).do { |but, i|
 };
 
 /*
-q.osc.leftDown.clear.add(\sw_1);
-q.osc.leftDown.clear.add(\sw_2);
-q.osc.leftDown.clear;
-MKtl(\ntmi).elAt(\inD, \5).value_(0);
 MFdef(\rightMode).(MKtl(\ntmi).elAt(\inD, \5), { "def".postln }, { "shift".postln });
 */
 
@@ -211,7 +207,6 @@ MFdef(\rightMode).(MKtl(\ntmi).elAt(\inD, \5), { "def".postln }, { "shift".postl
 MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 	var btval = but.value;
 	var btname = (bt_8: \touchMove, bt_7: \preDown, bt_6: \preUp)[but.name];
-	var leftButNames = [\bt_1, \bt_2, \bt_3, \bt_4 ];
 	var slotIndex, player;
 	if (q.osc.leftDown.size == 0) {
 		// if we just left a mode, just reset
@@ -226,7 +221,7 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 		// left is held down, and right was pressed,
 		// so now we are in shift mode:
 		q.osc.shiftWasUsed = true;
-		slotIndex = leftButNames.indexOf(q.osc.leftDown.first);
+		slotIndex = q.osc.leftDown.first;
 		player = q.slots.actives[slotIndex];
 		// " % shift action for slot %, % \n".postf(btname, slotIndex, player);
 		shiftAction.value(player);
@@ -318,15 +313,13 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 		},
 		2, {
 			"slot: slot volume".postln;
-			q.osc.leftDown.do { |btname|
-				var slotIndex = MKtl(\ntmi).dictAt(btname).indexInGroup;
+			q.osc.leftDown.do { |slotIndex|
 				MFdef(\stepVol).(q.slots.actives[slotIndex], enc.deviceValue);
 			};
 		},
 		3, {
 			"slotHat: sound selection".postln;
-			q.osc.leftDown.do { |btname|
-				var slotIndex = MKtl(\ntmi).dictAt(btname).indexInGroup;
+			q.osc.leftDown.do { |slotIndex|
 				q.slots.stepNext(slotIndex);
 			};
 
@@ -335,20 +328,33 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 	enc.deviceValue = 0;
 });
 
+
+// *** TODO: STEP buttons 6 7:
+// + base mode: step inphlux presets
+// -- slot mode: inc/dec/rand presets
+// -- hat mode: step mfx presets
+
 MKtl(\ntmi).elAt(\steps).do { |elem, index|
 	elem.action.add(\modal, {|bt|
-		var step = [1, -1]@index; // down, then up
-		// 0 is press, 1 is release:
-		// do modal action on release
-		if (bt.value == 1) {
-			MFdef(\rightMode).(bt,
-				{
+
+		var step = [1, -1]@index; // 6 is up, 7 is down
+		// do modal action on release only
+		if (bt.value == 0) {
+			if (MKtl(\ntmi).elAt(\encHat).isOn) {
+				MFdef(\mastaPreStep.postcs).(step);
+			} {
+				if (q.osc.leftDown.notEmpty) {
+					q.osc.leftDown.do { |slotIndex|
+						"stepNdefPreInf".postln;
+						q.pre.stepNdefInf(q.ndefs[slotIndex], step)
+					}
+				} {
+					"base: step inphlux preset.".postln;
 					// reply to OSC device: which LED os which Color!
 					MFdef(\stepInphWPre).(step);
-					MFdef(\stepSlotPres).(step);
-				},
-				{ |ndef| MFdef(\stepVol).(ndef, step) }
-			)
+					// MFdef(\stepSlotPres).(step);
+				}
+			};
 		};
 	})
 };
