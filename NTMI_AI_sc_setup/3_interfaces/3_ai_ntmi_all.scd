@@ -229,28 +229,41 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 });
 
 
-// switch mode - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\move, \touch];
-q.inph.mode = \move;
-q.inph.modeIndex = { q.inph.modes.indexOf(q.inph.mode) };
+// switch modes - analog in vs. IMU /// touch vs move mode
+q.inph.modes = [\move, \touch, \full];
+q.inph.modeIndex = 0;
+q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
-MFdef(\imuMode).add(\toggle, {
-	if(  q.inph.mode == \move ) {
-		q.inph.mode = \touch;
-		"*** enable TOUCH".postln;
-		MKtl(\ntmi).elAt('cap').do { |cap| cap.action.enable(\setInflux) };
-		MFdef(\imuFunc).disable( \setInphlux );
-		/////// pads set inphlux in unipolar, 0-1 range!
-		q.inphlux.set(*q.inphlux.inNames.keep(9).collect([_, 0]).flat);
-		// MKtl(\ntmi).elAt(\led, \5).value_(0.0);
-	}{
-		q.inph.mode = \move;
-		"*** enable MOVE (IMU) ".postln;
-		MKtl(\ntmi).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
-		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
-		MFdef(\imuFunc).enable( \setInphlux );
-		// MKtl(\ntmi).elAt(\led, \5).value_(1/2);
-	};
+MFdef(\imuON).add(\on, {
+	"*** enable MOVE imuON".postln;
+	MFdef(\imuFunc).enable( \setInphlux );
+});
+
+MFdef(\imuOFF).add(\on, {
+	"*** disable MOVE".postln;
+	MFdef(\imuFunc).disable( \setInphlux );
+	/////// pads set inphlux in unipolar, 0-1 range!
+	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
+});
+
+MFdef(\capON).add(\on, {
+	"*** enable TOUCH".postln;
+	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.enable(\setInflux) };
+});
+MFdef(\capOFF).add(\on, {
+	"*** disable TOUCH".postln;
+	MKtl(\ntmi).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
+	q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
+});
+
+MFdef(\imuMode3).add(\cycle, {
+	q.inph.modeIndex = (q.inph.modeIndex + 1 % 3).postln; '';
+	"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
+	(
+		move: { MFdef(\imuON).value; MFdef(\capOFF).value; },
+		touch: { MFdef(\imuOFF).value; MFdef(\capON).value; },
+		full: { MFdef(\imuON).value; MFdef(\capON).value; },
+	)[q.inph.mode].value;
 });
 
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
@@ -258,7 +271,7 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value > 0) {
 		MFdef(\rightMode).(bt,
-			MFdef(\imuMode),
+			MFdef(\imuMode3),
 			{ |ndef|
 				"% - choose rand preset...\n".postf(ndef);
 				q.pre.stepNdefInf( ndef, nil )

@@ -274,7 +274,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	rMViews[3].label_(q.inph.mode).mode_(\code);
 	rMViews[3].uv.mouseDownAction.add(\toggle, { |x|
-		MFdef(\imuMode).value;
+		MFdef(\imuMode3).value;
 		rMViews[3].label_(q.inph.mode).valueAction_(q.inph.mode);
 	});
 
@@ -318,7 +318,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			var centPadsL, padsLPos, centPadsR, padsRPos;
 			var star;
 
-			if (q.inph.mode == \touch) {
+			if ([\full, \touch].includes(q.inph.mode)) {
 				centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 				centPadsR = center.copy.x_(center.x + (center.y * 1.8));
 				padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
@@ -341,7 +341,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			};
 
 			// visualize move mode as star of 9;
-			if (q.inph.mode == \move) {
+			if ([\full, \move].includes(q.inph.mode)) {
 				// "move mode vis".postln;
 				star = g.main.movevals.collect { |val, i|
 					Polar(val.linlin( 0, 1, 40, 240), i / 9 * 2pi).asPoint + center;
