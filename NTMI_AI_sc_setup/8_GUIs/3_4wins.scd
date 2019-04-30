@@ -3,6 +3,9 @@
 // these show changes for all of them
 /*
 q.ndefs
+
+g.makeGui.slotSounds;
+
 */
 
 g.makeGui.slotSounds = { |dict, name = \slotSounds|
@@ -40,6 +43,3 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 	}, 0.2, { w.isClosed }, \presetWin);
 
 };
-
-g.makeGui.slotSounds;
-
