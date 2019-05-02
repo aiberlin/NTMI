@@ -2,12 +2,13 @@
 
 q.zoom = q.zoom?1;
 
+// tune this for jitter on zoom pot on NTMI
+Spec.add(\zoom, [0, 1, \lin, 0.02]);
+
 q.setZoom = {|ev, val|
-	val = val.clip(0.05, 1.0).round(0.05);
+	val = \zoom.asSpec.constrain(val);
 	// "global ZOOM f. RandomOrbits and Influxes: %\n".postf(val);
 	q.zoom = val;
-	// do external funcs here
-	try{ q.prez.ezs.value = q.zoom };
 	q.inphlux.inScaler = q.zoom;
    // return value
 	val

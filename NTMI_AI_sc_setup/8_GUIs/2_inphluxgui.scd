@@ -44,13 +44,23 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 		q.inphlux.calcOutVals;
 	}, q.inph.presIndex, labelWidth: 60, numberWidth: 30);
 	e.font_(f);
-	insc = EZSlider(infComp, 330@20, \inScaler, [0.05, 1, \lin, 0.05], { |ez|
+	insc = EZSlider(infComp, 330@20, \inScaler, \zoom.asSpec, { |ez|
 		q.setZoom(ez.value);
 		ez.value_(q.zoom);
-	}, labelWidth: 60, numberWidth: 40).font_(f);
+	}, q.inphlux.inScaler, labelWidth: 60, numberWidth: 40).font_(f);
 
 	q.inph.ktlgui = InfluxKtlGui(q.inphlux, 5, infComp, Rect(0,0,300, 280));
 
+	q.inph.ktlgui.nameView.bounds_(Rect(2.0, 2.0, 160, 20.0));
+	q.inph.ktlgui.nameView.align_(\center);
+	q.inph.ktlgui.name = "inphlux";
+	g.tuneNameView(q.inph.ktlgui);
+
+	q.inph.resetBut = Button(q.inph.ktlgui.zone, Rect(166, 2.0, 160, 20.0))
+	.states_([['resetInvals', Color.white, Color.red]])
+	.action_({ q.inphlux.resetInvals });
+
+	q.inph.resetBut.bounds_(Rect(166, 2.0, 160, 20.0));
 	// call this somewhere in skipjack, or when changes happen
 	q.inph.updateGui = {
 		q.ndefs.do { |ndef, i|
