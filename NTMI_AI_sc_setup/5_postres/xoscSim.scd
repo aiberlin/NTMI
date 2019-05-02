@@ -1,6 +1,22 @@
+///////// simulate all messages from xosc ///////////
+
+/*
+Tdef(\xoscSimulator).play;
+
+MKtl(\xosc).device.oscFuncDictionary.keys
+
+q.addrSC = ().sendMsg = { |q ... msg| msg.postcs };
+
+OSCdef.trace(true, true);
+OSCdef.trace(false, true);
+
+*/
+
+// send to this address, the port xosc sends to:
 q.addrSC = NetAddr.localAddr.port_(8000);
 
 OSCdef.trace(false);
+
 
 /* test buttons from remote:
 q.addrSC.sendMsg('/inputs/digital', 0, 2.rand);
@@ -16,6 +32,7 @@ q.addrSC.sendMsg('/inputs/analogue', *(0.5!16));
 q.addrSC.sendMsg('/inputs/analogue', *({0.75.rand}!16));
 */
 
+///// switch address inside MKtl for simulation, so MKtl responds
 MFdef(\switchToSim).add(\mode, {
 	var oscdict = MKtl(\xosc).device.oscFuncDictionary;
 	oscdict.do { |oscfunc|
@@ -26,6 +43,7 @@ MFdef(\switchToSim).add(\mode, {
 });
 
 
+///// switch back address to listen to real xosc sending
 MFdef(\switchToXOSC).add(\mode, {
 	var info = MKtl(\xosc).desc.fullDesc.netAddrInfo;
 	var oscdict = MKtl(\xosc).device.oscFuncDictionary;
@@ -38,48 +56,65 @@ MFdef(\switchToXOSC).add(\mode, {
 
 
 Tdef(\xoscSimulator).set(\dt, 0.2);
+Tdef(\xoscSimulator).set(\zoom, 0.7);
 
 Tdef(\xoscSimulator, { |ev|
 
-	var imuvals = 0.5 ! 9, imuRawVals;
 	var anavals = 0 ! 16;
-	var tempval = 20;
+	var digivals = 0 ! 16;
+	var imuvals = 0.5 ! 9, imuRawVals;
+	var tempval = 50;
+	var batval = 50;
 	var imuspecs = MKtl(\xosc).elAt(\imu9).collect(_.deviceSpec);
 
-	inf.do { |i|
-		// send OSC messages for analog and imu at typical rates,
-		// random drift unless played otherwise by some sim interface.
+	loop {
+		// ten seconds of pads & imu
+		(10 / ev.dt).do { |i|
+			// send OSC messages for analog and imu at typical rates,
+			// random drift unless played otherwise by some sim interface.
 
-		imuvals = imuvals.collectInPlace { |val| (val + 0.2.rand2 * 0.95).fold2(8.0).round(0.01) };
-		tempval = (tempval + 3.rand2).fold(0, 100);
+			// imuvals and temperature:
+			imuvals = imuvals.collectInPlace { |val| (val + 0.2.rand2 * 0.95).fold2(8.0).round(0.01) };
+			tempval = if (ev.dt.coin) { tempval = rrand(40, 60) };
+			// imuvals.round(0.001).postln;
 
-		anavals = anavals.collectInPlace { |val, i| (val + 0.05.rand2).fold(0, 1).round(0.01) };
+			// map backwards to get realistic raw values:
+			imuRawVals = imuvals.collect { |val,i| imuspecs[i].map(val) };
+			// imuRawVals.round(0.001).postln; "".postln;
+			q.addrSC.sendMsg(\imu, *(imuRawVals ++ tempval));
+			q.addrSC.sendMsg('/inputs/analogue', *anavals);
 
-		// zoom - pretend pot rand jitter to be filtered
-		anavals.put(7, q.zoom);
+			anavals = anavals.collectInPlace { |val, i| (val + 0.05.rand2).fold(0, 1).round(0.01) };
 
-		imuvals.round(0.001).postln;
-		imuRawVals = imuvals.collect { |val,i| imuspecs[i].map(val) };
-		imuRawVals.round(0.001).postln;
-		"".postln;
-		q.addrSC.sendMsg(\imu, *(imuRawVals ++ tempval));
-		q.addrSC.sendMsg('/inputs/analogue', *anavals);
+			// zoom - pretend pot rand jitter to be filtered
+			anavals.put(7, ev.zoom + 0.001);
 
-		ev.dt.wait;
+			// send battery value
+			if (i % 10 == 0) {
+				batval = rrand(3.5, 4.0).round(0.001);
+				q.addrSC.sendMsg('/battery', batval);
+			};
+			ev.dt.wait;
+		};
+
+		// ten seconds of random buttons
+		(10 / ev.dt).do { |i|
+			// randomly press button for a while
+			if ((ev.dt).coin) {
+				var randindex = 7.rand;
+				digivals[randindex] = 0;
+				q.addrSC.sendMsg('/inputs/digital', *digivals);
+				defer ({ digivals[randindex] = 1 }, rrand(0.2, 1.0));
+			};
+			// send battery value
+			if (i % 10 == 0) {
+				batval = rrand(3.5, 4.0).round(0.001);
+				q.addrSC.sendMsg('/battery', batval);
+			};
+			ev.dt.wait;
+		};
 
 	}
+
+
 });
-//
-// //////// start simulation from xosc GUI:
-// MKtl(\xosc).elAt(\inD, \15).action = { |bt|
-// 	if (bt.value > 0) {
-// 		"*** starting sim: ".post;
-// 		MFdef(\switchToSim).value;
-// 	}
-// };
-// MKtl(\xosc).elAt(\inD, \16).action = { |bt|
-// 	if (bt.value > 0) {
-// 		"*** stopping sim: ".post;
-// 		MFdef(\switchToXOSC).value;
-// 	}
-// };

@@ -18,13 +18,6 @@ g.makeGui.xosc = { |dict, name = \xosc|
 
 	g.guiXOSC.views[(43..49)].do{|v| v.view.enabled_(false)};     // dim unused analog ins
 
-	// make add on/off switch for OSC Simulator
-	simButStart = g.guiXOSC.views[18 + 7];
-	simButStop = g.guiXOSC.views[18 + 8];
-
-	simButStart.view.visible_(true).states_([ "SIM!", Color.white, Color.red() ]!2);
-	simButStop .view.visible_(true).states_(["stop", Color.black, Color.green ]!2);
-
 	/// hack in led displays:
 	// orig
 	// g.guiXOSC.views[27 + (0..15)].do { |elvw, i|
