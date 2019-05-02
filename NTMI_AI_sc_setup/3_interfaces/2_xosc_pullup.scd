@@ -140,10 +140,10 @@ MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 	but.action.add(\shift, { |but|
 		// 0 is button pressed: prep mode
 		if (but.value == 0) {
-			q.osc.leftDown.add(but.name);
+			q.osc.leftDown.add(i);
 		} {
 			// button was released: remove shifter
-			q.osc.leftDown.remove(but.name);
+			q.osc.leftDown.remove(i);
 			// q.osc.leftDown.postln;
 		}
 	});
@@ -208,8 +208,8 @@ MKtl(\xosc).elAt(\inD, [\5, \6, \7]).do { |but, i|
 };
 
 /*
-q.osc.leftDown.clear.add(\sw_1);
-q.osc.leftDown.clear.add(\sw_2);
+q.osc.leftDown.clear.add(0);
+q.osc.leftDown.clear.add(1);
 q.osc.leftDown.clear;
 MKtl(\xosc).elAt(\inD, \5).value_(0);
 MFdef(\rightMode).(MKtl(\xosc).elAt(\inD, \5), { "def".postln }, { "shift".postln });
@@ -219,7 +219,6 @@ MFdef(\rightMode).(MKtl(\xosc).elAt(\inD, \5), { "def".postln }, { "shift".postl
 MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 	var btval = but.value;
 	var btname = (sw_5: \touchMove, sw_6: \preDown, sw_7: \preUp)[but.name];
-	var leftButNames = [\inD_1, \inD_2, \inD_3, \inD_4 ];
 	var slotIndex, player;
 	if (q.osc.leftDown.size == 0) {
 		// if we just left a mode, just reset
@@ -234,7 +233,7 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 		// lest is held down, and right was pressed,
 		// so now we are in shoft mode:
 		q.osc.shiftWasUsed = true;
-		slotIndex = leftButNames.indexOf(q.osc.leftDown.first);
+		slotIndex = q.osc.leftDown.first;
 		player = q.slots.actives[slotIndex];
 		// " % shift action for slot %, % \n".postf(btname, slotIndex, player);
 		shiftAction.value(player);
