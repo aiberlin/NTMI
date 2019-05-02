@@ -264,7 +264,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 	rMViews[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
-	rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \unipolar);
+	rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \zoom.asSpec);
 
 	rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
 	rMViews[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
@@ -376,7 +376,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			imuUV.refresh;
 
 			// zoom
-			if (q.zoom != rMViews[0].value) { rMViews[0].value = q.zoom };
+			if ( q.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = q.zoom };
 			if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
 
 			// OSC status

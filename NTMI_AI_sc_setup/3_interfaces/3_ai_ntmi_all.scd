@@ -322,7 +322,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 		},
 		1, {
 			"hat: zoom".postln;
-			q.incZoom(enc.deviceValue * 0.05);
+			q.incZoom(enc.deviceValue * \zoom.asSpec.step.max(0.01));
 		},
 		2, {
 			"slot: slot volume".postln;

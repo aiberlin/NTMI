@@ -3,7 +3,7 @@
 q.zoom = q.zoom?1;
 
 // tune this for jitter on zoom pot on NTMI
-Spec.add(\zoom, [0, 1, \lin, 0.02]);
+Spec.add(\zoom, [0, 1, \lin, 0.025]);
 
 q.setZoom = {|ev, val|
 	val = \zoom.asSpec.constrain(val);

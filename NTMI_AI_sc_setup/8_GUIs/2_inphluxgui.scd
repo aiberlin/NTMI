@@ -1,12 +1,13 @@
 /*
 ToDo :
-- InfluxKtlGui - also show:
---- weights
+- InfluxKtlGui could also show:
 // config
 --- outProcs? which ones?
 --- outOffsets (per out)? name?
 
-g.makeGui.inphlux2
+g.makeGui.inphlux;
+
+include preset number and and inScaler in  SkipJack !
 
 */
 
