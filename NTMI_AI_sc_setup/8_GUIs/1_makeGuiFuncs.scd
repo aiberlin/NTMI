@@ -128,17 +128,27 @@ g.uc4 !? {
 
 MKtl.all['ferrari'] !? { g.makeGui.ferrari = { q.ferr.mktl.gui } };
 
-g.makeGui.xoscSimulator = { |dict, name = \xoscSimulator|
-	var bounds = Window.flipY(g.main.oscBut.absoluteBounds).height_(100).moveBy(0, -120);
-	var win = Window(\xoscSimulator, bounds).front;
+g.makeGui.oscSimulator = { |dict, name = \oscSimulator|
+	var bounds = Window.flipY(g.main.oscBut.absoluteBounds).height_(150).moveBy(0, -220);
+	var win = Window(name, bounds).front;
 	win.view.addFlowLayout;
-	StaticText(win, (bounds.extent * (0.99@0.38)).asRect)
-	.string_("Simulate random OSC signals from an xosc, to test that OSC is working:");
+	StaticText(win, (bounds.extent * (0.99@0.24)).asRect)
+	.string_(" - TEST THAT OSC IS WORKING - \nSimulate OSC signals from XOSC:");
 
-	[ MFdef(\switchToSim), MFdef(\switchToXOSC) ].do { |mfdef|
-		Button(win, bounds.extent * (0.45@0.3))
+	[ MFdef(\simulateXOSC), MFdef(\realXOSC) ].do { |mfdef|
+		Button(win, bounds.extent * (0.45@0.2))
 		.states_([[mfdef.key]])
 		.action_(mfdef);
+	};
+
+	StaticText(win, (bounds.extent * (0.99@0.16)).asRect)
+	.string_("TODO: Sim. OSC signals from NTMI:");
+
+	[ MFdef(\simulateNTMI), MFdef(\realNTMI) ].do { |mfdef|
+		Button(win, bounds.extent * (0.45@0.2))
+		.states_([[mfdef.key]])
+		.action_(mfdef)
+		.enabled_(false);
 	};
 };
 
@@ -160,7 +170,7 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 		'MakeGui',
 		'NTMI_Main',
 		'ntmi',
-		'xosc', 'xoscMTPads', 'xoscSimulator',
+		'xosc', 'xoscMTPads', 'oscSimulator',
 		'inphlux',
 		'slotSounds',
 		'liveInput',

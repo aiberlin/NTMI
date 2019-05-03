@@ -33,7 +33,7 @@ q.addrSC.sendMsg('/inputs/analogue', *({0.75.rand}!16));
 */
 
 ///// switch address inside MKtl for simulation, so MKtl responds
-MFdef(\switchToSim).add(\mode, {
+MFdef(\simulateXOSC).add(\mode, {
 	var oscdict = MKtl(\xosc).device.oscFuncDictionary;
 	oscdict.do { |oscfunc|
 		oscfunc.srcID.hostname_("127.0.0.1").port_(NetAddr.langPort)
@@ -44,7 +44,7 @@ MFdef(\switchToSim).add(\mode, {
 
 
 ///// switch back address to listen to real xosc sending
-MFdef(\switchToXOSC).add(\mode, {
+MFdef(\realXOSC).add(\mode, {
 	var info = MKtl(\xosc).desc.fullDesc.netAddrInfo;
 	var oscdict = MKtl(\xosc).device.oscFuncDictionary;
 	oscdict.do { |oscfunc|
@@ -94,12 +94,8 @@ Tdef(\xoscSimulator, { |ev|
 				batval = rrand(3.5, 4.0).round(0.001);
 				q.addrSC.sendMsg('/battery', batval);
 			};
-			ev.dt.wait;
-		};
 
-		// ten seconds of random buttons
-		(10 / ev.dt).do { |i|
-			// randomly press button for a while
+		// randomly press button for a while
 			if ((ev.dt).coin) {
 				var randindex = 7.rand;
 				digivals[randindex] = 0;
@@ -111,8 +107,26 @@ Tdef(\xoscSimulator, { |ev|
 				batval = rrand(3.5, 4.0).round(0.001);
 				q.addrSC.sendMsg('/battery', batval);
 			};
+
 			ev.dt.wait;
 		};
+
+		// // write ten seconds of specific  button seqs to test all modes!
+		// (10 / ev.dt).do { |i|
+		// 	// randomly press button for a while
+		// 	if ((ev.dt).coin) {
+		// 		var randindex = 7.rand;
+		// 		digivals[randindex] = 0;
+		// 		q.addrSC.sendMsg('/inputs/digital', *digivals);
+		// 		defer ({ digivals[randindex] = 1 }, rrand(0.2, 1.0));
+		// 	};
+		// 	// send battery value
+		// 	if (i % 10 == 0) {
+		// 		batval = rrand(3.5, 4.0).round(0.001);
+		// 		q.addrSC.sendMsg('/battery', batval);
+		// 	};
+		// 	ev.dt.wait;
+		// };
 
 	}
 
