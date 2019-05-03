@@ -2,11 +2,6 @@
 
 ////// desc file for NTMI with ESP32 chip \\\\\\\\\\\\\\\\
 
-TODO - BIZARRE BUG:
-the front leds send msg: [ /ntmi/led/front, 4, 1.0 ]
-the back leds  send: msg: [ /ntmi/led/back, 1.0 ] - why no second arg??
-
-
 ///////// quick instructions:
 
 // 1. log into WIFI "NTMI" - one user at a time only!
@@ -106,16 +101,19 @@ MKtlDesc.fromDict(
 			\switch: [0, 1, \lin, 1],
 			\pass: PassSpec,
 			// measured degrees of rotation at 100 Hz sendrate:
-			gyroAxis: [-1.0, 1.0],
+			gyroAxis: [-250, 250],
 			// measured max accel with fast shaking:
 			accelAxis: [-8, 8],
 			// guessing, usually more between +-0.5:
-			magnetAxis: [-0.8, 0.8],
+			magnetAxis: [-64, 64],
+
+			cap: [0, 2047],
 			// gyro temperature
 			temp: [0, 100],
 			// min and max working battery voltage
 			batVolt: [3.4, 3.9],
-			enc: [-7, 7, \lin, 1]
+			enc: [-7, 7, \lin, 1],
+			ledInt: (map: { |d, val| val.round(1).clip(0, 1).asInteger }, unmap: { |d, val| d.map(val) }, asSpec: { |d| d })
 		),
 
 		collectives: (
@@ -174,10 +172,10 @@ MKtlDesc.fromDict(
 				//// 8 floating-point analog values from the capsensors. Sent at analogue input message rate
 				(
 					key: \cap,
-					shared: (elementType: \slider, spec: \lin1, ioType: \collectiveIn),
+					shared: (elementType: \slider, spec: \cap, ioType: \collectiveIn),
 					elements:  (1..8).collect { |num, i|
 						(key: num.asSymbol,
-							style: (column: [2,5][i div: 4], row: i % 4 + 3, width: 1, height: 1.2)
+							style: (column: [2, 5][i div: 4], row: i % 4 + 3, width: 1, height: 1.2)
 						)
 
 					}
@@ -213,12 +211,12 @@ MKtlDesc.fromDict(
 				////// leds are out elements
 				(
 					key: \led,
-					shared: (elementType: \button, spec: \but, ioType: \out),
+					shared: (elementType: \button, spec: \ledInt, ioType: \out),
 					elements:  [
 						(key: \fr, elements: (1..8).collect { |num, i|
 							(
 								key: num.asSymbol,
-								oscPath: '/ntmi/led/front',
+								oscPath: '/ntmi/ledCtl/front',
 								argTemplate: [ i ],
 								style: (column: [3, 4][i div: 4], row: i % 4 + 3)
 							)
@@ -226,7 +224,7 @@ MKtlDesc.fromDict(
 						(key: \bk, elements: (1..8).collect { |num, i|
 							(
 								key: num.asSymbol,
-								oscPath: '/ntmi/led/back',
+								oscPath: '/ntmi/ledCtl/back',
 								argTemplate: [ i ],
 								style: (column: [0,7][i div: 4], row: i % 4 + 3)
 							)

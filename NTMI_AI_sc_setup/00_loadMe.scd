@@ -185,6 +185,8 @@ Task {
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
 
+		q.setZoom(0.5);
+
 	};
 }.play(AppClock);
 )
