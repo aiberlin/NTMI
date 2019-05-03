@@ -236,6 +236,13 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	}
 });
 
+MFdef(\inphModeStep).add(\modeSwColor, {
+	defer ({
+	var msg = [0,0,0,0].put(q.inph.modeIndex, 1);
+	MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
+	}, 0.05);
+});
+
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
