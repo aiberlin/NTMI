@@ -160,6 +160,41 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		// [bt, x, y, mod].postcs;
 	});
 
+
+	g.main.mastaSl = MView(
+		q.mFX.proxyChain.proxy.get(\mastaVol),
+		g.main.w, Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
+	);
+	g.main.mastaSl.uv.alpha_(0.7).refresh;
+	g.main.mastaSl.label_(\mastaVol);
+	g.main.mastaSl.putDict(\myspec, [0, 4, \amp]);
+	g.main.mastaSl.dict[\knobCol] = Color.grey(0, 0.7);
+	g.main.mastaSl.action.add(\setMasta, { |mv|
+		q.mFX.proxyChain.proxy.set(\mastaVol, mv.value)
+	});
+	g.main.mastaSl.drawFunc.add(\label, {
+		Pen.stringCenteredIn(
+			g.main.mastaSl.label,
+			g.main.mastaSl.bounds.moveTo(0,0),
+			Font("Monaco", 40 * scrscale),
+			Color.blue
+		)
+	});
+	g.main.mastaVolDisplay = {
+		var nuval = q.mFX.proxyChain.proxy.get(\mastaVol);
+		if (g.main.mastaSl.value != nuval) {
+			g.main.mastaSl.value = nuval
+		};
+	};
+	g.main.mastaSl.dict[\focusCol] = Color.grey(1.0, 0.8);
+	g.main.mastaSl.dict[\backCol] = Color.grey(1.0, 0.6);
+	g.main.mastaSl.uv.focus(true).refresh;
+	g.main.mastaSl.uv.focus(false).refresh;
+
+
+	// \mastaVol, [0, 4, \amp], labelWidth: 100 * scrscale).font_(Font("Monaco", 20 * scrscale));
+
+
 	// 4 popups to select sounds, 4 mviews for volume levels
 	// add play buttons?
 	popMVs = [ 3, 1, -1, -3].collect { |offset, i|
@@ -366,6 +401,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 				g.main.backCol = q.inph.currPresetCol;
 				g.main.w.background_(q.inph.currPresetCol);
 			};
+
+			g.main.mastaVolDisplay;
 
 			g.main.movevals = MKtl('xosc').elAt(\imu9).value;
 			g.main.padCols = MKtl('xosc').elAt('pads8').value.collect { |val|

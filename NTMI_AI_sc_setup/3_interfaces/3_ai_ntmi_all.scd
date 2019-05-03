@@ -1,7 +1,6 @@
 /*
 
 TODO:
-- skipjack for playing-status to leds?
 - show mastaVol on mainGui
 
 
@@ -396,6 +395,15 @@ q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 OSCdef(\imuAlive, { |msg, time|
 	q.osc.lastInTime = time;
 }, "/imu").permanent_(true);
+
+// update slot LEDs
+q.osc.ntmiSkip.free;
+q.osc.ntmiSkip = SkipJack({
+	MKtl(\ntmi).elAt(\led, \bk, (0..3)).do { |led, i|
+		var newval = q.ndefs[i].monitor.isPlaying.binaryValue;
+		if (led.value != newval) { led.value = newval };
+	};
+});
 
 
 ///////////////////////////////////////////////////////////////
