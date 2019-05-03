@@ -70,37 +70,27 @@ MFdef('battery').add(\calc, { |voltage = 0.0|
 	q.osc.batString.postcln;
 });
 
-// switch mode - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\move, \touch];
-q.inph.mode = \move;
-q.inph.modeIndex = { q.inph.modes.indexOf(q.inph.mode) };
 
 
 
-MFdef(\imuMode).add(\toggle, {
-	if(  q.inph.mode == \move ) {
-		q.inph.mode = \touch;
-		"*** enable TOUCH".postln;
-		8.do { |i|	MKtl(\xosc).elAt('inA').at(i + 8).action.enable(\setInflux) };
-		MFdef(\imuFunc).disable( \setInphlux );
-		/////// pads set inphlux in unipolar, 0-1 range!
-		q.inphlux.set(*q.inphlux.inNames.keep(9).collect([_, 0]).flat);
-		MKtl(\xosc).elAt(\led, \5).value_(0.0);
-	}{
-		q.inph.mode = \move;
-		"*** enable MOVE (IMU) ".postln;
-		MKtl(\xosc).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
-		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
-		MFdef(\imuFunc).enable( \setInphlux );
-		MKtl(\xosc).elAt(\led, \5).value_(1/2);
-	};
-});
+// MFdef(\imuMode).add(\toggle, {
+//
+// 	MKtl(\xosc).elAt(\led, \5).value_(0);
+// 	}{
+// 		q.inph.mode = \move;
+// 		"*** enable MOVE (IMU) ".postln;
+// 		MKtl(\xosc).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
+// 		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
+// 		MFdef(\imuFunc).enable( \setInphlux );
+// 		MKtl(\xosc).elAt(\led, \5).value_(1/2);
+// 	};
+// });
 
 
 
 // switch modes - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\move, \touch, \full];
-q.inph.modeIndex = 0;
+q.inph.modes = [\full, \move, \touch];
+q.inph.modeIndex = -1;
 q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
 
@@ -116,6 +106,7 @@ MFdef(\inphMode).add(\cycle, {
 		move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; },
 		touch: { MFdef(\moveOFF).value; MFdef(\touchON).value; },
 		full:  { MFdef(\moveON).value;  MFdef(\touchON).value; },
+		off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; },
 	)[q.inph.mode].value;
 });
 

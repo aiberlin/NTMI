@@ -1,23 +1,28 @@
 /*
 
 TODO:
-- skipjack for play status ?
--
-
-q.osc.shiftWasUsed
+- skipjack for play status to leds?
 
 OK --- back left buttons - slot play/stop
-OK --- encoder - master volume
+
+OK --- encoder -> master volume
+OK --- encHat + enc -> master zoom
+OK --- slots + enc -> slot volumes
+OK --- encHat + slot + encoder -> sound choice
+
 OK --- caps to inphlux
 OK --- imu to influx
-?? --- encHat + enc: master zoom
-?? --- hold playBt + enc -> indiv vol: OK
-OK --- preUp
-OK --- preDown
+
+OK --- preUp - step inphl up
+OK --- preDown step inphl down
+
+OK - modeBut - cycle full, move, touch, off
+?? --- preUP + preDown -> rand inphl
 ?? ---
 ?? ---
-?? ---
-?? ---
+
+?? --- encHat - just mode?
+
 
 
 OSCFunc.trace;
@@ -107,7 +112,7 @@ MKtl(\ntmi).elAt(\cap).valueAction_(0!8);
 /// name the elements
 MKtl(\ntmi).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
 MKtl(\ntmi).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
-MKtl(\ntmi).elAt(\modSw).elemDesc.label_('touchMove');
+MKtl(\ntmi).elAt(\modSw).elemDesc.label_('move Mode');
 
 ////////////// get battery value:
 MKtl(\ntmi).elAt(\battery).action = { |bat|
@@ -120,6 +125,8 @@ MKtl(\ntmi).elAt(\battery).action = { |bat|
 q.osc.leftDown = List[];
 q.osc.rightDown = List[];
 q.osc.shiftWasUsed = false;
+q.osc.leftWasUsed = false;
+q.osc.rightWasUsed = false;
 
 /*
 //////// to test left side actions:
@@ -156,12 +163,11 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 			// determine whether we are in a mode
 			if (q.osc.rightDown.size == 0) {
 				// reset if we just left a mode
-				if (q.osc.shiftWasUsed) {
-					q.osc.shiftWasUsed = false
+				if (q.osc.leftWasUsed) {
+					q.osc.leftWasUsed = false
 				} {
 					// if no mode, do default action
 					// " % default action: toggle\n".postf(btname);
-
 					playsNow = q.slots.toggleAt(i);
 					MKtl(\ntmi).elAt(\led, \bk, i).value = playsNow.binaryValue.postln;
 				}
@@ -188,19 +194,19 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 	});
 };
 
-MKtl(\ntmi).elAt(\bt, [\6, \7, \8]).do { |but, i|
-	// hope the button sorder is correct?
-	var btname = [\preUp, \preDown, \touchMove][i];
+MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
+	// hope the button order is correct?
+	var btname = [\encHat, \preUp, \preDown, \touchMove][i];
 	but.action.add(\shift, { |but|
 		// 0 is button pressed:
-		MKtl(\ntmi).elAt(\led, \bk, i + 5).value = but.value;
-		if (but.value == 0) {
+		MKtl(\ntmi).elAt(\led, \bk, i + 4).value = but.value;
+		if (but.value == 1) {
 			q.osc.rightDown.add(btname);
-			// "rightdown: %\n".postf(q.osc.rightDown);
+			"rightdown: %\n".postf(q.osc.rightDown);
 		} {
 			// button was released: remove shifter
 			q.osc.rightDown.remove(btname);
-			// "rightdown: %\n".postf(q.osc.rightDown);
+			"rightdown: %\n".postf(q.osc.rightDown);
 		}
 	});
 };
@@ -238,23 +244,35 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 
 
 MFdef(\touchON).add(\ntmi, {
+	"ntmi - touchON".postln;
+	MFdef(\capsToInph).enable;
 	MKtl(\ntmi).collAt('caps').enable;
 	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.enable(\setInflux) };
 });
 
 MFdef(\touchOFF).add(\ntmi, {
-	MKtl(\ntmi).collAt('caps').disable;
+	"ntmi - touchOFF".postln;
+	MFdef(\capsToInph).disable;
+
 	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.disable(\setInflux) };
+	q.inphlux.set(*q.inphlux.getHalo(\capNames).collect([_, 0]).flat);
+	q.inphlux.set(*q.inphlux.getHalo(\padNames).collect([_, 0]).flat);
 });
 
 MFdef(\moveON).add(\ntmi, {
+	"ntmi - moveON".postln;
 	MFdef(\ntmiImuFunc).enable(\setInflux);
 	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.enable(\setInflux) };
+
 });
 
 MFdef(\moveOFF).add(\ntmi, {
+	"ntmi - moveOFF".postln;
 	MFdef(\ntmiImuFunc).disable(\setInflux);
+
 	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.disable(\setInflux) };
+		/////// pads set inphlux in unipolar, 0-1 range!
+	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
 
 
@@ -317,13 +335,16 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 		},
 		2, {
 			"slot: slot volume".postln;
+			q.osc.leftWasUsed = true;
+			"q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
 			q.osc.leftDown.do { |slotIndex|
 				MFdef(\stepVol).(q.slots.actives[slotIndex], enc.deviceValue);
-				q.osc.left
 			};
 		},
 		3, {
 			"slotHat: sound selection".postln;
+			q.osc.leftWasUsed = true;
+			"q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
 			q.osc.leftDown.do { |slotIndex|
 				q.slots.stepNext(slotIndex);
 			};
@@ -376,7 +397,7 @@ MKtl(\ntmi).collectivesDict[\imu].action = {
 // set the first 9 values of the inphlux from the imu params:
 q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
 
-MFdef(\ntmiImuFunc).add(\setInphlux, {
+MFdef(\ntmiImuFunc).add(\setInflux, {
 	var imuInvalsBi = MKtl(\ntmi).elAt(\imu9).value.unibi;
 	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
 		var value = imuInvalsBi[i] - q.zero.imu[i];
@@ -391,8 +412,8 @@ MFdef(\ntmiImuFunc).add(\setInphlux, {
 MKtl(\ntmi).elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\ntmiImuFunc)));
 
 /*
-MFdef(\imuFunc).disable( \setInphlux );
-MFdef(\imuFunc).enable( \setInphlux );
+MFdef(\imuFunc).disable( \setInflux );
+MFdef(\imuFunc).enable( \setInflux );
 */
 
 

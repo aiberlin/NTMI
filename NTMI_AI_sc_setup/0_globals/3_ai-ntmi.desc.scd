@@ -113,7 +113,7 @@ MKtlDesc.fromDict(
 			// min and max working battery voltage
 			batVolt: [3.4, 3.9],
 			enc: [-7, 7, \lin, 1],
-			ledInt: (map: { |d, val| val.round(1).clip(0, 1).asInteger }, unmap: { |d, val| d.map(val) }, asSpec: { |d| d })
+			ledInt: (default: 0, map: { |d, val| val.round(1).clip(0, 1).asInteger }, unmap: { |d, val| d.map(val) }, asSpec: { |d| d })
 		),
 
 		collectives: (
@@ -175,7 +175,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: \slider, spec: \cap, ioType: \collectiveIn),
 					elements:  (1..8).collect { |num, i|
 						(key: num.asSymbol,
-							style: (column: [2, 5][i div: 4], row: i % 4 + 3, width: 1, height: 1.2)
+							style: (column: [2, 6][i div: 4], row: i % 4 + 3, width: 1, height: 1.2)
 						)
 
 					}
@@ -186,7 +186,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: \switch, spec: \switch, \oscPath: '/ntmi/btns'),
 					elements:  (1..8).collect { |num, i|
 						( key: num.asSymbol, argTemplate: [ i ],
-							style: (column: [1,6][i div: 4], row: i % 4 + 3)
+							style: (column: [1,7][i div: 4], row: i % 4 + 3)
 						)
 					}
 				),
@@ -194,7 +194,7 @@ MKtlDesc.fromDict(
 				(
 					key: \enc, oscPath: '/ntmi/enc', ioType: \in,
 					elementType: \encoder, spec: \enc,
-					style: (column: 6, row: 2)
+					style: (column: 7, row: 2)
 
 				),
 
@@ -218,7 +218,7 @@ MKtlDesc.fromDict(
 								key: num.asSymbol,
 								oscPath: '/ntmi/ledCtl/front',
 								argTemplate: [ i ],
-								style: (column: [3, 4][i div: 4], row: i % 4 + 3)
+								style: (column: [3, 5][i div: 4], row: i % 4 + 3)
 							)
 						}),
 						(key: \bk, elements: (1..8).collect { |num, i|
@@ -226,7 +226,7 @@ MKtlDesc.fromDict(
 								key: num.asSymbol,
 								oscPath: '/ntmi/ledCtl/back',
 								argTemplate: [ i ],
-								style: (column: [0,7][i div: 4], row: i % 4 + 3)
+								style: (column: [0, 8][i div: 4], row: i % 4 + 3)
 							)
 						}),
 					]
