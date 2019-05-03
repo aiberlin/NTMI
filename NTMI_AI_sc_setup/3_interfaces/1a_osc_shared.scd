@@ -67,29 +67,11 @@ MFdef('battery').add(\calc, { |voltage = 0.0|
 	q.osc.batvaltime = Main.elapsedTime;
 	q.osc.batPercent = ([3.2, 4.0].asSpec.unmap(voltage) * 100).round(0.1);
 	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
-	q.osc.batString.postcln;
+	// q.osc.batString.postcln;
 });
 
-
-
-
-// MFdef(\imuMode).add(\toggle, {
-//
-// 	MKtl(\xosc).elAt(\led, \5).value_(0);
-// 	}{
-// 		q.inph.mode = \move;
-// 		"*** enable MOVE (IMU) ".postln;
-// 		MKtl(\xosc).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
-// 		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
-// 		MFdef(\imuFunc).enable( \setInphlux );
-// 		MKtl(\xosc).elAt(\led, \5).value_(1/2);
-// 	};
-// });
-
-
-
 // switch modes - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\full, \move, \touch];
+q.inph.modes = [\full, \move, \touch, \off];
 q.inph.modeIndex = -1;
 q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
@@ -99,8 +81,8 @@ MFdef(\moveOFF).add(\info, { "move OFF".postln });
 MFdef(\touchON).add(\info, { "touch ON".postln });
 MFdef(\touchOFF).add(\info, { "touch OFF".postln });
 
-MFdef(\inphMode).add(\cycle, {
-	q.inph.modeIndex = (q.inph.modeIndex + 1 % 3).postln; '';
+MFdef(\inphModeSetIndex).add(\set, { |modeIndex = 0|
+	q.inph.modeIndex = modeIndex % q.inph.modes.size;
 	"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
 	(
 		move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; },
@@ -108,6 +90,11 @@ MFdef(\inphMode).add(\cycle, {
 		full:  { MFdef(\moveON).value;  MFdef(\touchON).value; },
 		off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; },
 	)[q.inph.mode].value;
+});
+
+MFdef(\inphModeStep).add(\step, { |inc = 1|
+	inc = inc ?? { 3.rand };
+	MFdef(\inphModeSetIndex).value(q.inph.modeIndex + inc);
 });
 
 MFdef(\mastaStepVol).add(\step, { |inc=0|
