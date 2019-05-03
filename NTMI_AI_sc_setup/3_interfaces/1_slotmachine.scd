@@ -82,8 +82,10 @@ q.slots.toggleAt = { |sl, index|
 
 	if (isPlaying) {
 		q.slots.stopAt(index);
+		false
 	} {
 		q.slots.playAt(index);
+		true
 	}
 };
 

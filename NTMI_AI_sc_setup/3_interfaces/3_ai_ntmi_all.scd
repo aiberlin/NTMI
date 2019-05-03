@@ -1,12 +1,37 @@
 /*
+
+TODO:
+- skipjack for play status ?
+-
+
+q.osc.shiftWasUsed
+
+OK --- back left buttons - slot play/stop
+OK --- encoder - master volume
+OK --- caps to inphlux
+OK --- imu to influx
+?? --- encHat + enc: master zoom
+?? --- hold playBt + enc -> indiv vol: OK
+OK --- preUp
+OK --- preDown
+?? ---
+?? ---
+?? ---
+?? ---
+
+
 OSCFunc.trace;
 OSCFunc.trace (false);
 
 TODO:
-- button polarity NOT like xosc!
--- buttons are 0 when open, and 1 when pressed!
+- unify/merge xosc and ntmi as much as possible!
+q.osc is shared space
 
-- ADD FULL mode: touch and move together!
+- magnet fluctuates between two states
+-> buggy? take it out until working?
++ ADD FULL mode: touch and move together!
+
++ button polarity NOT like xosc: buttons are 0 when open, and 1 when pressed!
 
 Controller Mapping:
 
@@ -35,6 +60,10 @@ Controller Mapping:
 + slot mode -> inc/dec slot volume
 + sl+hat mode -> inc/dec sounds?
 
+MKtl(\ntmi).elAt(\led, \fr, 0, 0);
+MKtl(\ntmi).elAt(\led, \bk, 0, 0);
+
+MKtl(\ntmi).elAt(\accel).deviceValue
 
 */
 
@@ -42,6 +71,8 @@ Controller Mapping:
 (
 // use this dict for everything osc related
 q.osc = q.osc ? ();
+q.osc.xosc = q.osc.ntmi ? ();
+
 
 ///////// make a new
 MKtl.all.at(\ntmi).free;
@@ -78,38 +109,9 @@ MKtl(\ntmi).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup 
 MKtl(\ntmi).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
 MKtl(\ntmi).elAt(\modSw).elemDesc.label_('touchMove');
 
-
-// init zero values
-q.zero = q.zero ? ();
-q.zero.imu = 0!9;
-q.zero.pads = 0!8;
-q.osc.rawPads = (0!8);
-
-// capture current zero position for imu and pads
-/* // get zero values while xosc is running:
-MFdef(\ZERO).value;
-*/
-MFdef(\ZERO).add(\set, {
-	q.zero.imu = MKtl(\ntmi).elAt(\imu9).value.unibi;
-	q.zero.pads = q.osc.rawPads;
-	"*** ZERO was set: ".postln;
-	"imu: %\n".postf(q.zero.imu.round(0.001));
-	"pads: %\n".postf(q.zero.imu.round(0.001));
-});
-
-// battery values and display
-q.osc.batString = "? battery ?";
-q.osc.batval = 0;
-q.osc.batPercent = 0;
-
 ////////////// get battery value:
 MKtl(\ntmi).elAt(\battery).action = { |bat|
-	q.osc.oldbatval = q.osc.batval;
-	q.osc.batval = bat.deviceValue;
-	q.osc.batvaltime = Main.elapsedTime;
-	q.osc.batPercent = (bat.value * 100).round(0.1);
-	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
-	q.osc.batString.postcln;
+	MFdef(\battery).value(bat.deviceValue);
 };
 
 
@@ -140,12 +142,13 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 		}
 	});
 
-	// on button release, do modal action:
+	// on button release, do the modal action:
 	but.action.add(\modal, { |but|
 		var btval = but.value;
 		var btnum = 1 + i;
 		var btname = but.name;
 		var actionFunc;
+		var playsNow;
 
 		[btname, btnum, btval].postln;
 
@@ -158,7 +161,9 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 				} {
 					// if no mode, do default action
 					// " % default action: toggle\n".postf(btname);
-					q.slots.toggleAt(i);
+
+					playsNow = q.slots.toggleAt(i);
+					MKtl(\ntmi).elAt(\led, \bk, i).value = playsNow.binaryValue.postln;
 				}
 			} {
 				// right side has a mode - remember we used it now
@@ -188,6 +193,7 @@ MKtl(\ntmi).elAt(\bt, [\6, \7, \8]).do { |but, i|
 	var btname = [\preUp, \preDown, \touchMove][i];
 	but.action.add(\shift, { |but|
 		// 0 is button pressed:
+		MKtl(\ntmi).elAt(\led, \bk, i + 5).value = but.value;
 		if (but.value == 0) {
 			q.osc.rightDown.add(btname);
 			// "rightdown: %\n".postf(q.osc.rightDown);
@@ -229,49 +235,35 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 });
 
 
-// switch modes - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\move, \touch, \full];
-q.inph.modeIndex = 0;
-q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
-MFdef(\imuON).add(\on, {
-	"*** enable MOVE imuON".postln;
-	MFdef(\imuFunc).enable( \setInphlux );
-});
 
-MFdef(\imuOFF).add(\on, {
-	"*** disable MOVE".postln;
-	MFdef(\imuFunc).disable( \setInphlux );
-	/////// pads set inphlux in unipolar, 0-1 range!
-	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
-});
-
-MFdef(\capON).add(\on, {
-	"*** enable TOUCH".postln;
+MFdef(\touchON).add(\ntmi, {
+	MKtl(\ntmi).collAt('caps').enable;
 	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.enable(\setInflux) };
 });
-MFdef(\capOFF).add(\on, {
-	"*** disable TOUCH".postln;
-	MKtl(\ntmi).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
-	q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
+
+MFdef(\touchOFF).add(\ntmi, {
+	MKtl(\ntmi).collAt('caps').disable;
+	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.disable(\setInflux) };
 });
 
-MFdef(\imuMode3).add(\cycle, {
-	q.inph.modeIndex = (q.inph.modeIndex + 1 % 3).postln; '';
-	"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
-	(
-		move: { MFdef(\imuON).value; MFdef(\capOFF).value; },
-		touch: { MFdef(\imuOFF).value; MFdef(\capON).value; },
-		full: { MFdef(\imuON).value; MFdef(\capON).value; },
-	)[q.inph.mode].value;
+MFdef(\moveON).add(\ntmi, {
+	MFdef(\ntmiImuFunc).enable(\setInflux);
+	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.enable(\setInflux) };
 });
+
+MFdef(\moveOFF).add(\ntmi, {
+	MFdef(\ntmiImuFunc).disable(\setInflux);
+	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.disable(\setInflux) };
+});
+
 
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
 	if (bt.value > 0) {
 		MFdef(\rightMode).(bt,
-			MFdef(\imuMode3),
+			MFdef(\inphMode),
 			{ |ndef|
 				"% - choose rand preset...\n".postf(ndef);
 				q.pre.stepNdefInf( ndef, nil )
@@ -283,7 +275,6 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 /*
 MFdef(\stepVol).(q.slots.actives[0]);
 MFdef(\stepVol).(q.slots.actives[0], -1);
-
 MFdef(\mastaStepVol).(1);
 
 */
@@ -328,6 +319,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 			"slot: slot volume".postln;
 			q.osc.leftDown.do { |slotIndex|
 				MFdef(\stepVol).(q.slots.actives[slotIndex], enc.deviceValue);
+				q.osc.left
 			};
 		},
 		3, {
@@ -378,23 +370,25 @@ MKtl(\ntmi).elAt(\steps).do { |elem, index|
 
 MKtl(\ntmi).collectivesDict[\imu].action = {
 	// trigger the action only once (influx calc)
-	MFdef(\imuFunc).value;
+	MFdef(\ntmiImuFunc).value;
 };
 
 // set the first 9 values of the inphlux from the imu params:
 q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
 
-MFdef(\imuFunc).add(\setInphlux, {
+MFdef(\ntmiImuFunc).add(\setInphlux, {
+	var imuInvalsBi = MKtl(\ntmi).elAt(\imu9).value.unibi;
 	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
-		var value = MKtl(\ntmi).elAt(\imu9, i).value.unibi - q.zero.imu[i];
+		var value = imuInvalsBi[i] - q.zero.imu[i];
 		[name, value]
 	}.flat;
+	q.zero.rawImuBiValues = imuInvalsBi;
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	q.inphlux.set(*keysvals);
 });
 
 // hack for xosc gui: all element actions trigger imuFunc!
-MKtl(\ntmi).elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\imuFunc)));
+MKtl(\ntmi).elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\ntmiImuFunc)));
 
 /*
 MFdef(\imuFunc).disable( \setInphlux );

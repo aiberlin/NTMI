@@ -1,23 +1,22 @@
-// /*
-// OSCFunc.trace;
-// OSCFunc.trace (false);
-// */
-//
+///////// xosc support for first batch of NTMI prototypes
+/*
+MKtl(\xosc).gui;
+*/
 
 (
-// use this dict for everything osc related
+
 q.osc = q.osc ? ();
+q.osc.xosc = q.osc.xosc ? ();
 
 // xosc sends here:
 thisProcess.openUDPPort(8000);
 thisProcess.openPorts.postln;
 
+
+
 // make xosc object
 MKtl.all[\xosc].free;
 MKtl(\xosc, "*x-osc");
-
-/// MKtl(\xosc).gui;
-
 
 /// init all xosc actions as MFuncs, provide posting
 MKtl(\xosc).elementsDict.do(_.action_(MFunc()));
@@ -59,57 +58,11 @@ MKtl(\xosc).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup 
 MKtl(\xosc).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["-DOWN", "+UP"]@i  };
 MKtl(\xosc).elAt(\modSw).elemDesc.label_('touchMove');
 
-// init zero values
-q.zero = q.zero ? ();
-q.zero.imu = 0!9;
-q.zero.pads = 0!8;
-q.osc.rawPads = (0!8);
-
-// capture current zero position for imu and pads
-/* // get zero values while xosc is running:
-MFdef(\ZERO).value;
-*/
-MFdef(\ZERO).add(\set, {
-	q.zero.imu = MKtl(\xosc).elAt(\imu9).value.unibi;
-	q.zero.pads = q.osc.rawPads;
-	"*** ZERO was set: ".postln;
-	"imu: %\n".postf(q.zero.imu.round(0.001));
-	"pads: %\n".postf(q.zero.imu.round(0.001));
-});
-
-
-//  MKtl(\xosc).device.destination.hostname = "127.0.0.1";
-
-// /// try replacing destination ONLY if test send fails:
-// try { MKtl(\xosc).device.destination.sendMsg("tralala") } {
-// 	"*** cannot send to: ".postln;
-// 	MKtl(\xosc).device.destination.postcs;
-// 	"... replacing MKtl(\xosc).device.destination.hostname_(\"localhost\");".postln;
-// 	MKtl(\xosc).device.destination.hostname_("localhost");
-// };
-
-// "*** XOSC - FOR NOW, TURN XOSC RESPONDERS OFF, ONLY USE hand-written OSCdefs!".postln;
-//
-// MKtl(\xosc).device.oscFuncDictionary.do(_.disable);
-
-
-// battery values and display
-// MKtl(\xosc).elAt(\battery).deviceSpec;
-q.osc.batString = "? battery ?";
-q.osc.batval = 0;
-q.osc.batPercent = 0;
 
 ////////////// get battery value:
 MKtl(\xosc).elAt(\battery).action = { |bat|
-	q.osc.oldbatval = q.osc.batval;
-	q.osc.batval = bat.deviceValue;
-	q.osc.batvaltime = Main.elapsedTime;
-	q.osc.batPercent = (bat.value * 100).round(0.1);
-	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
-	q.osc.batString.postcln;
+	MFdef('battery').value(bat.deviceValue);
 };
-
-
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -123,16 +76,16 @@ MKtl(\xosc).elAt(\inD, (0..7)).do (_.valueAction_(1));
 
 // prepare for modalization:
 // left buttons set up modes for right side and <>
-q.osc.leftDown = List[];
-q.osc.rightDown = List[];
-q.osc.shiftWasUsed = false;
+q.osc.xosc.leftDown = List[];
+q.osc.xosc.rightDown = List[];
+q.osc.xosc.shiftWasUsed = false;
 
 /*
 //////// to test left side actions:
-q.osc.rightDown.clear.add(\preUp);
-q.osc.rightDown.clear.add(\preDown);
-q.osc.rightDown.clear.add(\touchMove);
-q.osc.rightDown.clear;
+q.osc.xosc.rightDown.clear.add(\preUp);
+q.osc.xosc.rightDown.clear.add(\preDown);
+q.osc.xosc.rightDown.clear.add(\touchMove);
+q.osc.xosc.rightDown.clear;
 */
 
 // the slot switches:
@@ -140,11 +93,11 @@ MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 	but.action.add(\shift, { |but|
 		// 0 is button pressed: prep mode
 		if (but.value == 0) {
-			q.osc.leftDown.add(i);
+			q.osc.xosc.leftDown.add(i);
 		} {
 			// button was released: remove shifter
-			q.osc.leftDown.remove(i);
-			// q.osc.leftDown.postln;
+			q.osc.xosc.leftDown.remove(i);
+			// q.osc.xosc.leftDown.postln;
 		}
 	});
 
@@ -159,10 +112,10 @@ MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 
 		if (btval > 0) {
 			// determine whether we are in a mode
-			if (q.osc.rightDown.size == 0) {
+			if (q.osc.xosc.rightDown.size == 0) {
 				// reset if we just left a mode
-				if (q.osc.shiftWasUsed) {
-					q.osc.shiftWasUsed = false
+				if (q.osc.xosc.shiftWasUsed) {
+					q.osc.xosc.shiftWasUsed = false
 				} {
 					// if no mode, do default action
 					// " % default action: toggle\n".postf(btname);
@@ -170,7 +123,7 @@ MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 				}
 			} {
 				// right side has a mode - remember we used it now
-				q.osc.shiftWasUsed = true;
+				q.osc.xosc.shiftWasUsed = true;
 				actionFunc = (
 					preUp: {
 						// "*** rshift 1 action: % NEXT ndef\n".postf(btname);
@@ -184,7 +137,7 @@ MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 						// "*** rshift 3 action: % RAND ndef\n".postf(btname);
 						q.slots.chooseNext(i);
 					},
-				)[q.osc.rightDown.first];
+				)[q.osc.xosc.rightDown.first];
 				actionFunc.value;
 			}
 		}
@@ -197,20 +150,20 @@ MKtl(\xosc).elAt(\inD, [\5, \6, \7]).do { |but, i|
 	but.action.add(\shift, { |but|
 		// 0 is button pressed:
 		if (but.value == 0) {
-			q.osc.rightDown.add(btname);
-			// "rightdown: %\n".postf(q.osc.rightDown);
+			q.osc.xosc.rightDown.add(btname);
+			// "rightdown: %\n".postf(q.osc.xosc.rightDown);
 		} {
 			// button was released: remove shifter
-			q.osc.rightDown.remove(btname);
-			// "rightdown: %\n".postf(q.osc.rightDown);
+			q.osc.xosc.rightDown.remove(btname);
+			// "rightdown: %\n".postf(q.osc.xosc.rightDown);
 		}
 	});
 };
 
 /*
-q.osc.leftDown.clear.add(0);
-q.osc.leftDown.clear.add(1);
-q.osc.leftDown.clear;
+q.osc.xosc.leftDown.clear.add(0);
+q.osc.xosc.leftDown.clear.add(1);
+q.osc.xosc.leftDown.clear;
 MKtl(\xosc).elAt(\inD, \5).value_(0);
 MFdef(\rightMode).(MKtl(\xosc).elAt(\inD, \5), { "def".postln }, { "shift".postln });
 */
@@ -220,10 +173,10 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 	var btval = but.value;
 	var btname = (sw_5: \touchMove, sw_6: \preDown, sw_7: \preUp)[but.name];
 	var slotIndex, player;
-	if (q.osc.leftDown.size == 0) {
+	if (q.osc.xosc.leftDown.size == 0) {
 		// if we just left a mode, just reset
-		if (q.osc.shiftWasUsed) {
-			q.osc.shiftWasUsed = false
+		if (q.osc.xosc.shiftWasUsed) {
+			q.osc.xosc.shiftWasUsed = false
 		} {
 			// if we were not in any mode, do the default action
 			// " % default action: \n".postf(btname);
@@ -232,8 +185,8 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 	} {
 		// lest is held down, and right was pressed,
 		// so now we are in shoft mode:
-		q.osc.shiftWasUsed = true;
-		slotIndex = q.osc.leftDown.first;
+		q.osc.xosc.shiftWasUsed = true;
+		slotIndex = q.osc.xosc.leftDown.first;
 		player = q.slots.actives[slotIndex];
 		// " % shift action for slot %, % \n".postf(btname, slotIndex, player);
 		shiftAction.value(player);
@@ -241,29 +194,6 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 });
 
 
-// switch mode - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\move, \touch];
-q.inph.mode = \move;
-q.inph.modeIndex = { q.inph.modes.indexOf(q.inph.mode) };
-
-MFdef(\imuMode).add(\toggle, {
-	if(  q.inph.mode == \move ) {
-		q.inph.mode = \touch;
-		"*** enable TOUCH".postln;
-		8.do { |i|	MKtl(\xosc).elAt('inA').at(i + 8).action.enable(\setInflux) };
-		MFdef(\imuFunc).disable( \setInphlux );
-		/////// pads set inphlux in unipolar, 0-1 range!
-		q.inphlux.set(*q.inphlux.inNames.keep(9).collect([_, 0]).flat);
-		MKtl(\xosc).elAt(\led, \5).value_(0.0);
-	}{
-		q.inph.mode = \move;
-		"*** enable MOVE (IMU) ".postln;
-		MKtl(\xosc).elAt('pads8').do { |pad| pad.action.disable(\setInflux) };
-		q.inphlux.set(*q.inphlux.inNames.drop(9).collect([_, 0]).flat);
-		MFdef(\imuFunc).enable( \setInphlux );
-		MKtl(\xosc).elAt(\led, \5).value_(1/2);
-	};
-});
 
 MKtl(\xosc).elAt(\inD, \5).action.add(\modal, {|bt|
 	// do modal action on release
@@ -283,19 +213,6 @@ MKtl(\xosc).elAt(\inD, \5).action.add(\modal, {|bt|
 MFdef(\stepVol).(q.slots.actives[0]);
 MFdef(\stepVol).(q.slots.actives[0], -1);
 */
-
-MFdef(\stepVol).add(\step, { |ndef, step = 1|
-	var stepsize = 0.05; // 20 steps from 0 to 1
-	var ampspec = \amp.asSpec;
-	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * stepsize))
-});
-
-MFdef(\stepSlotPres).add(\step, { |step = 1|
-	var activeNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
-	activeNdefs.do { |nd, j|
-		q.pre.stepNdefInf( nd, step );
-	};
-});
 
 
 MKtl(\xosc).elAt(\inD, [\6, \7]).do { |elem, index|
@@ -325,14 +242,13 @@ MKtl(\xosc).collectivesDict[\imu].action = {
 	MFdef(\imuFunc).value;
 };
 
-// set the first 9 values of the inphlux from the imu params:
-q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
-
-MFdef(\imuFunc).add(\setInphlux, {
+MFdef(\xoscImuFunc).add(\setInphlux, {
+	var imuBiValues = MKtl(\xosc).elAt(\imu9, i).value.unibi;
 	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
-		var value = MKtl(\xosc).elAt(\imu9, i).value.unibi - q.zero.imu[i];
+		var value = imuBiValues[i] - q.zero.imu[i];
 		[name, value]
 	}.flat;
+	q.osc.rawImuBiValues = imuBiValues;
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	q.inphlux.set(*keysvals);
 });
@@ -341,19 +257,9 @@ MFdef(\imuFunc).add(\setInphlux, {
 MKtl(\xosc).elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\imuFunc)));
 
 /*
-MFdef(\imuFunc).disable( \setInphlux );
-MFdef(\imuFunc).enable( \setInphlux );
+MFdef(\xoscImuFunc).disable( \setInphlux );
+MFdef(\xoscImuFunc).enable( \setInphlux );
 */
-
-
-// for monitoring the incoming osc activity by timetag
-q.osc.lastInTime = 0;
-q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
-q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
-
-OSCdef(\imuAlive, { |msg, time|
-	q.osc.lastInTime = time;
-}, "/imu").permanent_(true);
 
 
 ///////////////////////////////////////////////////////////////
