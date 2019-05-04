@@ -257,7 +257,8 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 			q.osc.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
 				q.pre.stepNdefInf( q.ndefs[slotIndex], nil )
-			}
+			};
+			q.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{ MFdef(\inphModeStep).value(1) }
@@ -281,7 +282,8 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 			q.osc.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
 				q.pre.stepNdefInf( q.ndefs[slotIndex], 1 )
-			}
+			};
+			q.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{ MFdef(\stepInphWPre).value(1) }
@@ -305,7 +307,8 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 			q.osc.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
 				q.pre.stepNdefInf( q.ndefs[slotIndex], -1 )
-			}
+			};
+			q.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{ MFdef(\stepInphWPre).value(-1) }
