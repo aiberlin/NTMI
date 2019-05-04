@@ -200,7 +200,7 @@ MKtl(\xosc).elAt(\inD, \5).action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value > 0) {
 		MFdef(\rightMode).(bt,
-			MFdef(\imuMode),
+			MFdef(\inphModeStep),
 			{ |ndef|
 				"% - choose rand preset...\n".postf(ndef);
 				q.pre.stepNdefInf( ndef, nil )

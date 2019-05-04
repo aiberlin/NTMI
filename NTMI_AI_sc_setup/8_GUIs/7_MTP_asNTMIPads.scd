@@ -39,7 +39,7 @@ g.makeGui.xoscMTPads = {
 		var imukeys = [ 'accel', 'gyro', 'magnet' ];
 		var convertedSize;
 
-		if (q.inph.mode == \touch) {
+		if ([\touch, \full].includes(q.inph.mode) ) {
 			mypadindex = q.mtp.padmap[id];
 			mypadindex ?? {
 				mypadindex = q.mtp.pads.detectIndex { |pt|
@@ -54,24 +54,26 @@ g.makeGui.xoscMTPads = {
 				// q.mtp.padvals.round(0.001).postln;
 			};
 		} {
-			myimukey = q.mtp.imumap[id];
-			myimukey ?? {
-				numfingers = MTP.fingersDict.size;
-				if (numfingers < 4) {
-					myimukey = imukeys.detect { |key| q.mtp.imumap.includes(key).not };
-					q.mtp.imumap.put(id, myimukey);
+			if ([\move, \full].includes(q.inph.mode) ) {
+				myimukey = q.mtp.imumap[id];
+				myimukey ?? {
+					numfingers = MTP.fingersDict.size;
+					if (numfingers < 4) {
+						myimukey = imukeys.detect { |key| q.mtp.imumap.includes(key).not };
+						q.mtp.imumap.put(id, myimukey);
+					};
 				};
-			};
 
-			convertedSize = (xys[2] * 0.25 * (id % 2).unibi).biuni;
-			xys.put(2, convertedSize);
+				convertedSize = (xys[2] * 0.25 * (id % 2).unibi).biuni;
+				xys.put(2, convertedSize);
 
-			// [myimukey, xys.round(0.001)].postln;
+				// [myimukey, xys.round(0.001)].postln;
 
-			if(myimukey.notNil) {
-				MKtl(\xosc).elAt(myimukey).valueAction_(xys);
-				MFdef(\imuFunc).value;
-			};
+				if(myimukey.notNil) {
+					MKtl(\xosc).elAt(myimukey).valueAction_(xys);
+					MFdef(\imuFunc).value;
+				};
+			}
 		};
 	});
 
@@ -79,7 +81,7 @@ g.makeGui.xoscMTPads = {
 	MTP.setAction = MFdef(\mtp);
 
 	MTP.keydownDict.put($m, {
-		MFdef(\imuMode).value;
+		MFdef(\inphModeStep).value;
 		try { MTP.uview.refresh };
 	});
 

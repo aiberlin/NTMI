@@ -308,8 +308,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	rMViews[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
 
 	rMViews[3].label_(q.inph.mode).mode_(\code);
-	rMViews[3].uv.mouseDownAction.add(\toggle, { |x|
-		MFdef(\imuMode3).value;
+	rMViews[3].uv.mouseDownAction.add(\cycle, { |x|
+		MFdef(\inphModeStep).value;
 		rMViews[3].label_(q.inph.mode).valueAction_(q.inph.mode);
 	});
 
