@@ -43,7 +43,7 @@ q.osc is shared space
 (
 // use this dict for everything osc related
 q.osc = q.osc ? ();
-q.osc.xosc = q.osc.ntmi ? ();
+q.osc.ntmi = q.osc.ntmi ? ();
 
 
 ///////// make a new

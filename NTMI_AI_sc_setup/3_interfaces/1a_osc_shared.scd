@@ -72,7 +72,7 @@ MFdef('battery').add(\calc, { |voltage = 0.0|
 
 // switch modes - analog in vs. IMU /// touch vs move mode
 q.inph.modes = [\full, \move, \touch, \off];
-q.inph.modeIndex = -1;
+q.inph.modeIndex = 0;
 q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
 

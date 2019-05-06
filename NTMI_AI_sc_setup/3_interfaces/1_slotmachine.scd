@@ -48,7 +48,7 @@ q.inphlux.action.disable(q.inphlux.action.activeNames.copy);
 q.slots = q.slots ? ();
 q.slots.actives = q.ndefs;
 // use this global fadeoutTime for ndef.stop(fadeoutTime);
-q.slots.fadeoutTime = 1;
+q.slots.fadeoutTime = 0.2;
 q.slots.defaultVol = 0.25;
 
 

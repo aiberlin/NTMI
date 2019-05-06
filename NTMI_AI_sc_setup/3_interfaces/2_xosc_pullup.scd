@@ -1,6 +1,20 @@
 ///////// xosc support for first batch of NTMI prototypes
 /*
 MKtl(\xosc).gui;
+
+left buttons:
+- toggle sound slot on/off
+- if preUp/Down held, next sound
+- hold left, press
+
+preUp/Down:
+- next inphlux preset
+- if left slot button held, volume up/down
+
+zoom - just zoom
+
+on NTMI_xosc1, touch/Move but is dead!
+
 */
 
 (
@@ -30,8 +44,10 @@ MKtl(\xosc).elementsDict.do { |el| el.action.disable(\post) };
 // trigger the individual action on the button whose state has changed;
 // dont use doAction, because that triggers all group actions -> loop
 MKtl(\xosc).collAt(\dIn).action = { |coll|
+	// coll.value.postln;
 	coll.do { |bt|
 		if (bt.value != bt.prevValue) {
+			// [ bt.name, bt.value, bt.prevValue].postln;
 			bt.action.value(bt);
 		};
 	};
@@ -115,7 +131,7 @@ MKtl(\xosc).elAt(\inD, [\1, \2, \3, \4]).do { |but, i|
 			if (q.osc.xosc.rightDown.size == 0) {
 				// reset if we just left a mode
 				if (q.osc.xosc.shiftWasUsed) {
-					q.osc.xosc.shiftWasUsed = false
+					q.osc.xosc.shiftWasUsed = false;
 				} {
 					// if no mode, do default action
 					// " % default action: toggle\n".postf(btname);
@@ -183,8 +199,8 @@ MFdef(\rightMode).add(\modal, { |but, defaultAction, shiftAction|
 			defaultAction.value;
 		}
 	} {
-		// lest is held down, and right was pressed,
-		// so now we are in shoft mode:
+		// left is curr. held down, and right was pressed,
+		// so now we are in shifted mode:
 		q.osc.xosc.shiftWasUsed = true;
 		slotIndex = q.osc.xosc.leftDown.first;
 		player = q.slots.actives[slotIndex];
