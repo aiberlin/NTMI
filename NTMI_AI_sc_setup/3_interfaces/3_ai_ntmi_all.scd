@@ -1,13 +1,15 @@
 /*
 
 TODO:
-- show mastaVol on mainGui
+- ntmi_esp should be shown on maingui
++ change colors on preButs - 6 cols, red, yell, green, cyan, blue, magenta
+
 
 
 ALL Controller Mappings on NTMI_esp32_v1:
 
 OK --- back left buttons - slot play/stop
-  ----> hold down for slot mode
+----> hold down for slot mode
 
 OK --- encoder -> master volume
 OK --- encHat + enc -> master zoom
@@ -208,7 +210,7 @@ MFdef(\moveOFF).add(\ntmi, {
 	MFdef(\ntmiImuFunc).disable(\setInflux);
 
 	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.disable(\setInflux) };
-		/////// pads set inphlux in unipolar, 0-1 range!
+	/////// pads set inphlux in unipolar, 0-1 range!
 	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
 
@@ -237,10 +239,24 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 
 MFdef(\inphModeStep).add(\modeSwColor, {
 	defer ({
-	var msg = [0,0,0,0].put(q.inph.modeIndex, 1);
-	MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
+		var msg = [0,0,0,0].put(q.inph.modeIndex, 1);
+		MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
 	}, 0.05);
 });
+
+
+MFdef(\setInphWPre).add(\setLEDs, {
+	fork {
+		var ledCol = q.inph.currPresetCol.asArray.keep(3).round.collect(_.asInteger);
+		ledCol.postln;
+		0.1.wait;
+		[5, 6].do { |ledIndex|
+			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledIndex, *ledCol);
+			0.02.wait
+		}
+	}
+});
+
 
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release
@@ -376,7 +392,7 @@ MFdef(\ntmiImuFunc).add(\setInflux, {
 		var value = imuInvalsBi[i] - q.zero.imu[i];
 		[name, value]
 	}.flat;
-	q.zero.rawImuBiValues = imuInvalsBi;
+	q.osc.rawImuBiValues = imuInvalsBi;
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	q.inphlux.set(*keysvals);
 });
@@ -399,13 +415,24 @@ OSCdef(\imuAlive, { |msg, time|
 	q.osc.lastInTime = time;
 }, "/imu").permanent_(true);
 
-// update slot LEDs
-q.osc.ntmiSkip.free;
+///////// update slot LEDs
+q.osc.ntmiSkip.stop.free;
 q.osc.ntmiSkip = SkipJack({
-	MKtl(\ntmi).elAt(\led, \bk, (0..3)).do { |led, i|
-		var newval = q.ndefs[i].monitor.isPlaying.binaryValue;
-		if (led.value != newval) { led.value = newval };
-	};
+	var cols = [[0,0,0], [0,1,0]], col;
+	fork {
+		MKtl(\ntmi).elAt(\led, \bk, (0..3)).do { |led, ledi|
+			var isPlaying = q.ndefs[ledi].monitor.isPlaying;
+			var newval = isPlaying.binaryValue;
+			if (newval != led.value) {
+				led.value = newval;
+			};
+			col = cols[newval];
+			// [ ledi, col ].postln;
+			// "send green if on".postln;
+			0.1.wait;
+			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+		};
+	}
 });
 
 

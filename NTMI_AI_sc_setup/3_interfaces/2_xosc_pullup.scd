@@ -253,13 +253,14 @@ MKtl(\xosc).elAt(\inD, [\6, \7]).do { |elem, index|
 // //// I M U
 // ///////////////////////////////////////////////////////////////
 
-MKtl(\xosc).collectivesDict[\imu].action = {
+MKtl(\xosc).collAt(\imu).action = { |imugrp|
 	// trigger the action only once (influx calc)
-	MFdef(\imuFunc).value;
+	MFdef(\xoscImuFunc).value;
+	// msg.postcs;
 };
 
 MFdef(\xoscImuFunc).add(\setInphlux, {
-	var imuBiValues = MKtl(\xosc).elAt(\imu9, i).value.unibi;
+	var imuBiValues = MKtl(\xosc).elAt(\imu9).value.unibi;
 	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
 		var value = imuBiValues[i] - q.zero.imu[i];
 		[name, value]
@@ -330,7 +331,7 @@ MKtl(\xosc).collAt('aIn').groupAction = { |coll|
 	// trigger touch to inphlux only once ...
 	MFdef(\touchToInph).value;
 	// and explicitly trigger zoom action
-	MKtl(\xosc).elAt('inA', 7).doAction;
+	// MKtl(\xosc).elAt('inA', 7).doAction;
 
 };
 

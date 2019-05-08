@@ -25,7 +25,7 @@
 // ],
 
 // /// TODO: influxPresets from files if not numbers ...
-influxPresets: [ 3, 12, 37, 42, 45, 86, 666, 1000.rand ],
+influxPresets: [ 3, 12, 37, 42, 45, 86 ],
 // the preset key/name to set it to
 influxPreset: 3,
 

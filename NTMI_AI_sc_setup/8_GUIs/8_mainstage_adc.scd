@@ -404,8 +404,9 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 			g.main.mastaVolDisplay;
 
-			g.main.movevals = MKtl('xosc').elAt(\imu9).value;
-			g.main.padCols = MKtl('xosc').elAt('pads8').value.collect { |val|
+
+			g.main.movevals = q.osc.rawImuBiValues.biuni;
+			g.main.padCols = q.osc.rawPads.collect { |val|
 				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
 			};
 

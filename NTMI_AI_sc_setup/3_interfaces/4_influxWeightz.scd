@@ -37,8 +37,11 @@ q.inph = q.inph ? ();
 // find your favorite numbers for making weights by trying them out
 // q.inph.put(\randSeeds, [ 3, 12, 45, 42, 37, 86, 98, 111, 151, rrand(0, 1000).postln]);
 q.inph.randSeeds = q.prefs.active.influxPresets ?? {
-	[ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)]
+	////// 	[ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)]
+	[ 5, 8, 13, 21, 34, 55]
 };
+
+q.inph.randSeeds = q.inph.randSeeds.keep(6);
 
 // create a number of seeded random weights and store them in presets
 // keys are integers 0..n-1

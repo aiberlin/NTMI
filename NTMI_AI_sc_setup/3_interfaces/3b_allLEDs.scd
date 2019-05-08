@@ -1,5 +1,8 @@
 
 // test all led elements once:
+/*
+Tdef(\allLEDs).play;
+*/
 
 Tdef(\allLEDs).set(\dt, 0.05);
 Tdef(\allLEDs, { |ev|

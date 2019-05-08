@@ -182,10 +182,18 @@ Task {
 
 		};
 
+		///////// SHOWTIME TWEAKS //////////////
+		// disable Zoom on xosc only
+		MKtl(\xosc).elAt('inA', 7).disable;
+		q.setZoom(1);
+		// q.setZoom = nil;
+
+		g.main.skipper.dt = 1/25;
+
+		q.inph.modes = [\full, \touch];
+
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
-
-		q.setZoom(0.5);
 
 	};
 }.play(AppClock);

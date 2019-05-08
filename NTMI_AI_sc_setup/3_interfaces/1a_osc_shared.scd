@@ -36,6 +36,9 @@ q.zero.pads = 0!8;
 q.osc.rawPads = (0!8);
 q.osc.rawImuBiValues = (0!9);
 
+q.zero.imu = q.osc.rawImuBiValues;
+q.zero.pads = q.osc.rawPads;
+
 // set the first 9 values of the inphlux from the imu params:
 q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
 q.inphlux.addHalo(\padNames, q.inphlux.inNames.drop(9));
@@ -47,8 +50,9 @@ q.inphlux.addHalo(\capNames, q.inphlux.inNames.drop(9));
 MFdef(\ZERO).value;
 */
 
+
 MFdef(\ZERO).add(\set, {
-	q.zero.imu = q.rawImuBiValues;
+	q.zero.imu = q.osc.rawImuBiValues;
 	q.zero.pads = q.osc.rawPads;
 	"*** ZERO was set: ".postln;
 	"imu: %\n".postf(q.zero.imu.round(0.001));
@@ -71,7 +75,8 @@ MFdef('battery').add(\calc, { |voltage = 0.0|
 });
 
 // switch modes - analog in vs. IMU /// touch vs move mode
-q.inph.modes = [\full, \move, \touch, \off];
+// q.inph.modes = [\full, \move, \touch, \off];
+q.inph.modes = [\full, \touch];
 q.inph.modeIndex = 0;
 q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
