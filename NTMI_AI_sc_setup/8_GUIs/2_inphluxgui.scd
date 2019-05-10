@@ -138,7 +138,7 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 			inph.outNames.do { |name, i|
 				var rect = Rect(lWid + (i * hstep), tHi, hstep, bHi);
 				Pen.addRect(rect);
-				Pen.color = Color.grey(1 - inph.outValDict[name].biuni);
+				Pen.color = Color.grey(inph.outValDict[name].biuni);
 				Pen.fill;
 			};
 
@@ -155,7 +155,7 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 
 			inph.outNames.do { |name, i|
 				var x = hstep * (i + 0.5) + lWid;
-				var y = inph.outValDict[name].biuni * bHi + tHi;
+				var y = hi - (inph.outValDict[name].biuni * bHi);
 				if (i == 0) { Pen.moveTo(x@y) } { Pen.lineTo(x@y) };
 			};
 			Pen.color_(Color.green).width_(3).stroke;

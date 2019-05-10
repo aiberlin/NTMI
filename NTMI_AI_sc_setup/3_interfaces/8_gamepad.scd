@@ -3,8 +3,10 @@
 
 
 /*
-
+MKtl.find(\hid);
 MKtl('ferrari').gui;
+
+
 There are 4 slots with named sounds - see the left side views.
 
 1. They can be toggled on/off separately: press Buttons 1-4
@@ -22,7 +24,7 @@ hold button 10 down, set with wheel, release button 10, release wheel
 hold one of buttons 1-4, move wheel to set volume, release button
 
 
-4. Influx behavior has 8 different presets;
+4. Influx behavior has 6 different presets;
 - switch influx presets by pressing joystick hat buttons
 left hat for down by one,
 right hat for up by one,
@@ -48,22 +50,7 @@ button 8 for next higher preset,
 both for a randomly chosen preset.
 
 
-////////// BASICS: \\\\\\\\\\\
-- Buttons 1-4 toggle the 4 sounds on and off
-- the joysticks change 4 influx inputs
-- the throttles change 2 more influx inputs
-
-- the joystick hats switch influx presets:
-L = prev, both = rand, R = next
-- the underside buts 7 and 8 switch masterFX presets:
-L = prev, both = rand, R = next
-
-- the jogwheel on the left is for master volume; returns to center.
-
-////////// MODALS: \\\\\\\\\\\\
-
-
-
+///////// tests
 q.ferr.mktl.openDevice;
 q.ferr.mktl.gui;
 q.ferr.mktl.elAt(\bt, 0).dump
@@ -169,8 +156,10 @@ if (q.ferr.mktl.isNil) {
 	////////// 4 joyaxes set influx inputs
 	q.ferr.mktl.elAt(\joyAxes).do { |el, i|
 		var inName = q.inphlux.inNames[i + 9];
+		var sign = (x: 1, y: -1)[el.key];
+		[el, sign].postln;
 		el.elemDesc.label = "infl" + inName.cs;
-		el.action = { |el| q.inphlux.set(inName, el.value.unibi) };
+		el.action = { |el| q.inphlux.set(inName, el.value.unibi * sign) };
 	};
 
 	////////// 2 throttles set influx inputs
