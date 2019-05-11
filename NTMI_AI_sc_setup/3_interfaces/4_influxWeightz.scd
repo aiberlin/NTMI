@@ -34,24 +34,26 @@ e.g. 4 buttons:
 q = q ? ();
 q.inph = q.inph ? ();
 
-// find your favorite numbers for making weights by trying them out
-// q.inph.put(\randSeeds, [ 3, 12, 45, 42, 37, 86, 98, 111, 151, rrand(0, 1000).postln]);
-q.inph.randSeeds = q.prefs.active.influxPresets ?? {
-	////// 	[ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)]
-	[ 5, 8, 13, 21, 34, 55]
-};
+// // find your favorite numbers for making weights by trying them out
+// // q.inph.put(\randSeeds, [ 3, 12, 45, 42, 37, 86, 98, 111, 151, rrand(0, 1000).postln]);
+// q.inph.randSeeds = q.prefs.active.influxPresets ?? {
+// 	////// 	[ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)]
+// 	[ 5, 8, 13, 21, 34, 55]
+// };
+/////// hardcoded for now, enable prefs again later:
+q.inph.randSeeds = [ 3, 12, 37, 42, 45, 86, \diagL ];
 
-q.inph.randSeeds = q.inph.randSeeds.keep(6);
 
 // create a number of seeded random weights and store them in presets
 // keys are integers 0..n-1
-q.inph.randSeeds.size;
 (
-q.inph.randSeeds.do { |i|
-	{
-		q.inphlux.rand;
-		q.inphlux.presets.put(i, q.inphlux.weights)
-	}.valueSeed(i)
+q.inph.randSeeds.do { |seed|
+	if (seed.isNumber) {
+		{
+			q.inphlux.rand;
+			q.inphlux.presets.put(seed, q.inphlux.weights)
+		}.valueSeed(i)
+	}
 };
 
 // store num pres and current
@@ -61,12 +63,14 @@ q.inphlux.setwPre(q.prefs.active.influxPreset);
 
 q.inph.alpha = 0.8;
 // colors attributed to the n presets
-q.inph.presetCols = q.inph.randSeeds.size.collect {|i|
+q.inph.presetCols = 6.collect {|i|
 	var col = Color.hsv(i/ q.inph.randSeeds.size + 0.0, 1, 1, 1);
 	var sum = col.red + col.blue + col.green;
 	// tone down mixed colors for eye comfort
 	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [q.inph.alpha])
 };
+
+q.inph.presetCols = q.inph.presetCols.add(Color.black);
 
 // set weights preset by index: number is wrapped index in q.inph.randSeeds
 MFdef(\setInphWPre).add(\set, { |index|

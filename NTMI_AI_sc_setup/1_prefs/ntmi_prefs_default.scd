@@ -25,7 +25,7 @@
 // ],
 
 // /// TODO: influxPresets from files if not numbers ...
-influxPresets: [ 3, 12, 37, 42, 45, 86 ],
+influxPresets: [ 3, 12, 37, 42, 45, 86, \diagL ],
 // the preset key/name to set it to
 influxPreset: 3,
 
