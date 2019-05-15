@@ -6,6 +6,7 @@
 'name': 'default', // <- user name here
 'numChans': 2,
 'serverSetup': "serverBasic2.scd",
+'hasGui': true,
 
 // // the choices of processes to play
 ///// uncomment to restrict to these:

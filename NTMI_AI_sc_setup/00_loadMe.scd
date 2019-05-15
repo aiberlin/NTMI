@@ -110,6 +110,8 @@ Task {
 	q.numIns = q.prefs.active.numIns ? q.numChans;
 	"*** q.numChans is: %\n".postf(q.numChans);
 
+	q.hasGui = q.prefs.active.hasGui ? q.hasGui;
+
 	///////// dont load HIDs by default, for more stability
 	///// MKtl.find(\hid); 0.5.wait;
 	///////// do load MIDI devices

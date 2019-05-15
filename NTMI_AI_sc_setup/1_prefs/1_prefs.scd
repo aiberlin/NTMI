@@ -16,6 +16,8 @@ q.prefs.defaultPath = "ntmi_prefs_default.scd".resolveRelative;
 q.prefs.default = q.prefs.defaultPath.load;
 q.prefs.userPrefPath = (Platform.userAppSupportDir +/+  "ntmi_prefs.scd");
 
+q.prefs.open = { q.prefs.userPrefPath.openOS };
+
 q.prefs.readUser = {
 	var prefdict;
 	// try to read user prefs
