@@ -68,9 +68,8 @@ q.inph.presetCols = 6.collect {|i|
 	var sum = col.red + col.blue + col.green;
 	// tone down mixed colors for eye comfort
 	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [q.inph.alpha])
-};
+}.add(Color.black);
 
-q.inph.presetCols = q.inph.presetCols.add(Color.black);
 
 // set weights preset by index: number is wrapped index in q.inph.randSeeds
 MFdef(\setInphWPre).add(\set, { |index|

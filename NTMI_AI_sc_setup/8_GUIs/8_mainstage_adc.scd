@@ -65,7 +65,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	var oscBut, midiBut, recBut, batView;
 	var w;
 	var bigUV, imuUV;
-	var popMVs, ndefPops, ndefMViews, rMViews, skipper;
+	var popMVs, ndefPops, ndefMViews, rMViews;
 
 	try { g.main.w.close };
 	w = Window(name, bounds).front;
@@ -393,17 +393,16 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		};
 		imuUV.refresh;
 
-		skipper.stop;
-		skipper = SkipJack({
+		g.main.skipper.stop;
+		g.main.skipper = SkipJack({
+			var rMViews = g.main.rMViews;
+			var oscBut = g.main.oscBut;
 
 			if (g.main.backCol != q.inph.currPresetCol) {
 				// "refresh win color.".postln;
 				g.main.backCol = q.inph.currPresetCol;
 				g.main.w.background_(q.inph.currPresetCol);
 			};
-
-			g.main.mastaVolDisplay;
-
 
 			g.main.movevals = q.osc.rawImuBiValues.biuni;
 			g.main.padCols = q.osc.rawPads.collect { |val|
@@ -428,14 +427,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			};
 
 			if (q.osc.batval != q.osc.oldbatval) {
-				batView.refresh;
+				g.main.batView.refresh;
 			};
 
 			MFdef('guiSlots').value;
 
 			// "mainUV skip runs".postln;
 		}, 0.2, { w.isClosed }, name: \mainUV);
-		g.main.skipper = skipper;
 
 	);
 

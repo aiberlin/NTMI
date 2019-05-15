@@ -190,7 +190,7 @@ Task {
 		q.setZoom(1);
 		// q.setZoom = nil;
 
-		g.main.skipper.dt = 1/25;
+		g.main.skipper.dt = 1/10;
 
 		q.inph.modes = [\full, \touch];
 

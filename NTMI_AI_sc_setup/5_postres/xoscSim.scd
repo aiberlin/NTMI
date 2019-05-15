@@ -55,7 +55,7 @@ MFdef(\realXOSC).add(\mode, {
 });
 
 
-Tdef(\xoscSimulator).set(\dt, 0.2);
+Tdef(\xoscSimulator).set(\dt, 0.04);
 Tdef(\xoscSimulator).set(\zoom, 0.7);
 
 Tdef(\xoscSimulator, { |ev|
