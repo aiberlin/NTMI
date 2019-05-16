@@ -322,7 +322,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			var mastaIndex = q.mfx.domainIndex;
 			var domainName = q.mfx.preNames[mastaIndex];
 
-			"bigUV should only refresh when making NTMI_Main window.".postln;
+			"bigUV updating.".postln;
 			Pen.translate(center.x, center.y);
 
 			Pen.addArc(0@0, center.y * 0.9, 0, 2pi);
@@ -393,57 +393,58 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 		};
 		imuUV.refresh;
-
-		MFdef(\mainWinUpdate);
-		g.main.skipper.stop;
-		g.main.skipper = SkipJack(MFdef(\mainWinUpdate),  0.1, { w.isClosed }, name: \mainUV);
-
-		MFdef(\mainWinUpdate).add(\oscBat, {
-			var oscBut = g.main.oscBut;
-
-			// OSC status
-			if (oscBut.value != (q.osc.timeSinceLast < 1)) {
-				oscBut.value = q.osc.timeSinceLast < 1;
-				if (q.osc.timeSinceLast >= 1) {
-					q.osc.batval = 0;
-					q.osc.batPercent = 0;
-					q.osc.batString = "¿ battery ?";
-				};
-			};
-
-			if (q.osc.batval != q.osc.oldbatval) {
-				g.main.batView.refresh;
-			};
-		});
-
-		MFdef(\mainWinUpdate).add(\imuPad, {
-			// only of values changed? hmmm.
-			g.main.movevals = q.osc.rawImuBiValues.biuni;
-			g.main.padCols = q.osc.rawPads.collect { |val|
-				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
-			};
-			imuUV.refresh;
-		});
-
-		MFdef(\mainWinUpdate).add(\modeZoom, {
-			// inphlux mode to color and mview labels and values
-			if (g.main.backCol != q.inph.currPresetCol) {
-				// "refresh win color.".postln;
-				g.main.backCol = q.inph.currPresetCol;
-				g.main.w.background_(q.inph.currPresetCol);
-			};
-			if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
-			if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
-
-			// zoom
-			if ( q.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = q.zoom };
-
-		});
-
-		MFdef(\mainWinUpdate).add(\slots, MFdef('guiSlots'));
-
-
 	);
+
+	MFdef(\mainWinUpdate);
+	g.main.skipper.stop;
+	g.main.skipper = SkipJack(MFdef(\mainWinUpdate),  0.1, { w.isClosed }, name: \mainUV);
+
+	MFdef(\mainWinUpdate).add(\oscBat, {
+		var oscBut = g.main.oscBut;
+
+		// OSC status
+		if (oscBut.value != (q.osc.timeSinceLast < 1)) {
+			oscBut.value = q.osc.timeSinceLast < 1;
+			if (q.osc.timeSinceLast >= 1) {
+				q.osc.batval = 0;
+				q.osc.batPercent = 0;
+				q.osc.batString = "¿ battery ?";
+			};
+		};
+
+		if (q.osc.batval != q.osc.oldbatval) {
+			g.main.batView.refresh;
+		};
+	});
+
+	MFdef(\mainWinUpdate).add(\imuPad, {
+		// only of values changed? hmmm.
+		g.main.movevals = q.osc.rawImuBiValues.biuni;
+		g.main.padCols = q.osc.rawPads.collect { |val|
+			Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
+		};
+		imuUV.refresh;
+	});
+
+	MFdef(\mainWinUpdate).add(\modeZoom, {
+		// inphlux mode to color and mview labels and values
+		if (g.main.backCol != q.inph.currPresetCol) {
+			// "refresh win color.".postln;
+			g.main.backCol = q.inph.currPresetCol;
+			g.main.w.background_(q.inph.currPresetCol);
+		};
+		if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
+		if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
+
+		// zoom
+		if ( q.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = q.zoom };
+
+	});
+
+	MFdef(\mainWinUpdate).add(\slots, MFdef('guiSlots'));
+
+	MFdef(\mainWinUpdate).add(\masta, g.main[\mastaVolDisplay]);
+
 
 	/////// Clock display shows how long something has been running
 	/*
