@@ -64,7 +64,7 @@ q.inphlux.setwPre(q.prefs.active.influxPreset);
 q.inph.alpha = 0.8;
 // colors attributed to the n presets
 q.inph.presetCols = 6.collect {|i|
-	var col = Color.hsv(i/ q.inph.randSeeds.size + 0.0, 1, 1, 1);
+	var col = Color.hsv(i/6.0, 1, 1, 1);
 	var sum = col.red + col.blue + col.green;
 	// tone down mixed colors for eye comfort
 	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [q.inph.alpha])
