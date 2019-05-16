@@ -109,13 +109,13 @@ q.osc.rightDown.clear;
 MKtl(\ntmi).elAt(\slots).do { |but, i|
 
 	but.action.add(\shift, { |but|
+		var butIndex = but.indexInGroup;
 		// when is button pressed: set up for mode
 		if (but.isOn) {
-			q.osc.leftDown.add(but.indexInGroup);
+			q.osc.leftDown.add(butIndex);
 		} {
 			// when button was released: remove shifter
-			q.osc.leftDown.remove(but.indexInGroup);
-			// q.osc.leftDown.postln;
+			q.osc.leftDown.removeAllSuchThat(_ == butIndex);
 		}
 	});
 
@@ -174,7 +174,7 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 			"rightdown: %\n".postf(q.osc.rightDown);
 		} {
 			// button was released: remove shifter
-			q.osc.rightDown.remove(btname);
+			q.osc.rightDown.removeAllSuchThat(_ == btname);
 			"rightdown: %\n".postf(q.osc.rightDown);
 		}
 	});
