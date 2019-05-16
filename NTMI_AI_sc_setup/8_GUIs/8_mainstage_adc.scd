@@ -62,7 +62,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
-	var oscBut, midiBut, recBut, batView;
+	var oscBut, midiBut, hidBut, recBut, batView;
 	var w;
 	var bigUV, imuUV;
 	var popMVs, ndefPops, ndefMViews, rMViews;
@@ -88,17 +88,12 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	oscBut = Button(w,
 		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-		["¿¿OSC??", Color.white, butRed],
-		["¡OSC OK!", Color.black, butGreen]
+		["no OSC", Color.white, butRed],
+		["OSC active", Color.black, butGreen]
 	]).font_(font).value_(0);
 	g.main.oscBut = oscBut;
 
-	midiBut = Button(w, Rect(rightCol, 80 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-		["¿¿MIDI??", Color.white, butRed],
-		["MIDI OK!", Color.black, butGreen]
-	]).font_(font).value_(0);
-
-	batView = UserView(w, Rect(rightCol, 140 * scrscale, 300 * scrscale, 40 * scrscale));
+	batView = UserView(w, Rect(rightCol, 75 * scrscale, 300 * scrscale, 35 * scrscale));
 	batView.background_(butRed);
 	batView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
@@ -114,8 +109,19 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	batView.refresh;
 	g.main.batView = batView;
 
+	midiBut = Button(w, Rect(rightCol, 120 * scrscale, 300 * scrscale, 40 * scrscale)).states_([
+		["no MIDI", Color.grey(0.7), Color.grey(0.3)],
+		["MIDI active", Color.black, Color.grey(0.3)]
+	]).font_(font).value_(0);
 
-	Button(w, Rect(rightCol, 320 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+	hidBut = Button(w, Rect(rightCol, 170 * scrscale, 300 * scrscale, 40 * scrscale)).states_([
+		["no HID", Color.grey(0.7), Color.grey(0.3)],
+		["HID active", Color.black, Color.grey(0.3)]
+	]).font_(font).value_(0);
+
+
+
+	Button(w, Rect(rightCol, 320 * scrscale, 300 * scrscale, 80 * scrscale)).states_([
 		["Reset Clock", Color.white, butRed],
 	]).font_(font)
 	.action_({
@@ -467,7 +473,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	/// add gui parent here:
 	Tdef(\clocK).set(\timeUV, UserView(w,
-		Rect(rightCol, 160 * scrscale, 300 * scrscale, 200 * scrscale)
+		Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
 	).front);
 	Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
 	Tdef(\clocK).set(\color, Color.white);
