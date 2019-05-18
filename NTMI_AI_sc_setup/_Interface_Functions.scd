@@ -18,8 +18,8 @@ q.select(_.isFunction).keys.postcs; "";
 //// and can and should be put on substitute interfaces as well.
 
 ///////// 1. UFO /////////
-// toggle main UFO mode between touch and move
-MFdef('imuMode').();
+// step main UFO modes
+MFdef('inphModeStep').();
 
 // set ZERO offsets position for UFO imu and pads,
 /// so sound presets will be heard as stored
