@@ -77,34 +77,37 @@ Task {
 	// loads local or absolute filenames or paths,
 	// with wait time and posted load time info:
 	q.load = { |q, filename, here, wait = 0.05, dirsup = 0, preText = "", postText = ""|
-		var paths;
-		var path = filename.standardizePath;
-		if (path[0].isPathSeparator.not) {
-			here = here ? q.dir.base;
-			dirsup.do { here = here.dirname };
-			path = (here +/+ path);
-		};
+		var paths, path;
+		if (filename.isNil) { warn("path was nil!") } {
 
-		paths = path.pathMatch;
-
-		forkIfNeeded ({
-			var loadDur, t0 = Main.elapsedTime;
-
-			if (paths.size == 0) { "*** no files found for % :\n".postf(path.cs) };
-
-			if (paths.size > 1) { "****** matching files for % :\n".postf(path.cs) };
-
-			paths.do { |path|
-				"*** loading % : %".postf(path.basename, preText);
-				path.load;
-				if (s.serverRunning) { try { s.sync } };
-				loadDur = (Main.elapsedTime - t0).round(0.001);
-				" % secs. %\n".postf(loadDur, postText);
-				wait.wait;
+			path = filename.standardizePath;
+			if (path[0].isPathSeparator.not) {
+				here = here ? q.dir.base;
+				dirsup.do { here = here.dirname };
+				path = (here +/+ path);
 			};
 
-			"";
-		}, AppClock)
+			paths = path.pathMatch;
+
+			forkIfNeeded ({
+				var loadDur, t0 = Main.elapsedTime;
+
+				if (paths.size == 0) { "*** no files found for % :\n".postf(path.cs) };
+
+				if (paths.size > 1) { "****** matching files for % :\n".postf(path.cs) };
+
+				paths.do { |path|
+					"*** loading % : %".postf(path.basename, preText);
+					path.load;
+					if (s.serverRunning) { try { s.sync } };
+					loadDur = (Main.elapsedTime - t0).round(0.001);
+					" % secs. %\n".postf(loadDur, postText);
+					wait.wait;
+				};
+
+				"";
+			}, AppClock)
+		};
 	};
 
 
