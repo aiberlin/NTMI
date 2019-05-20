@@ -1,15 +1,52 @@
-/* this is the default ntmi prefs file
-- you can modify it as you like!
+/*
+  This is a default ntmi prefs file for macOS users.
+  It is copied automatically to Platform.userAppSupportDir,
+- and you can modify it there as you like!
+
+  It has lots of explanatory comments so users know
+  what to change for what effect.
+
+  filenames of code files to load can be:
+* relative, like "serverBasic2.scd", which will be taken from the project folder, or
+* absolute, like "~/mycode/ntmi/myServerSetup23.scd", which is a full path.
+
 */
 
+
 (
-'name': 'default', // <- user name here
-'numChans': 2,
-'serverSetup': "serverBasic2.scd",
+'name': 'default', // <- put your user name here
+'numIns': 6,       // number of input channels to use
+'numChans': 4,     // number of output channels to use in the slot sounds and MasterFX
+
+// run the gui-related code - true for macOS,
+/// false for headless systems, e.g. raspberry
 'hasGui': true,
 
-// // the choices of processes to play
-///// uncomment to restrict to these:
+
+// four stages where personalized extra code can be inserted:
+
+// after first globals are loaded, a script to configure the server
+//////// filename for the server setup
+'serverSetup': "serverBasic2.scd",
+
+/// ... load all sound processes and their presets ...
+
+// last code file to load before booting
+'preBootSetup': "~/Desktop/ufo/preBootSetup_adc.scd",
+
+// first code file to load right after server has booted
+'postBootSetup': "~/Desktop/ufo/postBootSetup_adc.scd",
+
+/// ... load all interfaces, postres and GUIs etc ...
+
+// personalize after loadMe file setup is finished
+'finalSetup': "~/Desktop/ufo/00_finalSetup_adc.scd",
+
+
+
+//////// specify wich specific processNames to load
+//////// if none given or commented out,
+//////// all processes found in POOL folders will be loaded.
 // processNames: [
 // 	'allArm', 'bleepo', 'brushes', 'cat', 'dog',
 // 	'etude', 'filterFB', 'formSing', 'frya', 'kiteHi',
@@ -17,23 +54,29 @@
 // 	'varsawFB', 'vowel', 'xFMSH',
 // 	// 'xf-bufFun', 'xf-ringMod'
 // ],
-// the 4 to load into the slots
+
+// THE 4 sounds to load into the slots on startup
 'defaultActives': [ 'allArm', 'dog', 'cat', 'revFB' ],
 
-// /// TODO: preset names different from ndef names ...
+// /// TODO: which Ndef-presets to select for each sound slots
 // presetNames: [
 // 	'allArm' -> 'allArmistice',
 // ],
 
-// /// TODO: influxPresets from files if not numbers ...
+
+////// Make six influx presets for different random seed numbers
+////// Number 6 is fix, to allow 6 button colors on Interactor buttons!
+////// plus diagL preset for simple 1-1 control
+// /// TODO: influxPresets from code filenames if not numbers ...
 influxPresets: [ 3, 12, 37, 42, 45, 86, \diagL ],
 // the preset key/name to set it to
 influxPreset: 3,
 
-// these are just filenames with collections of funcs for now
+// code filenames with collections of effects funcs to load
+// simple for now
 effects: [ "allFX.scd" ],
 
-// the slotNames to put into q.mFX
+// the slotNames to put into the MasterFX - q.mFX :
 mfxSlotNames: [
 	'00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal',
 	'1comby', '1holz', '1ixiDist',
