@@ -1,5 +1,5 @@
 /*
-* this loadme file reamins inside the app,
+* this loadme file resides in the project folder,
 * and is not intended for user-introduced changes.
 
 (
@@ -74,19 +74,25 @@ Task {
 	};
 
 
-	// loads code files or folders with wait and posts load time info:
+	// loads local or absolute filenames or paths,
+	// with wait time and posted load time info:
 	q.load = { |q, filename, here, wait = 0.05, dirsup = 0, preText = "", postText = ""|
+		var paths;
+		var path = filename.standardizePath;
+		if (path[0].isPathSeparator.not) {
+			here = here ? q.dir.base;
+			dirsup.do { here = here.dirname };
+			path = (here +/+ path);
+		};
+
+		paths = path.pathMatch;
+
 		forkIfNeeded ({
 			var loadDur, t0 = Main.elapsedTime;
-			var paths;
-			here = here ? q.dir.base;
 
-			dirsup.do { here = here.dirname };
-			paths = (here +/+ filename).pathMatch;
+			if (paths.size == 0) { "*** no files found for % :\n".postf(path.cs) };
 
-			if (paths.size == 0) { "*** no files found for % :\n".postf(filename.cs) };
-
-			if (paths.size > 1) { "****** matching files for % :\n".postf(filename.cs) };
+			if (paths.size > 1) { "****** matching files for % :\n".postf(path.cs) };
 
 			paths.do { |path|
 				"*** loading % : %".postf(path.basename, preText);
@@ -151,12 +157,16 @@ Task {
 
 	"\n\n".postln;
 
+	q.load(q.prefs.active.preBootSetup);
+
 	s.waitForBoot {
 
 		"*** server booted, plays 3 pings on left chan.".postln;
 		fork { 3.do { Env.perc.test; 0.3.wait } };
 
 		"\n".postln;
+
+		q.load(q.prefs.active.postBootSetup);
 
 		0.2.wait;
 		// activate the ndefs given in prefs:
@@ -196,6 +206,8 @@ Task {
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
+
+		q.load(q.prefs.active.finalSetup);
 
 	};
 }.play(AppClock);

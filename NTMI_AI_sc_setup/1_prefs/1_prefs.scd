@@ -1,12 +1,13 @@
 ///// handle default preferences and user preferences
 
 /*
-// write current settings to user prefs:
+// read current settings from user prefs:
+// this copies the default prefs to user home dir if not there
 q.prefs.readUser;
-... then use it in setup ...
-q.prefs.writeUser;
 
-q.prefs.userPrefPath.openOS;
+// open user prefs:
+q.prefs.open;
+
 */
 
 q.prefs = q.prefs ? ();
@@ -35,20 +36,20 @@ q.prefs.readUser = {
 	}
 };
 
-q.prefs.writeUser = {
-	var dict = (
-		name: q.myname,
-		numChans: q.numChans,
-		defaultActives: q.slots.actives.collect(_.key)
-	);
-	File.use(q.prefs.userPrefPath, "w", { |f| f.write(dict.cs) });
-	"*** stored user prefs: ".postln;
-	dict.postcs
-};
+// q.prefs.writeUser = {
+// 	var dict = (
+// 		name: q.myname,
+// 		numChans: q.numChans,
+// 		defaultActives: q.slots.actives.collect(_.key)
+// 	);
+// 	File.use(q.prefs.userPrefPath, "w", { |f| f.write(dict.cs) });
+// 	"*** stored user prefs: ".postln;
+// 	dict.postcs
+// };
 
 q.prefs.readUser;
 
-
+// set
 q.prefs.active = q.prefs.fromUser ? q.prefs.default;
 
 "";
