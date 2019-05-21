@@ -180,6 +180,22 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 	});
 };
 
+MKtl(\ntmi).collAt('caps').action = MFunc();
+// MKtl(\ntmi).collAt('caps').action.add(\yo, { \yo });
+MKtl(\ntmi).collAt('caps').action.add(\yo, { |coll|
+	coll.elements.do { |el, i|
+		var led = MKtl(\ntmi).elAt(\led, \fr, i);
+		var oldval = led.value;
+		var newval = (el.value > 0.25).binaryValue;
+		if (oldval != newval) {
+			[\yo, i].postln;
+			led.value = newval;
+		};
+	};
+})
+
+MKtl(\ntmi).collAt('caps').elements
+
 /////////// add funcs to inphMode switching so NTMI can do it /////////
 
 MFdef(\touchON).add(\ntmi, {
@@ -465,6 +481,8 @@ MKtl(\ntmi).collAt('caps').groupAction = nil;
 MKtl(\ntmi).collAt('caps').groupAction = { |coll|
 	var values = coll.value;
 
+	// reorder for proper order of pads and leds
+	values = values[[1, 4, 0, 3, 5, 6, 2, 7]];
 	q.osc.rawPads = values;
 
 	// q.zero.pads is the rest state of the pads
