@@ -60,7 +60,7 @@ q.slots.playAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	var vol = if (obj.monitor.isNil, q.slots.defaultVol, { obj.vol });
 	"% at % plays now.\n".postf(obj, index);
-	obj.play(vol: vol);
+	obj.rebuild.play(vol: vol);
 	q.inphlux.attachMapped(obj);
 };
 

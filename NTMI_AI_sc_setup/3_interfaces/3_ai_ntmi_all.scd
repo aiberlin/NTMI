@@ -181,20 +181,19 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 };
 
 MKtl(\ntmi).collAt('caps').action = MFunc();
-// MKtl(\ntmi).collAt('caps').action.add(\yo, { \yo });
-MKtl(\ntmi).collAt('caps').action.add(\yo, { |coll|
+MKtl(\ntmi).collAt('caps').action.add(\yo, { \yo });
+MKtl(\ntmi).collAt('caps').action.add(\setLed, { |coll|
 	coll.elements.do { |el, i|
 		var led = MKtl(\ntmi).elAt(\led, \fr, i);
 		var oldval = led.value;
 		var newval = (el.value > 0.25).binaryValue;
 		if (oldval != newval) {
-			[\yo, i].postln;
+			// [\yo, i].postln;
 			led.value = newval;
 		};
 	};
-})
+});
 
-MKtl(\ntmi).collAt('caps').elements
 
 /////////// add funcs to inphMode switching so NTMI can do it /////////
 
