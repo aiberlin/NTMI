@@ -1,0 +1,12 @@
+(
+	\name: "NTMI",
+	\path: "NTMI",
+	\summary: "Lose Control, Gain Influence.",
+	\author: "Alberto de Campo, Hannes Hoelzl, Bruno Gola",
+	\version: 0.1,
+	\organization: "Airborne Instruments / aiberlin",
+	\since: "2018",
+	\dependencies: [ "JITLibExtensions", "adclib", "Influx",
+		"Modality-toolkit", "MultiTouchPad", "Standalone", "Vowel"
+	]
+)
