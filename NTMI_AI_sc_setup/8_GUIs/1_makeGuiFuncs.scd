@@ -53,7 +53,7 @@ g.defaultWinBoundsList = [
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
 	[ "masterFX", Rect(966.0, 373.0, 524.0, 782.0) ],
 	[ "nanoKtl", Rect(435.0, 51.0, 913.0, 202.0) ],
-	[ "ndefMixer", Rect(28.0, 14.0, 684.0, 273.0) ],
+	[ "ndefMixer", Rect(28.0, 14.0, 684.0, 450) ],
 	//	[ "ndefPresets", Rect(5.0, 755.0, 487.0, 400.0) ],
 	[ "slotSounds", Rect(880.0, 367.0, 782.0, 610.0) ],
 	[ "xosc", Rect(965.0, 15.0, 910.0, 380.0) ],
@@ -77,7 +77,7 @@ g.makeGui.z_CLOSEALL = {
 
 
 g.makeGui.ndefMixer = { |dict, name = \ndefMixer|
-	var ndefMixer = NdefMixer(s, 12);
+	var ndefMixer = NdefMixer(s, 24);
 	ndefMixer.parent.name_(name);
 	g[name] = ndefMixer;
 	ndefMixer.skipjack.dt = 0.5;

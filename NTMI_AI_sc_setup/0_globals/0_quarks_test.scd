@@ -10,11 +10,9 @@ if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 		"Influx",
 		// "KtlLoop",
 		"Modality-toolkit",
-		"MultiTouchPad",
-		"Standalone",
+		// "MultiTouchPad",
+		// "Standalone",
 		"Vowel",
-		// "PaneView",
-		// "TabbedView", "TabbedView2_QT", "TabbedView2"
 	].collect(_.asSymbol);
 
 	installedQuarks = Quarks.installed.collect { |qu| qu.name.asSymbol };
@@ -30,5 +28,5 @@ if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 	"... all needed quarks present HERE!".postln;
 
 } {
-	// standalone app should have all quarks installed ...
+	// standalone app versions should have all quarks installed ...
 };
