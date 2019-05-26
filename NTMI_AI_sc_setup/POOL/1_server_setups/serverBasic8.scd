@@ -29,10 +29,17 @@ s.options.hardwareBufferSize_(64*2);
 
 s.options.memSize_(8192 * 16);
 
-///// set plugins path to very self-contained:
-s.options.ugenPluginsPath =
-([ String.scDir +/+ "plugins" ]
-++ [Standalone.internalExtDir]).join($:);
+///// If Standalone, set plugins path to very self-contained: read all internal plugins
+///// PLUS any plugins found in the Standalone's internal Extensions dir:
+///// so if we use any sc3-plugins, put them there ...
+if (\Standalone.asClass.notNil) {
+	"Standalone, so using special ugenPluginsPath:".postln;
+	s.options.ugenPluginsPath =
+	([ String.scDir +/+ "plugins" ]
+		++ [\Standalone.asClass.internalExtDir]).join($:).postcs;
+} {
+	"no standalone, using default ugenPluginsPath.";
+};
 
 // recording options:
 s
