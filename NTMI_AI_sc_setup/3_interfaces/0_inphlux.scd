@@ -3,7 +3,7 @@
 
 q = q ? ();
 q.inph = q.inph ? ();
-q.inphlux = Influx(9+8, 18);
+q.inphlux = Influx(9+8, 20);
 
 q.inph.seedRand = {|q, infl, seed=2011|
 	var d = thisThread.randData;
