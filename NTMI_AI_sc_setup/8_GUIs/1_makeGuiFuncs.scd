@@ -15,7 +15,7 @@ MFdef(\makeGui).add(\frontOrRemake, { |name, remake = false|
 		foundWins.do(_.close);
 		g.makeGui[name.asSymbol].value(g.makeGui, name);
 		if (name.notNil) {
-			try {
+			if (g.defaultWinBounds[name].notNil) {
 				Window.findAll(name).do(_.bounds = g.defaultWinBounds[name])
 			};
 		};
@@ -49,6 +49,7 @@ Window.getAll.postcs;
 // these are the default positions:
 g.defaultWinBoundsList = [
 	[ "MakeGui", Rect(0.0, 202.0, 170.0, 520.0) ],
+	[ "NTMI_Main", Window.availableBounds ],
 	[ "inphlux", Rect(100, 665.0, 680.0, 340.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
 	[ "masterFX", Rect(966.0, 373.0, 524.0, 782.0) ],
