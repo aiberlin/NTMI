@@ -56,7 +56,7 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 
 	Button(vlv1, Rect(0,0,100, 30)).states_([["Edit Preset"]]).action_({
 		Document( ppg.object.asString, ppg.object.settingsString);
-		unixCmd("open" + quote(Standalone.appPath));
+		unixCmd("open" + quote(ppg.object.storePath));
 	});
 
 	butrow.do({ |but, i|
