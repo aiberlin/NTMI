@@ -357,7 +357,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 	var hatDown = MKtl(\ntmi).elAt(\encHat).isOn.binaryValue;
 	var modeNum = slotDown * 2 + hatDown;
 
-	modeNum.postln.switch(
+	modeNum.switch(
 		0, {
 			"base: mastaStepVol".postln;
 			MFdef(\mastaStepVol).(enc.deviceValue);
@@ -367,7 +367,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 			q.incZoom(enc.deviceValue * \zoom.asSpec.step.max(0.01));
 		},
 		2, {
-			"slot: volume step: ".postln;
+			"slot volume step: ".post;
 			q.osc.leftWasUsed = true;
 			// "q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
 			q.osc.leftDown.do { |slotIndex|
@@ -375,7 +375,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 			};
 		},
 		3, {
-			"slotHat: select sound ".postln;
+			"slotHat - select sound: ".post;
 			q.osc.leftWasUsed = true;
 			// "q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
 			q.osc.leftDown.do { |slotIndex|
@@ -450,7 +450,7 @@ q.osc.ntmiSkip = SkipJack({
 
 		};
 	}
-});
+}, 0.05);
 
 
 ///////////////////////////////////////////////////////////////
