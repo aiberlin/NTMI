@@ -56,6 +56,30 @@ q.inph.randSeeds.do { |seed|
 	}
 };
 
+/////////// BIG AMP TWEAK:
+/////////// comment out if you dont like it!
+
+q.inphlux.presets.do { |weights|
+	// decouple amp:
+	// decrease amp influence on all
+	weights[0] = weights[0] * 0.25;
+
+	// right side: middle finger pad is gas pedal
+	weights[0][14] = 1.0;
+	// left  side: middle finger pad is brake pedal
+	weights[0][10] = -1.0;
+
+	// nose down is full blast, laying it on back takes volume down
+	weights[0][8] = 1.0;
+
+	// and compress output values by tanh, so we clip later?
+	q.inphlux.addProc(\base, { |val| val.tanh * 1.1 });
+};
+
+///////// BIG AMP TWEAK ends.
+
+
+
 // store num pres and current
 q.inph.put(\numPres, q.inph.randSeeds.size);
 q.inph.put(\presIndex, q.inph.randSeeds.indexOf(q.prefs.active.influxPreset) ? 0);
