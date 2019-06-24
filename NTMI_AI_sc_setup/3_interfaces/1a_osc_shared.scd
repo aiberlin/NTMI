@@ -105,14 +105,19 @@ MFdef(\inphModeStep).add(\step, { |inc = 1|
 	MFdef(\inphModeSetIndex).value(q.inph.modeIndex + inc);
 });
 
-MFdef(\mastaStepVol).add(\step, { |inc=0|
-	RelSet(q.mFX.pxChain.proxy, \mastaVol, inc * 0.01);
+MFdef(\mastaStepVol).add(\step, { |inc = 0|
+	// for fast turns, accelerate changes:
+	// 0.0 is linear, step1 -> 1, step 2 -> 2 etc
+	// 1.0 is quadratic, step1 -> 1, step 2 -> 4 etc
+	var acceleration = inc.abs ** 1.0;
+	RelSet(q.mFX.pxChain.proxy, \mastaVol, inc * acceleration * 0.01);
 });
 
 MFdef(\stepVol).add(\step, { |ndef, step = 1|
-	var stepsize = 0.05; // 20 steps from 0 to 1
+	var acceleration = step.abs ** 1.0;
+	var stepsize = 0.01; // 100 steps from 0 to 1
 	var ampspec = \amp.asSpec;
-	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * stepsize))
+	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * acceleration * stepsize))
 });
 
 MFdef(\stepSlotPres).add(\step, { |step = 1|
