@@ -6,7 +6,7 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	var px = q.currxoscPx ? q.ndefs[0];
 	var currPreset;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
-	w = Window(name, Rect(450, 5, 387+100, 400)).front;
+	w = Window(name, Rect(450, 5, 387+100, 500)).front;
 	// q.ndefPresetGlobalWin = w; // glob main win!
 	hlv = HLayoutView(w, w.bounds.moveTo(0,0));
 	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height))
@@ -52,6 +52,10 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 		])
 	});
 
+	butrow.do({ |but, i|
+		but.action_({ |b| MFdef('preButAction').value(i) })
+	});
+
 	w.addHalo(\butrow, butrow);
 
 	Button(vlv1, Rect(0,0,100, 30)).states_([["Edit Preset"]]).action_({
@@ -59,9 +63,15 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 		unixCmd("open" + quote(ppg.object.storePath));
 	});
 
-	butrow.do({ |but, i|
-		but.action_({ |b| MFdef('preButAction').value(i) })
+	EZPopUpMenu(vlv1, Rect(0,0,100, 60), 'choose_pre', q.process.allNames, { |pop|
+		pop.item.postcs;
+		MFdef('setPxInPreWin').value(Ndef(pop.item));
+	}, layout: \vert);
+
+	Button(vlv1, Rect(0,0,100, 30)).states_([["play at 0.25"]]).action_({
+		ppg.object.proxy.set(\amp, 0.25).play(vol: 0.25);
 	});
+
 
 	/*
 	// RandomOrbits Stuff here, kick out!
@@ -85,7 +95,7 @@ g.makeGui.ndefPresets = { |dict, name = \ndefPresets|
 	*/
 	pp = px.getHalo(\ndefPreset); // assumes there is! ToDo: default to making it!
 	ppg = NdefPresetGui(pp, 0, vlv2);
-	ng = NdefGui(px, 19, vlv2);
+	ng = NdefGui(px, 21, vlv2);
 	ng.skipjack.dt=0.1;
 
 	q.uniWin = w;
