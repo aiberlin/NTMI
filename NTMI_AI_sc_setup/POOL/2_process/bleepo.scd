@@ -61,7 +61,7 @@ Ndef(\bleepo, { arg amp = 0,
 	  - RHPF.ar(u, Slew.ar(filtfreqs2[1], ramp, ramp), rezo);
 
 	LocalOut.ar(waves ++ [sha] );
-	f = Limiter.ar(f * 0.1, 1, 0.01) * amp;
+	f = Limiter.ar(f * 0.4, 1, 0.01) * amp;
 
 	f.collect{|si, i|
 		PanAz.ar(q.numChans, si, SinOsc.kr(Rand(0.1, 0.2)/2, 0, Rand(1, 2)), amp)
