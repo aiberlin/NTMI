@@ -13,7 +13,7 @@ Ndef(\kiteHi, { arg amp=0, ffreq=12000, move = 0.2, hack=3, dustfreq=100, width=
 	} ! n)
 	.clump( q.numChans ).sum;
 
-	(LPF.ar(snd, 400) + HPF.ar(snd, 400, 0.33)).softclip * amp.lag(0.03);
+	(LPF.ar(snd, 400) + HPF.ar(snd, 400, 0.33)).softclip * (amp * 0.25).lag(0.03);
 });
 
 

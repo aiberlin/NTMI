@@ -20,7 +20,7 @@ Ndef(\dog, { |amp=0, freq=250, intv=19, timescale=1, curve=0, loopnode=0, dens =
 
 	var dusty = Ringz.ar(
 		Dust.ar(dens!3),
-		(resfreq * LFNoise0.kr([3, 5, 7], 0.5, 1)).lag(0.2),
+		(resfreq * LFNoise0.kr([3, 5, 7], 0.5, 1)).lag(0.3),
 		ringtime)
 		* ((dens ** -0.5) * (ringtime ** -0.3)
 	);
