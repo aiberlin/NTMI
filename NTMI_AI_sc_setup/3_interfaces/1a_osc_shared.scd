@@ -13,11 +13,13 @@ q.osc = q.osc ? ();
 q.osc.lastInTime = 0;
 q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
+q.osc.deviceName = '???';
 
 OSCdef(\xoscAlive, { |msg, time|
 	if (q.osc.lastInTime == 0) {
 		Tdef(\allLEDs).play;
 	};
+	q.osc.deviceName = \xosc;
 	q.osc.lastInTime = time;
 }, "/imu").permanent_(true);
 
@@ -25,6 +27,7 @@ OSCdef(\ntmiAlive, { |msg, time|
 	if (q.osc.lastInTime == 0) {
 		Tdef(\allLEDs).play;
 	};
+	q.osc.deviceName = \ntmi;
 	q.osc.lastInTime = time;
 }, "ntmi/imu").permanent_(true);
 
@@ -59,7 +62,7 @@ MFdef(\ZERO).add(\set, {
 	"pads: %\n".postf(q.zero.imu.round(0.001));
 });
 
-// battery values and display
+// battery values and display for xosc only ATM
 // MKtl(\xosc).elAt(\battery).deviceSpec;
 q.osc.batString = "? battery ?";
 q.osc.batval = 0;
