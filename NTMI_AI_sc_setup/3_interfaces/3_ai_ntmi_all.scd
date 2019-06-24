@@ -252,7 +252,7 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	}
 });
 
-MFdef(\inphModeStep).add(\modeSwColor, {
+MFdef(\inphModeSetIndex).add(\modeSwColor, {
 	defer ({
 		var msg = [0,0,0,0].put(q.inph.modeIndex, 1);
 		MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));

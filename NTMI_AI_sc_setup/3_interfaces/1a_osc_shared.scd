@@ -15,6 +15,7 @@ q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 q.osc.deviceName = '???';
 
+// only play LED ballet the very first time
 OSCdef(\xoscAlive, { |msg, time|
 	if (q.osc.lastInTime == 0) {
 		Tdef(\allLEDs).play;
