@@ -72,8 +72,8 @@ q.mfx.preNames = [
 q.mfx.preMap = (
 	'baseset': (
 		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.1], \ampFin],
-		settings: [\postAmp, 1, \ampLimit, 0.8],
-		randomize: [\noisefloor ]
+		settings: [\postAmp, 1, \ampLimit, 0.8, \noisefloor, 0.0001],
+		// randomize: [\noisefloor ]
 	),
 	'theology': (
 		chainElements: [['3AdCVerb', 0.05], ['1comby', 0.5]],
@@ -91,9 +91,8 @@ q.mfx.preMap = (
 		settings: [\mod, 0.11, \feedback, 25, \delayTime1, 0.08, \delayTime2, 0.11]
 	),
 	'socialism': (
-		chainElements: [['1ring', 0.2], ['6roto', 1], ['3AdCVerb', 0.08]],
-		randomize: [\predelay, \apDecay, \combdecay, \ringfr, \combScale],
-		settings: [\ixivAmp, 0.1]
+		chainElements: [['1ring', 0.2], ['6roto', 1], ['3ixiVerb', 0.08]],
+		randomize: [\predelay, \apDecay, \combdecay, \ringfr, \combScale]
 	),
 	'psychoanalysis': (
 		chainElements: [['1comby', 0.5], ['5HPF', 0.6], ['7Delay', 0.1], ['3AdCVerb', 0.03]],
@@ -156,8 +155,9 @@ MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
 		};
 		// rand
 		if(dict.randomize.notNil){
+			"MasterFX rand: ".postln;
 			chain.proxy.setUni(
-				*[dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat
+				*[dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat.postln
 			);
 		};
 		// looks better with cleanNodeMap, but better that nodeMap remembers last settings!
