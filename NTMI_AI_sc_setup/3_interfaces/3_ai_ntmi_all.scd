@@ -440,12 +440,13 @@ q.osc.ntmiSkip = SkipJack({
 			var newval = isPlaying.binaryValue;
 			if (newval != led.value) {
 				led.value = newval;
+				col = cols[newval];
+				// [ ledi, col ].postln;
+				"ntmi: sending changed color to led_bk %\n".postf(ledi);
+				0.05.wait;
+				MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
 			};
-			col = cols[newval];
-			// [ ledi, col ].postln;
-			// "send green if on".postln;
-			0.1.wait;
-			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+
 		};
 	}
 });
