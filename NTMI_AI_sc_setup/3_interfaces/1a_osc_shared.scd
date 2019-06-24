@@ -71,7 +71,7 @@ q.osc.batPercent = 0;
 
 MFdef('battery').add(\calc, { |voltage = 0.0|
 	q.osc.oldbatval = q.osc.batval;
-	q.osc.batval = voltage;
+	q.osc.batval = voltage.clip(0.0, 10.0);
 	q.osc.batvaltime = Main.elapsedTime;
 	q.osc.batPercent = ([3.2, 4.0].asSpec.unmap(voltage) * 100).round(0.1);
 	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);

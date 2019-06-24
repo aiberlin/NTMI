@@ -438,13 +438,14 @@ q.osc.ntmiSkip = SkipJack({
 		MKtl(\ntmi).elAt(\led, \bk, (0..3)).do { |led, ledi|
 			var isPlaying = q.ndefs[ledi].monitor.isPlaying;
 			var newval = isPlaying.binaryValue;
-			if (newval != led.value) {
+			if (newval != led.prevValue) {
 				led.value = newval;
 				col = cols[newval];
-				// [ ledi, col ].postln;
-				"ntmi: sending changed color to led_bk %\n".postf(ledi);
-				0.05.wait;
-				MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+				// "ntmi: sending changed color to led_bk %: %\n".postf(ledi, col);
+				2.do {
+					rrand(0.03, 0.07).wait;
+					MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+				};
 			};
 
 		};
