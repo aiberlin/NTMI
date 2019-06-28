@@ -58,10 +58,15 @@ q.slots.nowPlaying = {
 
 q.slots.playAt = { |sl, index|
 	var obj = q.slots.actives[index];
+	var pre = NdefPreset(obj.key);
+	var currPreName = pre.currSet.key;
 	var vol = if (obj.monitor.isNil, q.slots.defaultVol, { obj.vol });
-	"% at % plays now.\n".postf(obj, index);
+	"% at % plays now ... ".postf(obj, index);
 	obj.rebuild.play(vol: vol);
 	q.inphlux.attachMapped(obj);
+	// and make sure preset is active:
+	q.inphlux.offsetsFromPreset(pre, currPreName);
+	"using preset % as influx offset.\n".postf(currPreName.cs);
 };
 
 // maybe make a flag for stop or end?
