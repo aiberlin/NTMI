@@ -4,7 +4,7 @@ s.doWhenBooted {
 		Buffer.read(s, path);
 	};
 	s.sync;
-	Ndef(\granbuf).addSpec(\sndbuf, [q.granbufs[0].bufnum, q.granbufs.last.bufnum, \lin, 1]);
+	Ndef(\granbuf).addSpec(\sndbuf, [q.granbufs[0].bufnum, q.granbufs.last.bufnum, \lin, 0.01]);
 	Ndef(\granbuf).set(\sndbuf, q.granbufs.choose.bufnum);
 };
 /*
@@ -36,10 +36,11 @@ Ndef(\granbuf, { |amp = 0.1,
 	forward = 1, posvar = 0.001,
 	panvar = 0.25|
 
+	var sndbuf2 = (sndbuf + WhiteNoise.kr(0.1)).round(1);
 	var panpos = WhiteNoise.kr(panvar);
 	var ratekr = 1.25 ** WhiteNoise.kr (ratevar) * rate;
-	var filepos = Phasor.ar(0, 1 / SampleRate.ir / BufDur.kr(sndbuf.round) * forward, 0, 1);
+	var filepos = Phasor.ar(0, 1 / SampleRate.ir / BufDur.kr(sndbuf2) * forward, 0, 1);
 	filepos = filepos + WhiteNoise.ar(posvar);
-	GrainBuf.ar(4, Impulse.ar(dens), overlap / dens, sndbuf, ratekr, filepos, 2, panpos) * amp;
+	GrainBuf.ar(4, Impulse.ar(dens), overlap / dens, sndbuf2, ratekr, filepos, 2, panpos) * amp;
 }).play;
 
