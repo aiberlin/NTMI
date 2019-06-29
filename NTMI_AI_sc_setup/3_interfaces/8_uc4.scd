@@ -143,7 +143,8 @@ if (q.inphlux.respondsTo(\get).not) {
 	"///////// sliders hard-set influx directly ".postln;
 	g.uc4.elAt(\inflx).do { |sl, i|
 		sl.action = { |sl|
-			var name = q.inphlux.inNames[i];
+			// make sure we get to amp control (inphlux.inNames[8])
+			var name = q.inphlux.inNames[i + 1];
 			q.inphlux.set(name, sl.value.unibi)
 		};
 	}
@@ -152,7 +153,8 @@ if (q.inphlux.respondsTo(\get).not) {
 	"//// sliders SoftSet influx ".postln;
 	g.uc4.elAt(\inflx).do { |sl, i|
 		sl.action = { |sl|
-			var name = q.inphlux.inNames[i];
+			// make sure we get to amp control (inphlux.inNames[8])
+			var name = q.inphlux.inNames[i + 1];
 			SoftSet(q.inphlux, name, sl.value.unibi, lastVal: sl.prevValue.unibi);
 		};
 	}
