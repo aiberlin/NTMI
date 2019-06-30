@@ -14,7 +14,7 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 		Rect(scbn.width - 800,
 			scbn.height - 650,
 			780,
-			600)
+			800)
 	).front;
 	var slotNames = q.ndefs.collect(_.key);
 
@@ -22,7 +22,7 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 	w.alpha_(0.8);
 	g.ndefPreGuis = q.ndefs.keep(4).collect { |px, i|
 		var ndefPre = NdefPreset(px);
-		var gui = NdefPresetGui(ndefPre, 11, w);
+		var gui = NdefPresetGui(ndefPre, 15, w);
 		if (i.odd) { w.view.decorator.shift(0, 10) };
 		g.tuneNameView(gui.proxyGui);
 		gui;
