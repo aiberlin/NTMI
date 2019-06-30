@@ -1,8 +1,25 @@
 /// load a buffer of files to granulate
 /// here, with a set of textfiles
+
+/*
+///////// Ndef(\granbuf).clear;
+
+// make a preset
+NdefPreset(Ndef(\granbuf));
+// load its settings - add path if known
+NdefPreset(\granbuf).loadSettings(/* path can go here */);
+// make a gui for it
+NdefPresetGui(NdefPreset(Ndef(\granbuf)), Ndef(\granbuf).controlKeys.size + 2);
+
+Ndef(\granbuf).gui(12);
+
+q.granbufs.collect(_.bufnum);
+q.granbufs.choose.play(mul: 0.2)
+q.granbufs[0].play(mul: 0.2);
+*/
 q = q ? ();
 
-// command to load a block of soundfiles
+// command to load a block of soundfiles from paths
 MFdef(\granbufLoad).add(\loadFiles, { |paths|
 	forkIfNeeded {
 		q.granbufs = paths.collect { |path| Buffer.read(s, path) };
@@ -17,29 +34,24 @@ MFdef(\granbufLoad).add(\loadFiles, { |paths|
 });
 
 s.doWhenBooted {
+	// load the ones for granulatspeach
 	MFdef(\granbufLoad).value("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch);
 };
 
-/*
-Ndef(\granbuf).clear;
-q.granbufs.collect(_.bufnum);
-q.granbufs.choose.play(mul: 0.2)
-q.granbufs[0].play;
-Ndef(\granbuf).gui(12);
-*/
 
-Ndef(\granbuf).addSpec(\sndbuf, \unipolar);
-Ndef(\granbuf).addSpec(\sndbufvar, \unipolar);
-Ndef(\granbuf).addSpec(\rate, [0.7, 1.4, \exp]);
-Ndef(\granbuf).addSpec(\ratevar, [0, 1]);
-Ndef(\granbuf).addSpec(\dens, [0.5, 200, \exp]);
-Ndef(\granbuf).addSpec(\overlap, [0.1, 40, \exp]);
-Ndef(\granbuf).addSpec(\ratevar, [0, 1]);
-Ndef(\granbuf).addSpec(\scanspeed, [-2, 2]);
-Ndef(\granbuf).addSpec(\posvar, [0, 0.1, 4]);
-Ndef(\granbuf).addSpec(\panvar, [0, 1]);
-Ndef(\granbuf).addSpec(\trigrand, [0, 1]);
+// the Ndef specs:
+Ndef(\granbuf).addSpec(\sndbuf, \unipolar);        // index into buffer array, 0.0 is first, 1.0 is last
+Ndef(\granbuf).addSpec(\sndbufvar, \unipolar);     // how much overlap with next buffer
+Ndef(\granbuf).addSpec(\rate, [0.7, 1.4, \exp]);   // buffer playback rate
+Ndef(\granbuf).addSpec(\ratevar, [0, 1]);          // how much variation of playback rate between grains
+Ndef(\granbuf).addSpec(\dens, [0.5, 200, \exp]);   // density: how many grains per second
+Ndef(\granbuf).addSpec(\trigrand, [0, 1]);         // 0 is regular rhythm, 1 is random
+Ndef(\granbuf).addSpec(\overlap, [0.1, 40, \exp]); // how much overlap of grains - 2 is smooth continuous
+Ndef(\granbuf).addSpec(\scanspeed, [-2, 2]);       // how fast to move thru buffer - 1 is normal, 0 is freeze
+Ndef(\granbuf).addSpec(\posvar, [0, 0.1, 4]);      // how much file read pos varies
+Ndef(\granbuf).addSpec(\panvar, [0, 1]);           //
 
+// make sound buffer range known so Ndef can access it
 Ndef(\granbuf).addHalo(\sndbufRange, [-1, -1]);
 
 /*
@@ -51,6 +63,7 @@ Ndef(\granbuf).set(\scanspeed, -0.25);
 Ndef(\granbuf, { |
 	// don't store amp and sndbuf ...
 	amp = 0.1, sndbuf = 0,
+	// all of these params are stored in preset
 	sndbufvar = 0.1,
 	rate = 1, ratevar = 0.1,
 	trigrand = 0, dens = 30, overlap = 2,
