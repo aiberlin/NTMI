@@ -124,6 +124,7 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 
 		var actionFunc;
 		var playsNow;
+		var slotObj = q.slots.actives[i];
 
 		if (but.isOn.not) {
 			// determine whether we are in a mode
@@ -139,6 +140,11 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 					MKtl(\ntmi).elAt(\led, \bk, i).value = playsNow.binaryValue;
 				}
 			} {
+				"right mode for slot buttons ...".postln;
+				if (MKtl(\ntmi).elAt(\encHat).isOn) {
+					MFdef(\clutch).value(slotObj);
+					q.osc.rightWasUsed = true;
+				};
 				///////////// NOT SURE WE STILL REALLY WANT THESE - so take them out for now ////////
 				// // right side has set up a mode - remember we used it now
 				// q.osc.rightWasUsed = true;
