@@ -199,8 +199,10 @@ Task {
 
 		///////// SHOWTIME TWEAKS //////////////
 		// disable Zoom on xosc only
-		MKtl(\xosc).elAt('inA', 7).disable;
-		q.setZoom(1);
+		if (MKtl.all.at(\xosc).notNil) {
+			MKtl(\xosc).elAt('inA', 7).disable;
+			q.setZoom(1);
+		};
 		// q.setZoom = nil;
 
 		g.main.skipper.dt = 1/10;

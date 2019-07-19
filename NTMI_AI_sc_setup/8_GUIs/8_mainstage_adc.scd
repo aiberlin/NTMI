@@ -80,8 +80,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	imuUV.background_(Color.clear);
 	g.main.imuUV = v;
 
-	g.main.padCols = MKtl('xosc').elAt(\inA, (8..15)).collect(_.value);
-	g.main.movevals = MKtl('xosc').elAt([0, 1, 2]).flat.collect(_.value);
+	g.main.padCols = 0!8;
+	g.main.movevals = 0!9;
 
 	Stethoscope(s, q.numChans, view: w.view);
 	ServerMeterView(s, w, 250@0, q.numIns ? q.numChans, q.numChans);
