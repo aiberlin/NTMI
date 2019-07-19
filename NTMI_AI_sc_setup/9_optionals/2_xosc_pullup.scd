@@ -335,6 +335,16 @@ MKtl(\xosc).collAt('aIn').groupAction = { |coll|
 
 };
 
+// set zoom from poti on ana in 8 (it was 7, not worked)
+MKtl(\xosc).elAt('inA').at(7).action.add(\setZoom, {|el|
+	var val = el.value.clip(0.05, 1).round(0.05);
+	if (val != q.zoom) {
+		"zoom from xosc: %\n".postf(val);
+		q.setZoom(val)
+	};
+});
+
+
 // individual pad action - useful for guis
 /// do global set only once, from MFdef(\touchToInph)
 MKtl(\xosc).elAt(\pads8).do { |pad, i|
