@@ -140,7 +140,7 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 					MKtl(\ntmi).elAt(\led, \bk, i).value = playsNow.binaryValue;
 				}
 			} {
-				"... (right mode for slot buttons) ...".postln;
+				// "... (right mode for slot buttons) ...".postln;
 				if (MKtl(\ntmi).elAt(\encHat).isOn) {
 					MFdef(\clutch).value(slotObj);
 					q.osc.rightWasUsed = true;
@@ -177,11 +177,11 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 		MKtl(\ntmi).elAt(\led, \bk, i + 4).value = but.value;
 		if (but.value == 1) {
 			q.osc.rightDown.add(btname);
-			"rightdown: %\n".postf(q.osc.rightDown);
+			// "rightdown: %\n".postf(q.osc.rightDown);
 		} {
 			// button was released: remove shifter
 			q.osc.rightDown.removeAllSuchThat(_ == btname);
-			"rightdown: %\n".postf(q.osc.rightDown);
+			// "rightdown: %\n".postf(q.osc.rightDown);
 		}
 	});
 };
@@ -194,7 +194,6 @@ MKtl(\ntmi).collAt('caps').action.add(\setLed, { |coll|
 		var oldval = led.value;
 		var newval = (el.value > 0.25).binaryValue;
 		if (oldval != newval) {
-			// [\yo, i].postln;
 			led.value = newval;
 		};
 	};
@@ -269,7 +268,6 @@ MFdef(\inphModeSetIndex).add(\modeSwColor, {
 MFdef(\setInphWPre).add(\setLEDs, {
 	fork {
 		var ledCol = q.inph.currPresetCol.asArray.keep(3).round.collect(_.asInteger);
-		ledCol.postln;
 		0.1.wait;
 		[5, 6].do { |ledIndex|
 			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledIndex, *ledCol);
@@ -365,11 +363,11 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 
 	modeNum.switch(
 		0, {
-			"base: mastaStepVol".postln;
+			// "base: mastaStepVol".postln;
 			MFdef(\mastaStepVol).(enc.deviceValue);
 		},
 		1, {
-			"hat: zoom".postln;
+			// "hat: zoom".postln;
 			q.incZoom(enc.deviceValue * \zoom.asSpec.step.max(0.01));
 		},
 		2, {
@@ -382,7 +380,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 			};
 		},
 		3, {
-			"slotHat - select sound: ".post;
+			// "slotHat - select sound: ".post;
 			q.osc.leftWasUsed = true;
 			// "q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
 			q.osc.leftDown.do { |slotIndex|
