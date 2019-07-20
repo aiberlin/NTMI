@@ -64,7 +64,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	var oscBut, midiBut, hidBut, recBut, batView;
 	var w;
-	var bigUV, imuUV;
+	var bigUV, imuUV, imuWin;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
 	try { g.main.w.close };
@@ -76,6 +76,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	bigUV.background_(Color.clear);
 	g.main.bigUV = u;
 
+	// imuWin = Window("", Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale), false, false).front;
+	// imuUV = v = UserView(imuWin, imuWin.bounds.moveTo(0,0));
 	imuUV = v = UserView(w, Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale));
 	imuUV.background_(Color.clear);
 	g.main.imuUV = v;
@@ -405,31 +407,40 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.skipper.stop;
 	g.main.skipper = SkipJack(MFdef(\mainWinUpdate),  0.1, { w.isClosed }, name: \mainUV);
 
+	// update OSC and battery status
 	MFdef(\mainWinUpdate).add(\oscBat, {
 		var oscBut = g.main.oscBut;
 
-		// OSC status
-		if (oscBut.value != (q.osc.timeSinceLast < 1)) {
+		q.osc.oldbatval = q.osc.batval;
+		if (oscBut.value.binaryValue != (q.osc.timeSinceLast < 1)) {
 			oscBut.value = q.osc.timeSinceLast < 1;
+			// if no OSC for longer than 1 sec, set battery to "?"
 			if (q.osc.timeSinceLast >= 1) {
 				q.osc.batval = 0;
 				q.osc.batPercent = 0;
 				q.osc.batString = "¿ battery ?";
 			};
 		};
-
+		// update battery status if new
 		if (q.osc.batval != q.osc.oldbatval) {
+			"bat_fresh".scramble.postln;
 			g.main.batView.refresh;
 		};
 	});
 
 	MFdef(\mainWinUpdate).add(\imuPad, {
-		// only of values changed? hmmm.
-		g.main.movevals = q.osc.rawImuBiValues.biuni;
-		g.main.padCols = q.osc.rawPads.collect { |val|
-			Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
+		// only if values changed!
+		if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
+			or: q.osc.rawPads != q.osc.rawPadsOLD) {
+
+			g.main.movevals = q.osc.rawImuBiValues.biuni;
+			g.main.padCols = q.osc.rawPads.collect { |val|
+				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
+			};
+			g.main.imuUV.refresh;
 		};
-		imuUV.refresh;
+		q.osc.rawImuBiValuesOLD = q.osc.rawImuBiValues;
+		q.osc.rawPadsOLD = q.osc.rawPads;
 	});
 
 	MFdef(\mainWinUpdate).add(\modeZoom, {
