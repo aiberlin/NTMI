@@ -82,9 +82,9 @@ if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
 // q.ferr.mktl = MKtl('ferrari');
 
 if (q.ferr.mktl.isNil) {
-	"No Ferrari Gamepad present - not loading patch.".postln;
+	"No Ferrari Gamepad present - not loading Gamepad patch.".postln;
 } {
-	"*** Ferrari Gamepad present - loading it!".postln;
+	"*** Ferrari Gamepad found - loading it!".postln;
 
 	// prepare all elements for debugging:
 	q.ferr.mktl.elementsDict.do(_.action_(MFunc()));

@@ -9,7 +9,9 @@ q.setZoom = {|ev, val|
 	val = \zoom.asSpec.constrain(val);
 	// "global ZOOM f. RandomOrbits and Influxes: %\n".postf(val);
 	q.zoom = val;
+
 	q.inphlux.inScaler = q.zoom;
+	"zoom: %\n".postf(q.zoom);
    // return value
 	val
 };
@@ -17,5 +19,4 @@ q.setZoom = {|ev, val|
 q.incZoom = {|ev, inc=0.1|
 	q.setZoom((q.zoom + inc));
 };
-
 

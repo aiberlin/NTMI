@@ -130,13 +130,13 @@ MFdef(\setInphWPre).add(\set, { |index|
 	var nuIndex = (index ? q.inph.at(\presIndex) ? 0).asInteger % numPres;
 	var nuPreKey = q.inph.randSeeds[nuIndex];
 	var nuPreset = q.inphlux.presets[nuPreKey];
-	">>> setting inphlux to preset % with magic Number %:\n".postf(nuIndex, nuPreKey);
+	"INFLUX preset % - magicNumber % - ".postf(nuIndex, nuPreKey);
 	// nuPreset.round(0.001).printAll;
 	q.inph.put(\presIndex, nuIndex);
 	q.inphlux.setwPre(nuPreKey);
 	q.inph.currPresetCol = q.inph.presetCols @@ q.inph.at(\presIndex);
 	// send this to OSC/Modality device ! (RGB Col)
-	"curr Color: ".post; (q.inph.currPresetCol.asArray * 255).keep(3).asInteger.postln;
+	"color ".post; (q.inph.currPresetCol.asArray * 255).keep(3).asInteger.postln;
 	if (MKtl.all[\xosc].notNil) {
 		try {
 			MKtl(\xosc).elAt(\led, \6).value_(nuIndex / q.inph.randSeeds.size );

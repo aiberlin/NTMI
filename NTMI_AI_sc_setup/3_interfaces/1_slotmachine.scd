@@ -142,7 +142,7 @@ q.slots.stepNext = { |sl, index, incr|
 		myindex = candidates.indexOf(q.slots.actives[index].key);
 		nextindex = myindex + incr % candidates.size;
 		nextname = candidates[nextindex];
-		"next  sound in slot % : % \n".postf(index, nextname);
+		"SLOT % -> % \n".postf(index, nextname.cs);
 		// ndef is dogy here, hmmm
 		q.slots.addActive(index, Ndef(nextname));
 	};

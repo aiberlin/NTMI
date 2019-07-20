@@ -118,7 +118,7 @@ q.mfx.preMap = (
 		settings: [\pregain, 4, \dFreq, 1300,\loSlop, 0.4 ]
 	),
 	'transhumanism': (
-		chainElements: [['1ring', 0.3], ['4ixiVerb', 0.25], ['7Delay', 0.03]],
+		chainElements: [['1ring', 0.3], ['3AdCVerb', 0.1], ['7Delay', 0.03]],
 		randomize: [\predelay, \apDecay, \combdecay, \ringfr, \delayTime1, \delayTime2],
 		settings: [\ixivAmp, 0.1]
 	)
@@ -129,6 +129,7 @@ q.mfx.preMap = (
 MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
 	var chain = q.mfx.chain;
 	var dict = q.mfx.preMap[domainName];
+	var randSettings;
 
 	if (dict.isNil) {
 		"*** MastaPre: no domain %, not switching.".postf(domainName);
@@ -155,15 +156,15 @@ MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
 		};
 		// rand
 		if(dict.randomize.notNil){
-			"MasterFX rand: ".postln;
-			chain.proxy.setUni(
-				*[dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat.postln
-			);
+			// "MasterFX rand: ".postln;
+			randSettings = [dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat;
+			chain.proxy.setUni(*randSettings);
+			// randSettings.postln;
 		};
 		// looks better with cleanNodeMap, but better that nodeMap remembers last settings!
 		// chain.proxy.cleanNodeMap;
 
-		"[ [voiceFX: % - %\n".postf(domainName, dict.chainElements);
+		"masterFX: % - %\n".postf(domainName.cs, dict.chainElements.flat);
 	};
 });
 
