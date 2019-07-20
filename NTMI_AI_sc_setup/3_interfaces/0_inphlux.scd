@@ -52,12 +52,11 @@ q.inph.centerToNewRandSeed = {|q, infl, preset, seed=2011, much=1|
 // clutch and unclutch an object from influx
 // will be accessible from ntmi by hold-enc+slotbut
 MFdef(\clutch).add(\toggle, { |obj|
-	obj.postln;
 	if (q.inphlux.action.activeNames.includes(obj.key)) {
-		"influx: detaching %\n".postf(obj);
+		"INFLUX: detaching %\n".postf(obj);
 		q.inphlux.detach(obj.key);
 	} {
-		"influx: attaching %\n".postf(obj);
+		"INFLUX: attaching %\n".postf(obj);
 		q.inphlux.attachMapped(obj);
 	}
 });

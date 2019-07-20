@@ -61,7 +61,7 @@ q.slots.playAt = { |sl, index|
 	var pre = NdefPreset(obj.key);
 	var currPreName = pre.currSet.key;
 	var vol = if (obj.monitor.isNil, q.slots.defaultVol, { obj.vol });
-	"% at % plays now ... ".postf(obj, index);
+	"SLOT %: % starts - ".postf(index, obj);
 	obj.rebuild.play(vol: vol);
 	q.inphlux.attachMapped(obj);
 	// and make sure preset is active:
@@ -73,7 +73,7 @@ q.slots.playAt = { |sl, index|
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	if (obj.isPlaying) {
-		"% at % ends now.\n".postf(obj, index);
+		"SLOT %: % ends.\n".postf(index, obj);
 		obj.end(q.slots.fadeoutTime);
 	};
 	try { q.inphlux.removeMapped(obj.key) };

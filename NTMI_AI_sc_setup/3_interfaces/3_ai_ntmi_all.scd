@@ -140,7 +140,7 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 					MKtl(\ntmi).elAt(\led, \bk, i).value = playsNow.binaryValue;
 				}
 			} {
-				"right mode for slot buttons ...".postln;
+				"... (right mode for slot buttons) ...".postln;
 				if (MKtl(\ntmi).elAt(\encHat).isOn) {
 					MFdef(\clutch).value(slotObj);
 					q.osc.rightWasUsed = true;
@@ -373,11 +373,12 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 			q.incZoom(enc.deviceValue * \zoom.asSpec.step.max(0.01));
 		},
 		2, {
-			"slot volume step: ".post;
+
 			q.osc.leftWasUsed = true;
 			// "q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
 			q.osc.leftDown.do { |slotIndex|
-				MFdef(\stepVol).(*[q.slots.actives[slotIndex], enc.deviceValue].postln);
+				"SLOT %: ".postf(slotIndex);
+				MFdef(\stepVol).(q.slots.actives[slotIndex], enc.deviceValue);
 			};
 		},
 		3, {
