@@ -35,13 +35,24 @@ OSCdef(\ntmiAlive, { |msg, time|
 
 // init zero values
 q.zero = q.zero ? ();
-q.zero.imu = 0!9;
-q.zero.pads = 0!8;
 q.osc.rawPads = (0!8);
 q.osc.rawImuBiValues = (0!9);
 
 q.zero.imu = q.osc.rawImuBiValues;
 q.zero.pads = q.osc.rawPads;
+
+q.zero.path = Platform.userAppSupportDir +/+ "zeroes.scd";
+q.zero.write = {
+	File.use(q.zero.path, "w", { |file|
+		file.write("q.zero.imu =" +  q.zero.imu ++";\n");
+		file.write("q.zero.pads =" +  q.zero.pads ++";\n");
+		(q.zero.path + "written.").postln;
+	})
+};
+q.zero.read = { q.zero.path.load };
+
+// read old zero values if there
+q.zero.read;
 
 // set the first 9 values of the inphlux from the imu params:
 q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
@@ -61,6 +72,7 @@ MFdef(\ZERO).add(\set, {
 	"*** ZERO was set: ".postln;
 	"imu: %\n".postf(q.zero.imu.round(0.001));
 	"pads: %\n".postf(q.zero.imu.round(0.001));
+	q.zero.write;
 });
 
 // battery values and display for xosc only ATM
