@@ -77,17 +77,18 @@ MFdef(\ZERO).add(\set, {
 
 // battery values and display for xosc only ATM
 // MKtl(\xosc).elAt(\battery).deviceSpec;
-q.osc.batString = "? battery ?";
+q.osc.batString = "no battery data";
 q.osc.batval = 0;
 q.osc.batPercent = 0;
 
-MFdef('battery').add(\calc, { |voltage = 0.0|
+q.osc.batval = rrand(3.4, 4.0).postln;
+
+MFdef('battery').add(\calc, { |milliVolt = 0|
 	q.osc.oldbatval = q.osc.batval;
-	q.osc.batval = voltage.clip(0.0, 10.0);
+	q.osc.batval = milliVolt.clip(0, 4095) * 0.001;
 	q.osc.batvaltime = Main.elapsedTime;
-	q.osc.batPercent = ([3.2, 4.0].asSpec.unmap(voltage) * 100).round(0.1);
+	q.osc.batPercent = ([3.2, 4.1].asSpec.unmap(q.osc.batval) * 100).round(0.1);
 	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
-	// q.osc.batString.postcln;
 });
 
 // switch modes - analog in vs. IMU /// touch vs move mode
