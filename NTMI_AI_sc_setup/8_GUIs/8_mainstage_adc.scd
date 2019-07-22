@@ -14,6 +14,7 @@ q.slots.actives[0].vol;
 
 g.main.ndefMViews[0].label_(\test).refresh;
 g.main.ndefMViews[0].label;
+g.makeGui['NTMI_Main'].value;
 */
 
 g.main = g.main ? ();
@@ -432,7 +433,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	MFdef(\mainWinUpdate).add(\imuPad, {
 		// only if values changed!
 		if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
-			or: q.osc.rawPads != q.osc.rawPadsOLD) {
+			or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
 			g.main.movevals = q.osc.rawImuBiValues.biuni;
 			g.main.padCols = q.osc.rawPads.collect { |val|
