@@ -187,7 +187,6 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 };
 
 MKtl(\ntmi).collAt('caps').action = MFunc();
-MKtl(\ntmi).collAt('caps').action.add(\yo, { \yo });
 MKtl(\ntmi).collAt('caps').action.add(\setLed, { |coll|
 	coll.elements.do { |el, i|
 		var led = MKtl(\ntmi).elAt(\led, \fr, i);
@@ -276,6 +275,11 @@ MFdef(\setInphWPre).add(\setLEDs, {
 	}
 });
 
+MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
+	if (bt.isOn and: q.osc.leftDown.isEmpty) {
+		MFdef('snapshot').value;
+	};
+});
 
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release

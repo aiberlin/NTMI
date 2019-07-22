@@ -66,9 +66,11 @@ q.pre.incrementSeed = {|q, proxy, inc=1|
 ///// add a preset on the fly while playing
 MFdef(\snapshot1).add(\getset, { |proxy|
 	var presy = NdefPreset(proxy);
-	var setty = proxy.getKeysValues(presy.namesToStore).postcs;
-	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol.postcs;
-	presy.addSet(name, setty);
+	var setty = proxy.getKeysValues(presy.namesToStore);
+	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol;
+	"% - saving preset %\n".postf(presy, name);
+	// saves to disk!
+	presy.addSet(name, setty, true);
 });
 
 MFdef(\snapshot).add(\getset, { |proxy|
