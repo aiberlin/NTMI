@@ -32,16 +32,15 @@
 /// ... load all sound processes and their presets ...
 
 // last code file to load before booting
-'preBootSetup': "~/Desktop/ufo/preBootSetup_adc.scd",
+'preBootSetup': "~/Desktop/nufo/preBootSetup.scd",
 
 // first code file to load right after server has booted
-'postBootSetup': "~/Desktop/ufo/postBootSetup_adc.scd",
+'postBootSetup': "~/Desktop/nufo/postBootSetup.scd",
 
 /// ... load all interfaces, postres and GUIs etc ...
 
 // personalize after loadMe file setup is finished
-'finalSetup': "~/Desktop/ufo/00_finalSetup_adc.scd",
-
+'finalSetup': "~/Desktop/nufo/finalSetup.scd",
 
 
 //////// specify wich specific processNames to load
@@ -56,7 +55,7 @@
 // ],
 
 // THE 4 sounds to load into the slots on startup
-'defaultActives': [ 'allArm', 'dog', 'cat', 'revFB' ],
+'defaultActives': [ 'cat', 'xFMSH', 'robTron', 'revFB' ],
 
 // /// TODO: which Ndef-presets to select for each sound slots
 // presetNames: [
