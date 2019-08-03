@@ -33,8 +33,8 @@ Ndef(\blippoo).addSpec(\resonance, [0.001, 2, 'exp', 0, 0.707, ""]);
 };
 
 ~twinpeaks = {arg in,f1,f2,r1,r2; // this is the twin peaks filter as described for the blippoo box but without the distortion (unfortunately)
-	var l1 = RLPF.ar(in     ,f1.fold(20,20000).lag(0.005),r1);//lag is necessary to make sure the filter stays stable
-	var l2 = RLPF.ar(in * -1,f2.fold(20,20000).lag(0.005),r2);
+	var l1 = RLPF.ar(in     ,f1.fold(20,20000).lag(0.05),r1);//lag is necessary to make sure the filter stays stable
+	var l2 = RLPF.ar(in * -1,f2.fold(20,20000).lag(0.05),r2);
 	l1 + l2;
 };
 
@@ -77,13 +77,18 @@ Ndef(\blippoo,{|
 	var sig = ~twinpeaks.(comparator,pf1,pf2,resonance,resonance);
 	var fbout = LocalOut.ar([tri1,tri2,rungler1,rungler2,sah]);
 
-	var monoOut = Limiter.ar(sig.postln * (0.01 * amp));
+	var monoOut = Limiter.ar(Sanitize.ar(sig * 0.05)) * amp;
 
 	q.numChans.collect {
 		DelayL.ar( monoOut, 0.03, LFDNoise3.kr(0.3).range(0.0, 0.03))
 	};
 
 });
+
+// Ndef(\blippoo).clear;
+
+// Ndef(\blippoo).lag(*Ndef(\blippoo).controlKeys.collect ([_, 0.5]).flat);
+
 /*
 Ndef('blippoo').set('fm_sah_b', 32.584637770027, 'freqPeak1', 115.59385768307, 'fm_r_peak1', 1022.2025597648, 'freqOscB', 22.699345303073, 'freqOscA', 3.9693859855577, 'fm_r_a', 6.4822052062949, 'freqPeak2', 802.05582789904, 'resonance', 0.053593355607996, 'fm_r_b', 55.467640210437, 'fm_sah_peak', 187.8431927844, 'fm_b_a', 0.0, 'fm_sah_a', 4.1668212367655, 'fm_r_peak2', 669.35696176669, 'fm_a_b', 0.0).gui;
 */
