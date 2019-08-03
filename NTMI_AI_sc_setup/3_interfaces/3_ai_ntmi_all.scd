@@ -440,6 +440,7 @@ MFdef(\imuFunc).disable( \setInflux );
 MFdef(\imuFunc).enable( \setInflux );
 */
 
+q.osc.ntmiSkipLogin = SkipJack({ try { MKtl(\ntmi).device.source.sendMsg("/ntmi/login") } }, 0.5);
 
 // for monitoring the incoming osc activity by timetag
 q.osc.lastInTime = 0;
