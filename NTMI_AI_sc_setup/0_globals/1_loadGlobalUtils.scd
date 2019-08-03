@@ -25,3 +25,23 @@ q.postServerOptions = {
 	"********************".postln;
 };
 
+
+// command to load a block of soundfiles from paths
+MFdef(\bufLoad).add(\loadFiles, { |paths, buflistname = 'bufs'|
+	if (s.serverRunning.not) {
+		warn("cannot load buffers when server not running.");
+	} {
+		buflistname = buflistname.asSymbol;
+		forkIfNeeded {
+			q[buflistname] = paths.collect { |path| Buffer.read(s, path) };
+			s.sync;
+			Ndef(\granbuf).rebuild;
+			"q[%]: % buffers loaded.\n\n".postf(buflistname.cs, q[buflistname].size);
+		}
+	}
+});
+
+/*
+	// load the ones for granulatspeach
+	MFdef(\bufLoad).value("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch);
+*/
