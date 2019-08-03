@@ -13,7 +13,10 @@ q.pre.settingsDir.pathMatch;
 q.pre.makePreset = { |pre, proxy|
 
 	var name = proxy.key;
-	var namesToStore = proxy.controlKeys.reject( _ == \amp); // everything except amp
+	// maybe set already in Halo?
+	var namesToStore = proxy.getHalo(\namesToStore)
+	// everything except amp
+	?? { proxy.controlKeys.reject( _ == \amp) };
 	var preset = NdefPreset(proxy, namesToStore);	// <- dont store amp along
 	var presPath = (q.pre.settingsDir +/+ name ++ ".pxpreset.scd");
 
