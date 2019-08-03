@@ -258,7 +258,12 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 
 MFdef(\inphModeSetIndex).add(\modeSwColor, {
 	defer ({
-		var msg = [0,0,0,0].put(q.inph.modeIndex, 1);
+		var msg = [
+			[ 0, 1, 0 ], // green is full
+			[ 1, 0, 0 ], // red is touch
+			[ 0, 0, 1 ], // [ blue is move ]
+			[ 0, 0, 0 ]  // [ black is off ]
+		].clipAt(q.inph.modeIndex);
 		MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
 	}, 0.05);
 });
@@ -320,7 +325,10 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 		{
 			q.osc.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
-				q.pre.stepNdefInf( q.ndefs[slotIndex], 1 )
+				q.pre.stepNdefInf( q.ndefs[slotIndex], 1 );
+				// reset button color
+				MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
+				MFdef(\setInphWPre).value(q.inph.at(\presIndex));
 			};
 			q.osc.leftWasUsed = true;
 		}
@@ -345,7 +353,10 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 		{
 			q.osc.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
-				q.pre.stepNdefInf( q.ndefs[slotIndex], -1 )
+				q.pre.stepNdefInf( q.ndefs[slotIndex], -1 );
+				// reset button color
+				MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
+				MFdef(\setInphWPre).value(q.inph.at(\presIndex));
 			};
 			q.osc.leftWasUsed = true;
 		}
