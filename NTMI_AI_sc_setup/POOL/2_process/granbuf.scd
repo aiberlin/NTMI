@@ -19,23 +19,13 @@ q.granbufs[0].play(mul: 0.2);
 */
 q = q ? ();
 
-// command to load a block of soundfiles from paths
-MFdef(\granbufLoad).add(\loadFiles, { |paths|
-	forkIfNeeded {
-		q.granbufs = paths.collect { |path| Buffer.read(s, path) };
-		s.sync;
-
-		// assume bufnums will be in sequential order
-		Ndef(\granbuf).addHalo(\sndbufRange, [q.granbufs[0].bufnum, q.granbufs.last.bufnum]);
-		// rebuild so we use the latest
-		Ndef(\granbuf).rebuild;
-		"q.granbufs: % buffers loaded.\n\n".postf(q.granbufs.size);
-	}
-});
-
 s.doWhenBooted {
 	// load the ones for granulatspeach
-	MFdef(\granbufLoad).value("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch);
+	MFdef(\bufLoad).("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch, 'granbufs');
+	// assume bufnums will be in sequential order
+	Ndef(\granbuf).addHalo(\sndbufRange, [q.granbufs[0].bufnum, q.granbufs.last.bufnum]);
+	// rebuild so we use the latest
+	Ndef(\granbuf).rebuild;
 };
 
 
