@@ -229,13 +229,9 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		emmy.action.add(\setVol,  { |em|
 			q.slots.actives[i].vol_(em.value)
 		});
-		emmy.uv.keyDownAction = { |uv, char, mod = 0|
-			"emmy keydown action - char: % mod: % \n".postf(char.cs, mod);
-			switch(char,
-				$ , { q.slots.playAt(i) },
-				$., { q.slots.stopAt(i) }
-			);
-		};
+
+		emmy.dict.keyNumFuncs
+			.put($ , { q.slots.toggleAt(i) });
 
 		emmy.drawFunc.add(\label, {
 			var labelStr = emmy.label.asString;
