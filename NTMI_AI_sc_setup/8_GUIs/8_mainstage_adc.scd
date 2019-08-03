@@ -411,18 +411,16 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		// clear
 		if (oscBut.value.binaryValue != (q.osc.timeSinceLast < 1)) {
 			oscBut.value = q.osc.timeSinceLast < 1;
-			// if no OSC for longer than 1 sec, set battery to "?"
+			// if no OSC for longer than 1 sec, reset battery display
 			if (q.osc.timeSinceLast >= 1) {
-				q.osc.batval = 0;
-				q.osc.batPercent = 0;
-				q.osc.batString = "no battery";
+				MFdef(\battery).(0);
+				q.bat.resetVals;
 			};
 		};
 		// update battery status if new
-		if (q.osc.batval != q.osc.oldbatval) {
-			"bat_fresh".scramble.postln;
+		if (q.bat.percent != q.bat.percentOld) {
 			g.main.batView.refresh;
-			q.osc.oldbatval = q.osc.batval;
+			q.bat.percentOld = q.bat.percent;
 		};
 	});
 

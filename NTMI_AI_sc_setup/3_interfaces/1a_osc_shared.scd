@@ -17,7 +17,7 @@ q.osc.deviceName = '???';
 
 // only play LED ballet the very first time
 OSCdef(\xoscAlive, { |msg, time|
-	if (q.osc.lastInTime == 0) {
+	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
 	q.osc.deviceName = \xosc;
@@ -25,7 +25,7 @@ OSCdef(\xoscAlive, { |msg, time|
 }, "/imu").permanent_(true);
 
 OSCdef(\ntmiAlive, { |msg, time|
-	if (q.osc.lastInTime == 0) {
+	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
 	q.osc.deviceName = \ntmi;
@@ -75,20 +75,51 @@ MFdef(\ZERO).add(\set, {
 	q.zero.write;
 });
 
-// battery values and display for xosc only ATM
-// MKtl(\xosc).elAt(\battery).deviceSpec;
-q.osc.batString = "no battery data";
-q.osc.batval = 0;
-q.osc.batPercent = 0;
 
-q.osc.batval = rrand(3.4, 4.0).postln;
 
-MFdef('battery').add(\calc, { |milliVolt = 0|
-	q.osc.oldbatval = q.osc.batval;
-	q.osc.batval = milliVolt.clip(0, 4095) * 0.001;
-	q.osc.batvaltime = Main.elapsedTime;
-	q.osc.batPercent = ([3.2, 4.1].asSpec.unmap(q.osc.batval) * 100).round(0.1);
-	q.osc.batString = "bat: %V %%".format(q.osc.batval.round(0.01), q.osc.batPercent, $%);
+
+// xosc sends battery voltage as float in volts, usable range 3.2-4.1 volts
+// ntmi currently sends analog in values as int from 0-4095, usable range (guess)
+// this func is just for ntmi.
+
+q.bat = (
+	resetVals: { |bat|
+		bat.putAll((
+			string: "no battery data",
+			minval: 3000, // guessing, refine!
+			maxval: 4000, // guessing, refine!
+			totaltime: 180, // guessing, refine by testing
+			intval: 0,
+			percent: 0,
+			remain: 0,
+			lastTime: 0
+		))
+	}
+);
+q.bat.resetVals;
+
+MFdef('battery').add(\calc, { |intVal = 0|
+	// keep startvals for estimate
+	if (q.bat.time0.isNil) {
+		q.bat.time0 = Main.elapsedTime;
+		q.bat.intval0 = intVal;
+	};
+
+	q.bat.intval = intVal;
+	q.bat.lastTime = Main.elapsedTime;
+	q.bat.percent = intVal.linlin(q.bat.minval, q.bat.maxval, 0, 100).round(0.1);
+
+	// calculate likely remaintime
+	// conservative guess: known max time
+	q.bat.remain = intVal.linlin(q.bat.minval, q.bat.maxval, 0, q.bat.totaltime).round(1).asInteger;
+
+	// calculate average loss, use to predict remaining time. stabilizes after maybe 30 mins
+	q.bat.avgLoss = q.bat.intval0 - q.bat.intval / (q.bat.lastTime - q.bat.time0).max(2);
+	// q.bat.avgLoss;
+	q.bat.predictedRemain = (q.bat.intval - q.bat.minval / q.bat.avgLoss.clip(0.01, 0.1) / 60);
+
+	q.bat.string = "bat: %% %m".format(q.bat.percent, "%", q.bat.remain);
+	q.bat.string
 });
 
 // switch modes - analog in vs. IMU /// touch vs move mode
