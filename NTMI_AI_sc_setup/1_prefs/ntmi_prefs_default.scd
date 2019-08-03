@@ -15,8 +15,8 @@
 
 (
 'name': 'default', // <- put your user name here
-'numIns': 6,       // number of input channels to use
-'numChans': 4,     // number of output channels to use in the slot sounds and MasterFX
+'numIns': 2,       // number of input channels to use
+'numChans': 2,     // number of output channels to use in the slot sounds and MasterFX
 
 // run the gui-related code - true for macOS,
 /// false for headless systems, e.g. raspberry
