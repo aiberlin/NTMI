@@ -101,9 +101,9 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	batView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
 		Pen.addRect(bounds).color_(Color.white).stroke;
-		Pen.addRect(bounds.copy.width_(bounds.width * (q.osc.batPercent ? 0 * 0.01)));
+		Pen.addRect(bounds.copy.width_(bounds.width * (q.bat.percent ? 0 * 0.01)));
 		Pen.color_(Color.green(0.75, 0.8)).fill;
-		Pen.stringCenteredIn(q.osc.batString,
+		Pen.stringCenteredIn(q.bat.string,
 			bounds,
 			font.copy.size_(font.size * 0.8),
 			Color.white
