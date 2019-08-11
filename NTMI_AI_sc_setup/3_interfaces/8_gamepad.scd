@@ -49,6 +49,33 @@ can be switched stepped or jumped thru:
 button 8 for next higher preset,
 both for a randomly chosen preset.
 
+8. saving snapshots:
+When you like the way the active sound processes sound right now,
+press button 6 - right shoulder button - to save the current settings as a preset.
+This will be stored under a temporary name like "adc_190805_221134",
+which you can later change and keep.
+
+9. Other windows on MakeGui window buttons:
+All buttons (except the last 2) open GUIs for parts of the nUFO machinery,
+and push them to the front.
+hold down the option key to force-remake the window if needed.
+
+- NTMI_Main opens or remakes the main gui window.
+- ntmi opens a GUI for the NTMI/nUFO interface (for debugging)
+- inphlux opens a GUI for the Influx which shows the current weights and in/out values
+- slotSounds opens a window showing editors for the sounds in the four slots
+- liveInput allows editing the liveInput process used by the xf-sounds
+- ndefMixer opens a Mixer for all available Ndefs = sound processes
+- masterFX opens a GUI for the MasterFX section
+- nanoKtl opens a GUI for a korg nanoKontrol faderbox
+- ferrari opens a GUI for a Thrustmaster Ferrari gamepad
+- uc4 opens a GUI for a FaderFox UC4 faderbox
+- ndefPresets opens a GUI for trying out and editing the sound presets
+- z_CLOSEALL closes all windows (except MakeGui)
+- z_setAll posts the current positions of all open windows as code,
+  so the positions can be stored and reset to these  positions.
+
+
 
 ///////// tests
 q.ferr.mktl.openDevice;
