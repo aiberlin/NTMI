@@ -182,7 +182,11 @@ if (q.ferr.mktl.isNil) {
 
 	////////// 4 joyaxes set influx inputs
 	q.ferr.mktl.elAt(\joyAxes).do { |el, i|
-		var inName = q.inphlux.inNames[i + 9];
+		///// orig:
+		// var inName = q.inphlux.inNames[i + 9];
+		// hand-choose ins: take first 6 pad ins,
+		// skip the ones that have amp plus and minus on it:
+		var inName = [\q, \o, \n, \m][i];
 		var sign = (x: 1, y: -1)[el.key];
 		[el, sign].postln;
 		el.elemDesc.label = "infl" + inName.cs;
@@ -191,7 +195,9 @@ if (q.ferr.mktl.isNil) {
 
 	////////// 2 throttles set influx inputs
 	q.ferr.mktl.elAt(\throt).do { |el, i|
-		var inName = q.inphlux.inNames[i + 9 + 4];
+		// influx inputs: ampPlus is input \l, ampminus  p
+		// var inName = q.inphlux.inNames[i + 9 + 4];
+		var inName = [\p, \l][i];
 		el.elemDesc.label = "infl" + inName.cs;
 		el.action = { |el| q.inphlux.set(inName, el.value) };
 	};
@@ -338,4 +344,7 @@ if (q.ferr.mktl.isNil) {
 		}
 	});
 
+	q.ferr.mktl.elAt(\bt, \6).action.add(\snapPre, {
+		MFdef('snapshot').value;
+	});
 };
