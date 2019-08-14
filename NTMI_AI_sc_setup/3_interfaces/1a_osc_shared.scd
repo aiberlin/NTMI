@@ -15,7 +15,9 @@ q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
 q.osc.deviceName = '???';
 
-// only play LED ballet the very first time
+// should play LED ballet every time we go from
+// OSC silence to receiving stuff from nufo
+
 OSCdef(\xoscAlive, { |msg, time|
 	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
@@ -24,7 +26,13 @@ OSCdef(\xoscAlive, { |msg, time|
 	q.osc.lastInTime = time;
 }, "/imu").permanent_(true);
 
+/*
+// test wakeup ballet:
+// if first time, or longer than 10 sec silence, do ballet
+NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
+*/
 OSCdef(\ntmiAlive, { |msg, time|
+	\ntmiAlive.postln;
 	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
@@ -42,6 +50,7 @@ q.zero.imu = q.osc.rawImuBiValues;
 q.zero.pads = q.osc.rawPads;
 
 q.zero.path = Platform.userAppSupportDir +/+ "zeroes.scd";
+
 q.zero.write = {
 	File.use(q.zero.path, "w", { |file|
 		file.write("q.zero.imu =" +  q.zero.imu ++";\n");
@@ -49,7 +58,7 @@ q.zero.write = {
 		(q.zero.path + "written.").postln;
 	})
 };
-q.zero.read = { q.zero.path.load };
+q.zero.read = { "reading zeroes file.".postln; q.zero.path.load };
 
 // read old zero values if there
 q.zero.read;

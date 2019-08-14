@@ -5,7 +5,7 @@ q.inph.mode = \full;
 Tdef(\allLEDs).play;
 */
 
-Tdef(\allLEDs).set(\dt, 0.1).play;
+Tdef(\allLEDs).set(\dt, 0.1);
 Tdef(\allLEDs, { |ev|
 	try { q.osc.ntmiSkip.stop };
 	2.do {
