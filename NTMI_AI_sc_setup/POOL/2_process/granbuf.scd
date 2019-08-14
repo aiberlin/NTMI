@@ -19,14 +19,15 @@ q.granbufs[0].play(mul: 0.2);
 */
 q = q ? ();
 
-s.doWhenBooted {
+ServerBoot.add({
+	while { s.serverRunning.not } { 0.2.wait };
 	// load the ones for granulatspeach
 	MFdef(\bufLoad).("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch, 'granbufs');
 	// assume bufnums will be in sequential order
 	Ndef(\granbuf).addHalo(\sndbufRange, [q.granbufs[0].bufnum, q.granbufs.last.bufnum]);
 	// rebuild so we use the latest
 	Ndef(\granbuf).rebuild;
-};
+});
 
 
 // the Ndef specs:
