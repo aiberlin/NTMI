@@ -35,7 +35,8 @@ MFdef(\bufLoad).add(\loadFiles, { |paths, buflistname = 'bufs'|
 		forkIfNeeded {
 			q[buflistname] = paths.collect { |path| Buffer.read(s, path) };
 			s.sync;
-			Ndef(\granbuf).rebuild;
+			// this happens in granbuf.scd now:
+			// Ndef(\granbuf).rebuild;
 			"q[%]: % buffers loaded.\n\n".postf(buflistname.cs, q[buflistname].size);
 		}
 	}
