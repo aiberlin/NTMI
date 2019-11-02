@@ -32,7 +32,7 @@ OSCdef(\xoscAlive, { |msg, time|
 NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
 */
 OSCdef(\ntmiAlive, { |msg, time|
-	\ntmiAlive.postln;
+	// \ntmiAlive.postln;
 	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
