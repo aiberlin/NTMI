@@ -286,6 +286,16 @@ MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
 	};
 });
 
+// reset right back leds to their proper values
+// e.g. after modal action of buttons for MasterFX
+MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
+	defer ({
+		MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
+		MFdef(\setInphWPre).value(q.inph.at(\presIndex));
+	}, delay);
+});
+
+
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
@@ -293,7 +303,10 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 		case
 		// hat is down: masta fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
-		{ MFdef(\mastaPreStep).value(nil) }
+		{
+			MFdef(\mastaPreStep).value(nil);
+			MFdef(\resetModePreLEDs).value(0.1);
+		}
 
 		// slot mode: rand preset
 		{ q.osc.leftDown.size > 0 }
@@ -305,7 +318,10 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 			q.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
-		{ MFdef(\inphModeStep).value(1) }
+		{
+			MFdef(\inphModeStep).value(1);
+			MFdef(\resetModePreLEDs).value(0.1);
+		}
 
 	}
 });
@@ -318,7 +334,10 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 		case
 		// hat is down: masta fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
-		{ MFdef(\mastaPreStep).value(1) }
+		{
+			MFdef(\mastaPreStep).value(1);
+			MFdef(\resetModePreLEDs).value(0.1);
+		}
 
 		// slot mode: rand preset
 		{ q.osc.leftDown.size > 0 }
@@ -346,7 +365,10 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 		case
 		// hat is down: masta fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
-		{ MFdef(\mastaPreStep).value(-1) }
+		{
+			MFdef(\mastaPreStep).value(-1);
+			MFdef(\resetModePreLEDs).value(0.1);
+		}
 
 		// slot mode: rand preset
 		{ q.osc.leftDown.size > 0 }
