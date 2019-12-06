@@ -71,6 +71,10 @@ Ndef('rjkChaos').addSpec(\qu, [0.001, 1, \lin, 0, 1]);
 Ndef('rjkChaos').addSpec(\rfq, [0.001, 1, \lin, 0, 1]);
 Ndef('rjkChaos').addSpec(\gain, [0.001, 2, \lin, 0, 1]);
 
+fork { s.sync; 0.1.wait; Ndef('rjkChaos').end };
+
+Ndef('rjkChaos');
+
 //Ndef('rjkChaos').play(vol: 0.0);
 /*(
 NdefPreset(Ndef('rjkChaos'));

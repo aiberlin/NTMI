@@ -1,6 +1,5 @@
 
 (
-
 Ndef(\bufRd).addSpec(\start, [0, 0.999]);
 Ndef(\bufRd).addSpec(\end, [0.001, 1, \exp]);
 Ndef(\bufRd).addSpec(\rate, [-2, 2, \lin]);
@@ -38,4 +37,5 @@ Ndef(\bufRd, { | amp=1,bufnum= 0, rate=1, start=0, end=1, mod = 0, modSpeed = 1,
 })
 );
 
-//Ndef(\bufRd).gui
+fork { s.sync; 0.1.wait; Ndef(\bufRd).end };
+Ndef(\bufRd);

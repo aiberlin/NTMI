@@ -31,3 +31,6 @@ Ndef(\brushes).addSpec(\rq, [0.2, 12, \exp]);
 );
 
 //Ndef(\brushes).gui
+
+fork { s.sync; 0.1.wait; Ndef(\brushes).end };
+Ndef(\brushes);

@@ -41,6 +41,5 @@ Ndef(\cat, { |amp=0, pFreq=100, modFreq=0, filt=2, q=1, pWidth=0.5,  moDepth=12|
 Ndef(\cat).vol_(0.25);	// don't play it yet, just prepare
 );
 
-// NdefPreset( Ndef(\cat) ).loadSettings;
-
-//{SinOsc.ar(1+ [0, 0.1, 0.213] * 1000).product }.plot
+fork { s.sync; 0.1.wait; Ndef(\cat).end };
+Ndef(\cat);

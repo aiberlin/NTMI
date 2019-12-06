@@ -72,6 +72,10 @@ Ndef(\bleepo, { arg amp = 0,
 Ndef(\bleepo).supplementNodeMap;
 );
 
+fork { s.sync; 0.1.wait; Ndef(\bleepo).end };
+Ndef(\bleepo);
+
+
 // NdefPreset( Ndef(\bleepo) ).loadSettings;
 
 // q.makeBleepoGui = {

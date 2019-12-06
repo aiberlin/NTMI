@@ -163,6 +163,11 @@ Ndef(\robTron).addHalo(\reloadFunc, {
 		Ndef(\robTron).play(vol: 0);
 	}
 });
+
+fork { s.sync; 0.1.wait; Ndef(\robTron).end };
+Ndef(\robTron);
+
+
 //		Ndef(\robTron).gui;
 //		{ Ndef(\robTron).getHalo(\reloadFunc).value; }.defer(1);
 // "\n\nrobtron loaded\n".postln;

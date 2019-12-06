@@ -85,6 +85,10 @@ Ndef(\blippoo,{|
 
 });
 
+fork { s.sync; 0.1.wait; Ndef(\blippoo).end };
+Ndef(\blippoo);
+
+
 // Ndef(\blippoo).clear;
 
 // Ndef(\blippoo).lag(*Ndef(\blippoo).controlKeys.collect ([_, 0.5]).flat);

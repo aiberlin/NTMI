@@ -50,3 +50,6 @@ Ndef(\etude, { arg amp=0, bpm=120, att=0.002, dcy=0.05, ffreq=5000, reso=2, mod=
 	Limiter.ar(sig, amp);
 });
 
+fork { s.sync; 0.1.wait; Ndef(\etude).end };
+Ndef(\etude);
+

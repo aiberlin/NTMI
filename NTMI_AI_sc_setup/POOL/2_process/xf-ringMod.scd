@@ -15,3 +15,5 @@ Ndef('xf-ringMod', { arg amp=0.1, oct=2, which=0, pow=1;
 	Limiter.ar(in * amp * sines)
 });
 
+fork { s.sync; 0.1.wait; Ndef('xf-ringMod').end };
+Ndef('xf-ringMod');

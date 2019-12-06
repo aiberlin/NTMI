@@ -20,3 +20,6 @@ Ndef(\vowel).addSpec(\freqDev, [0.1, 11, \exp]);
 Ndef(\vowel).addSpec(\fold, [0.005, 1, \exp]);
 
 );
+
+fork { s.sync; 0.1.wait; Ndef(\vowel).end };
+Ndef(\vowel);

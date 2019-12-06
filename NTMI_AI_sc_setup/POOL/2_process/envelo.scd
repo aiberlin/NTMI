@@ -20,4 +20,6 @@ Ndef(\envelo).addSpec(\formfact, [0.1, 10, \exp]);
 Ndef(\envelo).addSpec(\widfact, [0.1, 10, \exp]);
 Ndef(\envelo).addSpec(\spread, \unipolar);
 );
-//Ndef(\envelo).gui
+
+fork { s.sync; 0.1.wait; Ndef(\envelo).end };
+Ndef(\envelo);

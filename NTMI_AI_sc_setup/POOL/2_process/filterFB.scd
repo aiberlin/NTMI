@@ -47,25 +47,7 @@ Ndef(\filterFB, {
 	ouz.flop.first.clip2(1) * amp //* (1-Dust.kr(1/10! q.numChans, 30).lag(0.3, 7)).clip(0,1);
 });
 );
-//Ndef(\filterFB).gui
-/*
-q.fluxA = Influx(
-[\in0, \in1, \in2, \in3, \in4, \in5, \in6, \in7],
-[\out0, \out1, \out2, \out3, \out4, \out5, \out6, \out7]);
 
-q.fluxA.attachMapped(Ndef(\filterFB));
+fork { s.sync; 0.1.wait; Ndef(\filterFB).end };
+Ndef(\filterFB);
 
-//attach nano to  fluxA
-
-q.nano = MIDIMKtl('nnkn20');
-q.nano.verbose_(false);
-
-//make elem. value bipolar
-8.do{|i|q.nano.elements[\sl][i].action_({|elem| q.fluxA.set(q.fluxA.inNames[i], elem.value * 2 -1);})};
-
-
-//randomize flux weights
-q.fluxA.rand(0.6)
-//reset weights
-8.do{|i| 8.do{|j| q.fluxA.weights[i][j] = 0}};
-*/

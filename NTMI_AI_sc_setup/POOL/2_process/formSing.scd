@@ -62,7 +62,12 @@ Ndef(\formSing).addHalo(\stepFdev, { arg val; var curr;
 	nd.set(\fdev, [0.03, 0.12, 0.5, 2.5, 7, 12, 24].foldAt(halo[\fdefidx]).postln);
 });
 
-/* // for reference, the mappings in the GamePad class (up to SC 3.4.5)
+fork { s.sync; 0.1.wait; Ndef(\formSing).end };
+Ndef(\formSing);
+
+
+/*
+// for reference, the mappings in the GamePad class (up to SC 3.4.5)
 GamePad.putProxy(4,
 	\s4_formsing,
 	(			// add switch and lag later?

@@ -30,7 +30,6 @@ Ndef(\xFMSH).addSpec(\freqB, \widefreq);
 Ndef(\xFMSH).addSpec(\shape, [8, 1/8, \exp]);
 Ndef(\xFMSH).addSpec(\lag, [0, 5, 5]);
 
-
 // basic mapping notes
 Ndef(\xFMSH).addHalo(\gamePadMap, (
 	joyLX: \freqA,
@@ -38,3 +37,6 @@ Ndef(\xFMSH).addHalo(\gamePadMap, (
 	joyRX: \modA_B,
 	joyRY: \amp)
 );
+
+fork { s.sync; 0.1.wait; Ndef(\xFMSH).end };
+Ndef(\xFMSH);

@@ -40,6 +40,10 @@ Ndef(\allArm).addHalo(\gamePadMap, (
 	joyRY: \amp)
 );
 
+fork { s.sync; 0.1.wait; Ndef(\allArm).end };
+
+Ndef(\allArm);
+
 /* tests
 Ndef(\allArm).gui;
 Ndef(\allArm).play;
@@ -48,8 +52,6 @@ Ndef(\allArm).vol_(0.1);
 Ndef(\allArm).set(\filtfreq, 200);
 Ndef(\allArm).set(\topfreq, 200);
 Ndef(\allArm).set(\divefreq, 1);
-
-Ndef(\allArm).paused
 */
 
 /* old gamepad mapping, for reference

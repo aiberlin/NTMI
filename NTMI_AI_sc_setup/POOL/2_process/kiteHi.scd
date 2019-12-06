@@ -43,6 +43,10 @@ Ndef(\kiteHi).addHalo(\stepWidth, { arg val; var curr;
 	nd.set(\width, curr);
 });
 
+fork { s.sync; 0.1.wait; Ndef(\kiteHi).end };
+
+Ndef(\kiteHi);
+
 /*
 Ndef(\kiteHi).gui;
 Ndef(\kiteHi).getHalo(\stepDustfreq).value;

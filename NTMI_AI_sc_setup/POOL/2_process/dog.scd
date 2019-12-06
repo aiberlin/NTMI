@@ -31,10 +31,5 @@ Ndef(\dog, { |amp=0, freq=250, intv=19, timescale=1, curve=0, loopnode=0, dens =
 
 Ndef(\dog).addHalo(\orderedNames, Ndef(\dog).controlKeys);
 
-/*
-Ndef(\dog).controlKeys;
-Ndef(\dog).vol_(0.5);
-NdefPreset( Ndef(\dog) ).loadSettings;
-Ndef(\dog).play;
-Ndef(\dog).gui;
-*/
+fork { s.sync; 0.1.wait; Ndef(\dog).end };
+Ndef(\dog);

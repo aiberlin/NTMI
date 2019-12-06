@@ -48,6 +48,9 @@ Ndef(\varsawFB, { |amp = 0.25, width = 0.5,
 })
 );
 
+fork { s.sync; 0.1.wait; Ndef(\varsawFB).end };
+Ndef(\varsawFB);
+
 
 /*
 

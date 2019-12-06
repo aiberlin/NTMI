@@ -35,7 +35,7 @@ Ndef(\revFB).addSpec(\animDepth, [0.0, 1, \amp]);
 Ndef(\revFB).addSpec(\hfDamping, [0, 1]);
 Ndef(\revFB).addSpec(\predelay, [0.0, 0.2, \amp]);
 Ndef(\revFB).addSpec(\revTime, [0.01, 100, \exp]);
-Ndef(\revFB).addSpec(\inFilter, [-0.99, 0.99]);
+Ndef(\revFB).addSpec(\inFilter, [0, 0.99]); // was -0.99, but negative values are just softer
 Ndef(\revFB).addSpec(\leakCoeff, [0.9, 0.998]);
 Ndef(\revFB).addSpec(\combScale, [0.1, 2, \exp]);
 Ndef(\revFB).addSpec(\apScale, [0.1, 2, \exp]);
@@ -74,6 +74,10 @@ Ndef(\revFB, { |amp=0, direct = 0.2, feedback = 0.1, revTime = 3, animRate = 0.1
 	// maybe resurrect DualBandComp?
 	OnePole.ar(snd.softclip, 0.2, amp);
 });
+
+fork { s.sync; 0.1.wait; Ndef(\revFB).end };
+
+Ndef(\revFB);
 
 /* // tests
 Ndef(\revFB).play;

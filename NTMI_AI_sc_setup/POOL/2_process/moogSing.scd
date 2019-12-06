@@ -92,6 +92,12 @@ Ndef(\moogSing).addHalo(\stepFreq, { arg val; var curr;
 	Ndef(\moogSing).set(\moogRoot, curr);
 });
 
+fork { s.sync; 0.1.wait; Ndef(\moogSing).end };
+
+Ndef(\moogSing);
+
+
+
 /* tests of extra functions
 Ndef(\moogSing).set(\amp, 0.2).play;
 Ndef(\moogSing).gui;
@@ -124,7 +130,4 @@ GamePad.putProxy(6, \s6_moogSing,
 		}
 	)
 );
-*/
-/*
-~s6_moogSing.set(\rq, 0.1);
 */

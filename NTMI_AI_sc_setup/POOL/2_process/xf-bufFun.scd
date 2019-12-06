@@ -37,3 +37,6 @@ Ndef('xf-bufFun', { arg amp=0.1, newLvl=1, oldLvl=0.1, secs=1, pitch1= -2, pitch
 		+ (ot * oldLvl.lag(0.7).cubed), buf, phaW); // loop rec into the buf
 	ot * amp
 });
+
+fork { s.sync; 0.1.wait; Ndef('xf-bufFun').end };
+Ndef('xf-bufFun');
