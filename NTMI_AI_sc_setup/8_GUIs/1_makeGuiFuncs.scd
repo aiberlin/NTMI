@@ -7,15 +7,18 @@ g.makeGui = ();
 
 // this func reuses or rebuilds existing windows
 MFdef(\makeGui).add(\frontOrRemake, { |name, remake = false|
-	var foundWins = Window.findAll(name);
-	var newWin;
+	var nameSym = name.asSymbol;
+	var foundWins = Window.findAll(nameSym);
+	var defaultBounds = g.defaultWinBounds[nameSym];
+
 	remake = remake or: { foundWins.isNil or: { foundWins.isEmpty } };
+
 	if (remake) {
 		// "closing: ".post; foundWins.postln;
 		foundWins.do(_.close);
-		g.makeGui[name.asSymbol].value(g.makeGui, name);
-		if (name.notNil) {
-			if (g.defaultWinBounds[name].notNil) {
+		g.makeGui[nameSym].value(g.makeGui, nameSym);
+		if (nameSym.notNil) {
+			if (foundWins.notNil) {
 				Window.findAll(name).do(_.bounds = g.defaultWinBounds[name])
 			};
 		};
@@ -48,7 +51,7 @@ Window.getAll.postcs;
 
 // these are the default positions:
 g.defaultWinBoundsList = [
-	[ "MakeGui", Rect(0.0, 180.0, 170.0, 550.0) ],
+	[ "MakeGui", Rect(0.0, 180.0, 170.0, 580.0) ],
 	[ "NTMI_Main", Window.availableBounds ],
 	[ "inphlux", Rect(100, 665.0, 680.0, 340.0) ],
 	[ "NdefGui_liveInput", Rect(600.0, 5.0, 394.0, 194.0) ],
@@ -153,9 +156,16 @@ g.makeGui.oscSimulator = { |dict, name = \oscSimulator|
 	};
 };
 
+g.makeGui.randomOrbitz = {
+	q.keypl.keyPlayerGui = KeyPlayerGui().front; //(options: [\useList]);
+	q.keypl.keyPlayerGui.moveTo(1250, 420);
+	q.keypl.keyPlayerGui.parent.name = "randomOrbitz";
+	q.keypl.keyPlayerGui.buttons.detect { |bt| bt.states[0][0] == 'prez' }.doAction;
+	q.keypl.keyPlayerGui;
+};
 
 g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
-	var winHeight = (g.makeGui.size + 2 * 35);
+	var winHeight = (g.makeGui.size + 3 * 35);
 	var w = Window(name,
 		Rect(5,
 			150,
@@ -168,23 +178,26 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 
 	// g.makeGui.keys(Array).sort.do ...
 	[
-		'MakeGui',
 		'NTMI_Main',
-		'ntmi',
-//		'xosc',
-//		'xoscMTPads',
-//		'oscSimulator',
 		'inphlux',
-		'slotSounds',
 		'liveInput',
+		'slotSounds',
+		'allPresets',
+		'randomOrbitz',
 		'ndefMixer',
 		'masterFX',
+		"- interfaces -",
+		'ntmi',
 		'nanoKtl',
 		'ferrari',
 		'uc4',
-		'ndefPresets',
+//		'xoscMTPads',
+		"- helpers -",
+//		'oscSimulator',
+		'chanTest',
+		'MakeGui',
+		'z_setAll',
 		'z_CLOSEALL',
-		'z_setAll'
 	].do { |key|
 		Button(w, 160@28)
 		.font_(Font("Monaco", 18))
