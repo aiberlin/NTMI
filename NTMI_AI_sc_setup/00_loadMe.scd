@@ -135,30 +135,8 @@ Task {
 	"/Users/adc/NTMI/POOL/1_server_setups/serverBasic2.scd".pathMatch;
 	q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
 	// preload all sounds while server is off!
-	q.load("2_liveInput.scd");
 
-	"\n\n*** *** *** FOLDER %:\n".postf("2_process");
-	// list all candidate files
-	if (q.prefs.active.processNames.isNil) {
-		(q.dir.userPOOL +/+ "*process/*.scd").pathMatch
-		.collect {|pa| pa.basename.splitext[0].asSymbol }.postcs;
-	};
-
-	q.process = q.process ? ();
-	q.process.allPaths = (q.dir.userPOOL +/+ "*process/*.scd").pathMatch;
-	q.process.allNames = q.process.allPaths.collect { |p|
-		p.basename.splitext[0].asSymbol
-	};
-
-	0.2.wait;
-	// load preferred processNames, or all:
-	(q.prefs.active.processNames ? q.process.allNames).do { |name|
-		q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process")
-	};
-
-	q.load("2a_preset*.scd");
-
-	"\n\n".postln;
+	s.options.numInputBusChannels = q.numIns;
 
 	q.load(q.prefs.active.preBootSetup);
 
@@ -171,16 +149,37 @@ Task {
 
 		q.load(q.prefs.active.postBootSetup);
 
+		"\n\n*** *** *** FOLDER %:\n".postf("2_process");
+		// list all candidate files
+		if (q.prefs.active.processNames.isNil) {
+			(q.dir.userPOOL +/+ "*process/*.scd").pathMatch
+			.collect {|pa| pa.basename.splitext[0].asSymbol }.postcs;
+		};
+
+		q.process = q.process ? ();
+		q.process.allPaths = (q.dir.userPOOL +/+ "*process/*.scd").pathMatch;
+		q.process.allNames = q.process.allPaths.collect { |p|
+			p.basename.splitext[0].asSymbol
+		};
+
+		0.5.wait;
+
+		q.load("2_liveInput.scd");
+
+		// load preferred processNames, or all:
+		(q.prefs.active.processNames ? q.process.allNames).do { |name|
+			q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
+			s.sync;
+			0.05.wait;
+		};
+
+		q.load("2a_preset*.scd");
+
+		"\n\n".postln;
+
 		0.2.wait;
 		// activate the ndefs given in prefs:
 		q.ndefs = q.prefs.active.defaultActives.collect(Ndef(_));
-		//
-		// and only wake up my selected sounds:
-		q.ndefs.do {|ndef|
-			ndef.set(\amp, 0).fadeTime_(1).vol_(0.25);
-		};
-
-		0.2.wait;
 
 		"\n\n*** *** *** FOLDER % : \n".postf("3_interfaces");
 		q.load("3_interfaces/*scd");
@@ -207,7 +206,7 @@ Task {
 
 		g.main.skipper.dt = 1/10;
 
-		q.inph.modes = [\full, \touch];
+		//  q.inph.modes = [\full, \touch];
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
