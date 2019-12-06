@@ -94,7 +94,7 @@ g.uc4.elAt(\pgKn1, \kn).do(_.deviceSpec_(g.uc4.getSpec(\knRel)));
 g.uc4.elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = q.ndefs[i];
-		MFdef(\stepVol).(ndef, ((el.deviceValue - 64) * 0.1));
+		MFdef(\stepVol).(ndef, ((el.deviceValue - 64) * 0.4));
 		el.deviceValue = 64;
 	};
 };
