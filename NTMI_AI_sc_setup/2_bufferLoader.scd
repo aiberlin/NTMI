@@ -1,3 +1,5 @@
+/// load global buffers on startup
+
 var globalBufFolder = q.prefs.active.bufferFolder;
 // load the ones for now
 if (globalBufFolder.notNil) {
