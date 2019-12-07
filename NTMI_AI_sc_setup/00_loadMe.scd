@@ -159,6 +159,8 @@ Task {
 			.collect {|pa| pa.basename.splitext[0].asSymbol }.postcs;
 		};
 
+		q.load("2_bufferLoader.scd");
+
 		q.process = q.process ? ();
 		q.process.allPaths = (q.dir.userPOOL +/+ "*process/*.scd").pathMatch;
 		q.process.allNames = q.process.allPaths.collect { |p|
