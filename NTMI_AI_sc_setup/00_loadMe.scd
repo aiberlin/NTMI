@@ -46,6 +46,7 @@ Task {
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
 
+	"*** Modality: find connected devices ***".postln;
 	/////// dont load HIDs by default, for more stability
 	// MKtl.find(\hid); 0.5.wait;
 	/////// do load MIDI devices
@@ -117,6 +118,8 @@ Task {
 		};
 	};
 
+	"\n\n".post;
+
 
 	//******* PREFERENCES
 	///// read user prefs (if there) or default prefs early on:
@@ -142,6 +145,8 @@ Task {
 	s.options.numInputBusChannels = q.numIns;
 
 	q.load(q.prefs.active.preBootSetup);
+
+	"\n\n".postln;
 
 	s.waitForBoot {
 

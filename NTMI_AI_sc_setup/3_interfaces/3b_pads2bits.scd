@@ -4,22 +4,32 @@
 and triggered when the number changes
 * every pad can also be an individual trigger
 
+MFdef(\capsToInph).activeNames;
+MFdef(\capsToInph).enable(\binKey);
+MFdef(\capsToInph).disable(\set);
+
 ***********/
 
-~bins = 0!8;
+q.bin = ();
+
+// tweak bin-threshold to your ntmi!
+q.bin.thresh = 0.1;
+
+q.bin.bins = 0!8;
+
 (
 // sneak binkey function into func that triggers when pads array is received:
 MFdef(\capsToInph).add(\binKey, {
-	var caps = MKtl('ntmi').collAt(\caps);
-	var thresh = 0.4;
-	var vals = caps.value;
-	var bins = vals.collect { |val| (val > thresh).binaryValue };
 	// var binMap = [ 128, 64, 32, 16, 8, 4, 2,   1];
-	   var binMap = [ 2,    8, 32, 128, 1, 4, 16, 64];
+	var binMap = [ 2,    8, 32, 128, 1, 4, 16, 64];
+	var caps = MKtl('ntmi').collAt(\caps);
+	var vals = caps.value;
+	var bins = vals.collect { |val| (val > q.bin.thresh).binaryValue };
 	var sum = (bins * binMap).sum;
 
-	if (~binkey != sum) {
-		~binkey = sum;
+	if (q.bin.binkey != sum) {
+		q.bin.binkey = sum;
+		MKtl('ntmi').collAt(\caps).value.round(0.001).postln;
 //		("*** trigger new binkey: " + ~binkey).postln;
 
 		if(sum > 0){
@@ -45,23 +55,6 @@ MFdef(\capsToInph).add(\binKey, {
 			///// cap.action.value;
 		}
 	};
-	~bins = bins
+	q.bin.bins = bins
 });
 );
-
-//// MKtl('ntmi').collAt(\caps).elements[0].action.activeNames;
-
-/**** tests: new number post triggers
-MKtl('ntmi').collAt(\caps).groupAction.value({ rrand(0.0, 1.0) } !8);
-MKtl('ntmi').collAt(\caps).groupAction.value({ rrand(0.0, 0.5) } !8);
-
-// test changing them slowly - where are the thresholds?
-MKtl('ntmi').collAt(\caps).groupAction.value({ 0.4 } !8);
-MKtl('ntmi').collAt(\caps).groupAction.value({ 0.44 } !8);
-MKtl('ntmi').collAt(\caps).groupAction.value({ 0.45 } !8);
-MKtl('ntmi').collAt(\caps).groupAction.value({ 0.46 } !8);
-
-MKtl('ntmi').collAt(\caps).groupAction.value((0!8).put(0, 1));
-MKtl('ntmi').collAt(\caps).groupAction.value((0!8).put(1, 1));
-MKtl('ntmi').collAt(\caps).groupAction.value((0!8).put(2, 1));
-****/
