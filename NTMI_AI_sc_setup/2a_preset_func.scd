@@ -12,13 +12,18 @@ q.pre.settingsDir.pathMatch;
 (
 q.pre.makePreset = { |pre, proxy|
 
+	var defaultNamesToStore = proxy.controlKeys.reject( _ == \amp);
 	var name = proxy.key;
-	// maybe set already in Halo?
-	var namesToStore = proxy.getHalo(\namesToStore)
-	// everything except amp
-	?? { proxy.controlKeys.reject( _ == \amp) };
-	var preset = NdefPreset(proxy, namesToStore);	// <- dont store amp along
-	var presPath = (q.pre.settingsDir +/+ name ++ ".pxpreset.scd");
+	var preset, presPath, namesToStore;
+
+	// set namesToStore if not already there:
+	if (proxy.getHalo(\namesToStore).isNil) {
+		// all controlKeys except \amp:
+		proxy.addHalo(\namesToStore, proxy.controlKeys.reject( _ == \amp))
+	};
+	// uses getHalo(\namesToStore):
+	preset = NdefPreset(proxy);
+	presPath = (q.pre.settingsDir +/+ name ++ ".pxpreset.scd");
 
 	//////// enable this line to tell influx to use same names;
 	//////// so Influx will not set amp values.
