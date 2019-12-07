@@ -208,12 +208,18 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	// 4 popups to select sounds, 4 mviews for volume levels
 	// add play buttons?
 	popMVs = [ 3, 1, -1, -3].collect { |offset, i|
+		var ndef = q.slots.actives[i];
+		var ndefpre = NdefPreset(ndef);
 		var top = w.bounds.center.y + (offset + 1 * -80 * scrscale);
 		var left = 200 - (offset.abs * 0) * scrscale;
+
 		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150 * scrscale));
 		var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
-		.items_(q.process.allNames)
-		.value_(q.slots.actives[i].key).font_(font);
+		.items_(q.slots.choices[i])
+		.value_(ndef.key).font_(font);
+		// var popPres = PopUpMenu(w, Rect(left + 250 * scrscale, top, 250 * scrscale, 40 * scrscale))
+		// .items_(ndefpre.getSetNames)
+		// .value_(ndefpre.getSetNames.size.rand).font_(font);
 
 		pop.background_(Color.grey(1.0, 0.7));
 
@@ -244,11 +250,12 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 				Color.blue
 			)
 		});
-		[pop,emmy];
+		[pop,emmy, /*popPres*/];
 	};
 
 	g.main.popups = popMVs.flop[0];
 	g.main.ndefMViews = popMVs.flop[1];
+	// g.main.popPres = popMVs.flop[2];
 
 	////// the 4 mviews on the right -  remove n eventually
 	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
@@ -359,7 +366,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			var centPadsL, padsLPos, centPadsR, padsRPos;
 			var star;
 
-			if ([\full, \touch].includes(q.inph.mode)) {
+			if ([\full, \touch, \binary].includes(q.inph.mode)) {
 				centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 				centPadsR = center.copy.x_(center.x + (center.y * 1.8));
 				padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
@@ -370,11 +377,14 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 					Polar(center.y * -1.5 + pi, angle * 0.8).asPoint + centPadsR;
 				};
 
+				Pen.width_(2);
 				// 4 left, 4 right touchpads
 				(padsLPos ++ padsRPos).collect { |pt, i|
 					Pen.addArc(pt, 60, 0, 2pi);
 					Pen.color_(g.main.padCols[i]);
 					Pen.fill;
+					Pen.addOval(Rect.aboutPoint(pt, 60, 60));
+					Pen.color_(Color.black).stroke;
 					// Pen.stringCenteredIn(i.asString, Rect.aboutPoint(pt, 60, 60),
 					// 	font: Font("Monaco", 96),
 					// color: Color.black);
@@ -430,8 +440,16 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
 			g.main.movevals = q.osc.rawImuBiValues.biuni;
-			g.main.padCols = q.osc.rawPads.collect { |val|
-				Color.yellow(val.linlin(0, 1, 0.25, 1)).red_(1);
+			if (q.inph.mode == \binary) {
+				g.main.padCols = ~bins.collect { |val, i|
+					Color.white.alpha_(val);
+					// if (val > 0.5) { Color.white } { Color.clear };
+				};
+				// g.main.padCols.postln;
+			} {
+				g.main.padCols = q.osc.rawPads.collect { |val|
+					Color.yellow(val).alpha_(val);
+				};
 			};
 			g.main.imuUV.refresh;
 		};
