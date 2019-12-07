@@ -2,32 +2,13 @@
 /// here, with a set of textfiles
 
 /*
-///////// Ndef(\granbuf).clear;
-
-// make a preset
-NdefPreset(Ndef(\granbuf));
-// load its settings - add path if known
-NdefPreset(\granbuf).loadSettings(/* path can go here */);
-// make a gui for it
-NdefPresetGui(NdefPreset(Ndef(\granbuf)), Ndef(\granbuf).controlKeys.size + 2);
+/////////
+Ndef(\granbuf).clear;
 
 Ndef(\granbuf).gui(12);
 
-q.granbufs.collect(_.bufnum);
-q.granbufs.choose.play(mul: 0.2)
-q.granbufs[0].play(mul: 0.2);
 */
 q = q ? ();
-
-ServerBoot.add({
-	while { s.serverRunning.not } { 0.2.wait };
-	// load the ones for granulatspeach
-	MFdef(\bufLoad).("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch, 'granbufs');
-	// assume bufnums will be in sequential order
-	Ndef(\granbuf).addHalo(\sndbufRange, [q.granbufs[0].bufnum, q.granbufs.last.bufnum]);
-	// rebuild so we use the latest
-	Ndef(\granbuf).rebuild;
-});
 
 
 // the Ndef specs:
@@ -43,7 +24,7 @@ Ndef(\granbuf).addSpec(\posvar, [0, 0.1, 4]);      // how much file read pos var
 Ndef(\granbuf).addSpec(\panvar, [0, 1]);           //
 
 // make sound buffer range known so Ndef can access it
-Ndef(\granbuf).addHalo(\sndbufRange, [-1, -1]);
+Ndef(\granbuf).addHalo(\sndbufRange, [0, 0]);
 
 /*
 Ndef(\granbuf).setUni(\posvar, 0.5);
@@ -73,6 +54,16 @@ Ndef(\granbuf, { |
 
 	GrainBuf.ar(4, trig, overlap / dens, sndbuf3, ratekr, filepos2, 2, panpos) * amp2;
 });
+
+// load the ones for granulatspeach
+MFdef(\bufLoad).(
+	"~/Seafile/AI_CC/granulatspeach/textbuffers/",
+	{ |bufs, listname|
+		MFdef(\setBufRange).(Ndef(\granbuf), bufs, listname);
+		Ndef(\granbuf).end;
+	},
+	'granbufs'
+);
 
 // Preset: don't store amp and sndbuf
 Ndef(\granbuf).addHalo(\namesToStore, Ndef(\granbuf).controlKeys.drop(2));
