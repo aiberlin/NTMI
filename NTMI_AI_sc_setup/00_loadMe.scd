@@ -45,6 +45,13 @@ Task {
 	// check user dir, make it and migrate pool there if needed
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
+
+	/////// dont load HIDs by default, for more stability
+	// MKtl.find(\hid); 0.5.wait;
+	/////// do load MIDI devices
+	MKtl.find(\midi); 0.5.wait;
+
+
 	// ///////// set for dev mode here :
 	// if (q.myname == \adcxxx) {
 	// 	q.dev = true;
@@ -121,11 +128,7 @@ Task {
 
 	q.hasGui = q.prefs.active.hasGui ? q.hasGui;
 
-	///////// dont load HIDs by default, for more stability
-	///// MKtl.find(\hid); 0.5.wait;
-	///////// do load MIDI devices
-	MKtl.find(\midi);
-
+	// Server.killAll;
 	s.quit; "".postln;
 
 	0.2.wait;
@@ -214,6 +217,6 @@ Task {
 		q.load(q.prefs.active.finalSetup);
 
 	};
-}.play(AppClock);
+	}.play(AppClock);
 )
 
