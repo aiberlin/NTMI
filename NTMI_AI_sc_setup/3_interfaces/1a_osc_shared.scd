@@ -138,20 +138,22 @@ q.inph.modeIndex = 0;
 q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
 
-MFdef(\moveON).add(\info, { "move ON".postln });
-MFdef(\moveOFF).add(\info, { "move OFF".postln });
-MFdef(\touchON).add(\info, { "touch ON".postln });
-MFdef(\touchOFF).add(\info, { "touch OFF".postln });
+// MFdef(\moveON).add(\info, { "move ON".postln });
+// MFdef(\moveOFF).add(\info, { "move OFF".postln });
+// MFdef(\touchON).add(\info, { "touch ON".postln });
+// MFdef(\touchOFF).add(\info, { "touch OFF".postln });
+// MFdef(\touchON).add(\info, { "binary ON".postln });
+// MFdef(\touchOFF).add(\info, { "binary OFF".postln });
 
 MFdef(\inphModeSetIndex).add(\set, { |modeIndex = 0|
 	q.inph.modeIndex = modeIndex % q.inph.modes.size;
 	"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
 	(
-		move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; },
-		touch: { MFdef(\moveOFF).value; MFdef(\touchON).value; },
-		full:  { MFdef(\moveON).value;  MFdef(\touchON).value; },
-		binary: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; },
-		off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; },
+		move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
+		touch: { MFdef(\moveOFF).value; MFdef(\touchON).value; MFdef(\binOFF).value; },
+		full:  { MFdef(\moveON).value;  MFdef(\touchON).value; MFdef(\binOFF).value; },
+		binary: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binON).value; },
+		off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
 	)[q.inph.mode].value;
 });
 

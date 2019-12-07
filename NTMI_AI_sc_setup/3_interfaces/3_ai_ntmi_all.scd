@@ -186,33 +186,33 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 	});
 };
 
-MKtl(\ntmi).collAt('caps').action = MFunc();
-MKtl(\ntmi).collAt('caps').action.add(\setLed, { |coll|
-	coll.elements.do { |el, i|
-		var led = MKtl(\ntmi).elAt(\led, \fr, i);
-		var oldval = led.value;
-		var newval = (el.value > 0.25).binaryValue;
-		if (oldval != newval) {
-			led.value = newval;
-		};
-	};
-});
+/// broken I think
+// MKtl(\ntmi).collAt('caps').action = MFunc();
+// MKtl(\ntmi).collAt('caps').action.add(\setLed, { |coll|
+// 	coll.elements.do { |el, i|
+// 		var led = MKtl(\ntmi).elAt(\led, \fr, i);
+// 		var oldval = led.value;
+// 		var newval = (el.value > 0.25).binaryValue;
+// 		if (oldval != newval) {
+// 			led.value = newval;
+// 		};
+// 	};
+// });
 
 
 /////////// add funcs to inphMode switching so NTMI can do it /////////
 
 MFdef(\touchON).add(\ntmi, {
 	"ntmi - touchON".postln;
-	MFdef(\capsToInph).enable;
-	MKtl(\ntmi).collAt('caps').enable;
-	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.enable(\setInflux) };
+	MFdef(\capsToInph).enable(\set);
+	q.slots.nowPlaying.do { |nd| q.inphlux.action.enable(nd.key) }
 });
 
 MFdef(\touchOFF).add(\ntmi, {
 	"ntmi - touchOFF".postln;
-	MFdef(\capsToInph).disable;
+	q.slots.nowPlaying.do { |nd| q.inphlux.action.disable(nd.key) };
+	MFdef(\capsToInph).disable(\set);
 
-	MKtl(\ntmi).elAt('cap').do { |cap| cap.action.disable(\setInflux) };
 	q.inphlux.set(*q.inphlux.getHalo(\capNames).collect([_, 0]).flat);
 	q.inphlux.set(*q.inphlux.getHalo(\padNames).collect([_, 0]).flat);
 });
@@ -232,6 +232,17 @@ MFdef(\moveOFF).add(\ntmi, {
 	/////// pads set inphlux in unipolar, 0-1 range!
 	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
+
+MFdef(\binON).add(\ntmi, {
+	"ntmi - binON".postln;
+	MFdef(\capsToInph).enable(\binKey);
+});
+
+MFdef(\binOFF).add(\ntmi, {
+	"ntmi - binOFF".postln;
+	MFdef(\capsToInph).disable(\binKey);
+});
+
 
 // show modes as colors:
 // green = both, red = move, blue = touch, black = off
