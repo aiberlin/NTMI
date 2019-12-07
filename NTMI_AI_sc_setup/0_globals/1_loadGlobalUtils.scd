@@ -25,24 +25,78 @@ q.postServerOptions = {
 	"********************".postln;
 };
 
+///////////// Buffery:
 
-// command to load a block of soundfiles from paths
-MFdef(\bufLoad).add(\loadFiles, { |paths, buflistname = 'bufs'|
+/// a global place for all buffer lists
+q.bufs = ();
+
+// function to load a list of buffers from soundfile paths
+MFdef(\bufLoad).add(\loadFiles, { |folderPath, doneFunc, buflistname|
 	if (s.serverRunning.not) {
 		warn("cannot load buffers when server not running.");
 	} {
-		buflistname = buflistname.asSymbol;
 		forkIfNeeded {
-			q[buflistname] = paths.collect { |path| Buffer.read(s, path) };
+			var buffers;
+			var paths = (folderPath +/+ "*.*").pathMatch.select { |path|
+				["WAV", "wav", "AIF", "aif", "AIFF", "aiff" ]
+				.includesEqual( path.split($.).last )
+			};
+
+			"/// loading % files from Folder'%'\n ... ".postf(paths.size, folderPath.basename);
+			buffers = paths.collect { |path|
+				// check for valid soundfile !
+				Buffer.readChannel(s, path, channels: [0])
+			};
+
 			s.sync;
-			// this happens in granbuf.scd now:
-			// Ndef(\granbuf).rebuild;
-			"q[%]: % buffers loaded.\n\n".postf(buflistname.cs, q[buflistname].size);
+
+			buflistname = buflistname ?? buffers.first.path.dirname.basename.asSymbol;
+			q.bufs.put(buflistname.asSymbol, buffers);
+
+			// make them available globally like this:
+			// Spec.add(\buf, [buffers.first.bufnum, buffers.last.bufnum]);
+			// if need rebuilding, if changing to new buffers in runtime,
+			// so we use the latest num.
+			// Ndef(\x_samplo).rebuild;
+			"/// buffers '%' loaded - access with: \n".postf(folderPath.basename);
+			"q.bufs.%;\n\n".postf(buflistname);
+			doneFunc.value(buffers, buflistname);
+
 		}
 	}
 });
 
+MFdef(\setBufRange).add(\setNdefs, { |ndefs, buffers, buflistname|
+	////// assuming contiguous numbers
+	var range = [ buffers.first.bufnum, buffers.last.bufnum ];
+	ndefs.do { |ndef|
+		"// % now uses % buffers in q.bufs.%, sndBufRange %.\n"
+		.postf(ndef, buffers.size, buflistname, range);
+		ndef.addHalo(\sndBufRange, range);
+		ndef.rebuild;
+	};
+});
+
 /*
-	// load the ones for granulatspeach
-	MFdef(\bufLoad).value("~/Seafile/AI_CC/granulatspeach/textbuffers/*.aif".pathMatch);
+// example/test - load specific samples for Ndef(\granbuf):
+MFdef(\bufLoad).value(
+	"~/Seafile/AI_CC/granulatspeach/textbuffers/",
+	{ |buffers, buflistname|
+		// tell a specific Ndef to use these buffers:
+		MFdef(\setBufRange).(Ndef(\granbuf), buffers, buflistname);
+	},
+	\texts // name of buffer list within q.bufs
+);
+
+/// point an Ndef to some buffers:
+MFdef(\setBufRange).(Ndef(\granbuf), q.bufs.texts, \texts);
+
+/// or several at once:
+MFdef(\setBufRange).([ Ndef(\granbuf), Ndef(\xyz)], q.bufs.texts, \texts);
+Ndef(\granbuf).getHalo.sndBufRange;
+
 */
+
+// q.bufs.texts.size;
+// q.bufs.textbuffers.choose.play;
+//
