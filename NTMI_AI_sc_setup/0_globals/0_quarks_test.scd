@@ -8,11 +8,12 @@ if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 		"JITLibExtensions",
 		"adclib",
 		"Influx",
-		// "KtlLoop",
+		"KtlLoop",
+		"KeyPlayer",
 		"Modality-toolkit",
-		// "MultiTouchPad",
-		// "Standalone",
 		"Vowel",
+		// "MultiTouchPad", // macOS only
+		// "Standalone",    // in Standalones only
 	].collect(_.asSymbol);
 
 	installedQuarks = Quarks.installed.collect { |qu| qu.name.asSymbol };
@@ -28,5 +29,18 @@ if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 	"... all needed quarks present HERE!".postln;
 
 } {
-	// standalone app versions should have all quarks installed ...
-};
+	// standalone app versions should have all quarks installed -
+	[
+	//	[ \Plinkyplonk, "NopeyDopey" ], /// test
+		[ \NdefPreset, "JITLibExtensions" ],
+		[ \MFdef,      "adclib" ],
+		[ \Influx,         "Influx" ],
+		[ \KtlLoop,        "KtlLoop" ],
+		[ \MKtl,           "Modality-toolkit" ],
+		[ \Vowel,          "Vowel" ],
+	].do { |pair|
+		if (pair[0].asClass.isNil) {
+			"*** Quark '%' seems to be missing! \n please install it somehow ... *** \n\n".postf(pair[1])
+		}
+	};
+}
