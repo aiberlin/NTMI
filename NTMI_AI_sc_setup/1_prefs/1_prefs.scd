@@ -25,8 +25,8 @@ q.prefs.readUser = {
 	if (File.exists(q.prefs.userPrefPath)) {
 		prefdict = q.prefs.userPrefPath.load;
 		q.prefs.fromUser = prefdict;
-		"*** found user prefs: ".postln;
-		prefdict.postcs;
+		"... found user prefs ...  ".postln;
+		// prefdict.postcs;
 	} {
 		"copying default prefs to user dir: ".postln;
 		unixCmd(
