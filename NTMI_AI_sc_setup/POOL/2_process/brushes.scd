@@ -1,7 +1,7 @@
 
 //Ndef(\brushes).ar(2);
 (
-Ndef(\brushes,{|amp, rabisco=4, trig=4, cf=400, rq=0.2|
+Ndef(\brushes, {|amp, rabisco=4, trig=4, cf=400, rq=0.2|
 	var tri, sig, modulator, papel, env;
 	modulator = LFNoise2.kr(
 		rabisco + LFNoise1.kr(rabisco.reciprocal).lag(rabisco.reciprocal));
@@ -19,8 +19,8 @@ Ndef(\brushes,{|amp, rabisco=4, trig=4, cf=400, rq=0.2|
 	papel = EnvGen.kr(env, tri);
 	sig = WhiteNoise.ar() * modulator * papel * amp;
 	sig = BPF.ar(sig,
-		cf,
-		rq);
+		cf.lag(0.1),
+		rq.lag(0.1));
 	sig = Pan2.ar(sig, LFNoise2.kr(trig/5+(rabisco/5), 0.8));
 	sig = Compander.ar(sig, sig, 1, 0.75, 0.25, 0.002);
 });
