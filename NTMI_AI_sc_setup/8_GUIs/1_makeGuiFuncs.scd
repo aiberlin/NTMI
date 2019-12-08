@@ -49,13 +49,13 @@ Window.getAll.postcs;
 (
 // these are the default positions:
 g.defaultWinBoundsList = [ [ "MakeGui", Rect(0.0, 180.0, 170.0, 580.0) ],
-	[ "NTMI_Main", Rect(-7.0, -34.0, 1920.0, 1155.0) ],
+	[ "NTMI_Main", Window.availableBounds ],
 	[ "inphluxInOut", Rect(675.0, 778.0, 680.0, 340.0) ],
 	[ "NdefGui_liveInput", Rect(971.0, 557.0, 394.0, 180.0) ],
 	[ "slotSounds", Rect(726.0, 138.0, 782.0, 720.0) ],
 	[ "allPresets", Rect(725.0, 289.0, 487.0, 500.0) ],
 	[ "randomOrbitz", Rect(768.0, 967.0, 434.0, 188.0) ],
-	[ "ndefMixer", Rect(40.0, 289.0, 684.0, 450.0) ],
+	[ "ndefMixer", Rect(200.0, 289.0, 684.0, 500) ],
 	[ "masterFX", Rect(1396.0, 373.0, 524.0, 782.0) ],
 
 	[ "ntmi", Rect(42.0, 2.0, 700.0, 462.0) ],
@@ -69,7 +69,7 @@ g.defaultWinBounds = ();
 g.defaultWinBoundsList.do { |pair|
 	g.defaultWinBounds.put(pair[0].asSymbol, pair[1]);
 };
-)
+);
 
 g.makeGui.z_setAll = {
 	Window.setAll(g.defaultWinBoundsList);

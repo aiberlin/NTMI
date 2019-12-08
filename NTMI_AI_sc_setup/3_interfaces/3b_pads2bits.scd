@@ -29,7 +29,7 @@ MFdef(\capsToInph).add(\binKey, {
 
 	if (q.bin.binkey != sum) {
 		q.bin.binkey = sum;
-		MKtl('ntmi').collAt(\caps).value.round(0.001).postln;
+		// MKtl('ntmi').collAt(\caps).value.round(0.001).postln;
 //		("*** trigger new binkey: " + ~binkey).postln;
 
 		if(sum > 0){
@@ -50,7 +50,7 @@ MFdef(\capsToInph).add(\binKey, {
 
 	};
 	caps.do { |cap, i|
-		if (bins[i] != ~bins[i]) {
+		if (bins[i] != q.bin.bins[i]) {
 			// cap.post; [bins[i], ~bins[i]].postln;
 			///// cap.action.value;
 		}
