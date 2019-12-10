@@ -18,12 +18,16 @@ MFdef(\makeGui).add(\frontOrRemake, { |name, remake = false|
 		g.makeGui[nameSym].value(g.makeGui, nameSym);
 		if (defaultBounds.notNil) {
 			"default bounds for %: %\n".postf(nameSym, defaultBounds);
-			Window.findAll(name).do(_.bounds = defaultBounds)
+			foundWins = Window.findAll(name);
+			foundWins.do(_.bounds = defaultBounds);
 		};
 	} {
 		// "to front: ".post; foundWins.postln;
-		foundWins.do(_.front)
+		foundWins.do { |win|
+			win.front;
+		}
 	};
+	foundWins.do(_.alpha_(0.8));
 });
 
 /*
@@ -59,10 +63,9 @@ g.defaultWinBoundsList = [ [ "MakeGui", Rect(0.0, 180.0, 170.0, 580.0) ],
 	[ "masterFX", Rect(1396.0, 373.0, 524.0, 782.0) ],
 
 	[ "ntmi", Rect(42.0, 2.0, 700.0, 462.0) ],
-	[ "nk2", Rect(128.0, 42.0, 912.0, 194.0) ],
+	[ "nanoKtl", Rect(128.0, 42.0, 912.0, 194.0) ],
 	[ "uc4", Rect(1166.0, 412.0, 490.0, 510.0) ],
 	[ "chanTest", Rect(743.0, 348.0, 400.0, 400.0) ],
-	// [ "nk2", Rect(757.0, 35.0, 912.0, 194.0) ]
 ];
 
 g.defaultWinBounds = ();
