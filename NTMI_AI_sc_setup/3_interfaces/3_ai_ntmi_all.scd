@@ -291,11 +291,35 @@ MFdef(\setInphWPre).add(\setLEDs, {
 	}
 });
 
-MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
-	if (bt.isOn and: q.osc.leftDown.isEmpty) {
-		MFdef('snapshot').value;
-	};
+//// should be :
+// if hat clicked and nothing else is done,
+/// -> release stores snapshot
+// otherwise, hat was shift but for other buttons.
+
+MFdef(\encHat).add(\used, {
+	if (MKtl(\ntmi).elAt(\encHat).isOn) {
+		"q.osc.encHatUsed = true ".postln;
+		q.osc.encHatUsed = true;
+	}
 });
+
+MFdef(\encHat).value;
+
+MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
+	if (bt.isOn) {
+		q.osc.encHatUsed = false;
+	} {
+		if (q.osc.encHatUsed.not) {
+			MFdef('snapshot').value;
+			q.osc.encHatUsed = true;
+		}
+	}
+});
+
+//////
+MKtl(\ntmi).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.postln.add(\enchat, MFdef(\encHat)) };
+MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHat));
+
 
 // reset right back leds to their proper values
 // e.g. after modal action of buttons for MasterFX
