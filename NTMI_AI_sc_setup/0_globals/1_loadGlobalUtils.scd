@@ -62,6 +62,7 @@ MFdef(\bufLoad).add(\loadFiles, { |folderPath, doneFunc, buflistname|
 			"q.bufs.%;\n\n".postf(buflistname);
 			doneFunc.value(buffers, buflistname);
 
+			s.sync;
 		}
 	}
 });

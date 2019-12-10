@@ -24,7 +24,7 @@ Ndef(\granbuf).addSpec(\posvar, [0, 0.1, 4]);      // how much file read pos var
 Ndef(\granbuf).addSpec(\panvar, [0, 1]);           //
 
 // make sound buffer range known so Ndef can access it
-Ndef(\granbuf).addHalo(\sndbufRange, [0, 0]);
+Ndef(\granbuf).addHalo(\sndBufRange, [0, 0]);
 
 /*
 Ndef(\granbuf).setUni(\posvar, 0.5);
@@ -43,7 +43,7 @@ Ndef(\granbuf, { |
 	panvar = 0.25|
 
 	var trig = Impulse.ar(dens * (1-trigrand)) + Dust.ar(dens * trigrand);
-	var sndbuf2 = sndbuf.linlin(0, 1, *Ndef(\granbuf).getHalo(\sndbufRange));
+	var sndbuf2 = sndbuf.linlin(0, 1, *Ndef(\granbuf).getHalo(\sndBufRange));
 	var sndbuf3 = sndbuf2 + Latch.ar(WhiteNoise.kr(sndbufvar), trig).round(1);
 	var filepos = Phasor.ar(0, 1 / SampleRate.ir / BufDur.kr(sndbuf2) * scanspeed, 0, 1);
 	var filepos2 = filepos + WhiteNoise.ar(posvar);

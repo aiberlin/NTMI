@@ -61,7 +61,7 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 } {
 	// if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size > 0) {
 	q.nktl.free;
-	q.nktl = MKtl('nk2', "korg-nanokontrol2");
+	q.nktl = MKtl('nanoKtl', "korg-nanokontrol2");
 
 	// make all named elements first
 	q.nktl.addNamed(\masta, q.nktl.elAt(\sl, 7));
