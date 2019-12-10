@@ -205,7 +205,10 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 MFdef(\touchON).add(\ntmi, {
 	"ntmi - touchON".postln;
 	MFdef(\capsToInph).enable(\set);
-	q.slots.nowPlaying.do { |nd| q.inphlux.action.enable(nd.key) }
+	q.slots.nowPlaying.do { |nd| q.inphlux.action.enable(nd.key) };
+	q.slots.nowPlaying.do { |obj|
+		q.inphlux.attachMapped(obj);
+	};
 });
 
 MFdef(\touchOFF).add(\ntmi, {
@@ -221,7 +224,9 @@ MFdef(\moveON).add(\ntmi, {
 	"ntmi - moveON".postln;
 	MFdef(\ntmiImuFunc).enable(\setInflux);
 	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.enable(\setInflux) };
-
+	q.slots.nowPlaying.do { |obj|
+		q.inphlux.attachMapped(obj);
+	};
 });
 
 MFdef(\moveOFF).add(\ntmi, {
@@ -236,6 +241,9 @@ MFdef(\moveOFF).add(\ntmi, {
 MFdef(\binON).add(\ntmi, {
 	"ntmi - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
+	q.slots.nowPlaying.do { |obj|
+		q.inphlux.detach(obj.key);
+	};
 });
 
 MFdef(\binOFF).add(\ntmi, {
