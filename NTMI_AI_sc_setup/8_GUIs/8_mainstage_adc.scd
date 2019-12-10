@@ -382,8 +382,9 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 				Pen.addArc(pt, 60, 0, 2pi);
 				Pen.color_(g.main.padCols[i]);
 				Pen.fill;
+				// rings white
 				Pen.addOval(Rect.aboutPoint(pt, 60, 60));
-				Pen.color_(Color.black).stroke;
+				Pen.color_(Color.white).stroke;
 				// Pen.stringCenteredIn(i.asString, Rect.aboutPoint(pt, 60, 60),
 				// 	font: Font("Monaco", 96),
 				// color: Color.black);
