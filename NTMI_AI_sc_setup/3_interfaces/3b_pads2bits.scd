@@ -13,7 +13,7 @@ MFdef(\capsToInph).disable(\set);
 q.bin = ();
 
 // tweak bin-threshold to your ntmi!
-q.bin.thresh = 0.1;
+q.bin.thresh = 0.3;
 
 q.bin.bins = 0!8;
 
