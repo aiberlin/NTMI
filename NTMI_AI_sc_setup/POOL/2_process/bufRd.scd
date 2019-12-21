@@ -2,7 +2,8 @@
 
 (
 // redo \bufnum spec to use specific buffer range!
-Ndef(\bufRd).addSpec(\bufnum,[0, 100, \lin, 1]);
+Ndef(\bufRd).addSpec(\bufnum, \unipolar);
+Ndef(\bufRd).addHalo(\sndBufRange, [0, 0]);
 
 /* //// e.g.
 Ndef(\bufRd).addSpec(\bufnum, [
@@ -24,18 +25,18 @@ Ndef(\bufRd).addSpec(\ampenv, [0, 1, \amp]);
 Ndef(\bufRd).addSpec(\modRateFreq , [0.05, 20, \amp]);
 Ndef(\bufRd).addSpec(\pan, [-1,1]);
 
-
-
-Ndef(\bufRd, { | amp=1,bufnum= 0, rate=1, start=0, end=1, mod = 0, modSpeed = 1, modResl = 1, atk =0.002, sustain=1, rel=0.002, ampenv = 1, modRateFreq = 1, pan=0|
+Ndef(\bufRd, { | amp=1,bufnum = 0, rate=1, start=0, end=1, mod = 0, modSpeed = 1, modResl = 1, atk =0.002, sustain=1, rel=0.002, ampenv = 1, modRateFreq = 1, pan=0|
 
 	var sig, buf = 0, brate, bframes, bStart, bEnd, bdur, trigg, modStart, env, modRate;
 
+	var bufnum2 = bufnum.linlin(0, 1, *Ndef(\bufRd).getHalo(\sndBufRange));
+
 	modRate = { LFNoise0.kr( modRateFreq, 1, -1) * 2 * rate + 1 }!2;
-	brate = BufRateScale.kr(buf) * modRate;
-	bframes = BufFrames.kr(buf);
+	brate = BufRateScale.kr(bufnum2) * modRate;
+	bframes = BufFrames.kr(bufnum2);
 	bStart = bframes * start;
 	bEnd = bframes * end;
-	bdur = BufDur.kr(buf);
+	bdur = BufDur.kr(bufnum2);
 	trigg = Impulse.kr(modResl);
 	modStart = LFSaw.kr( bdur.reciprocal * modSpeed).range(bframes * start, bframes);
 	modStart = Latch.kr( modStart, trigg );
@@ -43,7 +44,8 @@ Ndef(\bufRd, { | amp=1,bufnum= 0, rate=1, start=0, end=1, mod = 0, modSpeed = 1,
 		trigg,
 		timeScale: modResl.reciprocal
 	).clip(1 - ampenv, 1);
-	sig = BufRd.ar( 1, bufnum,
+
+	sig = BufRd.ar( 1, bufnum2,
 		Phasor.ar(0, brate, 0, bframes).wrap( bStart, bEnd ) + (modStart * mod),
 		1, 4 );
 	Splay.ar(sig * env, 1, amp, pan);
