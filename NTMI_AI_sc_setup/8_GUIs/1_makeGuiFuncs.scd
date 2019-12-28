@@ -161,14 +161,6 @@ g.makeGui.oscSimulator = { |dict, name = \oscSimulator|
 	};
 };
 
-g.makeGui.randomOrbitz = {
-	q.keypl.keyPlayerGui = KeyPlayerGui().front; //(options: [\useList]);
-	q.keypl.keyPlayerGui.moveTo(1250, 420);
-	q.keypl.keyPlayerGui.parent.name = "randomOrbitz";
-	q.keypl.keyPlayerGui.buttons.detect { |bt| bt.states[0][0] == 'prez' }.doAction;
-	q.keypl.keyPlayerGui;
-};
-
 g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 	var winHeight = (g.makeGui.size + 3 * 35);
 	var w = Window(name,
