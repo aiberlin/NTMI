@@ -13,6 +13,9 @@ MFdef(\capsToInph).disable(\set);
 q.bin = ();
 
 // tweak bin-threshold to your ntmi!
+// when pressing fully, 0.4 is reached after 3 frames,
+// and reached again falling from full level after 3-4 frames.
+
 q.bin.thresh = 0.3;
 
 q.bin.bins = 0!8;

@@ -40,6 +40,7 @@ MFdef(\ro).add(\collect, { |index, value|
 
 MFdef(\fire).add(\post, { "ok, fire!\n".postln });
 MFdef(\fire).add(\fire, { MFdef(\randOrb).value(q.ro.num) });
+MFdef(\fire).disable(\post);
 
 q.ro.endTask = TaskProxy({
 	q.ro.chordTime.wait;
