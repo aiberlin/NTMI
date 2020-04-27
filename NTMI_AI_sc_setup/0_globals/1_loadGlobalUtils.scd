@@ -42,40 +42,50 @@ MFdef(\bufLoad).add(\loadFiles, { |folderPath, doneFunc, buflistname|
 				.includesEqual( path.split($.).last )
 			};
 
-			"/// loading % files from Folder'%'\n ... ".postf(paths.size, folderPath.basename);
-			buffers = paths.collect { |path|
-				// check for valid soundfile !
-				Buffer.readChannel(s, path, channels: [0])
-			};
+			if (paths.isEmpty) {
+				"*** MFdef('bufLoad') : no files found at path %\n".postf(folderPath);
+				"*** not loading any buffers! ***\n".postln;
+			} {
 
-			s.sync;
+				"/// loading % files from Folder'%'\n ... ".postf(paths.size, folderPath.basename);
+				buffers = paths.collect { |path|
+					// check for valid soundfile !
+					Buffer.readChannel(s, path, channels: [0])
+				};
 
-			buflistname = buflistname ?? buffers.first.path.dirname.basename.asSymbol;
-			q.bufs.put(buflistname.asSymbol, buffers);
+				s.sync;
 
-			// make them available globally like this:
-			// Spec.add(\buf, [buffers.first.bufnum, buffers.last.bufnum]);
-			// if need rebuilding, if changing to new buffers in runtime,
-			// so we use the latest num.
-			// Ndef(\x_samplo).rebuild;
-			"/// buffers '%' loaded - access with: \n".postf(folderPath.basename);
-			"q.bufs.%;\n\n".postf(buflistname);
-			doneFunc.value(buffers, buflistname);
+				buflistname = buflistname ?? buffers.first.path.dirname.basename.asSymbol;
+				q.bufs.put(buflistname.asSymbol, buffers);
 
-			s.sync;
+				// make them available globally like this:
+				// Spec.add(\buf, [buffers.first.bufnum, buffers.last.bufnum]);
+				// if need rebuilding, if changing to new buffers in runtime,
+				// so we use the latest num.
+				// Ndef(\x_samplo).rebuild;
+				"/// buffers '%' loaded - access with: \n".postf(folderPath.basename);
+				"q.bufs.%;\n\n".postf(buflistname);
+				doneFunc.value(buffers, buflistname);
+
+				s.sync;
+			}
 		}
 	}
 });
 
 MFdef(\setBufRange).add(\setNdefs, { |ndefs, buffers, buflistname|
 	////// assuming contiguous numbers
-	var range = [ buffers.first.bufnum, buffers.last.bufnum ];
-	ndefs.do { |ndef|
-		"// % now uses % buffers in q.bufs.%, sndBufRange %.\n"
-		.postf(ndef, buffers.size, buflistname, range);
-		ndef.addHalo(\sndBufRange, range);
-		ndef.rebuild;
-	};
+	if (buffers.size < 1) {
+		"*** setBufRange: no buffers given, cannot set bufRange!".postln;
+	} {
+		var range = [ buffers.first.bufnum, buffers.last.bufnum ];
+		ndefs.do { |ndef|
+			"// % now uses % buffers in q.bufs.%, sndBufRange %.\n"
+			.postf(ndef, buffers.size, buflistname, range);
+			ndef.addHalo(\sndBufRange, range);
+			ndef.rebuild;
+		};
+	}
 });
 
 /*
