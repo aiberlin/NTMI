@@ -8,5 +8,6 @@
 	\since: "2018",
 	\dependencies: [
 		"JITLibExtensions", "adclib", "Influx", "Modality-toolkit",
-	"Vowel"]
+		"Vowel", "KeyPlayer", "KtlLoop"
+	]
 )

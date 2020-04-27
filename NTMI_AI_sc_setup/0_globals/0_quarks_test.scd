@@ -8,11 +8,12 @@ if (Platform.userAppSupportDir.endsWith("SuperCollider")) {
 		"JITLibExtensions",
 		"adclib",
 		"Influx",
-		"KtlLoop",
-		"KeyPlayer",
 		"Modality-toolkit",
 		"Vowel",
-		// "MultiTouchPad", // macOS only
+		/////// GUI based - mayb unneeded in raspis
+		"KtlLoop",
+		"KeyPlayer",
+		// "MultiTouchPad", // macOS only, so not required
 		// "Standalone",    // in Standalones only
 	].collect(_.asSymbol);
 
