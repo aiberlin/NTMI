@@ -86,6 +86,9 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 	// };
 };
 
+q.nktl.elAt(\inflSet).do(_.value = 0.5);
+
+
 q.nktl.elAt(\masta).elemDesc.label = "Main Vol";
 
 q.nktl.elAt(\rand_inph).elemDesc.label = "rand inph";
@@ -130,6 +133,7 @@ q.nktl.elAt(\inflSet).do { |sl, i|
 
 // rightmost slider is master volume (into limiter)
 q.nktl.elAt(\masta).action = { |sl| MFdef(\mastaVol).value(sl.value) };
+q.nktl.elAt(\masta).value = 0.5;
 
 
 // normal: select next setting
