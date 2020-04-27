@@ -335,7 +335,13 @@ ProxyChain.add3( '9endFilt',
 	]
 );
 
-ProxyChain.add3( '9stereofy', \filterIn -> { arg in; Splay.ar(in) }, 1);
+ProxyChain.add3( '9stereofy',
+	\filterIn -> { arg in;
+		// overwrite channels past 2 with Silence
+		Splay.ar(in) ++ Silent.ar(in.size - 2)
+	},
+	1
+);
 
 ProxyChain.add3( '9monofy', \filterIn -> { arg in; (in).mean.dup(q.numChans) }, 1);
 
