@@ -325,7 +325,7 @@ MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
 });
 
 //////
-MKtl(\ntmi).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.postln.add(\enchat, MFdef(\encHat)) };
+MKtl(\ntmi).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, MFdef(\encHat)) };
 MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHat));
 
 
