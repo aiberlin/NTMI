@@ -27,6 +27,8 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 		g.tuneNameView(gui.proxyGui);
 		gui;
 	};
+
+	g.ndefPreGuis.do(_.skipjack.dt_(0.1));
 	g[name] = w;
 	// w.bounds = w.bounds.moveTo(450, 500);
 

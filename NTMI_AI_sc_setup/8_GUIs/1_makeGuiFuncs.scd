@@ -96,6 +96,7 @@ g.makeGui.ndefMixer = { |dict, name = \ndefMixer|
 	// set popupmenu to 'activeProxies' ?
 	// ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
 	ProxyMeter.addMixer(ndefMixer);
+	ProxyMeter.skipjack.dt = 0.2;
 	defer ({ ProxyMeter.hideKrs }, 2);
 
 	ndefMixer
