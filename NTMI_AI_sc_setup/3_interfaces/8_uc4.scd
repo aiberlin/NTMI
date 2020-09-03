@@ -9,11 +9,11 @@
 
 - 8 sliders: 		influx!
 
-- xfader:           masterVol via mastaVol param
+- xfader:           mainVol via mainVol param
 
 - bot buts 1 2 3:	rand, prev, next influx preset
 - bot but  5:		snapshot presets
-- bot buts 6 7 8:	rand, prev, next MasterFX preset
+- bot buts 6 7 8:	rand, prev, next mainFX preset
 
 - ( bot but  4 still unused ;-)
 
@@ -29,7 +29,7 @@ g.uc4.free; g.uc4 = MKtl(\uc4, "*uc4_pg");
 
 
 // make all named elements first
-g.uc4.addNamed(\masta, g.uc4.elAt(\xfader));
+g.uc4.addNamed(\main, g.uc4.elAt(\xfader));
 g.uc4.addNamed(\inflx, g.uc4.elAt(\pgSl1, \sl));
 
 g.uc4.addNamed(\vols, g.uc4.elAt(\pgKn1, \kn, (0..3)));
@@ -61,7 +61,7 @@ g.uc4.elAt(\selMode).do { |el, i| el.elemDesc.label = "^-pre v-snd".format(i+1) 
 
 g.uc4.elAt(\inflx).do { |sl, i| sl.elemDesc.label = "inf" + q.inphlux.inNames[i].cs };
 
-g.uc4.elAt(\masta).elemDesc.label = "Main Vol";
+g.uc4.elAt(\main).elemDesc.label = "Main Vol";
 
 g.uc4.elAt(\rand_inph).elemDesc.label = "rand inph";
 g.uc4.elAt(\prev_inph).elemDesc.label = "prev inph";
@@ -78,7 +78,7 @@ g.uc4.elAt(\next_pre).elemDesc.label = "next MFX";
 // init values
 g.uc4.elAt('pgKn1', \kn).value = 0.5;
 g.uc4.elAt('pgSl1', \sl).value = 0.5;
-g.uc4.elAt('masta').value = 0.5;
+g.uc4.elAt('main').value = 0.5;
 
 
 // g.makeGui.uc4 = { g.uc4.gui };
@@ -107,10 +107,10 @@ g.uc4.elAt(\playBts).do { |el, i|
 	};
 };
 
-// xfader is master volume before limiter
-g.uc4.elAt('masta').action = { |xf|
+// xfader is main volume before limiter
+g.uc4.elAt('main').action = { |xf|
 	// 	s.volume.volume_(\svol.asSpec.map(xf.value))
-	MFdef(\mastaVol).value(xf.value);
+	MFdef(\mainVol).value(xf.value);
 };
 
 // normal: select next setting
@@ -167,10 +167,10 @@ g.uc4.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 )
 g.uc4.elAt(\zero_inph).action = { |el| if (el.isOn) { q.inphlux.resetInvals } };
 
 
-// Right 3 bottom buttons: masterfx preset rand, -1, +1
-g.uc4.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(nil) } };
-g.uc4.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(-1 ) } };
-g.uc4.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).( 1 ) } };
+// Right 3 bottom buttons: mainfx preset rand, -1, +1
+g.uc4.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
+g.uc4.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
+g.uc4.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
 
 
 
