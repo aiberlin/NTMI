@@ -55,13 +55,17 @@ Ndef(\granbuf, { |
 	GrainBuf.ar(4, trig, overlap / dens, sndbuf3, ratekr, filepos2, 2, panpos) * amp2;
 });
 
-// load the ones for granulatspeach
+// // load all soundfiles from example local "soundfiles" folder:
 MFdef(\bufLoad).(
-	"~/Seafile/AI_CC/granulatspeach/textbuffers/",
+	// path of dir with samples:
+	(q.dir.user +/+ "soundfiles"),
+	// function to run when loaded:
 	{ |bufs, listname|
+		// set an Ndef's buffer range to new loaded buffers
 		MFdef(\setBufRange).(Ndef(\granbuf), bufs, listname);
 		Ndef(\granbuf).end;
 	},
+	// name by which to store loaded buffers under q.bufs.granbufs;
 	'granbufs'
 );
 
