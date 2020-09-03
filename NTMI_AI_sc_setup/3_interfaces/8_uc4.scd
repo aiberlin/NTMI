@@ -172,3 +172,22 @@ g.uc4.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(nil) 
 g.uc4.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(-1 ) } };
 g.uc4.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).( 1 ) } };
 
+
+
+/**** add UC4 page2 - direct mode:
+8 sliders on page2 PullSet set first 8 process params
+hold down pgSl2 bt_1 to get params 9-16
+************/
+
+g.uc4.elAt('pgSl2', \sl).do { |sl, i|
+	sl.action = { |sl|
+		var index = g.uc4.elAt('pgSl2', \bt, 0).isOn.binaryValue * 8 + i;
+		[sl.name, sl.value.round(0.001)].postln;
+		q.slots.nowPlaying.do { |ndef|
+			var paramKey = ndef.controlKeys[index].postln;
+			if (paramKey.notNil) {
+				ndef.setUni(paramKey, sl.value);
+			};
+		};
+	};
+};
