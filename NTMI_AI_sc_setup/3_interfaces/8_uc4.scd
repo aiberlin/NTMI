@@ -182,9 +182,9 @@ hold down pgSl2 bt_1 to get params 9-16
 g.uc4.elAt('pgSl2', \sl).do { |sl, i|
 	sl.action = { |sl|
 		var index = g.uc4.elAt('pgSl2', \bt, 0).isOn.binaryValue * 8 + i;
-		[sl.name, sl.value.round(0.001)].postln;
+		// [sl.name, sl.value.round(0.001)].postln;
 		q.slots.nowPlaying.do { |ndef|
-			var paramKey = ndef.controlKeys[index].postln;
+			var paramKey = ndef.controlKeys[index];
 			if (paramKey.notNil) {
 				ndef.setUni(paramKey, sl.value);
 			};
