@@ -16,7 +16,7 @@
 (
 'name': 'default', // <- put your user name here
 'numIns': 2,       // number of input channels to use
-'numChans': 2,     // number of output channels to use in the slot sounds and MasterFX
+'numChans': 2,     // number of output channels to use in the slot sounds and MainFX
 
 // run the gui-related code - true for macOS,
 /// false for headless systems, e.g. raspberry
@@ -75,7 +75,7 @@ influxPreset: 3,
 // simple for now
 effects: [ "allFX.scd" ],
 
-// the slotNames to put into the MasterFX - q.mFX :
+// the slotNames to put into the MainFX - q.mFX :
 mfxSlotNames: [
 	'00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal',
 	'1comby', '1holz', '1ixiDist',

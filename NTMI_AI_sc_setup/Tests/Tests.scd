@@ -32,7 +32,7 @@ Tdef('zz_tests', {
 	t.({ s.serverRunning }, "server not running.", "server ok.");
 	t.({ MKtl.all[\xosc].notNil }, "xosc not present.", "xosc ok.");
 	t.({ MKtl.all['nanoKtl'].notNil }, "nanoKtl not present.", "nanoKtl ok.");
-	t.({ MasterFX.all[s.name].notNil }, "MasterFX missing.", "MasterFX ok.");
+	t.({ MainFX.all[s.name].notNil }, "MainFX missing.", "MainFX ok.");
 	t.({ q.inphlux.isKindOf(Influx) }, "q.inphlux not OK.", "inphlux ok.");
 
 	t.({ q.process.allNames.size >= 15 }, "less than 15 sounds?", "sounds ok.");

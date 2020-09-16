@@ -1,11 +1,11 @@
-g.makeGui.masterFX = {
+g.makeGui.mainFX = {
 	q.mfx.font = Font("Optima", 18);
 
 	q.mfx.highKeys = [];
 	q.mfx.srcKeys = q.mFX.slotNames;
 
 	try { q.mfx.win.close };
-	q.mfx.win = Window('masterFX', Rect(0,0, 520, 800)).front;
+	q.mfx.win = Window('mainFX', Rect(0,0, 520, 800)).front;
 	q.mfx.win.addFlowLayout;
 
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
@@ -32,8 +32,8 @@ g.makeGui.masterFX = {
 	// .action_({ "deleting by name - select view ... ".postln; });
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
 
-	q.mfx.prepop = EZPopUpMenu(q.mfx.win, Rect(0,0, 320, 30), \mastaPresetz, q.mfx.preNames, { |ezp|
-		MFdef(\mastaPre).(ezp.item);
+	q.mfx.prepop = EZPopUpMenu(q.mfx.win, Rect(0,0, 320, 30), \mainPresetz, q.mfx.preNames, { |ezp|
+		MFdef(\mainPre).(ezp.item);
 	}, labelWidth: 120);
 	q.mfx.prepop.font_(q.mfx.font);
 
@@ -41,7 +41,7 @@ g.makeGui.masterFX = {
 		Button(q.mfx.win, Rect(0,0,50,30))
 		.states_([[label]]).font_(q.mfx.font)
 		.action_({
-			MFdef(\mastaPreStep).([nil, -1, 1]@i)
+			MFdef(\mainPreStep).([nil, -1, 1]@i)
 		});
 	};
 

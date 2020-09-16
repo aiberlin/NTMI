@@ -26,12 +26,12 @@ influxWeights: 42,
 influxTerrains: [\none, \tanh, \env7, \env13],
 currTerrain: [\tanh],
 
-// preload these effects files for MasterFX
+// preload these effects files for MainFX
 effectsFiles: [ "basic" ],
 mfxSlotNames: [ '00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal', '1holz', '1ixiDist', '3AdCVerb', '3ring', '3thrasher', '4ixiVerb', '5HPF', '5LPF', '6roto', '7Delay', '9endFilt', '9monofy', '9stereofy', 'ampFin' ],
 
 /////////// not implemented yet, just sketched here -
-// preload these combinations of MasterFX presets:
+// preload these combinations of MainFX presets:
 mfxPresetNames: [ \theology, \cybernetics, \psychoanalysis ],
 // and call up this one to start
 mfxPreset: \psychoanalysis

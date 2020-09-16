@@ -10,7 +10,7 @@ processes/
 	cat.scd
 	cat_presets/
 		...
-masterfx/
+mainfx/
 	00_in.scd 	// ProxyChain.add3( ... );
 	0OnePolBal.scd
 	0_DBComp.scd
@@ -31,7 +31,7 @@ masterfx/
 	9monofy.scd
 	9stereofy.scd
 	ampFin.scd
-	ntmi.mfx.scd // MasterFX(s, slotNames, ...);
+	ntmi.mfx.scd // MainFX(s, slotNames, ...);
 	theology.mfxpreset.scd
 	cybernetics.mfxpreset.scd
 

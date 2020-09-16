@@ -72,12 +72,12 @@ MFdef('snapshot');
 
 
 
-/////////// MasterFX: //////////////
-// step masterFX preset: 1 -> up, -1 -> down,   nil -> random.
-MFdef('mastaPreStep');
+/////////// MainFX: //////////////
+// step mainFX preset: 1 -> up, -1 -> down,   nil -> random.
+MFdef('mainPreStep');
 
-// MasterFX: set preset to a given name
-MFdef('mastaPre').('theology');
+// MainFX: set preset to a given name
+MFdef('mainPre').('theology');
 
 
 /////////////////// INTERNAL / HELPER FUNCTIONS //////////////

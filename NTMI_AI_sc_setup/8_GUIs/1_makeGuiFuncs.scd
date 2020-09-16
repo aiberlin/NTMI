@@ -60,7 +60,7 @@ g.defaultWinBoundsList = [ [ "MakeGui", Rect(0.0, 180.0, 170.0, 580.0) ],
 	[ "allPresets", Rect(725.0, 289.0, 487.0, 500.0) ],
 	[ "randomOrbitz", Rect(768.0, 967.0, 434.0, 188.0) ],
 	[ "ndefMixer", Rect(200.0, 289.0, 684.0, 500) ],
-	[ "masterFX", Rect(1396.0, 373.0, 524.0, 782.0) ],
+	[ "mainFX", Rect(1396.0, 373.0, 524.0, 782.0) ],
 
 	[ "ntmi", Rect(42.0, 2.0, 700.0, 462.0) ],
 	[ "nanoKtl", Rect(128.0, 42.0, 912.0, 194.0) ],
@@ -108,7 +108,7 @@ g.makeGui.liveInput = { |dict, name = \liveInput|
 	g.liveGui;
 };
 
-g.makeGui.masterFX = { |dict, name = \masterFX|
+g.makeGui.mainFX = { |dict, name = \mainFX|
 	g.guiMaFX = q.mFX.gui(name, 40);
 	g.guiMaFX.moveTo(790, 1200);
 };
@@ -183,7 +183,7 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 		'allPresets',
 		'randomOrbitz',
 		'ndefMixer',
-		'masterFX',
+		'mainFX',
 		"- interfaces -",
 		'ntmi',
 		'nanoKtl',
