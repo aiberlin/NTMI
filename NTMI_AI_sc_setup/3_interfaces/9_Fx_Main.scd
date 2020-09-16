@@ -12,7 +12,7 @@ ProxyChain.checkDicts;
 
 (
 q.mFX.clear;
-q.mFX = MasterFX.new(server: s,
+q.mFX = MainFX.new(server: s,
 	numChannels: q.numChans,
 	slotNames: // q.prefs.active.mfxSlotNames ?
 		ProxyChain.allSources.keys(Array).sort,
@@ -126,13 +126,13 @@ q.mfx.preMap = (
 );
 
 (
-MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
+MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 	var chain = q.mfx.chain;
 	var dict = q.mfx.preMap[domainName];
 	var randSettings;
 
 	if (dict.isNil) {
-		"*** MastaPre: no domain %, not switching.".postf(domainName);
+		"*** MainPre: no domain %, not switching.".postf(domainName);
 	} {
 		q.mfx.prevDomain = q.mfx.currDomain;
 		q.mfx.currDomain =  domainName;
@@ -156,7 +156,7 @@ MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
 		};
 		// rand
 		if(dict.randomize.notNil){
-			// "MasterFX rand: ".postln;
+			// "MainFX rand: ".postln;
 			randSettings = [dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat;
 			chain.proxy.setUni(*randSettings);
 		};
@@ -168,18 +168,18 @@ MFdef(\mastaPre).add(\voiceFXSwitch, { |domainName|
 });
 
 
-MFdef(\mastaVol).add(\masta, { |univol = 0.5|
-	q.mFX.pxChain.proxy.setUni(\mastaVol, univol);
+MFdef(\mainVol).add(\main, { |univol = 0.5|
+	q.mFX.pxChain.proxy.setUni(\mainVol, univol);
 });
 
-MFdef(\mastaPre).value(\baseset);
+MFdef(\mainPre).value(\baseset);
 
-MFdef(\mastaPreStep).add(\inc, { |inc|
+MFdef(\mainPreStep).add(\inc, { |inc|
 	var nextIndex, nextName;
 	inc = inc ?? { rrand(1, q.mfx.preNames.lastIndex) };
 	nextIndex = q.mfx.domainIndex + inc % q.mfx.preNames.size;
 	nextName = q.mfx.preNames[nextIndex];
-	MFdef(\mastaPre).(nextName);
+	MFdef(\mainPre).(nextName);
 });
 );
 
