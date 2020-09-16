@@ -230,20 +230,6 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 	});
 };
 
-/// broken I think
-// MKtl(\ntmi).collAt('caps').action = MFunc();
-// MKtl(\ntmi).collAt('caps').action.add(\setLed, { |coll|
-// 	coll.elements.do { |el, i|
-// 		var led = MKtl(\ntmi).elAt(\led, \fr, i);
-// 		var oldval = led.value;
-// 		var newval = (el.value > 0.25).binaryValue;
-// 		if (oldval != newval) {
-// 			led.value = newval;
-// 		};
-// 	};
-// });
-
-
 /////////// add funcs to inphMode switching so NTMI can do it /////////
 
 MFdef(\touchON).add(\ntmi, {
@@ -604,13 +590,14 @@ MFdef(\capsToInph).add(\set, {
 });
 
 ////// this is the action that gets triggered
-////// when values come in from the xosc -
-////// use this to compensate for crosstalk,
-////// and sending the final values once.
+////// when values come in from the ntmi -
+////// coompensate for base values,
+////// and send the final values only once.
 
 MKtl(\ntmi).collAt('caps').groupAction = nil;
 
-MKtl(\ntmi).collAt('caps').groupAction = { |coll|
+MKtl(\ntmi).collAt('caps').groupAction = MFdef(\capsin);
+MFdef(\capsin).add(\set, { |coll|
 	var values = coll.value;
 
 	// reorder for proper order of pads and leds
@@ -625,11 +612,11 @@ MKtl(\ntmi).collAt('caps').groupAction = { |coll|
 		values.put(i, stretched);
 	};
 
-	// set to the compensated values, no action
+	// set element values back to the compensated values, no action
 	MKtl(\ntmi).elAt('cap').value_(values);
 	// trigger touch to inphlux only once ...
 	MFdef(\capsToInph).value;
-};
+});
 
 // individual pad action - useful for guis only
 /// do global set only once, from MFdef(\touchToInph)
