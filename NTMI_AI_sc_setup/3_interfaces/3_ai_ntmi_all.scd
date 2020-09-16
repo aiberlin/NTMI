@@ -105,6 +105,50 @@ q.osc.rightDown.clear.add(\touchMove);
 q.osc.rightDown.clear;
 */
 
+//////// calibrate imu and pads:
+//////// capture incoming values for a while
+//////// imu zero values by averaged
+//////// pad zero values by maxes + average deviation/jitter
+MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
+
+	"*** calibrating nUFO ***".postln;
+	q.capture = ();
+
+	q.capture.imu = List[];
+	q.capture.pads = List[];
+
+	MFdef(\ntmiImuFunc).add(\capture, {
+		q.capture.imu.add(q.osc.rawImuBiValues);
+	});
+
+	MFdef(\capsin).add(\capture, {
+		q.capture.pads.add(q.osc.rawPads);
+	});
+
+	defer ({
+		var padsflopped, padmeans, padmaxes, padjitters, padoffsets;
+		MFdef(\ntmiImuFunc).remove(\capture);
+		MFdef(\capsin).remove(\capture);
+
+		"*** nUFO calibration: ***".postln;
+		"q.zero.imu = mean of % captured values:\n".postf( q.capture.imu.size);
+		q.zero.imu = q.capture.imu.mean;
+		q.zero.imu.round(0.001).postln;
+
+		padsflopped = q.capture.pads.flop;
+		padmaxes = padsflopped.collect(_.maxItem);
+		padmeans = padsflopped.collect(_.mean);
+		padjitters = padsflopped.collect { |vals, i| (vals - padmeans[i]).abs.maxItem };
+
+		"q.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( q.capture.pads.size);
+		q.zero.pads = padmaxes + (padjitters * 0.5);
+		q.zero.pads.round(0.001).postln;
+		q.zero.write;
+		whenDone.value;
+		"*** nUFO calibrated. ***".postln;
+	}, dt);
+});
+
 // the slot switches:
 MKtl(\ntmi).elAt(\slots).do { |but, i|
 

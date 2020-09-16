@@ -152,9 +152,15 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 	Button(w, Rect(rightCol, 800 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["SET ZERO for\ntouch + move", Color.white, butRed],
+		["CALIBRATE\ntouch + move?", Color.white, butRed],
+		["CALIBRATING\ntouch + move", Color.black, Color.yellow],
+		["touch + move\ncalibrated", Color.black, butRed],
+
 	]).font_(font)
-	.action_({ MFdef('ZERO').value });
+	.action_({ |but|
+		but.value_(1);
+		MFdef('calibrate').value(1, { but.value_(2) })
+	});
 
 
 	Button(w,
