@@ -138,7 +138,6 @@ Task {
 	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
 	q.load("0_globals/*.scd");
 
-	"/Users/adc/NTMI/POOL/1_server_setups/serverBasic2.scd".pathMatch;
 	q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
 	// preload all sounds while server is off!
 
@@ -150,8 +149,10 @@ Task {
 
 	s.waitForBoot {
 
-		"*** server booted, plays 3 pings on left chan.".postln;
-		fork { 3.do { Env.perc.test; 0.3.wait } };
+		q.helloSnd ?? {
+			"*** server booted, plays 3 pings on left chan.".postln;
+			fork { 3.do { Env.perc.test; 0.3.wait } };
+		};
 
 		"\n".postln;
 
