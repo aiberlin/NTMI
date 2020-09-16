@@ -13,7 +13,11 @@ g.makeGui.allPresets = { |dict, name = \allPresets|
 		.background_(Color.green.alpha_(0.2));
 	vlv2 = VLayoutView(hlv, Rect.new(0,0, 410, hlv.bounds.height));
 
-	Button(vlv1, Rect(0,0,100, 30)).states_([["UPDATE"]]).action_(MFdef('preButUpdate'));
+	Button(vlv1, Rect(0,0,100, 30)).states_([["UPDATE"]])
+	.action_(MFdef('preButUpdate'));
+
+	Button(vlv1, Rect(0,0,100, 30)).states_([["open file"]])
+	.action_(MFdef('openPresetFile'));
 
 	MFdef('preButUpdate').add(\set, {
 		var butNames = butrow.collect { |but| but.states[0][0] };
@@ -24,6 +28,10 @@ g.makeGui.allPresets = { |dict, name = \allPresets|
 				but.states = newstates;
 			}
 		}
+	});
+
+	MFdef('openPresetFile').add(\open, {
+		ppg.object.storePath.openOS;
 	});
 
 	MFdef('setPxInPreWin').add(\set, { |proxy|
