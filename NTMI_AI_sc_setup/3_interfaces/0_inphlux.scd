@@ -49,18 +49,50 @@ q.inph.centerToNewRandSeed = {|q, infl, preset, seed=2011, much=1|
 	seed
 };
 
-// clutch and unclutch an object from influx
-// will be accessible from ntmi by hold-enc+slotbut
-MFdef(\clutch).add(\toggle, { |obj|
-	if (q.inphlux.action.activeNames.includes(obj.key)) {
-		"INFLUX: detaching %\n".postf(obj);
-		q.inphlux.detach(obj.key);
+q.inph.decoupled = Set[];
+
+MFdef(\inphCouple).add(\attachOrEnable, { |obj|
+	var objName = obj.key;
+	if (q.inphlux.action.funcDict[objName].isNil) {
+		// object is new: attach it
+		q.inphlux.attachMapped(obj)
 	} {
-		"INFLUX: attaching %\n".postf(obj);
-		q.inphlux.attachMapped(obj);
-	}
+		// if known, then just enable it:
+		q.inphlux.action.enable(objName)
+	};
 });
-/* toggles on?off
-MFdef(\clutch).value(Ndef(\formSing))
+
+// only disable func, keep func and data around
+MFdef(\inphDecouple).add(\disable, { |obj|
+	var objName = obj.key;
+	q.inphlux.action.disable(objName.postln)
+});
+
+MFdef(\inphCouple).(Ndef(\revFB)); q.inphlux.action.activeNames
+MFdef(\inphDecouple).(Ndef(\revFB));
+
+// clutch and unclutch an object from influx
+// accessible from ntmi by hold-enc+slotbut
+// how to show un/clutch on mainstage gui?
+
+MFdef(\clutch).add(\toggle, { |obj|
+	var objName = obj.key;
+	// if this object was decoupled, couple it now
+	if (q.inph.decoupled.includes(objName)) {
+		q.inph.decoupled.remove(objName);
+		if (q.slots.nowPlaying.includes(obj)) {
+			MFdef(\inphCouple).(obj)
+		}
+	} {
+		// if coupled,
+		q.inph.decoupled.add(objName);
+		MFdef(\inphDecouple).(obj)
+	};
+	"q.inph.decoupled: % \n".postf(q.inph.decoupled);
+	"q.inphlux - active & coupled: % \n".postf(q.inphlux.action.activeNames);
+});
+
+/* toggles on/off
+MFdef(\clutch).value(Ndef(\cat))
 MFdef(\clutch).value(Ndef(\formSing))
 */
