@@ -32,7 +32,7 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 			// was:
 			// q.slots.nowPlaying.do { |px| };
 			// don't set decoupled proxies:
-			q.slots.nowPlaying.reject { |px| q.inph.decoupled.includes(px.name) }.do { |px|
+			q.slots.nowPlaying.reject { |px| q.inph.decoupled.includes(px.key) }.do { |px|
 				var pre = NdefPreset(px);
 				// if outside presets, use newNum as random seed
 				if(newNum >= pre.settings.size){
