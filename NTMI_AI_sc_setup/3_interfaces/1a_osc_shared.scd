@@ -73,8 +73,6 @@ q.inphlux.addHalo(\capNames, q.inphlux.inNames.drop(9));
 /* // get zero values while xosc is running:
 MFdef(\ZERO).value;
 */
-
-
 MFdef(\ZERO).add(\set, {
 	q.zero.imu = q.osc.rawImuBiValues;
 	q.zero.pads = q.osc.rawPads;
@@ -83,8 +81,6 @@ MFdef(\ZERO).add(\set, {
 	"pads: %\n".postf(q.zero.imu.round(0.001));
 	q.zero.write;
 });
-
-
 
 
 // xosc sends battery voltage as float in volts, usable range 3.2-4.1 volts
@@ -146,15 +142,17 @@ q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 // MFdef(\touchOFF).add(\info, { "binary OFF".postln });
 
 MFdef(\inphModeSetIndex).add(\set, { |modeIndex = 0|
-	q.inph.modeIndex = modeIndex % q.inph.modes.size;
-	"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
-	(
-		move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
-		touch: { MFdef(\moveOFF).value; MFdef(\touchON).value; MFdef(\binOFF).value; },
-		full:  { MFdef(\moveON).value;  MFdef(\touchON).value; MFdef(\binOFF).value; },
-		binary: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binON).value; },
-		off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
-	)[q.inph.mode].value;
+	if (q.inph.modeIndex != modeIndex) {
+		q.inph.modeIndex = modeIndex % q.inph.modes.size;
+		"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
+		(
+			move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
+			touch: { MFdef(\moveOFF).value; MFdef(\touchON).value; MFdef(\binOFF).value; },
+			full:  { MFdef(\moveON).value;  MFdef(\touchON).value; MFdef(\binOFF).value; },
+			binary: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binON).value; },
+			off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
+		)[q.inph.mode].value;
+	};
 });
 
 MFdef(\inphModeStep).add(\step, { |inc = 1|

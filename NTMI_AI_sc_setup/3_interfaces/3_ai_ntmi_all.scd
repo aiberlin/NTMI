@@ -235,18 +235,17 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 MFdef(\touchON).add(\ntmi, {
 	"ntmi - touchON".postln;
 	MFdef(\capsToInph).enable(\set);
-	q.slots.nowPlaying.do { |nd| q.inphlux.action.enable(nd.key) };
 	q.slots.nowPlaying.do { |obj|
-		q.inphlux.attachMapped(obj);
-	};
+		if (q.inph.decoupled.includes(obj.key).not) {
+			MFdef(\inphCouple).(obj)
+		}
+	}
 });
 
 MFdef(\touchOFF).add(\ntmi, {
 	"ntmi - touchOFF".postln;
 	q.slots.nowPlaying.do { |nd| q.inphlux.action.disable(nd.key) };
 	MFdef(\capsToInph).disable(\set);
-
-	q.inphlux.set(*q.inphlux.getHalo(\capNames).collect([_, 0]).flat);
 	q.inphlux.set(*q.inphlux.getHalo(\padNames).collect([_, 0]).flat);
 });
 
@@ -255,14 +254,17 @@ MFdef(\moveON).add(\ntmi, {
 	MFdef(\ntmiImuFunc).enable(\setInflux);
 	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.enable(\setInflux) };
 	q.slots.nowPlaying.do { |obj|
-		q.inphlux.attachMapped(obj);
-	};
+		if (q.inph.decoupled.includes(obj.key).not) {
+			MFdef(\inphCouple).(obj);
+		}
+	}
 });
+
+MFdef(\moveON).value;
 
 MFdef(\moveOFF).add(\ntmi, {
 	"ntmi - moveOFF".postln;
 	MFdef(\ntmiImuFunc).disable(\setInflux);
-
 	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.disable(\setInflux) };
 	/////// pads set inphlux in unipolar, 0-1 range!
 	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
@@ -271,16 +273,15 @@ MFdef(\moveOFF).add(\ntmi, {
 MFdef(\binON).add(\ntmi, {
 	"ntmi - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
-	q.slots.nowPlaying.do { |obj|
-		q.inphlux.detach(obj.key);
-	};
+	// q.slots.nowPlaying.do { |obj|
+	// 	MFdef(\inphDecouple).(obj)
+	// };
 });
 
 MFdef(\binOFF).add(\ntmi, {
 	"ntmi - binOFF".postln;
 	MFdef(\capsToInph).disable(\binKey);
 });
-
 
 // show modes as colors:
 // green = both, red = move, blue = touch, black = off
@@ -306,15 +307,18 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 });
 
 MFdef(\inphModeSetIndex).add(\modeSwColor, {
-	defer ({
-		var msg = [
-			[ 0, 1, 0 ], // green is full
-			[ 1, 0, 0 ], // red is touch
-			[ 0, 0, 1 ], // [ blue is move ]
-			[ 0, 0, 0 ]  // [ black is off ]
-		].clipAt(q.inph.modeIndex);
+
+	var msg = [
+		[ 0, 1, 0 ], // green is full
+		[ 1, 0, 0 ], // red is touch
+		[ 0, 0, 1 ], // [ blue is move ]
+		[ 0, 0, 0 ]  // [ black is off ]
+	].clipAt(q.inph.modeIndex);
+	// send 3 times to make sure it arrives
+	fork { 3.do {
+		0.02.wait;
 		MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
-	}, 0.05);
+	} };
 });
 
 
@@ -363,6 +367,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHat));
 // e.g. after modal action of buttons for MainFX
 MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 	defer ({
+		MFdef(\resetModePreLEDs).postln;
 		MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
 		MFdef(\setInphWPre).value(q.inph.at(\presIndex));
 	}, delay);
@@ -370,7 +375,7 @@ MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 
 
 MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
-	// do modal action on release
+	// do modal action on release, i.e. if
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
@@ -416,7 +421,7 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 		{ q.osc.leftDown.size > 0 }
 		{
 			q.osc.leftDown.do { |slotIndex|
-				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
+				"%  ndef preset up 1.\n".postf(q.ndefs[slotIndex]);
 				q.pre.stepNdefInf( q.ndefs[slotIndex], 1 );
 				// reset button color
 				MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
@@ -447,7 +452,7 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 		{ q.osc.leftDown.size > 0 }
 		{
 			q.osc.leftDown.do { |slotIndex|
-				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
+				"%  ndef preset down 1.\n".postf(q.ndefs[slotIndex]);
 				q.pre.stepNdefInf( q.ndefs[slotIndex], -1 );
 				// reset button color
 				MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
