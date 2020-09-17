@@ -46,7 +46,7 @@ s.options.memSize_(8192 * 16);
 if (\Standalone.asClass.notNil) {
 	"Standalone, so using special ugenPluginsPath:".postln;
 	s.options.ugenPluginsPath =
-	([ String.scDir +/+ "plugins" ]
+	([ Platform.resourceDir +/+ "plugins" ]
 		++ [\Standalone.asClass.internalExtDir]).join($:).postcs;
 } {
 	"no standalone, using default ugenPluginsPath.";
