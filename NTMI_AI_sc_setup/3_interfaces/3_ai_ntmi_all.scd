@@ -596,8 +596,12 @@ MFdef(\capsToInph).add(\set, {
 
 MKtl(\ntmi).collAt('caps').groupAction = nil;
 
+MKtl(\ntmi).addHalo(\capLedThresh, 0.3);
+
 MKtl(\ntmi).collAt('caps').groupAction = MFdef(\capsin);
+
 MFdef(\capsin).add(\set, { |coll|
+	var capLedThresh = MKtl(\ntmi).getHalo(\capLedThresh);
 	var values = coll.value;
 
 	// reorder for proper order of pads and leds
@@ -616,6 +620,17 @@ MFdef(\capsin).add(\set, { |coll|
 	MKtl(\ntmi).elAt('cap').value_(values);
 	// trigger touch to inphlux only once ...
 	MFdef(\capsToInph).value;
+
+	// light up leds when pads are touched above thresh:
+	fork {
+		MKtl(\ntmi).elAt(\led, \fr).do { |led, i|
+			var newval = (values[i] > capLedThresh).binaryValue;
+			if (newval != led.value) {
+				led.value = newval;
+				0.003.wait;
+			}
+		}
+	}
 });
 
 // individual pad action - useful for guis only
