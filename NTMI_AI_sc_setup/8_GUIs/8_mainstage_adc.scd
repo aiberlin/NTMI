@@ -29,20 +29,25 @@ MFdef('guiSlots').add(\set, {
 		var mview = g.main.ndefMViews[i];
 		var vol = ndef.vol;
 		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
+		var ndefRandSeed;
 
 		var presetName = NdefPreset(ndef).currSet.key;
-		var newLabel;
+
+		var newLabel = ndef.key.asString;
 		if (presetName == \curr) {
-			newLabel = ndef.key
+			ndefRandSeed = ndef.getHalo(\randSeed);
+			ndefRandSeed !? {
+				newLabel = newLabel + "rd:" + ndefRandSeed
+			};
 		} {
-			newLabel = ndef.key.asString + presetName
+			newLabel = newLabel + presetName
 		};
 
 		if (ndef.key != pop.item or: { newLabel != mview.label }) {
 			pop.items = q.slots.choices[i];
 			pop.value = pop.items.indexOf(ndef.key);
 
-			mview.label_( newLabel.postcs );
+			mview.label_( newLabel );
 		};
 		if (mview.value != vol) { mview.value = vol };
 		if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
