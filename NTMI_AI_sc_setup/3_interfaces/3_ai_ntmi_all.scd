@@ -352,7 +352,8 @@ MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
 		q.osc.encHatUsed = false;
 	} {
 		if (q.osc.encHatUsed.not) {
-			MFdef('snapshot').value;
+			'snapshot happens too often ... FIXME.'.postln;
+			// MFdef('snapshot').value;
 			q.osc.encHatUsed = true;
 		}
 	}
