@@ -70,17 +70,17 @@ ProxyChain.add3( '00_in',
 );
 
 ProxyChain.add3( '0_DBComp',
-	\filterIn -> {	 arg in, mastaVol = 1, xFreq=400, thresh=0.5, loGain=2, hiGain=0.5, compRatio=2;
+	\filterIn -> {	 arg in, mainVol = 1, xFreq=400, thresh=0.5, loGain=2, hiGain=0.5, compRatio=2;
 
 		DualBandComp.ar(
-			in * mastaVol.lag(0.2),
+			in * mainVol.lag(0.2),
 			xFreq, loGain,  hiGain, thresh, compRatio
 		)
 	},
 	1,
 	[
 		\xFreq, [100, 1000, \exp],
-		\mastaVol, [0, 4, \amp],
+		\mainVol, [0, 4, \amp],
 		\loGain, [0, 10, \amp, 0, 1],
 		\hiGain, [0, 10, \amp, 0, 1],
 		\compRatio, [1, 10, \exp]

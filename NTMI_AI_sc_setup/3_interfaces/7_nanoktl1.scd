@@ -16,7 +16,7 @@ The same concept also works for gamepads and other devices.
 
 - sliders 1-8/1-7: 	influx!
 
-- last slider 8/9:	masterVol via mastaVol
+- last slider 8/9:	mainVol via mainVol
 
 transport buttons:
 nk1: rew, play, fwd:	rand, prev, next influx preset
@@ -38,7 +38,7 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 	q.nktl = MKtl('nk1', "korg-nanokontrol");
 
 	// make all named elements first
-	q.nktl.addNamed(\masta, q.nktl.elAt(\sl, 0, 8));
+	q.nktl.addNamed(\main, q.nktl.elAt(\sl, 0, 8));
 	q.nktl.addNamed(\inflx, q.nktl.elAt(\sl, 0, (0..7)));
 
 	q.nktl.addNamed(\vols, q.nktl.elAt(\kn, 0, (0..3)));
@@ -64,7 +64,7 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 	q.nktl = MKtl('nanoKtl', "korg-nanokontrol2");
 
 	// make all named elements first
-	q.nktl.addNamed(\masta, q.nktl.elAt(\sl, 7));
+	q.nktl.addNamed(\main, q.nktl.elAt(\sl, 7));
 	q.nktl.addNamed(\inflSet, q.nktl.elAt(\sl, (0..6)));
 
 	q.nktl.addNamed(\vols, q.nktl.elAt(\kn, (0..3)));
@@ -89,7 +89,7 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 q.nktl.elAt(\inflSet).do(_.value = 0.5);
 
 
-q.nktl.elAt(\masta).elemDesc.label = "Main Vol";
+q.nktl.elAt(\main).elemDesc.label = "Main Vol";
 
 q.nktl.elAt(\rand_inph).elemDesc.label = "rand inph";
 q.nktl.elAt(\prev_inph).elemDesc.label = "prev inph";
@@ -131,9 +131,9 @@ q.nktl.elAt(\inflSet).do { |sl, i|
 	}
 };
 
-// rightmost slider is master volume (into limiter)
-q.nktl.elAt(\masta).action = { |sl| MFdef(\mastaVol).value(sl.value) };
-q.nktl.elAt(\masta).value = 0.5;
+// rightmost slider is main volume (into limiter)
+q.nktl.elAt(\main).action = { |sl| MFdef(\mainVol).value(sl.value) };
+q.nktl.elAt(\main).value = 0.5;
 
 
 // normal: select next setting

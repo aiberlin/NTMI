@@ -176,39 +176,39 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 
-	g.main.mastaSl = MView(
-		q.mFX.proxyChain.proxy.get(\mastaVol),
+	g.main.mainSl = MView(
+		q.mFX.proxyChain.proxy.get(\mainVol),
 		g.main.w, Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
 
-	g.main.mastaSl.uv.alpha_(0.7).refresh;
-	g.main.mastaSl.label_(\mastaVol);
-	g.main.mastaSl.putDict(\myspec, [0, 4, \amp]);
-	g.main.mastaSl.dict[\knobCol] = Color.grey(0, 0.7);
-	g.main.mastaSl.action.add(\setMasta, { |mv|
-		q.mFX.proxyChain.proxy.set(\mastaVol, mv.value)
+	g.main.mainSl.uv.alpha_(0.7).refresh;
+	g.main.mainSl.label_(\mainVol);
+	g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
+	g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
+	g.main.mainSl.action.add(\setMain, { |mv|
+		q.mFX.proxyChain.proxy.set(\mainVol, mv.value)
 	});
-	g.main.mastaSl.drawFunc.add(\label, {
+	g.main.mainSl.drawFunc.add(\label, {
 		Pen.stringCenteredIn(
-			g.main.mastaSl.label,
-			g.main.mastaSl.bounds.moveTo(0,0),
+			g.main.mainSl.label,
+			g.main.mainSl.bounds.moveTo(0,0),
 			Font("Monaco", 40 * scrscale),
 			Color.blue
 		)
 	});
-	g.main.mastaVolDisplay = {
-		var nuval = q.mFX.proxyChain.proxy.get(\mastaVol);
-		if (g.main.mastaSl.value != nuval) {
-			g.main.mastaSl.value = nuval
+	g.main.mainVolDisplay = {
+		var nuval = q.mFX.proxyChain.proxy.get(\mainVol);
+		if (g.main.mainSl.value != nuval) {
+			g.main.mainSl.value = nuval
 		};
 	};
-	g.main.mastaSl.dict[\focusCol] = Color.grey(1.0, 0.8);
-	g.main.mastaSl.dict[\backCol] = Color.grey(1.0, 0.6);
-	g.main.mastaSl.uv.focus(true).refresh;
-	g.main.mastaSl.uv.focus(false).refresh;
+	g.main.mainSl.dict[\focusCol] = Color.grey(1.0, 0.8);
+	g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
+	g.main.mainSl.uv.focus(true).refresh;
+	g.main.mainSl.uv.focus(false).refresh;
 
 
-	// \mastaVol, [0, 4, \amp], labelWidth: 100 * scrscale).font_(Font("Monaco", 20 * scrscale));
+	// \mainVol, [0, 4, \amp], labelWidth: 100 * scrscale).font_(Font("Monaco", 20 * scrscale));
 
 
 	// 4 popups to select sounds, 4 mviews for volume levels
@@ -481,7 +481,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	MFdef(\mainWinUpdate).add(\slots, MFdef('guiSlots'));
 
-	MFdef(\mainWinUpdate).add(\masta, g.main[\mastaVolDisplay]);
+	MFdef(\mainWinUpdate).add(\main, g.main[\mainVolDisplay]);
 
 
 	/////// Clock display shows how long something has been running

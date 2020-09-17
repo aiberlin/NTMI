@@ -16,10 +16,10 @@ just move joysticks (left and right, X and Y),
 and the throttle controls (left and right)
 
 3. Volume can be played and set in 3 ways:
-- a. momentary master volume: move left-side wheel
-- b. set center of master volume:
+- a. momentary main volume: move left-side wheel
+- b. set center of main volume:
 hold button 10 down, set with wheel, release button 10, release wheel
--> master volume center is where wheel was when button 10 released.
+-> main volume center is where wheel was when button 10 released.
 - c. individual sound volume:
 hold one of buttons 1-4, move wheel to set volume, release button
 
@@ -272,10 +272,10 @@ if (q.ferr.mktl.isNil) {
 		};
 	};
 
-	// wheel controls master volume;
-	// sets master vol when bt 10 is down;
+	// wheel controls main volume;
+	// sets main vol when bt 10 is down;
 	// sets slot volume when or more buttons of 1-4 are down
-	q.ferr.uniMasterVolOffset = 0;
+	q.ferr.uniMainVolOffset = 0;
 	q.ferr.mktl.elAt(\wheel).action.add(\setvol, { |wheel|
 		var indices;
 		if (q.ferr.mode == \slot) {
@@ -288,12 +288,12 @@ if (q.ferr.mktl.isNil) {
 			q.ferr.slotModeWasUsed = true;
 		} {
 			if (q.ferr.mktl.elAt(\bt, \10).isOn) {
-				"set masterVolume center:".post;
-				q.ferr.uniMasterVolOffset = (wheel.value - 0.5).postln;
-				MFdef(\mastaVol).value( wheel.value);
+				"set mainVolume center:".post;
+				q.ferr.uniMainVolOffset = (wheel.value - 0.5).postln;
+				MFdef(\mainVol).value( wheel.value);
 			} {
-				// "masterVol: ".postln;
-				MFdef(\mastaVol).value(q.ferr.uniMasterVolOffset + wheel.value);s
+				// "mainVol: ".postln;
+				MFdef(\mainVol).value(q.ferr.uniMainVolOffset + wheel.value);s
 			};
 		};
 	});

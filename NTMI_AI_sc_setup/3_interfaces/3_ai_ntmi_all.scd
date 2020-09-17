@@ -11,8 +11,8 @@ ALL Controller Mappings on NTMI_esp32_v1:
 OK --- back left buttons - slot play/stop
 ----> hold down for slot mode
 
-OK --- encoder -> master volume
-OK --- encHat + enc -> master zoom
+OK --- encoder -> main volume
+OK --- encHat + enc -> main zoom
 OK --- slots + enc -> slot volumes
 OK --- encHat + slot + encoder -> sound choice
 
@@ -461,7 +461,7 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 	}
 });
 
-// -- base mode -> inc/dev master volume
+// -- base mode -> inc/dev main volume
 // -- hat  mode -> zoom!
 // -- slot mode -> inc/dec slot volume
 // -- sl+hat mode -> inc/dec sounds
@@ -473,8 +473,8 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 
 	modeNum.switch(
 		0, {
-			// "base: mastaStepVol".postln;
-			MFdef(\mastaStepVol).(enc.deviceValue);
+			// "base: mainStepVol".postln;
+			MFdef(\mainStepVol).(enc.deviceValue);
 		},
 		1, {
 			// "hat: zoom".postln;

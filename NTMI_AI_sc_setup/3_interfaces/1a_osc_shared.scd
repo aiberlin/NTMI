@@ -162,13 +162,13 @@ MFdef(\inphModeStep).add(\step, { |inc = 1|
 	MFdef(\inphModeSetIndex).value(q.inph.modeIndex + inc);
 });
 
-MFdef(\mastaStepVol).add(\step, { |inc = 0|
+MFdef(\mainStepVol).add(\step, { |inc = 0|
 	// for fast turns, accelerate changes:
 	// 0.0 is linear, step1 -> 1, step 2 -> 2 etc
 	// 1.0 is quadratic, step1 -> 1, step 2 -> 4 etc
 	var acceleration = inc.abs ** 1.0;
-	"mastaVol % by %\n".postf([\down, \up].wrapAt(inc.clip(0, 1)), inc);
-	RelSet(q.mFX.pxChain.proxy, \mastaVol, inc * acceleration * 0.01);
+	"mainVol % by %\n".postf([\down, \up].wrapAt(inc.clip(0, 1)), inc);
+	RelSet(q.mFX.pxChain.proxy, \mainVol, inc * acceleration * 0.01);
 });
 
 MFdef(\stepVol).add(\step, { |ndef, step = 1|

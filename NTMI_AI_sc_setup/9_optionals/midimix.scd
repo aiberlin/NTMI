@@ -20,7 +20,7 @@ Specific elements are given:
 
 - sliders 1-8/0-7: 	influx!
 
-- last slider 8/9:	masterVol via mastaVol
+- last slider 8/9:	mainVol via mainVol
 ***********/
 
 (
@@ -31,7 +31,7 @@ q.mmx.free;
 q.mmx = MKtl(\mmx, "akai-midimix");
 
 // make all named elements first
-q.mmx.addNamed(\masta, q.mmx.elAt(\sl, 8));
+q.mmx.addNamed(\main, q.mmx.elAt(\sl, 8));
 q.mmx.addNamed(\inflSet, q.mmx.elAt(\sl, (0..7)));
 
 q.mmx.addNamed(\vols, q.mmx.elAt(\kn, \1, (0..3)));
@@ -64,7 +64,7 @@ q.mmx.addNamed(\next_pre, q.mmx.elAt(\bt, \1, 7, \on));
 
 /////////// modify the labels shown on gui:
 // single elements
-q.mmx.elAt(\masta).elemDesc.label = "Main Vol";
+q.mmx.elAt(\main).elemDesc.label = "Main Vol";
 
 q.mmx.elAt(\rand_inph).elemDesc.label = "rand inph";
 q.mmx.elAt(\prev_inph).elemDesc.label = "prev inph";
@@ -113,8 +113,8 @@ q.mmx.elAt(\inflSet).do { |sl, i|
 	}
 };
 
-// rightmost slider is master volume (into limiter)
-q.mmx.elAt(\masta).action = { |sl| MFdef(\mastaVol).value(sl.value) };
+// rightmost slider is main volume (into limiter)
+q.mmx.elAt(\main).action = { |sl| MFdef(\mainVol).value(sl.value) };
 
 
 // select next sound preset setting
