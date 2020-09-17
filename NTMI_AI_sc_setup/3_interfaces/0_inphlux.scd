@@ -68,8 +68,10 @@ MFdef(\inphDecouple).add(\disable, { |obj|
 	q.inphlux.action.disable(objName.postln)
 });
 
-MFdef(\inphCouple).(Ndef(\revFB)); q.inphlux.action.activeNames
+/*
+MFdef(\inphCouple).(Ndef(\revFB));
 MFdef(\inphDecouple).(Ndef(\revFB));
+*/
 
 // clutch and unclutch an object from influx
 // accessible from ntmi by hold-enc+slotbut
