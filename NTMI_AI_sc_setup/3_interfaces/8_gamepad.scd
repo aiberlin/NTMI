@@ -42,8 +42,8 @@ press compass down on bottom for next sound choice DOWN in that slot,
 press compass down on top    for next sound choice  UP  in that slot,
 press button 10              for random next sound      in that slot.
 
-7. MasterFX presets:
-The nine MasterFX presets, named 'theology', 'magic', etc,
+7. MainFX presets:
+The nine MainFX presets, named 'theology', 'magic', etc,
 can be switched stepped or jumped thru:
 - press button 7 for lower preset,
 button 8 for next higher preset,
@@ -66,7 +66,7 @@ hold down the option key to force-remake the window if needed.
 - slotSounds opens a window showing editors for the sounds in the four slots
 - liveInput allows editing the liveInput process used by the xf-sounds
 - ndefMixer opens a Mixer for all available Ndefs = sound processes
-- masterFX opens a GUI for the MasterFX section
+- mainFX opens a GUI for the MainFX section
 - nanoKtl opens a GUI for a korg nanoKontrol faderbox
 - ferrari opens a GUI for a Thrustmaster Ferrari gamepad
 - uc4 opens a GUI for a FaderFox UC4 faderbox
@@ -248,10 +248,10 @@ if (q.ferr.mktl.isNil) {
 		if (bt.isOn.not) {
 			if (q.ferr.mktl.elAt(\bt, \8).isOn) {
 				q.ferr.mfxWasUsed = true;
-				MFdef('mastaPreStep').value(nil); // rand
+				MFdef('mainPreStep').value(nil); // rand
 			} {
 				if (q.ferr.mfxWasUsed.not) {
-					MFdef('mastaPreStep').value(-1); // prev
+					MFdef('mainPreStep').value(-1); // prev
 				};
 				q.ferr.mfxWasUsed = false;
 			};
@@ -262,10 +262,10 @@ if (q.ferr.mktl.isNil) {
 		if (bt.isOn.not) {
 			if (q.ferr.mktl.elAt(\bt, \7).isOn) {
 				q.ferr.mfxWasUsed = true;
-				MFdef('mastaPreStep').value(nil); // rand
+				MFdef('mainPreStep').value(nil); // rand
 			} {
 				if (q.ferr.mfxWasUsed.not) {
-					MFdef('mastaPreStep').value(1); // prev
+					MFdef('mainPreStep').value(1); // prev
 				};
 				q.ferr.mfxWasUsed = false;
 			};

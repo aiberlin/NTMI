@@ -24,9 +24,9 @@ OK --- preDown step inphl down
 
 OK --- modeBut - cycle full, move, touch, off
 
-OK --- hat + preUP -> masterFX UP
-OK --- hat + preDown -> masterFX down
-OK --- hat + preUP + Down -> masterFX rand
+OK --- hat + preUP -> mainFX UP
+OK --- hat + preDown -> mainFX down
+OK --- hat + preUP + Down -> mainFX rand
 
 ?? --- encHat - add snapshot? later.
 
@@ -290,9 +290,9 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
-		// hat is down: masta fx rand
+		// hat is down: main fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
-		{ MFdef(\mastaPreStep).value(nil) }
+		{ MFdef(\mainPreStep).value(nil) }
 
 		// slot mode: rand preset
 		{ q.osc.leftDown.size > 0 }
@@ -360,7 +360,7 @@ MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHat));
 
 
 // reset right back leds to their proper values
-// e.g. after modal action of buttons for MasterFX
+// e.g. after modal action of buttons for MainFX
 MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 	defer ({
 		MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
@@ -374,10 +374,10 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
-		// hat is down: masta fx rand
+		// hat is down: main fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
 		{
-			MFdef(\mastaPreStep).value(nil);
+			MFdef(\mainPreStep).value(nil);
 			MFdef(\resetModePreLEDs).value(0.1);
 		}
 
@@ -405,10 +405,10 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
-		// hat is down: masta fx rand
+		// hat is down: main fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
 		{
-			MFdef(\mastaPreStep).value(1);
+			MFdef(\mainPreStep).value(1);
 			MFdef(\resetModePreLEDs).value(0.1);
 		}
 
@@ -436,10 +436,10 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
-		// hat is down: masta fx rand
+		// hat is down: main fx rand
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
 		{
-			MFdef(\mastaPreStep).value(-1);
+			MFdef(\mainPreStep).value(-1);
 			MFdef(\resetModePreLEDs).value(0.1);
 		}
 

@@ -166,12 +166,12 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	Button(w,
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 60 * scrscale)
 	).states_([
-		["MasterFX\n<<  RAND  >>", Color.white, butRed],
+		["MainFX\n<<  RAND  >>", Color.white, butRed],
 	]).font_(font)
 	.mouseDownAction_({ |bt, x, y, mod|
 		var zone = x div: (bt.bounds.width div: 3);
 		var stepVal = [-1, nil, 1][zone];
-		MFdef('mastaPreStep').value(stepVal);
+		MFdef('mainPreStep').value(stepVal);
 		// [bt, x, y, mod].postcs;
 	});
 
@@ -337,8 +337,8 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	(
 		bigUV.drawFunc = { |uv|
 			var center = uv.bounds.extent * 0.5;
-			var mastaIndex = q.mfx.domainIndex;
-			var domainName = q.mfx.preNames[mastaIndex];
+			var mainIndex = q.mfx.domainIndex;
+			var domainName = q.mfx.preNames[mainIndex];
 
 			"bigUV updating.".postln;
 			Pen.translate(center.x, center.y);
@@ -350,7 +350,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 			Pen.stroke;
 
 
-			Pen.rotate(mastaIndex.linlin(-1, q.mfx.preNames.size, 0.5pi, -0.5pi));
+			Pen.rotate(mainIndex.linlin(-1, q.mfx.preNames.size, 0.5pi, -0.5pi));
 			Pen.scale(1.618, 1.618);
 			Pen.stringCenteredIn(domainName,
 				Rect.aboutPoint(0@0, center.x, 40),
@@ -362,7 +362,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 		bigUV.refresh;
 	);
 
-	MFdef('mastaPreStep').add(\updateMain, { defer { bigUV.refresh } });
+	MFdef('mainPreStep').add(\updateMain, { defer { bigUV.refresh } });
 
 	// small UV in the middle for cheaper pads/axes drawing
 	imuUV.drawFunc = { |uv|

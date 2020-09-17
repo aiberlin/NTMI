@@ -22,8 +22,8 @@ transport buttons:
 nk1: rew, play, fwd:	rand, prev, next influx preset
 nk2: cycle, rew, fwd 	rand, prev, next influx preset
 
-nk1: loop, stop, rec:  rand, prev, next MasterFX preset
-nk2: stop, play, rec:  rand, prev, next MasterFX preset
+nk1: loop, stop, rec:  rand, prev, next MainFX preset
+nk2: stop, play, rec:  rand, prev, next MainFX preset
 
 - top row(s) of buttons still unused.
 
@@ -156,6 +156,6 @@ q.nktl.elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil
 q.nktl.elAt(\prev_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(-1 ) } };
 q.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 ) } };
 
-q.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(nil) } };
-q.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(-1 ) } };
-q.nktl.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).( 1 ) } };
+q.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
+q.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
+q.nktl.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };

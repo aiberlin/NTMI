@@ -16,7 +16,7 @@ Specific elements are given:
 
 - right side buttons	rand, prev, next influx preset
 
-- right buts 1, 5-8: 	rand, prev, next masterFX
+- right buts 1, 5-8: 	rand, prev, next mainFX
 
 - sliders 1-8/0-7: 	influx!
 
@@ -56,7 +56,7 @@ q.mmx.addNamed(\rand_inph, q.mmx.elAt(\solo, \on));
 q.mmx.addNamed(\prev_inph, q.mmx.elAt(\bankLeft, \on));
 q.mmx.addNamed(\next_inph, q.mmx.elAt(\bankRight, \on));
 
-// master fx on right 3 rows
+// main fx on right 3 rows
 q.mmx.addNamed(\rand_pre, q.mmx.elAt(\bt, \1, 5, \on));
 q.mmx.addNamed(\prev_pre, q.mmx.elAt(\bt, \1, 6, \on));
 q.mmx.addNamed(\next_pre, q.mmx.elAt(\bt, \1, 7, \on));
@@ -139,9 +139,9 @@ q.mmx.elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil)
 q.mmx.elAt(\prev_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(-1 ) } };
 q.mmx.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 ) } };
 
-q.mmx.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(nil) } };
-q.mmx.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).(-1 ) } };
-q.mmx.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mastaPreStep).( 1 ) } };
+q.mmx.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
+q.mmx.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
+q.mmx.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
 
 g.makeGui;
 )
