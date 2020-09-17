@@ -28,8 +28,11 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 	if (q.bin.binkey != newNum) {
 		q.bin.binkey = newNum;
 
-		if(newNum > 0){
-			q.slots.nowPlaying.do({ |px|
+		if(newNum > 0) {
+			// was:
+			// q.slots.nowPlaying.do { |px| };
+			// don't set decoupled proxies:
+			q.slots.nowPlaying.reject { |px| q.inph.decoupled.includes(px.name) }.do { |px|
 				var pre = NdefPreset(px);
 				// if outside presets, use newNum as random seed
 				if(newNum >= pre.settings.size){
@@ -42,7 +45,7 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 					">>> % preset index: %\n".postf(pre, newNum);
 					pre.proxy.addHalo(\randSeed, nil);
 				}
-			})
+			}
 		}
 	}
 });
