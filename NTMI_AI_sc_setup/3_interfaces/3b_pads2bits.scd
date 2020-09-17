@@ -33,13 +33,14 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 				var pre = NdefPreset(px);
 				// if outside presets, use newNum as random seed
 				if(newNum >= pre.settings.size){
-
 					pre.setRand(q.zoom, seed: newNum);
 					">>> % setRand seed: %\n".postf(pre, newNum);
+					pre.proxy.addHalo(\randSeed, newNum);
 				}{
 					// if within presets, jump to the existing preset at that index
 					pre.setCurr( pre.getSetNames.wrapAt(newNum) );
 					">>> % preset index: %\n".postf(pre, newNum);
+					pre.proxy.addHalo(\randSeed, nil);
 				}
 			})
 		}
