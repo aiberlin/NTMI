@@ -57,7 +57,7 @@ MFdef('guiSlots').add(\set, {
 
 g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
-	var butRed = Color.red(1, 0.7), butGreen = Color.green(1, 0.7);
+	var butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
 	var bounds = Window.availableBounds;
 	var wheight = bounds.height, wwidth = bounds.width;
 	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
@@ -80,13 +80,15 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	bigUV = UserView(w, Rect.aboutPoint( bounds.center, wheight * 0.5, wheight * 0.5));
 	bigUV.background_(Color.clear);
-	g.main.bigUV = u;
+	g.main.bigUV = bigUV;
+	bigUV.canFocus_(false);
 
 	// imuWin = Window("", Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale), false, false).front;
 	// imuUV = v = UserView(imuWin, imuWin.bounds.moveTo(0,0));
 	imuUV = v = UserView(w, Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale));
 	imuUV.background_(Color.clear);
-	g.main.imuUV = v;
+	g.main.imuUV = imuUV;
+	imuUV.canFocus_(false);
 
 	g.main.padCols = 0!8;
 	g.main.movevals = 0!9;
@@ -96,13 +98,13 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 	oscBut = Button(w,
 		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-		["no OSC", Color.white, butRed],
+		["OSC?", Color.white, butGrey],
 		["OSC active", Color.black, butGreen]
 	]).font_(font).value_(0);
 	g.main.oscBut = oscBut;
 
 	batView = UserView(w, Rect(rightCol, 75 * scrscale, 300 * scrscale, 35 * scrscale));
-	batView.background_(butRed);
+	batView.background_(butGrey);
 	batView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
 		Pen.addRect(bounds).color_(Color.white).stroke;
@@ -118,26 +120,26 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.batView = batView;
 
 	midiBut = Button(w, Rect(rightCol, 120 * scrscale, 300 * scrscale, 40 * scrscale)).states_([
-		["no MIDI", Color.grey(0.7), Color.grey(0.3)],
-		["MIDI active", Color.black, Color.grey(0.3)]
+		["MIDI?", Color.grey(0.7), butGrey],
+		["MIDI active", Color.black, butGreen]
 	]).font_(font).value_(0);
 
 	hidBut = Button(w, Rect(rightCol, 170 * scrscale, 300 * scrscale, 40 * scrscale)).states_([
-		["no HID", Color.grey(0.7), Color.grey(0.3)],
-		["HID active", Color.black, Color.grey(0.3)]
+		["HID?", Color.grey(0.7), butGrey],
+		["HID active", Color.black, butGreen]
 	]).font_(font).value_(0);
 
 
 
-	Button(w, Rect(rightCol, 320 * scrscale, 300 * scrscale, 80 * scrscale)).states_([
-		["Reset Clock", Color.white, butRed],
+	Button(w, Rect(rightCol, 340 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
+		["Reset Clock", Color.white, butGrey],
 	]).font_(font)
 	.action_({
 		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
 	});
 
 	recBut = Button(w, Rect(rightCol, 450 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["RECORD?", Color.white, butRed],
+		["RECORD?", Color.white, butGrey],
 		["Recording!", Color.black, butGreen]
 	]).font_(font)
 	.action_({ |bt|
@@ -150,16 +152,16 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 	Button(w, Rect(rightCol, 580 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
-		["show recordings", Color.white, butRed]
+		["show recordings", Color.white, butGrey]
 	]).font_(font.copy.size_(font.size * 0.62))
 	.action_({ |bt|
 		Platform.recordingsDir.openOS;
 	});
 
 	Button(w, Rect(rightCol, 800 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["CALIBRATE\ntouch + move?", Color.white, butRed],
+		["CALIBRATE\ntouch + move?", Color.white, butGrey],
 		["CALIBRATING\ntouch + move", Color.black, Color.yellow],
-		["touch + move\ncalibrated", Color.black, butRed],
+		["touch + move\ncalibrated", Color.white, butGrey],
 
 	]).font_(font)
 	.action_({ |but|
@@ -169,9 +171,9 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 
 
 	Button(w,
-		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 60 * scrscale)
+		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 50 * scrscale)
 	).states_([
-		["MainFX\n<<  RAND  >>", Color.white, butRed],
+		["MainFX\n<<  RAND  >>", Color.white, butGrey],
 	]).font_(font)
 	.mouseDownAction_({ |bt, x, y, mod|
 		var zone = x div: (bt.bounds.width div: 3);
@@ -506,8 +508,6 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 0.1]);
 	Tdef(\clocK).set(\runtime, 0, \isRunning, true);
 
-	//	Tdef(\clocK).gui;
-
 	/// add gui parent here:
 	Tdef(\clocK).set(\timeUV, UserView(w,
 		Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
@@ -526,6 +526,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	};
 
 	Tdef(\clocK).get(\timeUV).refresh;
+	Tdef(\clocK).clock = SystemClock;
 
 	Tdef(\clocK, { |envir|
 		var dt = 1;
