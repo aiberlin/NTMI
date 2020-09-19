@@ -9,6 +9,14 @@ q.pre = q.pre ? ();
 q.pre.settingsDir = q.dir.userPOOL +/+ "2_process/presets/";
 q.pre.settingsDir.pathMatch;
 
+if (ProxyPreset.findMethod(\addsToTop).notNil) {
+		"*** ProxyPreset: adding new presets to top".postln;
+	q.pre.addsToTop = true;
+} {
+	"*** ProxyPreset: cannot add new presets to top - Please do:\n"
+	" Quark(\"JITLibExtensions\");\n".postln;
+};
+
 (
 q.pre.makePreset = { |pre, proxy|
 
@@ -38,6 +46,10 @@ q.pre.makePreset = { |pre, proxy|
 		"--- PRESET %: no preset found! \n".postf(name);
 	};
 	preset.storePath_(presPath);
+
+	if (q.pre.addsToTop == true){
+		preset.perform(\addsToTop, true);
+	};
 
 	// if(preset.settings.size < 2){
 	// 	// load first real preset ...
