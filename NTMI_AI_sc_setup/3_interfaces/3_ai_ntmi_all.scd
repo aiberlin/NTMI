@@ -346,30 +346,25 @@ MFdef(\setInphWPre).add(\setLEDs, {
 /// -> release stores snapshot
 // otherwise, hat was shift but for other buttons.
 
-MFdef(\encHat).add(\used, {
+MFdef(\encHatUsed).add(\used, {
 	if (MKtl(\ntmi).elAt(\encHat).isOn) {
-		"q.osc.encHatUsed = true ".postln;
 		q.osc.encHatUsed = true;
 	}
 });
-
-MFdef(\encHat).value;
 
 MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
 	if (bt.isOn) {
 		q.osc.encHatUsed = false;
 	} {
 		if (q.osc.encHatUsed.not) {
-			'snapshot happens too often ... FIXME.'.postln;
-			// MFdef('snapshot').value;
-			q.osc.encHatUsed = true;
+			MFdef('snapshot').value;
 		}
 	}
 });
 
 //////
-MKtl(\ntmi).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, MFdef(\encHat)) };
-MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHat));
+MKtl(\ntmi).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, MFdef(\encHatUsed)) };
+MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHatUsed));
 
 
 // reset right back leds to their proper values
@@ -393,6 +388,7 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 		{
 			MFdef(\mainPreStep).value(nil);
 			MFdef(\resetModePreLEDs).value(0.1);
+			MFdef(\encHatUsed).value;
 		}
 
 		// slot mode: rand preset
@@ -424,9 +420,10 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 		{
 			MFdef(\mainPreStep).value(1);
 			MFdef(\resetModePreLEDs).value(0.1);
+			MFdef(\encHatUsed).value;
 		}
 
-		// slot mode: rand preset
+		// slot mode: ndef preset up by one
 		{ q.osc.leftDown.size > 0 }
 		{
 			q.osc.leftDown.do { |slotIndex|
@@ -455,6 +452,7 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 		{
 			MFdef(\mainPreStep).value(-1);
 			MFdef(\resetModePreLEDs).value(0.1);
+			MFdef(\encHatUsed).value;
 		}
 
 		// slot mode: ndef preset down by one
