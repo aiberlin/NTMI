@@ -149,6 +149,32 @@ MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 	}, dt);
 });
 
+/***************
+How the modal logic for the NTMI buttons + encoder works:
+*** pressing down prepares for potential modal actions
+*** releasing triggers th action, basic or modal, and resets flags.
+
+*** All buttons have basic actions when nothing else is held:
+- left 4 slots buttons toggle sound on/off
+- encHat stores snapshots of running sounds
+- presetButs step influx presets up and down
+- modeBut cycles modes
+- encoder adjusts main volume up/down
+- encoderHat stores snapshot preset of currently active sounds
+
+*** When a button is  held and another is pressed, a modal action happens.
+
+** Left hand slot button(s) : press-and-hold selects the slots for:
+- preUp, preDown buttons step thru presets of the sound(s) in selected slots
+- mode button chooses random presets
+- encoder adjusts volume for selected tracks up/down
+* when encHat is also pressed:
+- encoder cycles through other sounds for selected tracks
+
+** when encHat is held, slot buttons toggle couple/decouple of that slot's sound
+
+****************/
+
 // the slot switches:
 MKtl(\ntmi).elAt(\slots).do { |but, i|
 
@@ -187,26 +213,8 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 				// "... (right mode for slot buttons) ...".postln;
 				if (MKtl(\ntmi).elAt(\encHat).isOn) {
 					MFdef(\clutch).value(slotObj);
-					q.osc.rightWasUsed = true;
 				};
-				///////////// NOT SURE WE STILL REALLY WANT THESE - so take them out for now ////////
-				// // right side has set up a mode - remember we used it now
-				// q.osc.rightWasUsed = true;
-				// actionFunc = (
-				// 	preUp: {
-				// 		// "*** rshift 1 action: % NEXT ndef\n".postf(btname);
-				// 		q.slots.stepNext(i, 1);
-				// 	},
-				// 	preDown: {
-				// 		// "*** rshift 2 action: % PREV ndef\n".postf(btname);
-				// 		q.slots.stepNext(i, -1);
-				// 	},
-				// 	touchMove: {
-				// 		// "*** rshift 3 action: % RAND ndef\n".postf(btname);
-				// 		q.slots.chooseNext(i);
-				// 	},
-				// )[q.osc.rightDown.first];
-				// actionFunc.value;
+				q.osc.rightWasUsed = true;
 			}
 		}
 	});
@@ -411,7 +419,7 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
-		// hat is down: main fx rand
+		// hat is down: main fx up by one
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(1);
@@ -442,14 +450,14 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
-		// hat is down: main fx rand
+		// hat is down: main fx down by one
 		{ MKtl(\ntmi).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(-1);
 			MFdef(\resetModePreLEDs).value(0.1);
 		}
 
-		// slot mode: rand preset
+		// slot mode: ndef preset down by one
 		{ q.osc.leftDown.size > 0 }
 		{
 			q.osc.leftDown.do { |slotIndex|
@@ -461,7 +469,7 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 			};
 			q.osc.leftWasUsed = true;
 		}
-		// default: step inph preset
+		// default: step inph preset down
 		{ MFdef(\stepInphWPre).value(-1) }
 
 	}

@@ -48,7 +48,7 @@ q.pre.makePreset = { |pre, proxy|
 	preset.storePath_(presPath);
 
 	if (q.pre.addsToTop == true){
-		preset.perform(\addsToTop, true);
+		preset.perform(\addsToTop_, true);
 	};
 
 	// if(preset.settings.size < 2){
@@ -88,12 +88,13 @@ MFdef(\snapshot1).add(\getset, { |proxy|
 	var presy = NdefPreset(proxy);
 	var setty = proxy.getKeysValues(presy.namesToStore);
 	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol;
-	"% - saving preset %\n".postf(presy, name);
+	"% - preset %\n".postf(presy, name);
 	// saves to disk!
 	presy.addSet(name, setty, true);
 });
 
 MFdef(\snapshot).add(\getset, { |proxy|
+	"MFdef(\snapshot) stores:".postln;
 	q.slots.nowPlaying.do { |proxy|
 		MFdef(\snapshot1).(proxy);
 	};
