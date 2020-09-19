@@ -51,8 +51,8 @@ q.osc.ntmi = q.osc.ntmi ? ();
 ///////// make a new
 MKtl.all.at(\ntmi).free;
 MKtl(\ntmi, "ai-ntmi");
-MKtl(\ntmi).device.updateDstAddr("169.254.1.1", 57120);
-MKtl(\ntmi).device.updateSrcAddr("169.254.1.1", 57120);
+MKtl(\ntmi).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
+MKtl(\ntmi).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
 
 MKtl(\ntmi).elAt(\enc).value_(0.5);
 
