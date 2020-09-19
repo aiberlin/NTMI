@@ -260,7 +260,6 @@ MFdef(\touchOFF).add(\ntmi, {
 MFdef(\moveON).add(\ntmi, {
 	"ntmi - moveON".postln;
 	MFdef(\ntmiImuFunc).enable(\setInflux);
-	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.enable(\setInflux) };
 	q.slots.nowPlaying.do { |obj|
 		if (q.inph.decoupled.includes(obj.key).not) {
 			MFdef(\inphCouple).(obj);
@@ -273,7 +272,6 @@ MFdef(\moveON).value;
 MFdef(\moveOFF).add(\ntmi, {
 	"ntmi - moveOFF".postln;
 	MFdef(\ntmiImuFunc).disable(\setInflux);
-	MKtl(\ntmi).elAt('imu9').do { |ax| ax.action.disable(\setInflux) };
 	/////// pads set inphlux in unipolar, 0-1 range!
 	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
@@ -539,12 +537,9 @@ MFdef(\ntmiImuFunc).add(\setInflux, {
 	q.inphlux.set(*keysvals);
 });
 
-// hack for xosc gui: all element actions trigger imuFunc!
-MKtl(\ntmi).elAt(['accel', 'gyro', 'magnet']).flat.do(_.action_(MFdef(\ntmiImuFunc)));
-
 /*
-MFdef(\imuFunc).disable( \setInflux );
-MFdef(\imuFunc).enable( \setInflux );
+MFdef(\ntmiImuFunc).disable( \setInflux );
+MFdef(\ntmiImuFunc).enable( \setInflux );
 */
 
 q.osc.ntmiSkipLogin.stop.free;

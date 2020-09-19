@@ -71,4 +71,5 @@ MFdef(\capsToInph).add(\binKey, {
 	};
 	q.bin.bins = bins
 });
+MFdef(\capsToInph).disable(\binKey);
 );
