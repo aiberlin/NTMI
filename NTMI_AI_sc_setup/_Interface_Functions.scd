@@ -17,64 +17,94 @@ q.select(_.isFunction).keys.postcs; "";
 //// and also on the main UFO window,
 //// and can and should be put on substitute interfaces as well.
 
-///////// 1. UFO /////////
-// step main UFO modes
-MFdef('inphModeStep').();
+///////// 1. FOUR SLOTS have these functions:
 
-// set ZERO offsets position for UFO imu and pads,
-/// so sound presets will be heard as stored
-// when interactor is at zero position
-MFdef('ZERO').();
+q.slots.keys(Array).sort.cs;
 
+// play and stop a sound at a slot index:
+q.slots.playAt(0);
+q.slots.stopAt(0);
+// toggle between stop or play
+q.slots.toggleAt(0);
+q.slots.toggleAt(0);
 
-//////// 2. INPHLUX ////////////
-// change inphlux preset:
-// by step (1 is up by one, -1 is down, wrapping)
-// or nil -> random new choice
-MFdef('stepInphWPre').funcDict.cs;
-////////// set inphlux preset directly to an index:
-// MFdef('setInphWPre').funcDict.cs;
+// which ones are currently selected in the slots?
+q.slots.actives;
+// which ones are actually playing now
+q.slots.nowPlaying;
 
-/////// set zoom for inphlux (and globally) directly to a value between 0.0 - 1.0:
-q[\setZoom].cs;
-// increment zoom by a relative step amount (e.g. 0.1)
-q[\incZoom].cs;
+// internal settings in slots:
+// the volume at which sounds start by default (0.25)
+q.slots.defaultVol;
+q.slots.defaultAmp;
+// the fadeoutTime used when sounds are turned off or replaced (1.0)
+q.slots.fadeoutTime;
 
+// the choices of available sounds for each slot
+q.slots.choices;
+// step/jump to a next sound: step +1 for up, -1 for down, nil for random jump
+q.slots.stepNext(0, 1);
 
-////////// 3. SOUNDS / SLOTS //////////////
+// switch to a specific sound in one slot
+q.slots.addActive(0, Ndef(\bleepo));
+// cannot use same sound on other slot:
+q.slots.addActive(2, Ndef(\bleepo));
 
-// turn 4 slots off and on:
-q.slots.toggleAt(index);
-// or call one or the other explicitly:
-q.slots.playAt(index);
-q.slots.stopAt(index);
+q.slots.chooseNext(0);
 
-
-// change the sound at a slot index:
-// random choice ...
-q.slots.chooseNext(index);
-// or step by an increment, usually +1, -1
-q.slots.stepNext(index, incr = 1);
 
 // change the presets on all active sounds:
-MFdef('stepSlotPres');
+MFdef('stepSlotPres').value(step);
 // change preset on a single sound:
-q.pre.stepNdefInf( nd, step );
+q.pre.stepNdefInf( ndef, step );
 
 // change volume on a specific ndef:
-MFdef('stepVol').funcDict.cs
+MFdef('stepVol').(ndef);
 
 
-/////////// quick-store a current setting of a single sound preset with datestamp:
+/////////// quick-store the current setting of a single sound preset with datestamp:
 MFdef('snapshot1');
 /////////// quick-store setting of all active sound presets:
 MFdef('snapshot');
 
 
+///////// 2. nUFO /////////
+// step thru main nUFO modes
+// - full, touch, binary
+MFdef('inphModeStep').();
+
+// set ZERO offsets position for nUFO imu and pads,
+/// so sound presets will be heard as stored
+// when interactor is at zero position
+MFdef('calibrate').();
+
+
+//////// 3. INPHLUX ////////////
+// change inphlux preset:
+// by step (1 is up by one, -1 is down, wrapping)
+// or nil -> random new choice
+MFdef('stepInphWPre').(1);
+MFdef('stepInphWPre').(-1);
+MFdef('stepInphWPre').();
+
+////////// set inphlux preset directly to an index:
+MFdef('setInphWPre').(0); // go to red
+
+/////// set zoom for inphlux (and globally) directly to a value between 0.0 - 1.0:
+// post function code:
+q[\setZoom].cs;
+// use function:
+q.setZoom(0.62);
+// increment zoom by a relative step amount (e.g. 0.1)
+q.incZoom(0.05);
+q.incZoom(-0.1);
+
 
 /////////// MainFX: //////////////
 // step mainFX preset: 1 -> up, -1 -> down,   nil -> random.
-MFdef('mainPreStep');
+MFdef('mainPreStep').(1);
+MFdef('mainPreStep').(-1);
+MFdef('mainPreStep').(); // rand
 
 // MainFX: set preset to a given name
 MFdef('mainPre').('theology');
@@ -92,20 +122,14 @@ MFdef('touchToInph');
 MFdef('switchToSim');
 MFdef('switchToXOSC');
 
-// function to set up mode of 3 right buttons group
-MFdef('rightMode').funcDict.cs;
-
-//////// 2. INPHLUX ////////////
-//////// set inphlux preset directly to an index:
-MFdef('setInphWPre').funcDict.cs;
 
 
-//////////////// 3. SLOTS, helper functions ///////////////
+//////////////// 1. SLOTS, helper functions ///////////////
 
 q.slots.actives; // the currently selected sounds
 q.slots.nowPlaying; // the currently playing subset of selected sounds
 
-// put a specific sound into a slot index:
+// put a new Ndef into a slot index:
 q.slots.addActive(index, ndef); //
 
 // list of the open choices for all 4 slots;
@@ -113,14 +137,9 @@ q.slots.addActive(index, ndef); //
 // minus the ones that currently play,
 // plus the name of the sound currently in this slot
 q.slots.choices;
+q.slots.choices[0]; // choices for slot 0
 
-// internal settings in slots:
-// the volume at which sounds start by default (0.25)
-q.slots.defaultVol;
-// the fadeoutTime used when sounds are turend off or replaced (1.0)
-q.slots.fadeoutTime;
-
-///////////// private methods in slots:
+///////////// private internal methods in slots:
 // check that a number is a valid index for slots
 q.slots.checkIndex(0);
 // check integrity of all slots:
@@ -131,11 +150,8 @@ q.slots.updateChoices;
 
 //////// GUI
 // make/remake gui for a given window name
-
-MFdef('makeGui').('xosc', remake: true);
-// update guiSlots on NTMI_main
-MFdef('guiSlots').();
-
-// all window func names here:
-g.makeGui.keys.cs;
+// all Butz actions:
+Butz.actions.names;
+// use one of the window makefuncs:
+Butz.run(\liveInput);
 
