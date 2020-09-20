@@ -91,8 +91,8 @@ q.bat = (
 	resetVals: { |bat|
 		bat.putAll((
 			string: "no battery data",
-			minval: 3000, // guessing, refine!
-			maxval: 4000, // guessing, refine!
+			minval: 3200, // guessing, refine!
+			maxval: 3800, // guessing, refine!
 			totaltime: 180, // guessing, refine by testing
 			intval: 0,
 			percent: 0,
