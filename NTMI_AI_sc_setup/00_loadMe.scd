@@ -202,22 +202,8 @@ Task {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
 			0.2.wait;
-			MFdef(\makeGui).(\MakeGui);
-			MFdef(\makeGui).(\NTMI_Main);
-
+			g.makeGui[\Main_NTMI].value;
 		};
-
-		///////// SHOWTIME TWEAKS //////////////
-		// disable Zoom on xosc only
-		if (MKtl.all.at(\xosc).notNil) {
-			MKtl(\xosc).elAt('inA', 7).disable;
-			q.setZoom(1);
-		};
-		// q.setZoom = nil;
-
-		g.main.skipper.dt = 1/10;
-
-		//  q.inph.modes = [\full, \touch];
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
