@@ -37,8 +37,16 @@ Tdef(\allLEDs, { |ev|
 	// set to correct state now:
 	try { q.osc.ntmiSkip.stop.play };
 
+	// sync back LEDs state
+	0.1.wait;
+	q.slots.actives.do { |ndef, i|
+		var playVal = ndef.monitor.isPlaying.binaryValue;
+		MKtl(\ntmi).elAt(\led, \bk, i).value = playVal;
+		0.05.wait;
+	};
 	MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
+	0.1.wait;
 	MFdef(\setInphWPre).value(q.inph.at(\presIndex));
-
+	0.1.wait;
 });
 
