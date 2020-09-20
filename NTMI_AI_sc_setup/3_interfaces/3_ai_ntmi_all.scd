@@ -127,25 +127,31 @@ MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 
 	defer ({
 		var padsflopped, padmeans, padmaxes, padjitters, padoffsets;
+		var captureOK;
 		MFdef(\ntmiImuFunc).remove(\capture);
 		MFdef(\capsin).remove(\capture);
 
 		"*** nUFO calibration: ***".postln;
-		"q.zero.imu = mean of % captured values:\n".postf( q.capture.imu.size);
-		q.zero.imu = q.capture.imu.mean;
-		q.zero.imu.round(0.001).postln;
+		captureOK = q.capture.imu.size > 5;
+		if (captureOK.not) {
+			"no values captured - calibration impossible.".postln;
+		} {
+			"q.zero.imu = mean of % captured values:\n".postf( q.capture.imu.size);
+			q.zero.imu = q.capture.imu.mean;
+			q.zero.imu.round(0.001).postln;
 
-		padsflopped = q.capture.pads.flop;
-		padmaxes = padsflopped.collect(_.maxItem);
-		padmeans = padsflopped.collect(_.mean);
-		padjitters = padsflopped.collect { |vals, i| (vals - padmeans[i]).abs.maxItem };
+			padsflopped = q.capture.pads.flop;
+			padmaxes = padsflopped.collect(_.maxItem);
+			padmeans = padsflopped.collect(_.mean);
+			padjitters = padsflopped.collect { |vals, i| (vals - padmeans[i]).abs.maxItem };
 
-		"q.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( q.capture.pads.size);
-		q.zero.pads = padmaxes + (padjitters * 0.5);
-		q.zero.pads.round(0.001).postln;
-		q.zero.write;
-		whenDone.value;
-		"*** nUFO calibrated. ***".postln;
+			"q.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( q.capture.pads.size);
+			q.zero.pads = padmaxes + (padjitters * 0.5);
+			q.zero.pads.round(0.001).postln;
+			q.zero.write;
+			"*** nUFO calibrated. ***".postln;
+		};
+		whenDone.value(captureOK);
 	}, dt);
 });
 

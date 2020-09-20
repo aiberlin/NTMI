@@ -167,7 +167,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	]).font_(font)
 	.action_({ |but|
 		but.value_(1);
-		MFdef('calibrate').value(1, { but.value_(2) })
+		MFdef('calibrate').value(1, { |ok| but.value_(if (ok, 2, 0).postln) })
 	});
 
 
