@@ -21,6 +21,42 @@ g.main = g.main ? ();
 g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 
 
+/////// Clock display shows how long something has been running
+/*
+Tdef(\clocK).gui;
+
+Tdef(\clocK).set(\isRunning, true);
+// jumps back to zero when stopped
+Tdef(\clocK).set(\isRunning, false);
+
+// watch some Tdef to see how long a piece has been running
+Tdef(\clocK).set(\isRunning, { Tdef(\watchMe).isPlaying });
+
+Tdef(\watchMe).play;
+Tdef(\watchMe).stop;
+*/
+
+Tdef(\clocK).clock = SystemClock;
+Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 1]);
+Tdef(\clocK).set(\runtime, 0, \isRunning, true);
+
+Tdef(\clocK, { |envir|
+	var dt = 1;
+	inf.do { |i|
+		envir.timeStr = envir.runtime.asTimeString.drop(-4);
+		defer { try { envir.timeUV.refresh } };
+
+		dt.wait;
+		if (envir.isRunning == true) {
+			envir.runtime = envir.runtime ? 0 + dt;
+		} {
+			envir.runtime = 0;
+		};
+
+	}
+}).play;
+
+
 MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') runs".postln;
 
@@ -491,25 +527,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	MFdef(\mainWinUpdate).add(\main, g.main[\mainVolDisplay]);
 
-
-	/////// Clock display shows how long something has been running
-	/*
-	Tdef(\clocK).set(\isRunning, true);
-	// jumps back to zero when stopped
-	Tdef(\clocK).set(\isRunning, false);
-
-	// watch some Tdef to see how long a piece has been running
-	Tdef(\clocK).set(\isRunning, { Tdef(\watchMe).isPlaying });
-
-	Tdef(\watchMe).play;
-	Tdef(\watchMe).stop;
-	*/
-
-
-	Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 0.1]);
-	Tdef(\clocK).set(\runtime, 0, \isRunning, true);
-
-	/// add gui parent here:
+	/// add gui for the clock here:
 	Tdef(\clocK).set(\timeUV, UserView(w,
 		Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
 	).front);
@@ -526,22 +544,4 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		)
 	};
 
-	Tdef(\clocK).get(\timeUV).refresh;
-	Tdef(\clocK).clock = SystemClock;
-
-	Tdef(\clocK, { |envir|
-		var dt = 1;
-		inf.do { |i|
-			envir.timeStr =
-			// "Runtime :\n" +
-			envir.runtime.asTimeString.drop(-4);
-			defer { envir.timeUV.refresh };
-			if (envir.isRunning == true) {
-				envir.runtime = envir.runtime ? 0 + dt;
-			} {
-				envir.runtime = 0;
-			};
-			dt.wait;
-		}
-	}).play;
 };
