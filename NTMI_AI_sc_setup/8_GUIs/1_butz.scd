@@ -5,6 +5,8 @@ g = g ? ();
 g.screenScale = min(Window.availableBounds.width / 1920,
 	Window.availableBounds.height / 1177);
 
+g.alpha = 0.8;
+
 // contains the previous GUI-making functions
 g.makeGui = g.makeGui ? ();
 
@@ -57,9 +59,10 @@ Butz.numButz = 20;
 Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(120@16);
 Butz.style.font.size = 16;
-Butz.w.layout.spacing_(2).margins_(2);
 
-Butz.show.showButs;
+Butz.show;
+Butz.w.layout.spacing_(2).margins_(2);
+Butz.showButs;
 
 
 // then add some one-liners:
@@ -74,32 +77,37 @@ Butz.add('plotTree', { s.plotTree });
 // Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
 // Butz.add('meters', { s.meter.window.name_(\meters) });
 
+Butz.add('chanTest', { g.makeGui.chanTest });
+
 Butz.add('CLOSEALL', {
 	Window.allWindows.do { |w| if (w != Butz.w) { w.close } }
 });
 
 // the main NTMI windows - funcs defined in other GUI files
 Butz.add('Main_NTMI', { WinBounds.showOrMake('Main_NTMI')});
-WinBounds.addMake('Main_NTMI', { g.makeGui[\Main_NTMI].value;  g.main.w });
+WinBounds.addMake('Main_NTMI', {
+	g.makeGui[\Main_NTMI].value;
+	g.main.w.alpha_(g.alpha ? 0.8);
+});
 
 Butz.add('inphlux', { WinBounds.showOrMake('inphlux') });
-WinBounds.addMake('inphlux', { g.makeGui.inphlux });
+WinBounds.addMake('inphlux', { g.makeGui.inphlux.alpha_(g.alpha) });
 
 Butz.add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 	g.liveGui = q.liveInput.gui.name_(name).moveTo(600, 5);
 	g.tuneNameView(g.liveGui);
-	g.liveGui.parent.alpha_(0.8);
+	g.liveGui.parent.alpha_(g.alpha);
 });
 
 Butz.add('slotSounds', { WinBounds.showOrMake('slotSounds') });
-WinBounds.addMake('slotSounds', { g.makeGui.slotSounds });
+WinBounds.addMake('slotSounds', { g.makeGui.slotSounds.alpha_(g.alpha) });
 
 Butz.add('allPresets', { WinBounds.showOrMake('allPresets') });
-WinBounds.addMake('allPresets', { g.makeGui.allPresets });
+WinBounds.addMake('allPresets', { g.makeGui.allPresets.alpha_(g.alpha) });
 
 Butz.add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
-WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz });
+WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
 
 
 //////// ndefmixer - add to WinBounds call to Butz,

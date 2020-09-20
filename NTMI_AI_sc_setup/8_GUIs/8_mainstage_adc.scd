@@ -55,7 +55,7 @@ MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') done.".postln;
 });
 
-g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
+g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	var butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
 	var bounds = Window.availableBounds;
@@ -77,6 +77,7 @@ g.makeGui['NTMI_Main'] = { |dict, name = 'ntmi_MainStage'|
 	w = Window(name, bounds).front;
 	g.main.w = w;
 	g.main.w.background_(q.inph.currPresetCol);
+	g.main.w.alpha_(g.alpha ? 0.8);
 
 	bigUV = UserView(w, Rect.aboutPoint( bounds.center, wheight * 0.5, wheight * 0.5));
 	bigUV.background_(Color.clear);

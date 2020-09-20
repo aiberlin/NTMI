@@ -21,4 +21,5 @@ g.makeGui.chanTest = {
 
 	q.chantest.pinkgui = NdefGui(q.chantest.pink, 4, q.chantest.win);
 	q.chantest.pinkgui.name_("PINK");
+	q.chantest.win
 };
