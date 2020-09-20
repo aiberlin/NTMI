@@ -1,6 +1,8 @@
 # NTMI 
 
-This repository contains the full setup for the Nontrivial Music Instrument (NTMI) by Airborne Instruments. The code is all in SuperCollider, and can be nstalled as a SuperCollider quark (i.e. an extension package). For better access to users with little interest in coding, it can also be packaged into Standalone apps made with SuperCollider.
+This repository contains the full setup for the Nontrivial Music Instrument (NTMI) by Airborne Instruments: http://airborneinstruments.eu/
+
+The code is all in SuperCollider, and can be nstalled as a SuperCollider quark (i.e. an extension package). For better access to users with little interest in coding, it can also be packaged into Standalone apps made with SuperCollider.
 
 Instructions to run this setup with SuperCollider:
 
