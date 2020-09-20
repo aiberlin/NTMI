@@ -1,5 +1,5 @@
 /*
-  This is a default ntmi prefs file for macOS users.
+  This is a default ntmi prefs file tested for macOS users.
   It is copied automatically to Platform.userAppSupportDir,
 - and you can modify it there as you like!
 
@@ -18,10 +18,9 @@
 'numIns': 2,       // number of input channels to use
 'numChans': 2,     // number of output channels to use in the slot sounds and MainFX
 
-// run the gui-related code - true for macOS,
-/// false for headless systems, e.g. raspberry
+// flag whether to run gui-related code or not - true for macOS,
+/// false for headless systems, e.g. raspberry or bela
 'hasGui': true,
-
 
 // four stages where personalized extra code can be inserted:
 
@@ -29,20 +28,19 @@
 //////// filename for the server setup
 'serverSetup': "serverBasic2.scd",
 
-/// ... load all sound processes and their presets ...
-
 // last code file to load before booting
 'preBootSetup': "~/Desktop/nufo/preBootSetup.scd",
 
 // first code file to load right after server has booted
 'postBootSetup': "~/Desktop/nufo/postBootSetup.scd",
 
+/// ... load all sound processes and their presets ...
 /// ... load all interfaces, postres and GUIs etc ...
 
 // personalize after loadMe file setup is finished
 'finalSetup': "~/Desktop/nufo/finalSetup.scd",
 
-
+///////////// OPTIONAL: ////////////////
 //////// specify wich specific processNames to load
 //////// if none given or commented out,
 //////// all processes found in POOL folders will be loaded.
@@ -62,7 +60,6 @@
 // 	'allArm' -> 'allArmistice',
 // ],
 
-
 ////// Make six influx presets for different random seed numbers
 ////// Number 6 is fix, to allow 6 button colors on Interactor buttons!
 ////// plus diagL preset for simple 1-1 control
@@ -72,7 +69,7 @@ influxPresets: [ 3, 12, 37, 42, 45, 86, \diagL ],
 influxPreset: 3,
 
 // code filenames with collections of effects funcs to load
-// simple for now
+// load everything in basic collection allFX for now
 effects: [ "allFX.scd" ],
 
 // the slotNames to put into the MainFX - q.mFX :

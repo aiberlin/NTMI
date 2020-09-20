@@ -139,7 +139,6 @@ Task {
 	q.load("0_globals/*.scd");
 
 	q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
-	// preload all sounds while server is off!
 
 	s.options.numInputBusChannels = q.numIns;
 
