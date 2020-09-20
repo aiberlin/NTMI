@@ -16,9 +16,7 @@ g.makeGui.randomOrbitz = { |dict, name = \allPresets|
 		Pen.stringCenteredIn(q.ro.str, (uv.bounds.extent * (1@0.5)).asRect, q.ro.font);
 		Pen.stringCenteredIn("rd:" + q.ro.lastval, uv.bounds.extent.asRect, q.ro.bigFont);
 	};
-	//
-	g.defaultWinBounds['randomOrbitz'] = Rect(768.0, 967.0, 434.0, 295.0);
 	KeyPlayer.gui.parent.name = "randomOrbitz";
-
+	KeyPlayer.gui.parent;
 }
 );

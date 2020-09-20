@@ -19,7 +19,7 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 
 	var w, e, f, insc, infComp;
 
-	q.inph.ioWin = w = Window("inphluxInOut",
+	q.inph.ioWin = w = Window("inphlux",
 		Rect.aboutPoint(
 			(bnds.width * 0.5) @ (bnds.height - size),
 			size2,

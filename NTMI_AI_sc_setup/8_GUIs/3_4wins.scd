@@ -28,7 +28,7 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 		gui;
 	};
 
-	g.ndefPreGuis.do(_.skipjack.dt_(0.1));
+	g.ndefPreGuis.do { |gui| gui.skipjack.dt_(0.1) };
 	g[name] = w;
 	// w.bounds = w.bounds.moveTo(450, 500);
 
@@ -43,5 +43,5 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 		};
 		slotNames = newNames;
 	}, 0.2, { w.isClosed }, \presetWin);
-
+	w;
 };

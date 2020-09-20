@@ -1,3 +1,6 @@
+/*
+/////////// deactivated because moving to Butz !!!! ////////////
+
 // all window making functions go here:
 
 g.screenScale = min(Window.availableBounds.width / 1920,
@@ -206,3 +209,4 @@ g.makeGui[\MakeGui] = { |dict, name = \MakeGui|
 	g[name] = w;
 };
 
+*/
