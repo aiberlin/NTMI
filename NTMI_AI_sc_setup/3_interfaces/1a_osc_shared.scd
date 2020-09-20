@@ -69,28 +69,33 @@ q.inphlux.addHalo(\padNames, q.inphlux.inNames.drop(9));
 q.inphlux.addHalo(\capNames, q.inphlux.inNames.drop(9));
 
 
-// capture current zero position for imu and pads
-/* // get zero values while xosc is running:
-MFdef(\ZERO).value;
-*/
-MFdef(\ZERO).add(\set, {
-	q.zero.imu = q.osc.rawImuBiValues;
-	q.zero.pads = q.osc.rawPads;
-	"*** ZERO was set: ".postln;
-	"imu: %\n".postf(q.zero.imu.round(0.001));
-	"pads: %\n".postf(q.zero.imu.round(0.001));
-	q.zero.write;
-});
+// // too simple capture for zero position for imu and pads
+// /* // get zero values while xosc is running:
+// MFdef(\ZERO).value;
+// */
+// MFdef(\ZERO).add(\set, {
+// 	q.zero.imu = q.osc.rawImuBiValues;
+// 	q.zero.pads = q.osc.rawPads;
+// 	"*** ZERO was set: ".postln;
+// 	"imu: %\n".postf(q.zero.imu.round(0.001));
+// 	"pads: %\n".postf(q.zero.imu.round(0.001));
+// 	q.zero.write;
+// });
 
 
 // xosc sends battery voltage as float in volts, usable range 3.2-4.1 volts
-// ntmi currently sends analog in values as int from 0-4095, usable range (guess)
+
+// ntmi currently sends analog in values as int from 0-4095,
+// above 4000 means charger is connected,
+// usable range from maxval 3800 = quite full
+// down to ca 3200 - network begins to drop out.
+
 // this func is just for ntmi.
 
 q.bat = (
 	resetVals: { |bat|
 		bat.putAll((
-			string: "no battery data",
+			string: "battery?",
 			minval: 3200, // guessing, refine!
 			maxval: 3800, // guessing, refine!
 			totaltime: 180, // guessing, refine by testing
@@ -112,7 +117,7 @@ MFdef('battery').add(\calc, { |intVal = 0|
 
 	q.bat.intval = intVal;
 	q.bat.lastTime = Main.elapsedTime;
-	q.bat.percent = intVal.linlin(q.bat.minval, q.bat.maxval, 0, 100).round(0.1);
+	q.bat.percent = intVal.linlin(q.bat.minval, q.bat.maxval, 0, 100).round(1);
 
 	// calculate likely remaintime
 	// conservative guess: known max time
@@ -134,12 +139,14 @@ q.inph.modeIndex = 0;
 q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
 
+/////// functions that switch the main modes components on/off:
 // MFdef(\moveON).add(\info, { "move ON".postln });
 // MFdef(\moveOFF).add(\info, { "move OFF".postln });
 // MFdef(\touchON).add(\info, { "touch ON".postln });
 // MFdef(\touchOFF).add(\info, { "touch OFF".postln });
 // MFdef(\touchON).add(\info, { "binary ON".postln });
 // MFdef(\touchOFF).add(\info, { "binary OFF".postln });
+
 
 MFdef(\inphModeSetIndex).add(\set, { |modeIndex = 0|
 	if (q.inph.modeIndex != modeIndex) {
