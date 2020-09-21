@@ -543,6 +543,32 @@ MFdef(\ntmiImuFunc).add(\setInflux, {
 	q.inphlux.set(*keysvals);
 });
 
+
+q.frame = q.frame ? ();
+q.frame.ring = Array.fill(10, 0);
+q.frame.index = 0;
+q.frame.rate = {
+	var now = Main.elapsedTime;
+	var newest = q.frame.ring.wrapAt(q.frame.index - 1);
+	var oldest = q.frame.ring.at(q.frame.index);
+	if (now - newest < 0.5) {
+		q.frame.ring.size - 1 / (newest - oldest);
+	} {
+		// oops, dropout?
+		q.frame.ring.size - 1 / (now - oldest);
+	};
+};
+q.frame.rateStr = { "nUFO @ % fps".format(q.frame.rate.round(0.1)) };
+/*
+q.frame.rate
+q.frame.rateStr
+*/
+
+MFdef(\ntmiImuFunc).add(\frame, {
+	q.frame.ring.put(q.frame.index, Main.elapsedTime);
+	q.frame.index = q.frame.index + 1 % q.frame.ring.size;
+});
+
 /*
 MFdef(\ntmiImuFunc).disable( \setInflux );
 MFdef(\ntmiImuFunc).enable( \setInflux );
