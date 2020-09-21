@@ -35,7 +35,7 @@ g.butzNames = [
 	'ndefMixer',
 	'mainFX',
 	'- interfaces -',
-	'ntmi',
+	'nUFO',
 	'nanoKtl',
 	'ferrari',
 	'uc4',
@@ -148,9 +148,10 @@ WinBounds.addMake(\nanoKtl, { |dict, name = \nanoKtl|
 });
 
 
-Butz.add(\ntmi, { WinBounds.showOrMake(\ntmi) });
-WinBounds.addMake(\ntmi, {
+Butz.add(\nUFO, { WinBounds.showOrMake(\nUFO) });
+WinBounds.addMake(\nUFO, {
 	var ntg = MKtl(\ntmi).gui;
+	ntg.parent.name_(\nUFO);
 	ntg.views.detect { |vw| vw.element.name == \enc }.view.centered_(true);
 });
 
