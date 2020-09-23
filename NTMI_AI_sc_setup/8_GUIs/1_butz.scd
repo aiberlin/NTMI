@@ -117,11 +117,12 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	var ndefMixer = NdefMixer(s, 24);
 	ndefMixer.parent.name_(name);
 	g[name] = ndefMixer;
-	ndefMixer.skipjack.dt = 0.4;
 	ndefMixer.moveTo(5, 5);
 	// set popupmenu to 'activeProxies' ?
 	// ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
 	ProxyMeter.addMixer(ndefMixer);
+	// save CPU by slowing down polling:
+	ndefMixer.skipjack.dt = 0.4;
 	ProxyMeter.skipjack.dt = 0.2;
 	defer ({ ProxyMeter.hideKrs }, 1);
 
