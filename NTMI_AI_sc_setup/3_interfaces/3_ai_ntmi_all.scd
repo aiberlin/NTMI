@@ -558,7 +558,7 @@ q.frame.rate = {
 		q.frame.ring.size - 1 / (now - oldest);
 	};
 };
-q.frame.rateStr = { "nUFO @ % fps".format(q.frame.rate.round(0.1)) };
+q.frame.rateStr = { "nUFO @ % fps".format(q.frame.rate.round(1)) };
 /*
 q.frame.rate
 q.frame.rateStr

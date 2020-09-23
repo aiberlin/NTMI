@@ -2,6 +2,13 @@
 
 // "\n**********  Network Config:  **********\n".postln;
 
+q.getWifiName = {
+	// osx only for now:
+	"networksetup -getairportnetwork en0".unixCmdGetStdOut.split($:).last.drop(1).drop(-1);
+};
+
+SkipJack({ q.wifiStr = "WiFi:" + q.getWifiName }, 5);
+
 q.getMyIPs = {
 		var confstr = unixCmdGetStdOut("ifconfig");
 		var labelStarts = confstr.findAll("inet");

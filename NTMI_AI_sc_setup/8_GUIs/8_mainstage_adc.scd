@@ -20,7 +20,6 @@ g.makeGui['NTMI_Main'].value;
 g.main = g.main ? ();
 g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 
-
 /////// Clock display shows how long something has been running
 /*
 Tdef(\clocK).gui;
@@ -104,7 +103,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
-	var oscBut, midiBut, hidBut, recBut, batView;
+	var nufoView, recBut;
 	var w;
 	var bigUV, imuUV, imuWin;
 	var popMVs, ndefPops, ndefMViews, rMViews;
@@ -133,40 +132,26 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	Stethoscope(s, q.numChans, view: w.view);
 	ServerMeterView(s, w, 250@0, q.numIns ? q.numChans, q.numChans);
 
-	oscBut = Button(w,
-		Rect(rightCol, 20 * scrscale, 300 * scrscale, 50 * scrscale)).states_([
-		["OSC?", Color.white, butGrey],
-		["OSC active", Color.black, butGreen]
-	]).font_(font).value_(0);
-	g.main.oscBut = oscBut;
 
-	batView = UserView(w, Rect(rightCol, 75 * scrscale, 300 * scrscale, 35 * scrscale));
-	batView.background_(butGrey);
-	batView.drawFunc_({ |uv|
+	nufoView = UserView(w, Rect(rightCol, 20 * scrscale, 300 * scrscale, 150 * scrscale));
+	nufoView.background_(butGrey);
+	nufoView.drawFunc_({ |uv|
 		var bounds = uv.bounds.extent.asRect;
 		Pen.addRect(bounds).color_(Color.white).stroke;
 		Pen.addRect(bounds.copy.width_(bounds.width * (q.bat.percent ? 0 * 0.01)));
 		Pen.color_(Color.green(0.75, 0.8)).fill;
-		Pen.stringCenteredIn(q.bat.string,
+		Pen.stringCenteredIn(
+			q.wifiStr
+			++ "\n" ++ q.frame.rateStr
+			++ "\n" ++ q.bat.string,
 			bounds,
 			font.copy.size_(font.size * 0.8),
 			Color.white
 		);
+		// "nufoView.drawFunc".postln;
 	});
-	batView.refresh;
-	g.main.batView = batView;
-
-	midiBut = Button(w, Rect(rightCol, 120 * scrscale, 300 * scrscale, 40 * scrscale)).states_([
-		["MIDI?", Color.grey(0.7), butGrey],
-		["MIDI active", Color.black, butGreen]
-	]).font_(font).value_(0);
-
-	hidBut = Button(w, Rect(rightCol, 170 * scrscale, 300 * scrscale, 40 * scrscale)).states_([
-		["HID?", Color.grey(0.7), butGrey],
-		["HID active", Color.black, butGreen]
-	]).font_(font).value_(0);
-
-
+	nufoView.refresh;
+	g.main.nufoView = nufoView;
 
 	Button(w, Rect(rightCol, 340 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
 		["Reset Clock", Color.white, butGrey],
@@ -466,22 +451,23 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.skipper = SkipJack(MFdef(\mainWinUpdate),  0.1, { w.isClosed }, name: \mainUV);
 
 	// update OSC and battery status
-	MFdef(\mainWinUpdate).add(\oscBat, {
-		var oscBut = g.main.oscBut;
-
-		// clear
-		if (oscBut.value.binaryValue != (q.osc.timeSinceLast < 1)) {
-			oscBut.value = q.osc.timeSinceLast < 1;
-			// if no OSC for longer than 1 sec, reset battery display
-			if (q.osc.timeSinceLast >= 1) {
-				MFdef(\battery).(0);
-				q.bat.resetVals;
-			};
+	MFdef(\mainWinUpdate).add(\nufoView, {
+		if (q.osc.timeSinceLast >= 1) {
+			MFdef(\battery).(0);
+			q.bat.resetVals;
+			q.frame.resetVals;
 		};
+
 		// update battery status if new
-		if (q.bat.percent != q.bat.percentOld) {
-			g.main.batView.refresh;
+		if (q.bat.percent != q.bat.percentOld
+			or: { q.wifiOld != q.wifiStr
+				or: { (q.frame.rateStr == q.frame.rateStrOld).not }
+		})
+		{
+			g.main.nufoView.refresh;
 			q.bat.percentOld = q.bat.percent;
+			q.frame.rateStrOld = q.frame.rateStr;
+			q.wifiOld = q.wifiStr;
 		};
 	});
 
@@ -494,9 +480,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			if (q.inph.mode == \binary) {
 				g.main.padCols = q.bin.bins.collect { |val, i|
 					Color.white.alpha_(val);
-					// if (val > 0.5) { Color.white } { Color.clear };
 				};
-				// g.main.padCols.postln;
 			} {
 				g.main.padCols = q.osc.rawPads.collect { |val|
 					Color.yellow(val).alpha_(val);
