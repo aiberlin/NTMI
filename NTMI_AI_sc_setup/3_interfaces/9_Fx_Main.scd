@@ -156,9 +156,9 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 		};
 		// rand
 		if(dict.randomize.notNil){
-			// "MainFX rand: ".postln;
 			randSettings = [dict.randomize, {rrand(0.2, 0.8)}.dup(dict.randomize.size)].flop.flat;
 			chain.proxy.setUni(*randSettings);
+			"MainFX rand: %\n".postf(randSettings);
 		};
 		// looks better with cleanNodeMap, but better that nodeMap remembers last settings!
 		// chain.proxy.cleanNodeMap;
