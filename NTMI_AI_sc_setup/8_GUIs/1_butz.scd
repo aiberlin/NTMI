@@ -139,7 +139,7 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 Butz.add('mainFX', { WinBounds.showOrMake('mainFX', ) });
 WinBounds.addMake('mainFX', { |dict, name = \mainFX|
 	g.makeGui.mainFX;
-	g.mfx.win.front.name_(name);
+	q.mfx.win.front.name_(name);
 });
 
 /// some more for extra interfaces - MKtls
