@@ -92,7 +92,7 @@ MFdef('guiSlots').add(\set, {
 
 g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
-	var butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
+	var w, butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
 	var bounds = Window.availableBounds;
 	var wheight = bounds.height, wwidth = bounds.width;
 	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
@@ -104,7 +104,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
 	var nufoView, recBut;
-	var w;
 	var bigUV, imuUV, imuWin;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
@@ -205,46 +204,29 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 
-<<<<<<< HEAD
 	g.main.mainSl = MView(
 		q.mFX.proxyChain.proxy.get(\mainVol),
 		g.main.w, Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
 
+
 	g.main.mainSl.uv.alpha_(0.7).refresh;
 	g.main.mainSl.label_(\mainVol);
 	g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
 	g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
+	g.main.mainSl.dict.round_(1/100);
+	g.main.mainSl.dict.font_(Font("Monaco", 30));
 	g.main.mainSl.action.add(\setMain, { |mv|
 		q.mFX.proxyChain.proxy.set(\mainVol, mv.value)
-=======
-	g.main.mastaSl = MView(
-		q.mFX.proxyChain.proxy.get(\mastaVol),
-		g.main.w, Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
-	);
-
-	g.main.mastaSl.uv.alpha_(0.7).refresh;
-	g.main.mastaSl.label_(\mastaVol);
-	g.main.mastaSl.putDict(\myspec, [0, 4, \amp]);
-	g.main.mastaSl.dict[\knobCol] = Color.grey(0, 0.7);
-	g.main.mastaSl.action.add(\setMasta, { |mv|
-		q.mFX.proxyChain.proxy.set(\mastaVol, mv.value)
->>>>>>> parent of bd886a6... - rounded slider values to 0.01 for clutter reduction
 	});
 	g.main.mainSl.drawFunc.add(\label, {
 		Pen.stringCenteredIn(
-<<<<<<< HEAD
 			g.main.mainSl.label,
 			g.main.mainSl.bounds.moveTo(0,0),
-=======
-			g.main.mastaSl.label,
-			g.main.mastaSl.bounds.moveTo(0,0),
->>>>>>> parent of bd886a6... - rounded slider values to 0.01 for clutter reduction
 			Font("Monaco", 40 * scrscale),
 			Color.blue
 		)
 	});
-<<<<<<< HEAD
 	g.main.mainVolDisplay = {
 		var nuval = q.mFX.proxyChain.proxy.get(\mainVol);
 		if (g.main.mainSl.value != nuval) {
@@ -255,18 +237,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
 	g.main.mainSl.uv.focus(true).refresh;
 	g.main.mainSl.uv.focus(false).refresh;
-=======
-	g.main.mastaVolDisplay = {
-		var nuval = q.mFX.proxyChain.proxy.get(\mastaVol);
-		if (g.main.mastaSl.value != nuval) {
-			g.main.mastaSl.value = nuval
-		};
-	};
-	g.main.mastaSl.dict[\focusCol] = Color.grey(1.0, 0.8);
-	g.main.mastaSl.dict[\backCol] = Color.grey(1.0, 0.6);
-	g.main.mastaSl.uv.focus(true).refresh;
-	g.main.mastaSl.uv.focus(false).refresh;
->>>>>>> parent of bd886a6... - rounded slider values to 0.01 for clutter reduction
 
 
 	// \mastaVol, [0, 4, \amp], labelWidth: 100 * scrscale).font_(Font("Monaco", 20 * scrscale));
@@ -358,6 +328,8 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			dict[\width] = dict[\bounds].width;
 			dict[\focusCol] = Color.grey(1.0, 0.8);
 			dict[\backCol] = Color.grey(1.0, 0.6);
+			dict[\round] = (1/100);
+
 
 			dict[\bounds00] = dict[\bounds].moveTo(0,0);
 			dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
@@ -541,10 +513,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	MFdef(\mainWinUpdate).add(\slots, MFdef('guiSlots'));
 
-<<<<<<< HEAD
 	MFdef(\mainWinUpdate).add(\main, g.main[\mainVolDisplay]);
-=======
-	MFdef(\mainWinUpdate).add(\masta, g.main[\mastaVolDisplay]);
 
 
 	/////// Clock display shows how long something has been running
@@ -552,23 +521,23 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	Tdef(\clocK).set(\isRunning, true);
 	// jumps back to zero when stopped
 	Tdef(\clocK).set(\isRunning, false);
->>>>>>> parent of bd886a6... - rounded slider values to 0.01 for clutter reduction
+	>>>>>>> parent of bd886a6... - rounded slider values to 0.01 for clutter reduction
 
 	/// add gui for the clock here:
 	Tdef(\clocK).set(\timeUV, UserView(w,
-		Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
+	Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
 	).front);
 	Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
 	Tdef(\clocK).set(\color, Color.white);
 
 	Tdef(\clocK).get(\timeUV).drawFunc = { |uv|
-		var font = fatfont.copy.size_(60 * scrscale);
-		var timeStr = Tdef(\clocK).get(\timeStr);
-		Pen.stringCenteredIn(timeStr,
-			Rect(0,0, uv.bounds.width, uv.bounds.height),
-			Tdef(\clocK).get(\font),
-			Tdef(\clocK).get(\color)
-		)
+	var font = fatfont.copy.size_(60 * scrscale);
+	var timeStr = Tdef(\clocK).get(\timeStr);
+	Pen.stringCenteredIn(timeStr,
+	Rect(0,0, uv.bounds.width, uv.bounds.height),
+	Tdef(\clocK).get(\font),
+	Tdef(\clocK).get(\color)
+	)
 	};
-
+	*/
 };
