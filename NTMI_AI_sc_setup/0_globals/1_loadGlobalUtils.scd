@@ -74,11 +74,12 @@ MFdef(\bufLoad).add(\loadFiles, { |folderPath, doneFunc, buflistname|
 });
 
 MFdef(\setBufRange).add(\setNdefs, { |ndefs, buffers, buflistname|
+	var range;
 	////// assuming contiguous numbers
 	if (buffers.size < 1) {
 		"*** setBufRange: no buffers given, cannot set bufRange!".postln;
 	} {
-		var range = [ buffers.first.bufnum, buffers.last.bufnum ];
+		range = [ buffers.first.bufnum, buffers.last.bufnum ];
 		ndefs.do { |ndef|
 			"// % now uses % buffers in q.bufs.%, sndBufRange %.\n"
 			.postf(ndef, buffers.size, buflistname, range);
