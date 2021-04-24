@@ -1,10 +1,11 @@
 (
 	\name: "NTMI",
 	\path: "NTMI",
-	\summary: "Lose Control, Gain Influence - the setup for the Nontrivial Musical Instrument, a.k.a. UFO.",
+	\summary: "setup for the Nontrivial Musical Instrument, a.k.a. nUFO.",
 	\author: "Alberto de Campo, Hannes Hoelzl, Bruno Gola, Isak Han",
 	\version: 0.1,
 	\organization: "Airborne Instruments / aiberlin",
+	\url: "http://airborneinstruments.eu/",
 	\since: "2018",
 	\dependencies: [
 		"JITLibExtensions", "adclib", "Influx", "Modality-toolkit",
