@@ -521,23 +521,22 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	Tdef(\clocK).set(\isRunning, true);
 	// jumps back to zero when stopped
 	Tdef(\clocK).set(\isRunning, false);
-	>>>>>>> parent of bd886a6... - rounded slider values to 0.01 for clutter reduction
+	*/
 
 	/// add gui for the clock here:
 	Tdef(\clocK).set(\timeUV, UserView(w,
-	Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
+		Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
 	).front);
 	Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
 	Tdef(\clocK).set(\color, Color.white);
 
 	Tdef(\clocK).get(\timeUV).drawFunc = { |uv|
-	var font = fatfont.copy.size_(60 * scrscale);
-	var timeStr = Tdef(\clocK).get(\timeStr);
-	Pen.stringCenteredIn(timeStr,
-	Rect(0,0, uv.bounds.width, uv.bounds.height),
-	Tdef(\clocK).get(\font),
-	Tdef(\clocK).get(\color)
-	)
+		var font = fatfont.copy.size_(60 * scrscale);
+		var timeStr = Tdef(\clocK).get(\timeStr);
+		Pen.stringCenteredIn(timeStr,
+			Rect(0,0, uv.bounds.width, uv.bounds.height),
+			Tdef(\clocK).get(\font),
+			Tdef(\clocK).get(\color)
+		)
 	};
-	*/
 };
