@@ -61,6 +61,7 @@ MFdef('guiSlots').add(\set, {
 
 	q.slots.actives.do { |ndef, i|
 		var pop = g.main.popups[i];
+		var prepop = g.main.prePops[i];
 		var mview = g.main.ndefMViews[i];
 		var vol = ndef.vol;
 		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
@@ -69,6 +70,7 @@ MFdef('guiSlots').add(\set, {
 		var presetName = NdefPreset(ndef).currSet.key;
 
 		var newLabel = ndef.key.asString;
+
 		if (presetName == \curr) {
 			ndefRandSeed = ndef.getHalo(\randSeed);
 			ndefRandSeed !? {
@@ -82,8 +84,16 @@ MFdef('guiSlots').add(\set, {
 			pop.items = q.slots.choices[i];
 			pop.value = pop.items.indexOf(ndef.key);
 
+			prepop.items = NdefPreset(ndef).getSetNames;
+			prepop.value = NdefPreset(ndef).currIndex;
+
 			mview.label_( newLabel );
 		};
+
+		if (NdefPreset(ndef).currIndex != prepop.value) {
+			prepop.value = NdefPreset(ndef).currIndex;
+		};
+
 		if (mview.value != vol) { mview.value = vol };
 		if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
 	};
@@ -254,9 +264,9 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
 		.items_(q.slots.choices[i])
 		.value_(ndef.key).font_(font);
-		// var popPres = PopUpMenu(w, Rect(left + 250 * scrscale, top, 250 * scrscale, 40 * scrscale))
-		// .items_(ndefpre.getSetNames)
-		// .value_(ndefpre.getSetNames.size.rand).font_(font);
+		var prePop = PopUpMenu(w, Rect(left + 250 * scrscale, top, 250 * scrscale, 40 * scrscale))
+		.items_(ndefpre.getSetNames)
+		.value_(ndefpre.getSetNames.size.rand).font_(font);
 
 		pop.background_(Color.grey(1.0, 0.7));
 
@@ -265,6 +275,15 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			MFdef('guiSlots').value;
 			emmy.refresh;
 		};
+		prePop.action = { |pop|
+			var ndef = q.slots.actives[i];
+			NdefPreset(ndef).setCurr(pop.item);
+			// dont step, just add influx offset
+			q.pre.stepNdefInf(ndef, 0);
+			MFdef('guiSlots').value;
+			emmy.refresh;
+		};
+
 		emmy.uv.resize_(1);
 		emmy.uv.alpha = 0.8;
 		emmy.dict[\knobCol] = Color.grey(0, 0.7);
@@ -287,12 +306,12 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 				Color.blue
 			)
 		});
-		[pop,emmy, /*popPres*/];
+		[pop,emmy, prePop];
 	};
 
 	g.main.popups = popMVs.flop[0];
 	g.main.ndefMViews = popMVs.flop[1];
-	// g.main.popPres = popMVs.flop[2];
+	g.main.prePops = popMVs.flop[2];
 
 	////// the 4 mviews on the right -  remove n eventually
 	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
