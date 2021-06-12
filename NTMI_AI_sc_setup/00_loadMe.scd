@@ -33,8 +33,19 @@ Task {
 	//// Set generally useful globals:
 	q.time0 = Main.elapsedTime;
 	q.myname = Platform.userHomeDir.basename.asSymbol;
-	q.hasGui = \View.asClass.notNil;
-	if (q.hasGui) { "9_optionals/warnWin.scd".loadRelative };
+
+	// these may be set in startup file already?
+	q.hasGui = q.hasGui ?? { \View.asClass.notNil };
+	q.isPi = q.isPi ?? { q.myname == 'pi' };
+	q.usesMidi = q.usesMidi ? true;
+
+	if (q.hasGui) {
+		"9_optionals/warnWin.scd".loadRelative
+	} {
+		q.warnWin = { |q, string="?!?", title="?!?"|
+			warn(title + string)
+		}
+	};
 
 	//////// DIRECTORIES:
 	q.dir = q.dir ? ();
@@ -46,12 +57,13 @@ Task {
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
 
-	"*** Modality: find connected devices ***".postln;
-	/////// dont load HIDs by default, for more stability
-	// MKtl.find(\hid); 0.5.wait;
-	/////// do load MIDI devices
-	MKtl.find(\midi); 0.5.wait;
-
+	// "*** Modality: find MIDI and HID devices if enabled ***".postln;
+	if (q.usesMidi) {
+		MKtl.find(\midi); 0.5.wait;
+	};
+	if (q.usesHid) {
+		MKtl.find(\hid); 0.5.wait;
+	};
 
 	// ///////// set for dev mode here :
 	// if (q.myname == \adcxxx) {
@@ -128,8 +140,7 @@ Task {
 	q.numChans = q.prefs.active.numChans ? 2;
 	q.numIns = q.prefs.active.numIns ? q.numChans;
 	"*** q.numChans is: %\n".postf(q.numChans);
-
-	q.hasGui = q.prefs.active.hasGui ? q.hasGui;
+	"*** q.numIns is: %\n".postf(q.numIns);
 
 	// Server.killAll;
 	s.quit; "".postln;
@@ -147,7 +158,7 @@ Task {
 	"\n\n".postln;
 
 	s.waitForBoot {
-
+		// can be overwritten in startup file
 		q.helloSnd ?? {
 			"*** server booted, plays 3 pings on left chan.".postln;
 			fork { 3.do { Env.perc.test; 0.3.wait } };
@@ -201,7 +212,11 @@ Task {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
 			0.2.wait;
-			g.makeGui[\Main_NTMI].value;
+			if (q.isPi != true) {
+				g.makeGui[\Main_NTMI].value;
+			} {
+				g.makeGui['miniNTMI'].value;
+			};
 		};
 
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
@@ -210,6 +225,6 @@ Task {
 		q.load(q.prefs.active.finalSetup);
 
 	};
-	}.play(AppClock);
+}.play(AppClock);
 )
 
