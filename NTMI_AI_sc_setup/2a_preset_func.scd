@@ -10,7 +10,7 @@ q.pre.settingsDir = q.dir.userPOOL +/+ "2_process/presets/";
 q.pre.settingsDir.pathMatch;
 
 if (ProxyPreset.findMethod(\addsToTop).notNil) {
-		"*** ProxyPreset: adding new presets to top".postln;
+	"*** ProxyPreset: adding new presets to top".postln;
 	q.pre.addsToTop = true;
 } {
 	"*** ProxyPreset: cannot add new presets to top - Please do:\n"
@@ -50,20 +50,10 @@ q.pre.makePreset = { |pre, proxy|
 	if (q.pre.addsToTop == true){
 		preset.perform(\addsToTop_, true);
 	};
-
-	// if(preset.settings.size < 2){
-	// 	// load first real preset ...
-	// 	preset.setCurr(preset.settings.wrapAt(1).key);
-	// }{ "sorry, no settings there yet".warn };
-	// proxy.addHalo(\ndefPreset, preset);
 };
 
 // making all the presets here
 q.getNdefs.do { |proxy, i|	q.pre.makePreset(proxy) };
-// FIXME /////// ****** preset.loadSettings(presPath); with xFMSH
-/// somehow creates a global var l - a List of settings - why?
-// quick and dirty fix: set it to nil
-l = nil;
 );
 
 // init to first preset if there are any saved ones
