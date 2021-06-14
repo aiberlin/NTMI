@@ -34,12 +34,12 @@ g.butzNames = [
 	'randomOrbitz',
 	'ndefMixer',
 	'mainFX',
-	'- interfaces -',
+	'-interfaces-',
 	'nUFO',
 	'nanoKtl',
 	'ferrari',
 	'uc4',
-	'- helpers -',
+	'-helpers-',
 	'chanTest',
 	'plotTree',
 	// 'meters',
@@ -55,21 +55,15 @@ g.butzNames.do (Butz.add(_));
 
 // set Butz window style params:
 Butz.style;
-Butz.numButz = 20;
+Butz.numButz = 22; // leave two for customization
 Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(120@16);
 Butz.style.font.size = 16;
 
-Butz.show;
-Butz.w.layout.spacing_(2).margins_(2);
-Butz.showButs;
-
+Butz.show.updateButtons;
 
 // then add some one-liners:
-Butz.add('miniMax', {
-	var numToShow = if (Butz.butz[1].visible, 1, nil);
-	Butz.showButs(numToShow);
-});
+Butz.addMiniMax;
 
 Butz.add('setAll', { WinBounds.restoreAll });
 
