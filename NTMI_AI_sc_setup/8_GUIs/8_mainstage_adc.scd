@@ -138,9 +138,11 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.padCols = 0!8;
 	g.main.movevals = 0!9;
 
+	// stetho needs to be in a new-style layout for resizing...
 	Stethoscope(s, q.numChans, view: w.view);
+	// ServerMeter does not scale at all...
+	// put it in its own window?s
 	ServerMeterView(s, w, 250@0, q.numIns ? q.numChans, q.numChans);
-
 
 	nufoView = UserView(w, Rect(rightCol, 20 * scrscale, 300 * scrscale, 150 * scrscale));
 	nufoView.background_(butGrey);
@@ -415,13 +417,20 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	);
 
 	MFdef('mainPreStep').add(\updateMain, { defer { bigUV.refresh } });
+	// possible fixes here:
+	// do basic geometry of locations only once rel to center,
+	// move to center, then scale,
+	// and only paint the ones that are needed.
 
 	// small UV in the middle for cheaper pads/axes drawing
 	imuUV.drawFunc = { |uv|
-		var bounds = uv.bounds.moveTo(0,0);
-		var center = bounds.center;
+		var myscale = Window.screenBounds.width / 1680;
+		var bounds = uv.bounds.moveTo(0, 0);
+		var center = bounds.center / myscale; // reverse scale
 		var centPadsL, padsLPos, centPadsR, padsRPos;
 		var star;
+
+		Pen.scale(myscale, myscale);
 
 		if ([\full, \touch, \binary].includes(q.inph.mode)) {
 			centPadsL = center.copy.x_(center.x - (center.y * 1.8));
@@ -463,7 +472,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			Pen.color = Color.white; Pen.width = 1.5;
 			Pen.stroke;
 		};
-
 	};
 	imuUV.refresh;
 
