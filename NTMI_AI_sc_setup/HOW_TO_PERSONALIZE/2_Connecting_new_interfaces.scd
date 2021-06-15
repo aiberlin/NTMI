@@ -6,7 +6,7 @@ For longer examples to follow, see the nanoKtl and uc4 files.
 
 */
 /// this file discusses all basic functions:
-(q.dir.base +/+ "_Interface_Functions.scd").openOS;
+(q.dir.ntmi +/+ "_Interface_Functions.scd").openOS;
 
 // using Modality-toolkit, make an MKtl for a korg nankontrol:
 MKtl('testa', "*kontrol2");

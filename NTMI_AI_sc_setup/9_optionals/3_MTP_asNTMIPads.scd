@@ -15,7 +15,7 @@ OSCdef(\xana).func.value([\qwer] ++ (0.2!16)); // only once
 if (q.hasGui and: { thisProcess.platform.name == \osx }) {
 
 
-	MTP.progpath = (q.dir.base +/+ "macos_binaries/");
+	MTP.progpath = (q.dir.ntmi +/+ "macos_binaries/");
 
 	g.makeGui.xoscMTPads = {
 		q = q ? ();

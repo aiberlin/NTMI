@@ -1,14 +1,14 @@
 /////////// EXAMPLE PROCESS SETUP ////////////
 
 // // post all found processes:
-// (q.dir.base +/+ "*processes/*.scd").pathMatch.collect { |path|
+// (q.dir.ntmi +/+ "*processes/*.scd").pathMatch.collect { |path|
 // 	path.basename.splitext[0].asSymbol;
 // }.postcs;
 
 
 (
 /// processes: preload all found processes
-processNames: (q.dir.base +/+ "*processes/*.scd").pathMatch.collect { |path|
+processNames: (q.dir.ntmi +/+ "*processes/*.scd").pathMatch.collect { |path|
 	path.basename.splitext[0].asSymbol;
 },
 //////// start with isak favorites:

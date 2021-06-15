@@ -34,10 +34,11 @@ Task {
 	q.time0 = Main.elapsedTime;
 	q.myname = Platform.userHomeDir.basename.asSymbol;
 
-	// these may be set in startup file already?
-	q.hasGui = q.hasGui ?? { \View.asClass.notNil };
-	q.isPi = q.isPi ?? { q.myname == 'pi' };
+	// these may have been set in startup file already:
+	q.hasGui   = q.hasGui ?? { \View.asClass.notNil };
+	q.isPi     = q.isPi ?? { q.myname == 'pi' };
 	q.usesMidi = q.usesMidi ? true;
+	q.usesHid  = q.usesHid  ? true;
 
 	if (q.hasGui) {
 		"9_optionals/warnWin.scd".loadRelative
@@ -49,8 +50,8 @@ Task {
 
 	//////// DIRECTORIES:
 	q.dir = q.dir ? ();
-	q.dir.base = thisProcess.nowExecutingPath.dirname;
-	q.dir.fullNames = (q.dir.base +/+ "*/").pathMatch;
+	q.dir.ntmi = thisProcess.nowExecutingPath.dirname;
+	q.dir.fullNames = (q.dir.ntmi +/+ "*/").pathMatch;
 	q.dir.names = q.dir.fullNames.collect { |path| path.basename };
 
 	// check user dir, make it and migrate pool there if needed
@@ -77,15 +78,15 @@ Task {
 
 	if(q.dev) {
 		///////////// WHILE DEVELOPING, direct back to dev/project dir!
-		q.dir.user = q.dir.base;
-		q.dir.userPOOL = q.dir.base +/+ "POOL";
+		q.dir.user = q.dir.ntmi;
+		q.dir.userPOOL = q.dir.ntmi +/+ "POOL";
 	} {
 		///////////// non-dev: copy pool to user home dir
 		if (File.exists(q.dir.user).not) {
 			"NTMI: making user home dir".postln;
 			unixCmd("mkdir" + quote(q.dir.user));
 			unixCmd("cp -nR"
-				+ quote(q.dir.base +/+ "POOL")
+				+ quote(q.dir.ntmi +/+ "POOL")
 				+ quote(q.dir.user +/+ "POOL")
 			);
 		};
@@ -102,7 +103,7 @@ Task {
 
 			path = filename.standardizePath;
 			if (path[0].isPathSeparator.not) {
-				here = here ? q.dir.base;
+				here = here ? q.dir.ntmi;
 				dirsup.do { here = here.dirname };
 				path = (here +/+ path);
 			};
