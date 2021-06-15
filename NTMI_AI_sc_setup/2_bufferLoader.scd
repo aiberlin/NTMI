@@ -1,4 +1,4 @@
-/// load global buffers on startup
+/// load global buffers
 
 var globalBufFolder = q.prefs.active.bufferFolder;
 // if present, load global bufferfolder into q.bufs.global

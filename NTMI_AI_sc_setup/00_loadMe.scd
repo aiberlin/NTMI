@@ -24,7 +24,7 @@ q.keys(SortedList).do("q.% : %\n".postf(_, _, _));
 Task {
 	0.1.wait; /// wait for SC Welcome post ...
 
-	"\n\n*** startup file for NTMI_AI_sc_setup loading...\n\n".postln;
+	"\n\n*** loadMe file for NTMI_AI_sc_setup loading...\n\n".postln;
 
 	q = q ? ();  // <- dict for most everything
 	g = g ? ();  // <- gui stuff goes here!
@@ -158,8 +158,9 @@ Task {
 	"\n\n".postln;
 
 	s.waitForBoot {
-		// can be overwritten in startup file
+
 		q.helloSnd ?? {
+			// if q.helloSnd is not already defined in startup file, do:
 			"*** server booted, plays 3 pings on left chan.".postln;
 			fork { 3.do { Env.perc.test; 0.3.wait } };
 		};
