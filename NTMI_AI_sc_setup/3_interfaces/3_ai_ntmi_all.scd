@@ -45,12 +45,13 @@ q.osc is shared space
 (
 // use this dict for everything osc related
 q.osc = q.osc ? ();
-q.osc.ntmi = q.osc.ntmi ? ();
+q.osc.nufo = q.osc.nufo ? ();
 
 
 ///////// make a new
 MKtl.all.at(\ntmi).free;
 MKtl(\ntmi, "ai-ntmi");
+// this is for logging into NTMI-xxx networks only:
 MKtl(\ntmi).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
 MKtl(\ntmi).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
 
@@ -329,7 +330,9 @@ MFdef(\inphModeSetIndex).add(\modeSwColor, {
 	// send 3 times to make sure it arrives
 	fork { 3.do {
 		0.02.wait;
-		MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
+		try {
+			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
+		}
 	} };
 });
 
@@ -339,7 +342,9 @@ MFdef(\setInphWPre).add(\setLEDs, {
 		var ledCol = q.inph.currPresetCol.asArray.keep(3).round.collect(_.asInteger);
 		0.1.wait;
 		[5, 6].do { |ledIndex|
-			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledIndex, *ledCol);
+			try {
+				MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledIndex, *ledCol);
+			};
 			0.02.wait
 		}
 	}
@@ -574,8 +579,10 @@ MFdef(\ntmiImuFunc).disable( \setInflux );
 MFdef(\ntmiImuFunc).enable( \setInflux );
 */
 
-q.osc.ntmiSkipLogin.stop.free;
-q.osc.ntmiSkipLogin = SkipJack({ try { MKtl(\ntmi).device.source.sendMsg("/ntmi/login") } }, 0.5);
+q.osc.nufoSkipLogin.stop.free;
+q.osc.nufoSkipLogin = SkipJack({
+	try { MKtl(\ntmi).device.source.sendMsg("/ntmi/login")
+} }, 0.5);
 
 // for monitoring the incoming osc activity by timetag
 q.osc.lastInTime = 0;
@@ -587,8 +594,8 @@ OSCdef(\imuAlive, { |msg, time|
 }, "/imu").permanent_(true);
 
 ///////// update slot LEDs
-q.osc.ntmiSkip.stop.free;
-q.osc.ntmiSkip = SkipJack({
+q.osc.nufoSkip.stop.free;
+q.osc.nufoSkip = SkipJack({
 	var cols = [[0,0,0], [0,1,0]], col;
 	fork {
 		MKtl(\ntmi).elAt(\led, \bk, (0..3)).do { |led, ledi|
@@ -600,7 +607,9 @@ q.osc.ntmiSkip = SkipJack({
 				// "ntmi: sending changed color to led_bk %: %\n".postf(ledi, col);
 				2.do {
 					rrand(0.03, 0.07).wait;
-					MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+					try {
+						MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+					}
 				};
 			};
 

@@ -7,7 +7,7 @@ Tdef(\allLEDs).play;
 
 Tdef(\allLEDs).set(\dt, 0.1);
 Tdef(\allLEDs, { |ev|
-	try { q.osc.ntmiSkip.stop };
+	try { q.osc.nufoSkip.stop };
 	2.do {
 		"leds back ON".postln;
 		MKtl(\ntmi).elAt(\led, \bk).do { |led|
@@ -35,7 +35,7 @@ Tdef(\allLEDs, { |ev|
 	};
 
 	// set to correct state now:
-	try { q.osc.ntmiSkip.stop.play };
+	try { q.osc.nufoSkip.stop.play };
 
 	// sync back LEDs state
 	0.1.wait;

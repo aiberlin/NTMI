@@ -30,7 +30,12 @@ q.net.getBroad = {
 
 q.net.getMyIP = {
 	// get my own IP
-	"ifconfig".unixCmdGetStdOut.findRegexp("(?:[0-9]{1,3}[.]){3}[0-9]{1,3}(?=(?=.{10,30}broadcast )|(?=.{1,10}Bcast:))")[0][1];
+	var res = "ifconfig".unixCmdGetStdOut
+	.findRegexp("(?:[0-9]{1,3}[.]){3}[0-9]{1,3}(?=(?=.{10,30}broadcast )|(?=.{1,10}Bcast:))");
+	if (res.notEmpty) { res[0][1] } {
+		"*** NO NETWORK FOUND! q.net.getMyIP returns localhost: 127.0.0.1".postln;
+		"127.0.0.1"
+	};
 };
 
 ///// get my network name - macOS only
