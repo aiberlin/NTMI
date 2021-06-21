@@ -13,7 +13,7 @@ g.makeGui = g.makeGui ? ();
 // make nameViews bigger and better
 g.tuneNameView = { |q, obj|
 	if (obj.respondsTo(\nameView)) {
-		obj.nameView.font_(Font.defaultMonoFace, 16))
+		obj.nameView.font_(Font.defaultMonoFace, 16)
 		.stringColor_(Color.white)
 		.background_(Color.blue)
 	} {
