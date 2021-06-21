@@ -33,22 +33,6 @@ MFdef(\makeGui).add(\frontOrRemake, { |name, remake = false|
 	foundWins.do(_.alpha_(0.8));
 });
 
-/*
-z = NdefGui(Ndef(\allArm));
-g.tuneNameView(s);
-*/
-
-g.tuneNameView = { |q, obj|
-	if (obj.respondsTo(\nameView)) {
-		obj.nameView.font_(Font("Helvetica", 16))
-		.stringColor_(Color.white)
-		.background_(Color.blue)
-	} {
-		"g.tuneNameView: obj % has no nameView.".postf(obj.cs)
-	};
-	obj
-};
-
 // catch all windows positions
 /*
 Window.getAll.postcs;

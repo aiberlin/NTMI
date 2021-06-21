@@ -122,7 +122,7 @@ if (q.hasGui and: { thisProcess.platform.name == \osx }) {
 			var extent = bounds.extent;
 			var center = bounds.center;
 			var halfFing = MTP.fingerSize * 0.5;
-			var star, font = Font("Monaco", extent.x * 0.08);
+			var star, font = Font(Font.defaultMonoFace, extent.x * 0.08);
 			var white = Color.white.alpha_(0.6);
 			var black = Color.black.alpha_(0.6);
 

@@ -53,7 +53,7 @@ Multiple left buttons held down may also receive the same change, but not guaran
 
 ****************************/
 w = Window("test").front;
-f = Font("MOnaco", 24);
+f = Font(Font.defaultMonoFace, 24);
 w.layout = HLayout(
 	VLayout(
 		*~lefts = [ \slot1, \slot2, \slot3, \slot4] .collect { |name, i|

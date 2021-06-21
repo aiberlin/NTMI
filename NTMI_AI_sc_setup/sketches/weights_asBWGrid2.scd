@@ -24,7 +24,7 @@ w.layout = VLayout(
 	var influx = q.inphlux;
 	var outNames = influx.outNames;
 	var numCols = outNames.size;
-	var font = Font("Monaco", width / numCols * 1.5);
+	var font = Font(Font.defaultMonoFace, width / numCols * 1.5);
 
 	var colstep = bounds.width / numCols;
 	var lineCol = Color.green(1, 0.8);

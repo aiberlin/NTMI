@@ -2,7 +2,7 @@
 // all together
 Tdef(\sim_nUFO).play;
 
-// or individually:s
+// or individually:
 Tdef(\simButs).play;
 Tdef(\simCaps).play;
 Tdef(\simImu).play;

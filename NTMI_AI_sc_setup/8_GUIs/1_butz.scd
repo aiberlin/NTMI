@@ -13,7 +13,7 @@ g.makeGui = g.makeGui ? ();
 // make nameViews bigger and better
 g.tuneNameView = { |q, obj|
 	if (obj.respondsTo(\nameView)) {
-		obj.nameView.font_(Font("Helvetica", 16))
+		obj.nameView.font_(Font.defaultMonoFace, 16))
 		.stringColor_(Color.white)
 		.background_(Color.blue)
 	} {
@@ -21,6 +21,12 @@ g.tuneNameView = { |q, obj|
 	};
 	obj
 };
+
+/*
+z = NdefGui(Ndef(\allArm));
+g.tuneNameView(s);
+*/
+
 
 Butz.clear;
 

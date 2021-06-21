@@ -30,7 +30,7 @@ u.drawFunc = { |uv|
 			Pen.color_(g.main.padCols[i]);
 			Pen.fill;
 			// Pen.stringCenteredIn(i.asString, Rect.aboutPoint(pt, 60, 60),
-			// 	font: Font("Monaco", 96),
+			// 	font: Font(Font.defaultMonoFace, 96),
 			// color: Color.black);
 		};
 	};

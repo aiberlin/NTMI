@@ -5,6 +5,6 @@ q.warnWin = { |q, string="?!?", title="?!?"|
 	tv.background_(Color(1, 0.75));
 	tv.align_(\center);
 	w.alpha_(0.9);
-	tv.string_(string).font_(Font("Arial", 24));
+	tv.string_(string).font_(Font(Font.defaultMonoFace, 24));
 };
 
