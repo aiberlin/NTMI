@@ -65,13 +65,14 @@ MKtl('ntmi').device.oscFuncDictionary.keys(Array).sort.cs;
 // to send sim to a second machine (raspi), change addrs to mb18:
 // MKtl('ntmi').device.updateSrcDstAddr(~mb18_hyper5.hostname, ~mb18_hyper5.port);
 
+/*
 // on first machine, send to raspi
 q.net.ntmiTestAddr = q.net.secondIP;
 
 // to send to myself, do
 q.net.ntmiTestAddr = q.net.myIP;
 MKtl('ntmi').device.updateSrcDstAddr(q.net.myIP.hostname, q.net.myIP.port).source;
-
+*/
 
 (
 (
