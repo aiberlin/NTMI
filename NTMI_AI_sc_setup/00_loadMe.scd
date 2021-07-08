@@ -173,7 +173,7 @@ Task {
 		"\n\n*** *** *** FOLDER %:\n".postf("2_process");
 		// list all candidate files
 		if (q.prefs.active.processNames.isNil) {
-			(q.dir.userPOOL +/+ "*process/*.scd").pathMatch
+			(q.dir.userPOOL +/+ "2_process/*.scd").pathMatch
 			.collect {|pa| pa.basename.splitext[0].asSymbol }.postcs;
 		};
 

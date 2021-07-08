@@ -4,12 +4,19 @@
 
 q.getWifiName = {
 	// osx only for now:
-	"networksetup -getairportnetwork en0".unixCmdGetStdOut.split($:).last.drop(1).drop(-1);
+	Platform.case(\osx, {
+		"networksetup -getairportnetwork en0".unixCmdGetStdOut.split($:).last.drop(1).drop(-1);
+	}, {
+		// to be written for win and linux
+		"<to do...>";
+	});
 };
 
 SkipJack({ q.wifiStr = "WiFi:" + q.getWifiName }, 5);
 
-q.getMyIPs = {
+// todo: adapt for linux and windows later
+Platform.case(\osx, {
+	q.getMyIPs = {
 		var confstr = unixCmdGetStdOut("ifconfig");
 		var labelStarts = confstr.findAll("inet");
 		var strings = labelStarts.collect { |start|
@@ -18,9 +25,10 @@ q.getMyIPs = {
 			str.split($ ).select { |st| st.size > 7 }
 		}.flatten(1);
 		cands.select(_.every("1234567890.".includes(_)));
-};
+	};
 
-q.getMyIPs;
+	// q.getMyIPs;
+});
 
 // q.myIPs = OSCMon.getMyIPs;
 NetAddr.broadcastFlag_(true);
