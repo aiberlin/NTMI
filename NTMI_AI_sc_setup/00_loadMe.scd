@@ -170,27 +170,37 @@ Task {
 
 		q.load(q.prefs.active.postBootSetup);
 
-		"\n\n*** *** *** FOLDER %:\n".postf("2_process");
-		// list all candidate files
-		if (q.prefs.active.processNames.isNil) {
-			(q.dir.userPOOL +/+ "2_process/*.scd").pathMatch
-			.collect {|pa| pa.basename.splitext[0].asSymbol }.postcs;
-		};
 
+		"\n\n*** *** *** FOLDER %:\n".postf("2_process");
 		q.load("2_bufferLoader.scd");
 
+		// find matching paths in pool first
 		q.process = q.process ? ();
-		q.process.allPaths = (q.dir.userPOOL +/+ "*process/*.scd").pathMatch;
-		q.process.allNames = q.process.allPaths.collect { |p|
+		q.process.procPath = (q.dir.userPOOL +/+ "2_process/*.scd");
+		q.process.foundPaths = q.process.procPath.pathMatch;
+		q.process.foundNames = q.process.foundPaths.collect { |p|
 			p.basename.splitext[0].asSymbol
 		};
+
+		// list all candidate files
+		"// found % process paths at \n%\n".postf(
+			q.process.foundPaths.size, q.process.procPath.cs);
+		"// post them with: \nq.process.foundNames.cs".postln;
 
 		0.5.wait;
 
 		q.load("2_liveInput.scd");
 
+		if (q.prefs.active.processNames.isNil) {
+			"loading % found paths:\n".postf(q.process.foundNames.size);
+			q.process.namesToLoad = q.process.foundNames;
+		} {
+			"loading predefined paths in q.prefs.active.processNames:\n";
+			q.process.namesToLoad = q.prefs.active.processNames;
+		};
+
 		// load preferred processNames, or all:
-		(q.prefs.active.processNames ? q.process.allNames).do { |name|
+		q.process.namesToLoad.do { |name|
 			q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
 			s.sync;
 			0.05.wait;
