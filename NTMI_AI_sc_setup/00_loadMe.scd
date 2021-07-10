@@ -199,6 +199,8 @@ Task {
 			q.process.namesToLoad = q.prefs.active.processNames;
 		};
 
+		q.process.allNames = q.process.namesToLoad;
+
 		// load preferred processNames, or all:
 		q.process.namesToLoad.do { |name|
 			q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
