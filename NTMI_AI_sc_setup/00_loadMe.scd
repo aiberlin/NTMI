@@ -22,6 +22,7 @@ q.keys(SortedList).do("q.% : %\n".postf(_, _, _));
 (
 
 Task {
+
 	0.1.wait; /// wait for SC Welcome post ...
 
 	"\n\n*** loadMe file for NTMI_AI_sc_setup loading...\n\n".postln;
@@ -159,6 +160,10 @@ Task {
 	"\n\n".postln;
 
 	s.waitForBoot {
+		var prevLatency = s.latency;
+
+		 // avoid late messages while loading
+		s.latency = nil;
 
 		q.helloSnd ?? {
 			// if q.helloSnd is not already defined in startup file, do:
@@ -233,10 +238,19 @@ Task {
 			};
 		};
 
+		q.load(q.prefs.active.finalSetup);
+
+		// reinstate prev. latency
+		if (s.latency.isNil) {
+			s.latency = prevLatency;
+			"// server latency back to % after loading.\n\n".postf(s.latency);
+		} {
+			"*** server prevLatency was %\n;"
+			"*** server latency now  is % - leaving it as is.\n".postf(prevLatency, s.latency);
+		};
+
 		q.setupTime = (Main.elapsedTime - q.time0).round(0.01);
 		"\n*** NTMI SETUP finished in % secs! ***\n\n\n".postf(q.setupTime);
-
-		q.load(q.prefs.active.finalSetup);
 
 	};
 }.play(AppClock);
