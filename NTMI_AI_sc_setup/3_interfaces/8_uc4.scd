@@ -32,13 +32,15 @@ g.uc4.free; g.uc4 = MKtl(\uc4, "*uc4_pg");
 g.uc4.addNamed(\main, g.uc4.elAt(\xfader));
 g.uc4.addNamed(\inflx, g.uc4.elAt(\pgSl1, \sl));
 
-g.uc4.addNamed(\vols, g.uc4.elAt(\pgKn1, \kn, (0..3)));
-g.uc4.addNamed(\playBts, g.uc4.elAt(\pgKn1, \pbt, (0..3)));
+// lower 4 encoders and their hatButtons for play and vol
+g.uc4.addNamed(\vols, g.uc4.elAt(\pgKn1, \kn, (4..7)));
+g.uc4.addNamed(\playBts, g.uc4.elAt(\pgKn1, \pbt, (4..7)));
 
+// higher 4 encoders for changing presets, hold hats for processes
 // select preset or sounds
-g.uc4.addNamed(\select, g.uc4.elAt(\pgKn1, \kn, (4..7)));
+g.uc4.addNamed(\select, g.uc4.elAt(\pgKn1, \kn, (0..3)));
 // if but up, select preset, if down, sound
-g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (4..7)));
+g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (0..3)));
 
 g.uc4.addNamed(\rand_inph, g.uc4.elAt(\pgSl1, \bt, 0));
 g.uc4.addNamed(\prev_inph, g.uc4.elAt(\pgSl1, \bt, 1));
