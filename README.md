@@ -2,9 +2,9 @@
 
 This repository contains the full setup for the Nontrivial Music Instrument (NTMI) by Airborne Instruments: http://airborneinstruments.eu/
 
-The code is all in SuperCollider, and can be nstalled as a SuperCollider quark (i.e. an extension package). For better access to users with little interest in coding, it can also be packaged into Standalone apps made with SuperCollider.
+The code is all in SuperCollider, and is best installed as a SuperCollider Quark, i.e. an extension package. (For better access to users with little interest in coding, it can also be packaged into Standalone apps made with SuperCollider).
 
-Instructions to run this setup with SuperCollider:
+Instructions to run this setup within SuperCollider:
 
 - install as Quark (which installs all other required quarks)
 Quarks.install("NTMI"); 
@@ -21,6 +21,8 @@ You can personalize this setup later with
 - a personalized ntmi preferences file for your settings
 - inserting your own code in the loading process, for adding your own sound processes, presets, interfaces, or other modifications.
 
-Recommended: install SC3-plugins 
+Recommended: also install SC3-plugins 
 (some sound processes may require UGens from SC3-plugins)
 https://github.com/supercollider/sc3-plugins
+and if you switch between projects in SuperCollider, try 
+Quarks.install("StartupFile");
