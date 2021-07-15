@@ -7,10 +7,10 @@ The code is all in SuperCollider, and is best installed as a SuperCollider Quark
 Instructions to run this setup within SuperCollider:
 
 - install as Quark (which installs all other required quarks)
-Quarks.install("NTMI"); 
+`Quarks.install("NTMI");` or if this doesn't work: `Quarks.install("https://github.com/aiberlin/NTMI")`
 
 - update all installed Quarks to their current versions:
-Quarks.installed.do(_.update);
+`Quarks.installed.do(_.update);`
 
 - recompile the class library
 
