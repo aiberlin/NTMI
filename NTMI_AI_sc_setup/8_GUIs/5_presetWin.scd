@@ -1,7 +1,7 @@
 ////// function to make a presetWin if needed
 
 (
-g.makeGui.allPresets = { |dict, name = \allPresets|
+g.makeGui.presets = { |dict, name = \presets|
 	var pxs = q.ndefs;
 	var px = q.currxoscPx ? q.ndefs[0];
 	var currPreset;

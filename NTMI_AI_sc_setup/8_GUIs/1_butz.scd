@@ -36,7 +36,7 @@ g.butzNames = [
 	'inphlux',
 	'liveInput',
 	'slotSounds',
-	'allPresets',
+	'presets',
 	'randomOrbitz',
 	'ndefMixer',
 	'mainFX',
@@ -103,8 +103,8 @@ WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 Butz.add('slotSounds', { WinBounds.showOrMake('slotSounds') });
 WinBounds.addMake('slotSounds', { g.makeGui.slotSounds.alpha_(g.alpha) });
 
-Butz.add('allPresets', { WinBounds.showOrMake('allPresets') });
-WinBounds.addMake('allPresets', { g.makeGui.allPresets.alpha_(g.alpha) });
+Butz.add('presets', { WinBounds.showOrMake('presets') });
+WinBounds.addMake('presets', { g.makeGui.presets.alpha_(g.alpha) });
 
 Butz.add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
@@ -184,7 +184,7 @@ WinBounds.stored.putAll( (
 	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
 	'ntmi': Rect(42.0, 2.0, 700.0, 462.0),
 
-	'allPresets': Rect(725.0, 289.0, 487.0, 500.0),
+	'presets': Rect(725.0, 289.0, 487.0, 500.0),
 	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
 	'NdefGui_liveInput': Rect(971.0, 557.0, 394.0, 180.0),
 	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0)

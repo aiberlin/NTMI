@@ -2,7 +2,7 @@
 ////// function to make a randomOrbitz KeyPlayerGui if needed
 
 (
-g.makeGui.randomOrbitz = { |dict, name = \allPresets|
+g.makeGui.randomOrbitz = { |dict, name = \randomOrbitz|
 
 	g.kpgui = KeyPlayerGui(KeyPlayer(\ro));
 	g.kpgui.parent.bounds_(g.kpgui.parent.bounds.height_(300));
