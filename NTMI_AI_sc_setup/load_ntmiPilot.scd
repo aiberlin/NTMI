@@ -126,15 +126,11 @@ Tdef(\ntmiPilot, { |envir|
 		preset !? { presetsToChoose.removeAt(preset.key) };
 		preset = presetsToChoose.choose;
 		ndef = preset.proxy;
-
-		envir.currNdef = ndef;
-
-		"ntmiPilot uses %\n".postf(preset);
 		preset.morphTask.set(\dt, 0.05);
-		ndef.set(\amp, 0.25).play;
+		ndef.set(\amp, 0.25);
 		ndef.map(\amp, Ndef(\gainride));
 
-		timeFunc.value.wait;
+		envir.currNdef = ndef;
 
 		// random start
 		settings = preset.settings.drop(1).collect(_.key);
@@ -142,18 +138,25 @@ Tdef(\ntmiPilot, { |envir|
 		preset.xfadeTo(setname, rrand(0.5, 2));
 		envir.currSetting = setname;
 
+		"ntmiPilot uses %, preset % \n".postf(preset, setname);
+
+		waitTime = timeFunc.value.postln;
+		ndef.play(fadeTime: waitTime);
+		waitTime.wait;
+
+		"numSteps: ".post;
 		exprand(3, 8).round.postln.do { |i|
-			waitTime = timeFunc.value.postln;
+			waitTime = timeFunc.value;
 
 			settings = preset.settings.drop(1).collect(_.key);
 			settings.remove(setname);
 			setname = settings.choose;
 			envir.currSetting = setname;
 
-			"xfading to % in % secs".postf(setname, waitTime);
+			"xfade to % in % secs".postf(setname, waitTime);
 			preset.xfadeTo(setname, waitTime);
 			waitTime.do { ".".post; 1.wait }; "|".postln;
-			timeFunc.value.wait;
+			"staying for ".post; timeFunc.value.postln.wait;
 		};
 		waitTime = timeFunc.value;
 		ndef.end(waitTime * 2);
