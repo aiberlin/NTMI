@@ -19,8 +19,9 @@ Ndef(\brushes, {|amp, rabisco=4, trig=4, cf=400, rq=0.2|
 	papel = EnvGen.kr(env, tri);
 	sig = WhiteNoise.ar() * modulator * papel * amp;
 	sig = BPF.ar(sig,
-		cf.lag(0.1),
-		rq.lag(0.1));
+		cf.lag(0.5),
+		rq.lag(0.5)
+	);
 	sig = Pan2.ar(sig, LFNoise2.kr(trig/5+(rabisco/5), 0.8));
 	sig = Compander.ar(sig, sig, 1, 0.75, 0.25, 0.002);
 });

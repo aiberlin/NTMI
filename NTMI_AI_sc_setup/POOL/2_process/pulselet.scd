@@ -10,7 +10,7 @@ Ndef(\pulselet).gui;
 Ndef(\pulselet).play;
 */
 
-Ndef(\pulselet).addSpec(\fund, [0.1, 4000, \exp]);
+Ndef(\pulselet).addSpec(\fund, [1, 4000, \exp]);
 Ndef(\pulselet).addSpec(\spread, \bipolar);
 Ndef(\pulselet).addSpec(\coinDrop, [0, 2]);
 Ndef(\pulselet).addSpec(\decay, [1, 16, \exp]);
