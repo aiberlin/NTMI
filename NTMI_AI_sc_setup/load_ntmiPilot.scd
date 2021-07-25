@@ -7,23 +7,24 @@
 - can be used for choir of machines playing the same sequence.
 
 
-*** TODO: buffers need to load
-
-
 Tdef(\ntmiPilot).set(\randSeed, 4711);
 Tdef(\ntmiPilot).set(\randSeed, 666);
 Tdef(\ntmiPilot).set(\randSeed, nil);
 
 Tdef(\ntmiPilot).gui
-s.meter
+NdefMixer(s)
 
-q.clear;
 ****/
+
 q = q ? ();
+q.dir = q.dir ? ();
+
 if (q[\load].isNil) {
 	// simple replacement for use outside NTMI
 	q.load = { |q, path| try { path.loadRelative } };
 };
+
+// q.process = nil;
 
 s.waitForBoot {
 
@@ -31,6 +32,7 @@ s.waitForBoot {
 	if (q.process.isNil) {
 		"LOADING NTMI Processes and presets...".postln;
 		q.codeDirNTMI = thisProcess.nowExecutingPath.dirname;
+		q.dir.user = q.codeDirNTMI;
 
 		// find matching paths in pool first
 		q.process = q.process ? ();
@@ -52,6 +54,11 @@ s.waitForBoot {
 			q.process.foundPaths.size, q.process.procPath.cs);
 		"// post them with: \nq.process.foundNames.cs".postln;
 
+		if ( \WavesetsEvent.asClass.isNil) {
+			q.process.namesToLoad = q.process.namesToLoad.reject(_ == \wsetta);
+		};
+
+
 		forkIfNeeded ({
 			var ndefKeysAlreadyThere, ndefKeysNowLoaded;
 
@@ -59,7 +66,7 @@ s.waitForBoot {
 			s.sync;
 			"\n\nloading NTMI buffers and processes in %:\n".postf("2_process");
 
-			ndefKeysAlreadyThere = Ndef.dictFor(s).keys;
+			ndefKeysAlreadyThere = Ndef.dictFor(s).envir.keys;
 			q.load("2_liveInput.scd");
 			// load preferred processNames, or all:
 			q.process.namesToLoad.do { |name|
@@ -68,7 +75,7 @@ s.waitForBoot {
 				0.05.wait;
 			};
 
-			ndefKeysNowLoaded = Ndef.all[s.name].keys.removeAll(ndefKeysAlreadyThere);
+			ndefKeysNowLoaded = Ndef.dictFor(s).envir.keys.removeAll(ndefKeysAlreadyThere);
 
 			// simple replacement for use outside NTMI
 			if (q[\getNdefs].isNil) {
@@ -82,7 +89,7 @@ s.waitForBoot {
 
 			"*** ntmiPilot prep done. ***\n\n".postln;
 
-			Tdef(\ntmiPilot).play;
+			// Tdef(\ntmiPilot).play;
 
 		}, AppClock);
 
@@ -125,15 +132,20 @@ Tdef(\ntmiPilot, { |envir|
 
 		timeFunc.value.wait;
 
+		// random start
+		settings = preset.settings.drop(1).collect(_.key);
+		setname = settings.choose;
+		preset.xfadeTo(setname, rrand(0.5, 2));
+		envir.currSetting = setname;
 
 		exprand(3, 8).round.postln.do { |i|
+			waitTime = timeFunc.value.postln;
+
 			settings = preset.settings.drop(1).collect(_.key);
 			settings.remove(setname);
 			setname = settings.choose;
-
 			envir.currSetting = setname;
 
-			waitTime = timeFunc.value;
 			"xfading to % in % secs".postf(setname, waitTime);
 			preset.xfadeTo(setname, waitTime);
 			waitTime.do { ".".post; 1.wait }; "|".postln;
