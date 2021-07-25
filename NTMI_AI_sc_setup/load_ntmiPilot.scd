@@ -2,7 +2,7 @@
 *** AutoPilot variant for ntmi sound processes:
 - load all sound processes and presets
 - Tdef picks a sound, and morphs between its presets
-- amp is random-modualted for dynamics
+- amp is random-modulated for dynamics
 - setting a randSeed makes rand sequences reproduceable;
 - can be used for choir of machines playing the same sequence.
 
@@ -56,6 +56,10 @@ s.waitForBoot {
 
 		if ( \WavesetsEvent.asClass.isNil) {
 			q.process.namesToLoad = q.process.namesToLoad.reject(_ == \wsetta);
+		};
+		if (\Fhn2DL.asClass.isNil) {
+			q.process.namesToLoad = q.process.namesToLoad.reject(_ == \fhnerv8net);
+			q.process.namesToLoad = q.process.namesToLoad.reject(_ == \fhnerv8);
 		};
 
 

@@ -52,7 +52,6 @@ q.slots.addActive(2, Ndef(\bleepo));
 
 q.slots.chooseNext(0);
 
-
 // change the presets on all active sounds:
 MFdef('stepSlotPres').value(step);
 // change preset on a single sound:
@@ -63,9 +62,9 @@ MFdef('stepVol').(ndef);
 
 
 /////////// quick-store the current setting of a single sound preset with datestamp:
-MFdef('snapshot1');
+MFdef('snapshot1').value(ndef);
 /////////// quick-store setting of all active sound presets:
-MFdef('snapshot');
+MFdef('snapshot').value;
 
 
 ///////// 2. nUFO /////////

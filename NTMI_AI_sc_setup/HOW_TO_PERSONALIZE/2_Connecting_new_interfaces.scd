@@ -21,7 +21,7 @@ MKtl('testa').elAt(\bt, \R, (0..3)).do { |but, index|
 MKtl('testa').elAt(\bt, \S, (0..3)).do { |but, index|
 	but.action = { q.slots.stopAt(index) };
 };
-// first four knobs to et volume the sounds
+// first four knobs to set volume of the four sounds
 MKtl('testa').elAt(\kn, (0..3)).do { |knob, index|
 	knob.action = {
 		q.slots.actives[index].postln.vol_(knob.value.squared.postln)
@@ -38,7 +38,7 @@ MKtl('testa').elAt(\sl, 7).action = { |sl|
 
 // attach the first seven sliders the influx:
 /// this is how movement and touch influence the running sounds
-// switch nUFO off, or leave network ...
+// switch nUFO off, or leave the nufo network!
 // show the influx GUI
 Butz.run(\inphlux);
 
