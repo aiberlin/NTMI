@@ -67,104 +67,103 @@ s.waitForBoot {
 		"// post them with: \nq.process.foundNames.cs".postln;
 
 
-			forkIfNeeded ({
-				var ndefKeysAlreadyThere, ndefKeysNowLoaded;
+		forkIfNeeded ({
+			var ndefKeysAlreadyThere, ndefKeysNowLoaded;
 
-				q.load("0_globals/1_loadGlobalUtils.scd");
+			q.load("0_globals/1_loadGlobalUtils.scd");
+			s.sync;
+			"\n\nloading NTMI buffers and processes in %:\n".postf("2_process");
+
+			ndefKeysAlreadyThere = Ndef.dictFor(s).envir.keys;
+			q.load("2_liveInput.scd");
+			// load preferred processNames, or all:
+			q.process.namesToLoad.do { |name|
+				q.load("POOL/2_process" +/+ name.postln ++ ".scd");
 				s.sync;
-				"\n\nloading NTMI buffers and processes in %:\n".postf("2_process");
+				0.05.wait;
+			};
 
-				ndefKeysAlreadyThere = Ndef.dictFor(s).envir.keys;
-				q.load("2_liveInput.scd");
-				// load preferred processNames, or all:
-				q.process.namesToLoad.do { |name|
-					q.load("POOL/2_process" +/+ name.postln ++ ".scd");
-					s.sync;
-					0.05.wait;
-				};
+			ndefKeysNowLoaded = Ndef.dictFor(s).envir.keys.removeAll(ndefKeysAlreadyThere);
 
-				ndefKeysNowLoaded = Ndef.dictFor(s).envir.keys.removeAll(ndefKeysAlreadyThere);
+			// simple replacement for use outside NTMI
+			if (q[\getNdefs].isNil) {
+				// ndefKeysNowLoaded.postcs;
+				q.getNdefs = ndefKeysNowLoaded.collect(Ndef(_));
+			};
 
-				// simple replacement for use outside NTMI
-				if (q[\getNdefs].isNil) {
-					// ndefKeysNowLoaded.postcs;
-					q.getNdefs = ndefKeysNowLoaded.collect(Ndef(_));
-				};
+			q.load("2a_preset*.scd");
 
-				q.load("2a_preset*.scd");
+			"found % NdefPresets.\n\n".postf(NdefPreset.all.size);
 
-				"found % NdefPresets.\n\n".postf(NdefPreset.all.size);
+			"*** ntmiPilot prep done. ***\n\n".postln;
 
-				"*** ntmiPilot prep done. ***\n\n".postln;
+			// Tdef(\ntmiPilot).play;
 
-				// Tdef(\ntmiPilot).play;
+		}, AppClock);
 
-			}, AppClock);
+} };
 
-	} };
+Tdef(\ntmiPilot, { |envir|
+	var presetsToChoose, preset, ndef, waitTime, settings, setname;
+	var timeFunc = {
+		var dt = [3, 5, 8, 13 ].choose;
+		envir.waitTime = dt;
+		dt;
+	};
 
-	Tdef(\ntmiPilot, { |envir|
-		var presetsToChoose, preset, ndef, waitTime, settings, setname;
-		var timeFunc = {
-			var dt = [3, 5, 8, 13 ].choose;
-			envir.waitTime = dt;
-			dt;
-		};
+	var seed = Tdef(\ntmiPilot).get(\randSeed);
+	if (seed.isNumber) {
+		" Tdef(\ntmiPilot): randSeed is %\n".postf(seed);
+		thisThread.randSeed = seed
+	};
 
-		var seed = Tdef(\ntmiPilot).get(\randSeed);
-		if (seed.isNumber) {
-			" Tdef(\ntmiPilot): randSeed is %\n".postf(seed);
-			thisThread.randSeed = seed
-		};
 
+	Ndef(\gainride, {
+		LFDNoise3.kr(
+			LFDNoise1.kr(1/30).exprange(0.1, 5)
+		).range(-20, 0).dbamp
+	});
+
+	inf.do {
 		presetsToChoose = NdefPreset.all.select { |pre| pre.settings.size > 3 };
 		envir.numNdefs = presetsToChoose.size;
+		preset !? { presetsToChoose.removeAt(preset.key) };
+		preset = presetsToChoose.choose;
+		ndef = preset.proxy;
+		preset.morphTask.set(\dt, 0.05);
+		ndef.set(\amp, 0.25);
+		ndef.map(\amp, Ndef(\gainride));
 
-		Ndef(\gainride, {
-			LFDNoise3.kr(
-				LFDNoise1.kr(1/30).exprange(0.1, 5)
-			).range(-20, 0).dbamp
-		});
+		envir.currNdef = ndef;
 
-		inf.do {
-			preset !? { presetsToChoose.removeAt(preset.key) };
-			preset = presetsToChoose.choose;
-			ndef = preset.proxy;
-			preset.morphTask.set(\dt, 0.05);
-			ndef.set(\amp, 0.25);
-			ndef.map(\amp, Ndef(\gainride));
+		// random start
+		settings = preset.settings.drop(1).collect(_.key);
+		setname = settings.choose;
+		preset.xfadeTo(setname, rrand(0.5, 2));
+		envir.currSetting = setname;
 
-			envir.currNdef = ndef;
+		"*** ntmiPilot uses %, preset % \n".postf(preset, setname);
 
-			// random start
+		waitTime = timeFunc.value.postln;
+		ndef.play(fadeTime: waitTime);
+		waitTime.wait;
+
+		"numSteps: ".post;
+		exprand(3, 8).round.postln.do { |i|
+			waitTime = timeFunc.value;
+
 			settings = preset.settings.drop(1).collect(_.key);
+			settings.remove(setname);
 			setname = settings.choose;
-			preset.xfadeTo(setname, rrand(0.5, 2));
 			envir.currSetting = setname;
 
-			"ntmiPilot uses %, preset % \n".postf(preset, setname);
-
-			waitTime = timeFunc.value.postln;
-			ndef.play(fadeTime: waitTime);
-			waitTime.wait;
-
-			"numSteps: ".post;
-			exprand(3, 8).round.postln.do { |i|
-				waitTime = timeFunc.value;
-
-				settings = preset.settings.drop(1).collect(_.key);
-				settings.remove(setname);
-				setname = settings.choose;
-				envir.currSetting = setname;
-
-				"xfade to % in % secs".postf(setname, waitTime);
-				preset.xfadeTo(setname, waitTime);
-				waitTime.do { ".".post; 1.wait }; "|".postln;
-				"staying for ".post; timeFunc.value.postln.wait;
-			};
-			waitTime = timeFunc.value;
-			ndef.end(waitTime * 2);
-			"ntmiPilot loops.".postln;
+			"xfade to % in % secs".postf(setname, waitTime);
+			preset.xfadeTo(setname, waitTime);
+			waitTime.do { ".".post; 1.wait }; "|".postln;
+			"staying for ".post; timeFunc.value.postln.wait;
 		};
-	});
-	
+		waitTime = timeFunc.value;
+		ndef.end(waitTime * 2);
+		"ntmiPilot loops.".postln;
+	};
+});
