@@ -5,10 +5,10 @@
 // Butz.w.close;
 // Butz.show.updateButtons;
 
-Butz.add('miniNTMI', { WinBounds.showOrMake('miniNTMI')});
-WinBounds.addMake('miniNTMI', {
-	g.makeGui['miniNTMI'].value;
-});
+// Butz.add('miniNTMI', { WinBounds.showOrMake('miniNTMI')});
+// WinBounds.addMake('miniNTMI', {
+// 	g.makeGui['miniNTMI'].value;
+// });
 
 MFdef(\miniGuiUpdate).add(\slots, {
 	// "slots...".postln;
