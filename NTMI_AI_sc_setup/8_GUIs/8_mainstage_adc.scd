@@ -107,8 +107,8 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	var wheight = bounds.height, wwidth = bounds.width;
 	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
 
-	var font = Font(Font.defaultMonoFace, (36 * scrscale).round);
-	var fatfont = Font(Font.defaultMonoFace, (72 * scrscale).round);
+	var font = Font(g.fontName, (36 * scrscale).round);
+	var fatfont = Font(g.fontName, (72 * scrscale).round);
 	var center, centPadsL, padsLPos, centPadsR, padsRPos;
 
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
@@ -227,7 +227,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
 	g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
 	g.main.mainSl.dict.round_(1/100);
-	g.main.mainSl.dict.font_(Font(Font.defaultMonoFace, 30));
+	g.main.mainSl.dict.font_(Font(g.fontName, 30 * scrscale));
 	g.main.mainSl.action.add(\setMain, { |mv|
 		q.mFX.proxyChain.proxy.set(\mainVol, mv.value)
 	});
@@ -235,7 +235,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		Pen.stringCenteredIn(
 			g.main.mainSl.label,
 			g.main.mainSl.bounds.moveTo(0,0),
-			Font(Font.defaultMonoFace, 40 * scrscale),
+			Font(g.fontName, 40 * scrscale),
 			Color.blue
 		)
 	});
@@ -249,9 +249,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
 	g.main.mainSl.uv.focus(true).refresh;
 	g.main.mainSl.uv.focus(false).refresh;
-
-
-	// \mastaVol, [0, 4, \amp], labelWidth: 100 * scrscale).font_(Font(Font.defaultMonoFace, 20 * scrscale));
 
 
 	// 4 popups to select sounds, 4 mviews for volume levels
@@ -452,9 +449,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 				// rings white
 				Pen.addOval(Rect.aboutPoint(pt, 60, 60));
 				Pen.color_(Color.white).stroke;
-				// Pen.stringCenteredIn(i.asString, Rect.aboutPoint(pt, 60, 60),
-				// 	font: Font(Font.defaultMonoFace, 96),
-				// color: Color.black);
 			};
 		};
 

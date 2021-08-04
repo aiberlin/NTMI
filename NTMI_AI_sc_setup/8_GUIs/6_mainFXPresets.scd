@@ -1,7 +1,8 @@
 ///// todo: move to ProxyChainPreset ...
 
 g.makeGui.mainFX = {
-	q.mfx.font = Font("Helvetica", 18);
+	q.mfx.font = Font(g.fontName, 18);
+
 
 	q.mfx.highKeys = [];
 	q.mfx.srcKeys = q.mFX.slotNames;

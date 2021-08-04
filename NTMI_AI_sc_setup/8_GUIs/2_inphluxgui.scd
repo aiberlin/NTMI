@@ -17,7 +17,10 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 	var size = 170;
 	var size2 = size * 2;
 
-	var w, e, f, insc, infComp;
+	var w, presl, insc, font, fontbig, infComp;
+
+	font = Font(g.fontName, 13);
+	fontbig = Font(g.fontName, 16);
 
 	q.inph.ioWin = w = Window("inphlux",
 		Rect.aboutPoint(
@@ -38,17 +41,19 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 	q.inph.ioUV.background_(Color.grey(0.5));
 
 
-	f = Font(Font.defaultMonoFace, 13);
-	StaticText(infComp, 330@20).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(f);
-	e = EZSlider(infComp, 330@20, \preset, [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
+
+
+	StaticText(infComp, 330@20).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(font);
+	presl = EZSlider(infComp, 330@20, \preset, [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
 		q.inphlux.setwPre(q.inph.randSeeds[ez.value.asInteger]);
 		q.inphlux.calcOutVals;
 	}, q.inph.presIndex, labelWidth: 60, numberWidth: 30);
-	e.font_(f);
+	presl.font_(font);
+
 	insc = EZSlider(infComp, 330@20, \inScaler, \zoom.asSpec, { |ez|
 		q.setZoom(ez.value);
 		ez.value_(q.zoom);
-	}, q.inphlux.inScaler, labelWidth: 60, numberWidth: 40).font_(f);
+	}, q.inphlux.inScaler, labelWidth: 60, numberWidth: 40).font_(font);
 
 	q.inph.ktlgui = InfluxKtlGui(q.inphlux, 5, infComp, Rect(0,0,300, 280));
 
@@ -89,7 +94,6 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 			var numIns = inph.inNames.size;
 			var numOuts = inph.outNames.size;
 
-			var font = Font(Font.defaultMonoFace, 16);
 			var green1 = Color.green(1.0);
 			var green2 = Color(0, 0.8, 0.2);
 
@@ -110,7 +114,7 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 					rect.copy.width_(lWid * i.linlin(0, 17, 0.1, 1.9))
 					.height_(vstep * 1.5)
 					.top_(rect.top - (vstep * 0.25)),
-					font, green2);
+					fontbig, green2);
 			};
 
 			/// left TOP : draw invals line
@@ -148,7 +152,7 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 					rect.copy.width_(lWid * i.linlin(0, 17, 0.1, 1.9))
 					.height_(vstep * 2)
 					.top_(rect.top - (vstep * 0.5) + (vstep * 0.9 * i)),
-					font, green2);
+					fontbig, green2);
 			};
 
 			/// right bottom: outvals as line
@@ -160,7 +164,6 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 			};
 			Pen.color_(Color.green).width_(3).stroke;
 
-			// Pen.stringCenteredIn(name.asString, rect, Font(Font.defaultMonoFace, 16), Color.green);
 		};
 		SkipJack({ q.inph.ioUV.refresh }, 0.2, { q.inph.ioWin.isClosed }, "inphIOW");
 	);

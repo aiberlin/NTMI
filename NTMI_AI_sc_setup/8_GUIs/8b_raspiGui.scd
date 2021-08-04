@@ -70,7 +70,7 @@ g.mini = ();
 g.makeGui.miniNTMI = {
 
 	var w = Window("miniNTMI", Rect(300, 300, 480, 320)).front;
-	var f = Font(Font.defaultMonoFace, 18);
+	var f = Font(g.fontName, 18);
 
 	var popPreVols, pops, prePops, vols;
 	var popMain, infPreKnob, zoomKnob;

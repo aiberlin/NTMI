@@ -2,18 +2,22 @@
 (
 q = q ? ();
 g = g ? ();
-g.screenScale = min(Window.availableBounds.width / 1920,
-	Window.availableBounds.height / 1177);
 
-g.alpha = 0.8;
+//// set global prefs here:
+g.alpha = g.alpha ? 0.8;
+// g.fontName = g.fontName ? Font.defaultMonoFace;
+g.fontName = g.fontName ? Font.defaultSansFace;
 
 // contains the previous GUI-making functions
 g.makeGui = g.makeGui ? ();
 
+g.screenScale = min(Window.availableBounds.width / 1920,
+	Window.availableBounds.height / 1177);
+
 // make nameViews bigger and better
 g.tuneNameView = { |q, obj|
 	if (obj.respondsTo(\nameView)) {
-		obj.nameView.font_(Font.defaultMonoFace, 16)
+		obj.nameView.font_(g.fontName, 16)
 		.stringColor_(Color.white)
 		.background_(Color.blue)
 	} {
@@ -64,6 +68,7 @@ Butz.style;
 Butz.numButz = 22; // leave two for customization
 Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(120@16);
+Butz.style.font.name = g.fontName;
 Butz.style.font.size = 16;
 
 Butz.show.updateButtons;
@@ -112,8 +117,10 @@ WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
 
 //////// ndefmixer - add to WinBounds call to Butz,
 Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
+
 ///// then add makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
+	// numItems could also be q.process.allNames.size;
 	var ndefMixer = NdefMixer(s, 24);
 	ndefMixer.parent.name_(name);
 	g[name] = ndefMixer;
