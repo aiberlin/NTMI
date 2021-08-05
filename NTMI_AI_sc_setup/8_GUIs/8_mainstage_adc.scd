@@ -100,6 +100,16 @@ MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') done.".postln;
 });
 
+// rescale stethoscope height
+g.scaleStetho = { |g, stetho, height = 200|
+	var scopeV = stetho.scopeView;
+	var cycleSl = stetho.view.children[5];
+	var yzoomSl = stetho.view.children[6];
+	scopeV.bounds = scopeV.bounds.height_(height);
+	cycleSl.bounds = cycleSl.bounds.height_(height);
+	yzoomSl.bounds = yzoomSl.bounds.top_( 30 + height);
+};
+
 g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	var w, butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
@@ -139,10 +149,19 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.movevals = 0!9;
 
 	// stetho needs to be in a new-style layout for resizing...
-	Stethoscope(s, q.numChans, view: w.view);
+	g.main.stetho = Stethoscope(s, q.numChans, view: w.view);
+	// resize quick and dirty
+	defer ({
+		g.main.stetho.view.bounds_(Rect(130, 0.0, 250.0, 250.0));
+		g.scaleStetho(g.main.stetho, 230 * scrscale);
+
+	}, 0.1);
 	// ServerMeter does not scale at all...
-	// put it in its own window?s
-	ServerMeterView(s, w, 250@0, q.numIns ? q.numChans, q.numChans);
+	// put it in its own window?
+	//
+	g.main.meterWidth = ServerMeterView.getWidth(q.numIns ? q.numChans, q.numChans);
+	g.main.meterLeft = (g.main.w.bounds.width - g.main.meterWidth) div: 2;
+	g.main.meter = ServerMeterView(s, w, g.main.meterLeft@0, q.numIns ? q.numChans, q.numChans);
 
 	nufoView = UserView(w, Rect(rightCol, 20 * scrscale, 300 * scrscale, 150 * scrscale));
 	nufoView.background_(butGrey);
@@ -186,7 +205,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	Button(w, Rect(rightCol, 580 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
 		["show recordings", Color.white, butGrey]
-	]).font_(font.copy.size_(font.size * 0.62))
+	]).font_(font.copy.size_(font.size * 0.8))
 	.action_({ |bt|
 		Platform.recordingsDir.openOS;
 	});
