@@ -226,7 +226,8 @@ Tdef(\wsetta, {
 
 
 			soundDur = event.sustain;
-			totalDur = (event[\dur] / event[\rate]);
+			// minimal safety wait when no waveset found
+			totalDur = (event[\dur] ? 0.01 / event[\rate]);
 
 			max(totalDur, q.wse.minWaitDur).wait;
 
