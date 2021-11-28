@@ -154,6 +154,7 @@ Task {
 	q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
 
 	s.options.numInputBusChannels = q.numIns;
+	s.options.numOutputBusChannels = q.numChans;
 
 	q.load(q.prefs.active.preBootSetup);
 
