@@ -51,7 +51,9 @@ Ndef(\moogSing, { arg amp=0, moogRoot=24, lpRatio=36, lfDepth=24, lfSpeed=0.35, 
 	);
 
 
-	(Limiter.ar(bunz.clump(q.numChans).sum, 0.7) * (amp * 2)).softclip;
+
+	(Limiter.ar(bunz.clump(q.numChans).sum, 0.7) * (amp * 2))
+	.softclip.wrapExtend(q.numChans);
 });
 );
 
