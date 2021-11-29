@@ -46,10 +46,10 @@ g.butzNames = [
 	'ndefMixer',
 	'mainFX',
 	'-interfaces-',
-	'nUFO',
+	//	'nUFO',
 	'nanoKtl',
-	'ferrari',
-	'uc4',
+	//	'ferrari',
+	//	'uc4',
 	'-helpers-',
 	'chanTest',
 	'plotTree',
@@ -124,7 +124,7 @@ Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
 ///// then add makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	// numItems could also be q.process.allNames.size;
-	var ndefMixer = NdefMixer(s, 24);
+	var ndefMixer = NdefMixer(s, max(q.process.allNames.size, 24));
 	ndefMixer.parent.name_(name);
 	g[name] = ndefMixer;
 	ndefMixer.moveTo(5, 5);
@@ -158,27 +158,35 @@ WinBounds.addMake(\nanoKtl, { |dict, name = \nanoKtl|
 	g.nanoKtl = q.nktl.gui; g.nanoKtl.parent;
 });
 
+// move these later
+if (MKtl.all['ntmi'].notNil) {
+	Butz.actions.addAfter(\nUFO, { WinBounds.showOrMake(\nUFO) }, '-interfaces-');
+	Butz.updateButtons.showButs(Butz.actions.size);
+	WinBounds.addMake(\nUFO, {
+		var ntg = MKtl(\ntmi).gui;
+		ntg.parent.name_(\nUFO);
+		ntg.views.detect { |vw| vw.element.name == \enc }.view.centered_(true);
+	});
+};
 
-Butz.add(\nUFO, { WinBounds.showOrMake(\nUFO) });
-WinBounds.addMake(\nUFO, {
-	var ntg = MKtl(\ntmi).gui;
-	ntg.parent.name_(\nUFO);
-	ntg.views.detect { |vw| vw.element.name == \enc }.view.centered_(true);
-});
+if (MKtl.all['uc4'].notNil) {
+	Butz.actions.addAfter(\uc4, { WinBounds.showOrMake(\uc4) }, '-interfaces-');
+	Butz.updateButtons.showButs(Butz.actions.size);
+	Butz.add(\uc4, { WinBounds.showOrMake(\uc4) });
+	WinBounds.addMake(\uc4, {
+		var uc4gui = g.uc4.gui;
+		uc4gui.views.keep(8).do { |view| view.view.centered = true };
+		uc4gui.parent.alpha_(0.8);
+	});
+};
 
-Butz.add(\uc4, { WinBounds.showOrMake(\uc4) });
-WinBounds.addMake(\uc4, {
-	var uc4gui = g.uc4.gui;
-	uc4gui.views.keep(8).do { |view| view.view.centered = true };
-	uc4gui.parent.alpha_(0.8);
-});
-
-
-// only make ferrari if present
-if (MKtl.all['ferrari'].isNil) {
-	Butz.remove(\ferrari);
-} {
-	WinBounds.addMake(\ferrari, { g.ferrari = MKtl.all['ferrari'].gui; g.ferrari.parent })
+if (MKtl.all['ferrari'].notNil) {
+	Butz.actions.addAfter(\ferrari, { WinBounds.showOrMake(\ferrari) }, '-interfaces-');
+	Butz.updateButtons.showButs(Butz.actions.size);
+	WinBounds.addMake(\ferrari, {
+		g.ferrari = MKtl.all['ferrari'].gui;
+		g.ferrari.parent.name_(\ferrari);
+	})
 };
 
 /////////// and these are all the stored bounds:
@@ -189,7 +197,7 @@ WinBounds.stored.putAll( (
 	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
 
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
-	'ndefMixer': Rect(200.0, 289.0, 684.0, 500.0),
+	'ndefMixer': Rect(200.0, 289.0, 684.0, 540.0),
 	'mainFX': Rect(1156.0, 223.0, 524.0, 782.0),
 	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
 	'ntmi': Rect(42.0, 2.0, 700.0, 462.0),
