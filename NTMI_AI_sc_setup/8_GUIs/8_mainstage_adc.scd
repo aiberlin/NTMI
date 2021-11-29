@@ -229,7 +229,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	});
 
 
-	Button(w,
+	g.main.mfxBut = Button(w,
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 50 * scrscale)
 	).states_([
 		["MainFX\n<<  RAND  >>", Color.white, butGrey],
@@ -240,11 +240,13 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		MFdef('mainPreStep').value(stepVal);
 		// [bt, x, y, mod].postcs;
 	});
+	g.main.mfxBut.visible_(q.usesMainFX);
 
 
 	g.main.mainSl = MView(
 		q.mFX.proxyChain.proxy.get(\mainVol),
-		g.main.w, Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
+		g.main.w,
+		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
 
 
@@ -261,7 +263,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		Pen.stringCenteredIn(
 			g.main.mainSl.label,
 			g.main.mainSl.bounds.moveTo(0,0),
-			Font(g.fontName, 40 * scrscale),
+			Font(g.fontName, 50 * scrscale),
 			Color.blue
 		)
 	});
@@ -436,7 +438,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 			);
 		};
-		bigUV.refresh;
+		g.main.bigUV.visible_(q.usesMainFX);
 	);
 
 	g.main.nufoViews = [
@@ -448,7 +450,9 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	MFdef('mainPreStep').add(\updateMain, {
 		defer {
-			g.main.bigUV.refresh;
+			if (q.usesMainFX) {
+				g.main.bigUV.refresh;
+			};
 		}
 	});
 
