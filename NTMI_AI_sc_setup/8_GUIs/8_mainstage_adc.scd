@@ -20,6 +20,14 @@ g.makeGui['NTMI_Main'].value;
 g.main = g.main ? ();
 g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 
+// quick and dirty removal of nufo from gui:
+g.hasNufo = { MKtl.all[\ntmi].notNil };
+// these should not be needed, but avoid errors for now
+q.bat =  q.bat ? ();
+q.frame = q.frame ? ();
+q.inph.mode = \full;
+
+
 /////// Clock display shows how long something has been running
 /*
 Tdef(\clocK).gui;
@@ -180,7 +188,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		);
 		// "nufoView.drawFunc".postln;
 	});
-	nufoView.refresh;
 	g.main.nufoView = nufoView;
 
 	Button(w, Rect(rightCol, 340 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
@@ -210,7 +217,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		Platform.recordingsDir.openOS;
 	});
 
-	Button(w, Rect(rightCol, 800 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
+	g.main.caliBut = Button(w, Rect(rightCol, 800 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["CALIBRATE\ntouch + move?", Color.white, butGrey],
 		["CALIBRATING\ntouch + move", Color.black, Color.yellow],
 		["touch + move\ncalibrated", Color.white, butGrey],
@@ -432,7 +439,19 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		bigUV.refresh;
 	);
 
-	MFdef('mainPreStep').add(\updateMain, { defer { bigUV.refresh } });
+	g.main.nufoViews = [
+		g.main.imuUV,
+		g.main.nufoView,
+		g.main.rMViews.last.uv, // mode view
+		g.main.caliBut,
+	];
+
+	MFdef('mainPreStep').add(\updateMain, {
+		defer {
+			g.main.bigUV.refresh;
+		}
+	});
+
 	// possible fixes here:
 	// do basic geometry of locations only once rel to center,
 	// move to center, then scale,
@@ -486,8 +505,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			Pen.stroke;
 		};
 	};
-	imuUV.refresh;
-
 
 	MFdef(\mainWinUpdate);
 
@@ -496,44 +513,56 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 
 	// update OSC and battery status
 	MFdef(\mainWinUpdate).add(\nufoView, {
-		if (q.osc.timeSinceLast >= 1) {
-			MFdef(\battery).(0);
-			q.bat.resetVals;
-			q.frame.resetVals;
+		var showNufo = g.hasNufo;
+		g.main.nufoViews.do { |view|
+			if (view.visible != showNufo) {
+				view.visible = showNufo;
+			};
 		};
 
-		// update battery status if new
-		if (q.bat.percent != q.bat.percentOld
-			or: { q.wifiOld != q.wifiStr
-				or: { (q.frame.rateStr == q.frame.rateStrOld).not }
-		})
-		{
-			g.main.nufoView.refresh;
-			q.bat.percentOld = q.bat.percent;
-			q.frame.rateStrOld = q.frame.rateStr;
-			q.wifiOld = q.wifiStr;
+		if (showNufo) {
+			if (q.osc.timeSinceLast >= 1) {
+				MFdef(\battery).(0);
+				q.bat.resetVals;
+				q.frame.resetVals;
+			};
+
+
+			// update battery status if new
+			if (q.bat.percent != q.bat.percentOld
+				or: { q.wifiOld != q.wifiStr
+					or: { (q.frame.rateStr == q.frame.rateStrOld).not }
+			})
+			{
+				g.main.nufoView.refresh;
+				q.bat.percentOld = q.bat.percent;
+				q.frame.rateStrOld = q.frame.rateStr;
+				q.wifiOld = q.wifiStr;
+			};
 		};
 	});
 
 	MFdef(\mainWinUpdate).add(\imuPad, {
-		// only if values changed!
-		if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
-			or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
+		if (g.hasNufo) {
+			// only if values changed!
+			if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
+				or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
-			g.main.movevals = q.osc.rawImuBiValues.biuni;
-			if (q.inph.mode == \binary) {
-				g.main.padCols = q.bin.bins.collect { |val, i|
-					Color.white.alpha_(val);
+				g.main.movevals = q.osc.rawImuBiValues.biuni;
+				if (q.inph.mode == \binary) {
+					g.main.padCols = q.bin.bins.collect { |val, i|
+						Color.white.alpha_(val);
+					};
+				} {
+					g.main.padCols = q.osc.rawPads.collect { |val|
+						Color.yellow(val).alpha_(val);
+					};
 				};
-			} {
-				g.main.padCols = q.osc.rawPads.collect { |val|
-					Color.yellow(val).alpha_(val);
-				};
+				g.main.imuUV.refresh;
 			};
-			g.main.imuUV.refresh;
+			q.osc.rawImuBiValuesOLD = q.osc.rawImuBiValues;
+			q.osc.rawPadsOLD = q.osc.rawPads;
 		};
-		q.osc.rawImuBiValuesOLD = q.osc.rawImuBiValues;
-		q.osc.rawPadsOLD = q.osc.rawPads;
 	});
 
 	MFdef(\mainWinUpdate).add(\modeZoom, {
