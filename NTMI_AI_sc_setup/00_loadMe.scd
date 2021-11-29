@@ -32,20 +32,20 @@ Task {
 
 
 	//// Set generally useful globals:
-	q.time0 = Main.elapsedTime;
-	q.myname = Platform.userHomeDir.basename.asSymbol;
-
 	// these may have been set in startup file already:
 	q.hasGui   = q.hasGui ?? { \View.asClass.notNil };
 	q.isPi     = q.isPi ?? { q.myname == 'pi' };
 	q.usesMidi = q.usesMidi ? true;
 	q.usesHid  = q.usesHid  ? true;
 	q.interfacesToLoad  = q.interfacesToLoad ? [ "uc4" ];
-
 	q.usesMainFX  = q.usesMainFX  ? true;
 
+	// internally useful:
+	q.time0 = Main.elapsedTime;
+	q.myname = Platform.userHomeDir.basename.asSymbol;
+
 	if (q.hasGui) {
-		"9_optionals/warnWin.scd".loadRelative
+		"9_optionals/warnWin.scd".loadRelative;
 	} {
 		q.warnWin = { |q, string="?!?", title="?!?"|
 			warn(title + string)
@@ -119,7 +119,7 @@ Task {
 
 				if (paths.size == 0) { "*** no files found for % :\n".postf(path.cs) };
 
-				if (paths.size > 1) { "****** matching files for % :\n".postf(path.cs) };
+				if (paths.size > 1) { "****** % matching files for % :\n".postf(paths.size, path.cs) };
 
 				paths.do { |path|
 					"*** loading % : %".postf(path.basename, preText);
