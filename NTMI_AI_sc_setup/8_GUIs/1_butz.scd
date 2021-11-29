@@ -36,6 +36,7 @@ Butz.clear;
 
 g.butzNames = [
 	'miniMax',
+	'StartupDial',
 	'Main_NTMI',
 	'inphlux',
 	'liveInput',
@@ -75,6 +76,8 @@ Butz.show.updateButtons;
 
 // then add some one-liners:
 Butz.addMiniMax;
+
+Butz.add('StartupDial', { StartupFile.dialog });
 
 Butz.add('setAll', { WinBounds.restoreAll });
 
