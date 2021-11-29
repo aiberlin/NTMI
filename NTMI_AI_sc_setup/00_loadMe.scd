@@ -32,18 +32,13 @@ Task {
 
 
 	//// Set generally useful globals:
-	// these may have been set in startup file already:
-	q.hasGui   = q.hasGui ?? { \View.asClass.notNil };
-	q.isPi     = q.isPi ?? { q.myname == 'pi' };
-	q.usesMidi = q.usesMidi ? true;
-	q.usesHid  = q.usesHid  ? true;
-	q.interfacesToLoad  = q.interfacesToLoad ? [ "uc4" ];
-	// turning this off does not work yet
-	q.usesMainFX  = /*q.usesMainFX  ?*/ true;
 
 	// internally useful:
+	q.hasGui   = q.hasGui ?? { \View.asClass.notNil };
+	q.isPi     = q.isPi ?? { q.myname == 'pi' };
 	q.time0 = Main.elapsedTime;
 	q.myname = Platform.userHomeDir.basename.asSymbol;
+
 
 	if (q.hasGui) {
 		"9_optionals/warnWin.scd".loadRelative;
@@ -62,14 +57,6 @@ Task {
 	// check user dir, make it and migrate pool there if needed
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
-
-	// "*** Modality: find MIDI and HID devices if enabled ***".postln;
-	if (q.usesMidi) {
-		MKtl.find(\midi); 0.5.wait;
-	};
-	if (q.usesHid) {
-		MKtl.find(\hid); 0.5.wait;
-	};
 
 	// ///////// set for dev mode here :
 	// if (q.myname == \adcxxx) {
@@ -142,32 +129,60 @@ Task {
 	//******* PREFERENCES
 	///// read user prefs (if there) or default prefs early on:
 	"1_prefs/1_prefs.scd".loadRelative;
-	// set q.numChans from prefs
-	q.numChans = q.prefs.active.numChans ? 2;
-	q.numIns = q.prefs.active.numIns ? q.numChans;
-	"*** q.numChans is: %\n".postf(q.numChans);
-	"*** q.numIns is: %\n".postf(q.numIns);
+
+	// these may have been set in startup file already:
+	q.usesMidi = q.prefs.active.usesMidi ? true;
+	q.usesHid  = q.prefs.active.usesHid  ? true;
+	q.interfacesToLoad  = q.prefs.active.interfacesToLoad ? [ "nufo", "uc4" ];
+	q.reboot = q.prefs.active.reboot  ? false;
+
+	// turning this off does not work yet
+	q.usesMainFX  = /*q.q.prefs.active.usesMainFX  ?*/ true;
+
+	// "*** Modality: find MIDI and HID devices if enabled ***".postln;
+	if (q.usesMidi) {
+		MKtl.find(\midi); 0.5.wait;
+	};
+	if (q.usesHid) {
+		MKtl.find(\hid); 0.5.wait;
+	};
 
 	// Server.killAll;
-	s.quit; "".postln;
+	if (q.reboot) {
+		s.quit; "".postln;
+		0.2.wait;
+	};
 
-	0.2.wait;
 	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
 	q.load("0_globals/*.scd");
 
-	q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
+	// set q.numChans from prefs
+	q.numChans = q.prefs.active.numChans ? 2;
+	q.numIns = q.prefs.active.numIns ? q.numChans;
 
-	s.options.numInputBusChannels = q.numIns;
-	s.options.numOutputBusChannels = q.numChans;
+	if (s.serverRunning) {
+		"server running already, cannot adjust settings".postln;
+		q.numChans = min(q.numChans, s.options.numOutputBusChannels);
+		q.numIns =   min(q.numIns,   s.options.numInputBusChannels);
 
-	q.load(q.prefs.active.preBootSetup);
+	} {
+		"setting up server ... ".postln;
+		q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
+
+		s.options.numInputBusChannels = q.numIns;
+		s.options.numOutputBusChannels = q.numChans;
+
+		q.load(q.prefs.active.preBootSetup);
+	};
+	"*** q.numChans is: %\n".postf(q.numChans);
+	"*** q.numIns is: %\n".postf(q.numIns);
 
 	"\n\n".postln;
 
 	s.waitForBoot {
 		var prevLatency = s.latency;
 
-		 // avoid late messages while loading
+		// avoid late messages while loading
 		s.latency = nil;
 
 		q.helloSnd ?? {
