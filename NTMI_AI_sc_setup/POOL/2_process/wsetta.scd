@@ -211,7 +211,7 @@ Tdef(\wsetta, {
 
 			// // and make the event to play
 			event = wse.asEvent((
-				start: ev[\pos] % wse.size,
+				start: ev[\pos] % (wse.size - 1),
 				num: mymap[\num],
 				repeats: mymap[\repeats],
 				legato: mymap[\legato],
