@@ -38,7 +38,8 @@ Task {
 	q.usesMidi = q.usesMidi ? true;
 	q.usesHid  = q.usesHid  ? true;
 	q.interfacesToLoad  = q.interfacesToLoad ? [ "uc4" ];
-	q.usesMainFX  = q.usesMainFX  ? true;
+	// turning this off does not work yet
+	q.usesMainFX  = /*q.usesMainFX  ?*/ true;
 
 	// internally useful:
 	q.time0 = Main.elapsedTime;
