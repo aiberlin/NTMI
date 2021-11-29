@@ -40,6 +40,7 @@ Task {
 	q.isPi     = q.isPi ?? { q.myname == 'pi' };
 	q.usesMidi = q.usesMidi ? true;
 	q.usesHid  = q.usesHid  ? true;
+	q.interfacesToLoad  = q.interfacesToLoad ? [ "uc4" ];
 
 	if (q.hasGui) {
 		"9_optionals/warnWin.scd".loadRelative
@@ -224,6 +225,10 @@ Task {
 
 		"\n\n*** *** *** FOLDER % : \n".postf("3_interfaces");
 		q.load("3_interfaces/*scd");
+
+		q.interfacesToLoad.do { |name|
+			q.load("3_interfaces/*/*%*scd".format(name));
+		};
 
 		"\n\n*** *** *** FOLDER % : \n".postf("5_postres");
 		q.load("5_postres/*scd");

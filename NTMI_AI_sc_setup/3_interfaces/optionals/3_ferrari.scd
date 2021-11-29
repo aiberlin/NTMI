@@ -92,21 +92,21 @@ q.ferr = q.ferr ? ();						// sub-Dict for all things gamePad
 // MKtl.find(\hid);
 // Ferrari wireless gamepad for Liz
 
-if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
-	MKtl.all['ferrari'].free;
-	MKtl('ferrari', "*run-n-drive");
-	q.ferr.mktl = MKtl('ferrari');
-} {
-	if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size == 1) {
-		MKtl.all['ferrari'].free;
-		q.ferr.mktl = MKtl('ferrari', "*run-n-drive-wireless");
-	};
-};
+// if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
+// 	MKtl.all['ferrari'].free;
+// 	MKtl('ferrari', "*run-n-drive");
+// 	q.ferr.mktl = MKtl('ferrari');
+// } {
+// 	if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size == 1) {
+// 		MKtl.all['ferrari'].free;
+// 		q.ferr.mktl = MKtl('ferrari', "*run-n-drive-wireless");
+// 	};
+// };
 
-// // make it anyway:
-// MKtl.all['ferrari'].free;
-// MKtl('ferrari', "*run-n-drive");
-// q.ferr.mktl = MKtl('ferrari');
+// make it anyway:
+MKtl.all['ferrari'].free;
+MKtl('ferrari', "*run-n-drive");
+q.ferr.mktl = MKtl('ferrari');
 
 if (q.ferr.mktl.isNil) {
 	"No Ferrari Gamepad present - not loading Gamepad patch.".postln;
