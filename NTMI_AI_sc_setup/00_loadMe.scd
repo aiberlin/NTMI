@@ -42,6 +42,8 @@ Task {
 	q.usesHid  = q.usesHid  ? true;
 	q.interfacesToLoad  = q.interfacesToLoad ? [ "uc4" ];
 
+	q.usesMainFX  = q.usesMainFX  ? true;
+
 	if (q.hasGui) {
 		"9_optionals/warnWin.scd".loadRelative
 	} {
@@ -232,6 +234,10 @@ Task {
 
 		"\n\n*** *** *** FOLDER % : \n".postf("5_postres");
 		q.load("5_postres/*scd");
+
+		if (q.usesMainFX) {
+			q.load("6_MainFX.scd");
+		};
 
 		if (q.hasGui) {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
