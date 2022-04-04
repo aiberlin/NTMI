@@ -31,8 +31,8 @@ z = NdefGui(Ndef(\allArm));
 g.tuneNameView(s);
 */
 
-
 Butz.clear;
+Butz(\ntmi).clear;
 
 g.butzNames = [
 	'miniMax',
@@ -51,18 +51,13 @@ g.butzNames = [
 	//	'ferrari',
 	//	'uc4',
 	'-helpers-',
-	'chanTest',
-	'plotTree',
-	// 'meters',
-	// 'scope',
-	'setAll',
+	'meters',
+	'scope',
 	'CLOSEALL',
 ];
 
 // Butz.clear;
 Butz.numButz = g.butzNames.size + 2;
-// just do the names to create the proper order in Butz:
-g.butzNames.do (Butz.add(_));
 
 // set Butz window style params:
 Butz.style;
@@ -72,54 +67,60 @@ Butz.style.winExtent_(120@16);
 Butz.style.font.name = g.fontName;
 Butz.style.font.size = 16;
 
-Butz.show.updateButtons;
+Butz.show;
 
 // then add some one-liners:
 Butz.addMiniMax;
-
 Butz.add('StartupDial', { StartupFile.dialog });
+Butz.add('CLOSEALL', { Window.allWindows.do { |w| if (w != Butz.w) { w.close } } });
+Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
+Butz.add('meters', { s.meter.window.name_(\meters) });
 
-Butz.add('setAll', { WinBounds.restoreAll });
+//////// ndefmixer - add to WinBounds call to Butz,
+Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
 
-Butz.add('plotTree', { s.plotTree });
-// Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
-// Butz.add('meters', { s.meter.window.name_(\meters) });
-
-Butz.add('chanTest', { g.makeGui.chanTest });
-
-Butz.add('CLOSEALL', {
-	Window.allWindows.do { |w| if (w != Butz.w) { w.close } }
+// add a gui makeFunc for MainFX:
+Butz.add('mainFX', { WinBounds.showOrMake('mainFX') });
+WinBounds.addMake('mainFX', { |dict, name = \mainFX|
+	g.makeGui.mainFX;
+	q.mfx.win.front.name_(name);
 });
 
+/// some helpers
+Butz(\helpers).add('setAll', { WinBounds.restoreAll });
+Butz(\helpers).add('plotTree', { s.plotTree });
+Butz(\helpers).add('chanTest', { g.makeGui.chanTest });
+
+
 // the main NTMI windows - funcs defined in other GUI files
-Butz.add('Main_NTMI', { WinBounds.showOrMake('Main_NTMI')});
+// just do the names to create the proper order in Butz:
+g.butzNames.do (Butz(\ntmi).add(_));
+
+Butz(\ntmi).add('Main_NTMI', { WinBounds.showOrMake('Main_NTMI')});
 WinBounds.addMake('Main_NTMI', {
 	g.makeGui[\Main_NTMI].value;
 	g.main.w.alpha_(g.alpha ? 0.8);
 });
 
-Butz.add('inphlux', { WinBounds.showOrMake('inphlux') });
+Butz(\ntmi).add('inphlux', { WinBounds.showOrMake('inphlux') });
 WinBounds.addMake('inphlux', { g.makeGui.inphlux.alpha_(g.alpha) });
 
-Butz.add(\liveInput, { WinBounds.showOrMake(\liveInput) });
+Butz(\ntmi).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 	g.liveGui = q.liveInput.gui.name_(name).moveTo(600, 5);
 	g.tuneNameView(g.liveGui);
 	g.liveGui.parent.alpha_(g.alpha);
 });
 
-Butz.add('slotSounds', { WinBounds.showOrMake('slotSounds') });
+Butz(\ntmi).add('slotSounds', { WinBounds.showOrMake('slotSounds') });
 WinBounds.addMake('slotSounds', { g.makeGui.slotSounds.alpha_(g.alpha) });
 
-Butz.add('presets', { WinBounds.showOrMake('presets') });
+Butz(\ntmi).add('presets', { WinBounds.showOrMake('presets') });
 WinBounds.addMake('presets', { g.makeGui.presets.alpha_(g.alpha) });
 
-Butz.add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
+Butz(\ntmi).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
 
-
-//////// ndefmixer - add to WinBounds call to Butz,
-Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
 
 ///// then add makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
@@ -143,25 +144,17 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	ndefMixer.parent;
 });
 
-//
-
-// add a gui makeFunc for MainFX:
-Butz.add('mainFX', { WinBounds.showOrMake('mainFX', ) });
-WinBounds.addMake('mainFX', { |dict, name = \mainFX|
-	g.makeGui.mainFX;
-	q.mfx.win.front.name_(name);
-});
 
 /// some more for extra interfaces - MKtls
-Butz.add(\nanoKtl, { WinBounds.showOrMake(\nanoKtl) });
+Butz(\ntmi).add(\nanoKtl, { WinBounds.showOrMake(\nanoKtl) });
 WinBounds.addMake(\nanoKtl, { |dict, name = \nanoKtl|
 	g.nanoKtl = q.nktl.gui; g.nanoKtl.parent;
 });
 
 // move these later
 if (MKtl.all['ntmi'].notNil) {
-	Butz.actions.addAfter(\nUFO, { WinBounds.showOrMake(\nUFO) }, '-interfaces-');
-	Butz.updateButtons.showButs(Butz.actions.size);
+	Butz(\ntmi).actions.addAfter(\nUFO, { WinBounds.showOrMake(\nUFO) }, '-interfaces-');
+	Butz.update.showButs(Butz(\ntmi).actions.size);
 	WinBounds.addMake(\nUFO, {
 		var ntg = MKtl(\ntmi).gui;
 		ntg.parent.name_(\nUFO);
@@ -170,9 +163,8 @@ if (MKtl.all['ntmi'].notNil) {
 };
 
 if (MKtl.all['uc4'].notNil) {
-	Butz.actions.addAfter(\uc4, { WinBounds.showOrMake(\uc4) }, '-interfaces-');
-	Butz.updateButtons.showButs(Butz.actions.size);
-	Butz.add(\uc4, { WinBounds.showOrMake(\uc4) });
+	Butz(\ntmi).actions.addAfter(\uc4, { WinBounds.showOrMake(\uc4) }, '-interfaces-');
+	Butz.update.showButs(Butz(\ntmi).actions.size);
 	WinBounds.addMake(\uc4, {
 		var uc4gui = g.uc4.gui;
 		uc4gui.views.keep(8).do { |view| view.view.centered = true };
@@ -181,8 +173,8 @@ if (MKtl.all['uc4'].notNil) {
 };
 
 if (MKtl.all['ferrari'].notNil) {
-	Butz.actions.addAfter(\ferrari, { WinBounds.showOrMake(\ferrari) }, '-interfaces-');
-	Butz.updateButtons.showButs(Butz.actions.size);
+	Butz(\ntmi).actions.addAfter(\ferrari, { WinBounds.showOrMake(\ferrari) }, '-interfaces-');
+	Butz.update.showButs(Butz(\ntmi).actions.size);
 	WinBounds.addMake(\ferrari, {
 		g.ferrari = MKtl.all['ferrari'].gui;
 		g.ferrari.parent.name_(\ferrari);
@@ -207,5 +199,4 @@ WinBounds.stored.putAll( (
 	'NdefGui_liveInput': Rect(971.0, 557.0, 394.0, 180.0),
 	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0)
 ) );
-
 )
