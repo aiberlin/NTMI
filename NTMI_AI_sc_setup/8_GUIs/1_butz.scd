@@ -50,7 +50,7 @@ g.butzNames = [
 ];
 
 // Butz.clear;
-Butz.numButz = g.butzNames.size + 2;
+Butz.numButz = g.butzNames.size + 5;
 
 // set Butz window style params:
 Butz.style;
@@ -84,8 +84,6 @@ Butz.add('setAll', { WinBounds.restoreAll });
 Butz.add('plotTree', { s.plotTree });
 Butz.add('chanTest', { g.makeGui.chanTest });
 
-
-
 // the main NTMI windows - funcs defined in other GUI files
 // just do the names to create the proper order in Butz:
 g.butzNames.do (Butz(\NTMI).add(_));
@@ -101,6 +99,8 @@ if (WinBounds.makeFuncs[\wsetta].notNil) {
 	Butz(\NTMI).add(\wsetta, { WinBounds.showOrMake(\wsetta) });
 };
 
+Butz('interfaces');
+
 Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
 
 [ 	'nUFO',
@@ -110,6 +110,9 @@ Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
 ].do { |ifName|
 	Butz(\interfaces).add(ifName, { ifName.postln });
 };
+
+
+
 
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 WinBounds.addMake('inphlux', { g.makeGui.inphlux.alpha_(g.alpha) });
@@ -153,41 +156,54 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	ndefMixer.parent;
 });
 
-// /// some more for extra interfaces - MKtls
-// Butz(\NTMI).add(\nanoKtl, { WinBounds.showOrMake(\nanoKtl) });
-// WinBounds.addMake(\nanoKtl, { |dict, name = \nanoKtl|
-// 	g.nanoKtl = q.nktl.gui; g.nanoKtl.parent;
-// });
-//
-// // move these later
-// if (MKtl.all['NTMI'].notNil) {
-// 	Butz(\NTMI).actions.addAfter(\nUFO, { WinBounds.showOrMake(\nUFO) }, '-interfaces-');
-// 	Butz.update.showButs(Butz(\NTMI).actions.size);
-// 	WinBounds.addMake(\nUFO, {
-// 		var ntg = MKtl(\NTMI).gui;
-// 		ntg.parent.name_(\nUFO);
-// 		ntg.views.detect { |vw| vw.element.name == \enc }.view.centered_(true);
-// 	});
-// };
-//
-// if (MKtl.all['uc4'].notNil) {
-// 	Butz(\NTMI).actions.addAfter(\uc4, { WinBounds.showOrMake(\uc4) }, '-interfaces-');
-// 	Butz.update.showButs(Butz(\NTMI).actions.size);
-// 	WinBounds.addMake(\uc4, {
-// 		var uc4gui = g.uc4.gui;
-// 		uc4gui.views.keep(8).do { |view| view.view.centered = true };
-// 		uc4gui.parent.alpha_(0.8);
-// 	});
-// };
-//
-// if (MKtl.all['ferrari'].notNil) {
-// 	Butz(\NTMI).actions.addAfter(\ferrari, { WinBounds.showOrMake(\ferrari) }, '-interfaces-');
-// 	Butz.update.showButs(Butz(\NTMI).actions.size);
-// 	WinBounds.addMake(\ferrari, {
-// 		g.ferrari = MKtl.all['ferrari'].gui;
-// 		g.ferrari.parent.name_(\ferrari);
-// 	})
-// };
+Butz(\interfaces).add('nUFO', {
+	if (MKtl.all['nUFO'].isNil) {
+		[
+			"3_interfaces/optionals/1_osc_nufo.scd",
+			"3_interfaces/optionals/1b_ntmi_nufo.scd",
+			"3_interfaces/optionals/1c_allLEDs_nufo.scd",
+			"3_interfaces/optionals/1d_pads2bits_nufo.scd"
+		].do { |path| (q.dir.user +/+ path).postcs.loadPaths };
+	};
+	WinBounds.addMake('nUFO', {
+		MKtl(\nUFO).gui.showLabels.parent
+	});
+	WinBounds.showOrMake('nUFO');
+});
+
+Butz(\interfaces).add('ferrari', {
+	if (MKtl.all['ferrari'].isNil) {
+		(q.dir.user +/+ "3_interfaces/optionals/3_ferrari.scd".postcs).loadPaths;
+	} {
+		WinBounds.addMake('ferrari', {
+			MKtl(\ferrari).gui.showLabels.parent
+		});
+		WinBounds.showOrMake('ferrari')
+	};
+});
+
+Butz(\interfaces).add('uc4', {
+	if (MKtl.all['uc4'].isNil) {
+		(q.dir.user +/+ "3_interfaces/optionals/2_uc4.scd".postcs).loadPaths;
+	} {
+		WinBounds.addMake('uc4', {
+			MKtl('uc4').gui.showLabels.parent
+		});
+		WinBounds.showOrMake('uc4')
+	};
+});
+
+Butz(\interfaces).add('nanoKtl', {
+	if (MKtl.all['nanoKtl'].isNil) {
+		(q.dir.user +/+ "3_interfaces/optionals/7_nanoKtl.scd".postcs).loadPaths;
+	} {
+		WinBounds.addMake('nanoKtl', {
+			MKtl('nanoKtl').gui.parent
+		});
+		WinBounds.showOrMake('nanoKtl')
+	};
+});
+
 
 /////////// and these are all the stored bounds:
 WinBounds.stored.putAll( (
