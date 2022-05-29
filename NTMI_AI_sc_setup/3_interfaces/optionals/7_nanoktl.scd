@@ -159,3 +159,5 @@ q.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 
 q.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
 q.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
 q.nktl.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
+
+q.nktl;
