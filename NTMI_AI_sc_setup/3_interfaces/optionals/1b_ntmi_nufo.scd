@@ -49,43 +49,43 @@ q.osc.nufo = q.osc.nufo ? ();
 
 
 ///////// make a new
-MKtl.all.at(\ntmi).free;
-MKtl(\ntmi, "ai-ntmi");
+MKtl.all.at(\nUFO).free;
+MKtl(\nUFO, "ai-ntmi");
 // this is for logging into NTMI-xxx networks only:
-MKtl(\ntmi).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
-MKtl(\ntmi).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
+MKtl(\nUFO).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
+MKtl(\nUFO).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
 
-MKtl(\ntmi).elAt(\enc).value_(0.5);
+MKtl(\nUFO).elAt(\enc).value_(0.5);
 
 
 /// init all xosc actions as MFuncs, provide posting
-MKtl(\ntmi).elementsDict.do(_.action_(MFunc()));
-MKtl(\ntmi).elementsDict.do { |el| el.action.add(\post, { |el|
+MKtl(\nUFO).elementsDict.do(_.action_(MFunc()));
+MKtl(\nUFO).elementsDict.do { |el| el.action.add(\post, { |el|
 	[el.name, el.value.round(0.0001)].postln
 }) };
-MKtl(\ntmi).elementsDict.do { |el| el.action.enable(\post) };
-MKtl(\ntmi).elementsDict.do { |el| el.action.disable(\post) };
+MKtl(\nUFO).elementsDict.do { |el| el.action.enable(\post) };
+MKtl(\nUFO).elementsDict.do { |el| el.action.disable(\post) };
 
 
 // create named elements/groups for imu and pads etc:
-MKtl(\ntmi).addNamed(\imu9, MKtl(\ntmi).elAt([\accel, \gyro, \magnet]).flat);
-MKtl(\ntmi).addNamed(\slots, MKtl(\ntmi).elAt(\bt, (0..3)));
-MKtl(\ntmi).addNamed(\encHat, MKtl(\ntmi).elAt(\bt, \5));
-MKtl(\ntmi).addNamed(\steps, MKtl(\ntmi).elAt(\bt, [\6, \7]));
-MKtl(\ntmi).addNamed(\modSw, MKtl(\ntmi).elAt(\bt, \8));
+MKtl(\nUFO).addNamed(\imu9, MKtl(\nUFO).elAt([\accel, \gyro, \magnet]).flat);
+MKtl(\nUFO).addNamed(\slots, MKtl(\nUFO).elAt(\bt, (0..3)));
+MKtl(\nUFO).addNamed(\encHat, MKtl(\nUFO).elAt(\bt, \5));
+MKtl(\nUFO).addNamed(\steps, MKtl(\nUFO).elAt(\bt, [\6, \7]));
+MKtl(\nUFO).addNamed(\modSw, MKtl(\nUFO).elAt(\bt, \8));
 
-MKtl(\ntmi).elAt(\slots);
+MKtl(\nUFO).elAt(\slots);
 // init imu values to center, caps to bottom
-MKtl(\ntmi).elAt(\imu9).value_(0.5!9);
-MKtl(\ntmi).elAt(\cap).valueAction_(0!8);
+MKtl(\nUFO).elAt(\imu9).value_(0.5!9);
+MKtl(\nUFO).elAt(\cap).valueAction_(0!8);
 
 /// name the elements
-MKtl(\ntmi).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
-MKtl(\ntmi).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
-MKtl(\ntmi).elAt(\modSw).elemDesc.label_('move Mode');
+MKtl(\nUFO).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
+MKtl(\nUFO).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
+MKtl(\nUFO).elAt(\modSw).elemDesc.label_('move Mode');
 
 ////////////// get battery value:
-MKtl(\ntmi).elAt(\battery).action = { |bat|
+MKtl(\nUFO).elAt(\battery).action = { |bat|
 	MFdef(\battery).value(bat.deviceValue);
 };
 
@@ -118,7 +118,7 @@ MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 	q.capture.imu = List[];
 	q.capture.pads = List[];
 
-	MFdef(\ntmiImuFunc).add(\capture, {
+	MFdef(\nUFOImuFunc).add(\capture, {
 		q.capture.imu.add(q.osc.rawImuBiValues);
 	});
 
@@ -129,7 +129,7 @@ MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 	defer ({
 		var padsflopped, padmeans, padmaxes, padjitters, padoffsets;
 		var captureOK;
-		MFdef(\ntmiImuFunc).remove(\capture);
+		MFdef(\nUFOImuFunc).remove(\capture);
 		MFdef(\capsin).remove(\capture);
 
 		"*** nUFO calibration: ***".postln;
@@ -183,7 +183,7 @@ How the modal logic for the NTMI buttons + encoder works:
 ****************/
 
 // the slot switches:
-MKtl(\ntmi).elAt(\slots).do { |but, i|
+MKtl(\nUFO).elAt(\slots).do { |but, i|
 
 	but.action.add(\shift, { |but|
 		var butIndex = but.indexInGroup;
@@ -214,11 +214,11 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 					// " % default action: toggle\n".postf(but.name);
 					playsNow = q.slots.toggleAt(i);
 					// send led value to show play state on NTMI immediately
-					MKtl(\ntmi).elAt(\led, \bk, i).value = playsNow.binaryValue;
+					MKtl(\nUFO).elAt(\led, \bk, i).value = playsNow.binaryValue;
 				}
 			} {
 				// "... (right mode for slot buttons) ...".postln;
-				if (MKtl(\ntmi).elAt(\encHat).isOn) {
+				if (MKtl(\nUFO).elAt(\encHat).isOn) {
 					MFdef(\clutch).value(slotObj);
 				};
 				q.osc.rightWasUsed = true;
@@ -227,13 +227,13 @@ MKtl(\ntmi).elAt(\slots).do { |but, i|
 	});
 };
 
-MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
+MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 	// hope the button order is correct?
 	var btname = [\encHat, \preUp, \preDown, \touchMove][i];
 
 	but.action.add(\shift, { |but|
 		// 0 is button pressed:
-		MKtl(\ntmi).elAt(\led, \bk, i + 4).value = but.value;
+		MKtl(\nUFO).elAt(\led, \bk, i + 4).value = but.value;
 		if (but.value == 1) {
 			q.osc.rightDown.add(btname);
 			// "rightdown: %\n".postf(q.osc.rightDown);
@@ -247,7 +247,7 @@ MKtl(\ntmi).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 
 /////////// add funcs to inphMode switching so NTMI can do it /////////
 
-MFdef(\touchON).add(\ntmi, {
+MFdef(\touchON).add(\nUFO, {
 	"ntmi - touchON".postln;
 	MFdef(\capsToInph).enable(\set);
 	q.slots.nowPlaying.do { |obj|
@@ -257,16 +257,16 @@ MFdef(\touchON).add(\ntmi, {
 	}
 });
 
-MFdef(\touchOFF).add(\ntmi, {
+MFdef(\touchOFF).add(\nUFO, {
 	"ntmi - touchOFF".postln;
 	q.slots.nowPlaying.do { |nd| q.inphlux.action.disable(nd.key) };
 	MFdef(\capsToInph).disable(\set);
 	q.inphlux.set(*q.inphlux.getHalo(\padNames).collect([_, 0]).flat);
 });
 
-MFdef(\moveON).add(\ntmi, {
+MFdef(\moveON).add(\nUFO, {
 	"ntmi - moveON".postln;
-	MFdef(\ntmiImuFunc).enable(\setInflux);
+	MFdef(\nUFOImuFunc).enable(\setInflux);
 	q.slots.nowPlaying.do { |obj|
 		if (q.inph.decoupled.includes(obj.key).not) {
 			MFdef(\inphCouple).(obj);
@@ -276,14 +276,14 @@ MFdef(\moveON).add(\ntmi, {
 
 MFdef(\moveON).value;
 
-MFdef(\moveOFF).add(\ntmi, {
+MFdef(\moveOFF).add(\nUFO, {
 	"ntmi - moveOFF".postln;
-	MFdef(\ntmiImuFunc).disable(\setInflux);
+	MFdef(\nUFOImuFunc).disable(\setInflux);
 	/////// pads set inphlux in unipolar, 0-1 range!
 	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
 
-MFdef(\binON).add(\ntmi, {
+MFdef(\binON).add(\nUFO, {
 	"ntmi - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
 	// q.slots.nowPlaying.do { |obj|
@@ -291,7 +291,7 @@ MFdef(\binON).add(\ntmi, {
 	// };
 });
 
-MFdef(\binOFF).add(\ntmi, {
+MFdef(\binOFF).add(\nUFO, {
 	"ntmi - binOFF".postln;
 	MFdef(\capsToInph).disable(\binKey);
 });
@@ -299,13 +299,13 @@ MFdef(\binOFF).add(\ntmi, {
 // show modes as colors:
 // green = both, red = move, blue = touch, black = off
 
-MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
+MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
 		// hat is down: main fx rand
-		{ MKtl(\ntmi).elAt(\encHat).isOn }
+		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{ MFdef(\mainPreStep).value(nil) }
 
 		// slot mode: rand preset
@@ -331,7 +331,7 @@ MFdef(\inphModeSetIndex).add(\modeSwColor, {
 	fork { 3.do {
 		0.02.wait;
 		try {
-			MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
+			MKtl(\nUFO).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
 		}
 	} };
 });
@@ -343,7 +343,7 @@ MFdef(\setInphWPre).add(\setLEDs, {
 		0.1.wait;
 		[5, 6].do { |ledIndex|
 			try {
-				MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledIndex, *ledCol);
+				MKtl(\nUFO).device.source.sendMsg("/ntmi/ledCtl/back", ledIndex, *ledCol);
 			};
 			0.02.wait
 		}
@@ -356,12 +356,12 @@ MFdef(\setInphWPre).add(\setLEDs, {
 // otherwise, hat was shift but for other buttons.
 
 MFdef(\encHatUsed).add(\used, {
-	if (MKtl(\ntmi).elAt(\encHat).isOn) {
+	if (MKtl(\nUFO).elAt(\encHat).isOn) {
 		q.osc.encHatUsed = true;
 	}
 });
 
-MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
+MKtl(\nUFO).elAt(\encHat).action.add(\snap, { |bt|
 	if (bt.isOn) {
 		q.osc.encHatUsed = false;
 	} {
@@ -372,8 +372,8 @@ MKtl(\ntmi).elAt(\encHat).action.add(\snap, { |bt|
 });
 
 //////
-MKtl(\ntmi).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, MFdef(\encHatUsed)) };
-MKtl(\ntmi).elAt(\enc).action.add(\enchat, MFdef(\encHatUsed));
+MKtl(\nUFO).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, MFdef(\encHatUsed)) };
+MKtl(\nUFO).elAt(\enc).action.add(\enchat, MFdef(\encHatUsed));
 
 
 // reset right back leds to their proper values
@@ -387,13 +387,13 @@ MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 });
 
 
-MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
+MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release, i.e. if
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
 		// hat is down: main fx rand
-		{ MKtl(\ntmi).elAt(\encHat).isOn }
+		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(nil);
 			MFdef(\resetModePreLEDs).value(0.1);
@@ -419,13 +419,13 @@ MKtl(\ntmi).elAt(\modSw).action.add(\modal, {|bt|
 });
 
 // preUp button:
-MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
+MKtl(\nUFO).elAt(\steps)[0].action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
 		// hat is down: main fx up by one
-		{ MKtl(\ntmi).elAt(\encHat).isOn }
+		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(1);
 			MFdef(\resetModePreLEDs).value(0.1);
@@ -451,13 +451,13 @@ MKtl(\ntmi).elAt(\steps)[0].action.add(\modal, {|bt|
 });
 
 // preDown button - same but -1
-MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
+MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 	// do modal action on release
 	// [bt.name, bt.value].postln;
 	if (bt.value == 0) {
 		case
 		// hat is down: main fx down by one
-		{ MKtl(\ntmi).elAt(\encHat).isOn }
+		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(-1);
 			MFdef(\resetModePreLEDs).value(0.1);
@@ -487,9 +487,9 @@ MKtl(\ntmi).elAt(\steps)[1].action.add(\modal, {|bt|
 // -- slot mode -> inc/dec slot volume
 // -- sl+hat mode -> inc/dec sounds
 
-MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
+MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 	var slotDown = (q.osc.leftDown.size > 0).binaryValue;
-	var hatDown = MKtl(\ntmi).elAt(\encHat).isOn.binaryValue;
+	var hatDown = MKtl(\nUFO).elAt(\encHat).isOn.binaryValue;
 	var modeNum = slotDown * 2 + hatDown;
 
 	modeNum.switch(
@@ -529,16 +529,16 @@ MKtl(\ntmi).elAt(\enc).action.add(\modal, { |enc|
 // //// I M U
 // ///////////////////////////////////////////////////////////////
 
-MKtl(\ntmi).collectivesDict[\imu].action = {
+MKtl(\nUFO).collectivesDict[\imu].action = {
 	// trigger the action only once (influx calc)
-	MFdef(\ntmiImuFunc).value;
+	MFdef(\nUFOImuFunc).value;
 };
 
 // set the first 9 values of the inphlux from the imu params:
 q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
 
-MFdef(\ntmiImuFunc).add(\setInflux, {
-	var imuInvalsBi = MKtl(\ntmi).elAt(\imu9).value.unibi;
+MFdef(\nUFOImuFunc).add(\setInflux, {
+	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
 	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
 		var value = imuInvalsBi[i] - q.zero.imu[i];
 		[name, value]
@@ -569,19 +569,19 @@ q.frame.rate
 q.frame.rateStr
 */
 
-MFdef(\ntmiImuFunc).add(\frame, {
+MFdef(\nUFOImuFunc).add(\frame, {
 	q.frame.ring.put(q.frame.index, Main.elapsedTime);
 	q.frame.index = q.frame.index + 1 % q.frame.ring.size;
 });
 
 /*
-MFdef(\ntmiImuFunc).disable( \setInflux );
-MFdef(\ntmiImuFunc).enable( \setInflux );
+MFdef(\nUFOImuFunc).disable( \setInflux );
+MFdef(\nUFOImuFunc).enable( \setInflux );
 */
 
 q.osc.nufoSkipLogin.stop.free;
 q.osc.nufoSkipLogin = SkipJack({
-	try { MKtl(\ntmi).device.source.sendMsg("/ntmi/login")
+	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login")
 } }, 0.5);
 
 // for monitoring the incoming osc activity by timetag
@@ -598,7 +598,7 @@ q.osc.nufoSkip.stop.free;
 q.osc.nufoSkip = SkipJack({
 	var cols = [[0,0,0], [0,1,0]], col;
 	fork {
-		MKtl(\ntmi).elAt(\led, \bk, (0..3)).do { |led, ledi|
+		MKtl(\nUFO).elAt(\led, \bk, (0..3)).do { |led, ledi|
 			var isPlaying = q.ndefs[ledi].monitor.isPlaying;
 			var newval = isPlaying.binaryValue;
 			if (newval != led.prevValue) {
@@ -608,7 +608,7 @@ q.osc.nufoSkip = SkipJack({
 				2.do {
 					rrand(0.03, 0.07).wait;
 					try {
-						MKtl(\ntmi).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+						MKtl(\nUFO).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
 					}
 				};
 			};
@@ -629,7 +629,7 @@ q.inphlux.addHalo(\padNames, q.inphlux.inNames.copyRange(9, 16));
 
 MFdef(\capsToInph).add(\set, {
 	var influx = q.inphlux;
-	var pads = MKtl(\ntmi).elAt(\cap);
+	var pads = MKtl(\nUFO).elAt(\cap);
 	var padInNames = q.inphlux.getHalo(\padNames);
 	var keysValues = pads.collect { |pad, i|
 		[ padInNames[i], pad.value]
@@ -642,14 +642,14 @@ MFdef(\capsToInph).add(\set, {
 ////// coompensate for base values,
 ////// and send the final values only once.
 
-MKtl(\ntmi).collAt('caps').groupAction = nil;
+MKtl(\nUFO).collAt('caps').groupAction = nil;
 
-MKtl(\ntmi).addHalo(\capLedThresh, 0.3);
+MKtl(\nUFO).addHalo(\capLedThresh, 0.3);
 
-MKtl(\ntmi).collAt('caps').groupAction = MFdef(\capsin);
+MKtl(\nUFO).collAt('caps').groupAction = MFdef(\capsin);
 
 MFdef(\capsin).add(\set, { |coll|
-	var capLedThresh = MKtl(\ntmi).getHalo(\capLedThresh);
+	var capLedThresh = MKtl(\nUFO).getHalo(\capLedThresh);
 	var values = coll.value;
 
 	// reorder for proper order of pads and leds
@@ -665,13 +665,13 @@ MFdef(\capsin).add(\set, { |coll|
 	};
 
 	// set element values back to the compensated values, no action
-	MKtl(\ntmi).elAt('cap').value_(values);
+	MKtl(\nUFO).elAt('cap').value_(values);
 	// trigger touch to inphlux only once ...
 	MFdef(\capsToInph).value;
 
 	// light up leds when pads are touched above thresh:
 	fork {
-		MKtl(\ntmi).elAt(\led, \fr).do { |led, i|
+		MKtl(\nUFO).elAt(\led, \fr).do { |led, i|
 			var newval = (values[i] > capLedThresh).binaryValue;
 			if (newval != led.value) {
 				led.value = newval;
@@ -683,7 +683,7 @@ MFdef(\capsin).add(\set, { |coll|
 
 // individual pad action - useful for guis only
 /// do global set only once, from MFdef(\touchToInph)
-MKtl(\ntmi).elAt(\cap).do { |pad, i|
+MKtl(\nUFO).elAt(\cap).do { |pad, i|
 	pad.action.add(\setInflux, {|ana|
 		var name = 	q.inphlux.getHalo(\padNames).clipAt(i);
 		q.inphlux.set(name, ana.value.pow(3));

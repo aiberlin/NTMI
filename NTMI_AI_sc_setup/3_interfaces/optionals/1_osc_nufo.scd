@@ -31,12 +31,12 @@ OSCdef(\xoscAlive, { |msg, time|
 // if first time, or longer than 10 sec silence, do ballet
 NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
 */
-OSCdef(\ntmiAlive, { |msg, time|
-	// \ntmiAlive.postln;
+OSCdef(\nUFOAlive, { |msg, time|
+	// \nUFOAlive.postln;
 	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
-	q.osc.deviceName = \ntmi;
+	q.osc.deviceName = \nUFO;
 	q.osc.lastInTime = time;
 }, "ntmi/imu").permanent_(true);
 
