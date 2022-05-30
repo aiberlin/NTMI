@@ -58,7 +58,11 @@ q.getNdefs.do { |proxy, i|	q.pre.makePreset(proxy) };
 
 // init to first preset if there are any saved ones
 NdefPreset.all.do { |pre|
-	if (pre.settings.size > 1) { pre.setCurr(pre.settings[1].key) };
+	var secondSet;
+	if (pre.settings.size > 1) {
+		secondSet = pre.settings[1].key;
+		pre.setCurr(secondSet).setProxy(secondSet);
+	};
 };
 
 // increments and stores a random seed per ndefPreset.
@@ -108,7 +112,7 @@ q.pre.stepNdefInf = { |dict, ndef, inc|
 		nextIndex = currIndex + inc % nextNames.size;
 		nextName = nextNames[nextIndex];
 		">>> % setting: % at index: % \n\n".postf(pre, nextName.cs, nextIndex);
-		pre.setCurr(nextName);
+		pre.setCurr(nextName, true).setProxy(nextName);
 		q.inphlux.offsetsFromPreset(*[pre, nextName]);
 	};
 };

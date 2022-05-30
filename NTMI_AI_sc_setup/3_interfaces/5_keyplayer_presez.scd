@@ -21,7 +21,8 @@ KeyPlayer(\prez).makeLoop;
 		// randomize Settings using the key's ascii number as random seed
 		q.slots.nowPlaying.do({ |px|
 			var pres = NdefPreset(px);
-			pres.setCurr( pres.getSetNames.wrapAt(char.digit) );
+			var newSet = pres.getSetNames.wrapAt(char.digit);
+			pres.setCurr( newSet ).setProxy(newSet);
 		})
 	});
 };

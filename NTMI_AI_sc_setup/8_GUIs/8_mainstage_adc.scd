@@ -304,7 +304,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		};
 		prePop.action = { |pop|
 			var ndef = q.slots.actives[i];
-			NdefPreset(ndef).setCurr(pop.item);
+			NdefPreset(ndef).setCurr(pop.item).setProxy(pop.item);
 			// dont step, just add influx offset
 			q.pre.stepNdefInf(ndef, 0);
 			MFdef('guiSlots').value;

@@ -5,6 +5,7 @@ q.bin = q.bin ? ();
 q.bin.binkey = 1;
 
 MFdef(\randOrb).add(\setPres, { |newNum|
+	var newSetName;
 	if (q.bin.binkey != newNum) {
 		q.bin.binkey = newNum;
 
@@ -21,7 +22,8 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 					pre.proxy.addHalo(\randSeed, newNum);
 				}{
 					// if within presets, jump to the existing preset at that index
-					pre.setCurr( pre.getSetNames.wrapAt(newNum) );
+					newSetName = pre.getSetNames.wrapAt(newNum);
+					pre.setCurr(newSetName).setProxy(newSetName);
 					">>> % preset index: %\n".postf(pre, newNum);
 					pre.proxy.addHalo(\randSeed, nil);
 				}

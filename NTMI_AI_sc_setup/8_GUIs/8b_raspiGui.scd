@@ -98,7 +98,7 @@ g.makeGui.miniNTMI = {
 		prePop = PopUpMenu(w, Rect(5 + 100, 60 + 2 * i + 5, 100, 30))
 		.items_(ndefpre.getSetNames).value_(ndefpre.currIndex)
 		.action_({ |ppop|
-			ndefpre.setCurr(ppop.item);
+			ndefpre.setCurr(ppop.item).setProxy(ppop.item);
 			// dont step, just add influx offset
 			q.pre.stepNdefInf(myndef, 0);
 

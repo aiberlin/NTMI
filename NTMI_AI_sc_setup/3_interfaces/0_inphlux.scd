@@ -20,7 +20,7 @@ q.inph.centerToRandPreset = { |q, infl, preset|
 	var nuP = preset.getSetNames.choose.postln;
 	infl.offsetsFromPreset(preset, nuP);
 	q.inphlux.resetInvals;
-	preset.setCurr(nuP);
+	preset.setCurr(nuP).setProxy(nuP);
 	nuP;
 };
 
@@ -30,7 +30,7 @@ q.inph.centerToPreset = { |q, infl, preset, presNr=1|
 	var nuP = sez.wrapAt(presNr).key.postln;
 	infl.offsetsFromPreset(preset, nuP);
 	q.inphlux.resetInvals;
-	preset.setCurr(nuP);
+	preset.setCurr(nuP).setProxy(nuP);
 	nuP;
 };
 
