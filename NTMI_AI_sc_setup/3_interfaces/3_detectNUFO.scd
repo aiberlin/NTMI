@@ -18,10 +18,17 @@ OSCdef(\nUFOdetectIMU, { |msg|
 	};
 }, "/ntmi/imu").permanent;
 
-// // wait for nUFO ID, decide whether to connect:
-// OSCdef(\nUFOdetectID, { |msg|
-// 	msg.postln;
-// }, "/ntmi/ID")
+q.knownNUFOs = [];
+// wait for nUFO ID, decide whether to connect:
+OSCdef(\nUFOdetectID, { |msg|
+	var newID = msg[1];
+	if (q.knownNUFOs.includes(newID).not) {
+		q.knownNUFOs = q.knownNUFOs.add(newID);
+		"*** q.knownNUFOs : %\n\n".postf(q.knownNUFOs.cs);
+
+	};
+	msg.postln;
+}, "/ntmi/ID")
 
 
 
