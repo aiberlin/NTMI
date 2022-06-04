@@ -22,7 +22,7 @@ if (foundInfos.notEmpty) {
 	// foundInfos.printcsAll;
 	"---".postln;
 	foundInfos.do { |entry|
-		if (entry == "nanoKONTROL2") { filenames.add("7_nanoktl1.scd") };
+		if (entry == "nanoKONTROL2") { filenames.add("7_nanoktl.scd") };
 		if (entry == "Faderfox UC4") { filenames.add("2_uc4.scd") };
 		if (entry == "Run'N' Drive_Thrustmaster" ) {
 			filenames.add("3_ferrari.scd") };
@@ -35,5 +35,7 @@ if (filenames.isEmpty) {
 	filenames.add("7_nanoktl1.scd")
 };
 
-filenames.do { |filename| (here +/+ "optionals" +/+ filename).loadPaths };
+filenames.do { |filename| try {
+	(here +/+ "optionals" +/+ filename).loadPaths
+} };
 )
