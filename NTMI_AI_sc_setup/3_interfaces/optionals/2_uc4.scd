@@ -34,24 +34,24 @@ g.uc4.addNamed(\inflx, g.uc4.elAt(\pgSl1, \sl));
 
 // lower 4 encoders and their hatButtons for play and vol
 g.uc4.addNamed(\vols, g.uc4.elAt(\pgKn1, \kn, (4..7)));
-g.uc4.addNamed(\playBts, g.uc4.elAt(\pgKn1, \pbt, (4..7)));
+g.uc4.addNamed(\playBts, g.uc4.elAt(\pgKn1, \pbt, (4..7), 0));
 
 // higher 4 encoders for changing presets, hold hats for processes
 // select preset or sounds
 g.uc4.addNamed(\select, g.uc4.elAt(\pgKn1, \kn, (0..3)));
 // if but up, select preset, if down, sound
-g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (0..3)));
+g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (0..3), 0));
 
-g.uc4.addNamed(\rand_inph, g.uc4.elAt(\pgSl1, \bt, 0));
-g.uc4.addNamed(\prev_inph, g.uc4.elAt(\pgSl1, \bt, 1));
-g.uc4.addNamed(\next_inph, g.uc4.elAt(\pgSl1, \bt, 2));
-g.uc4.addNamed(\zero_inph, g.uc4.elAt(\pgSl1, \bt, 3));
+g.uc4.addNamed(\rand_inph, g.uc4.elAt(\pgSl1, \bt, 0, 0));
+g.uc4.addNamed(\prev_inph, g.uc4.elAt(\pgSl1, \bt, 1, 0));
+g.uc4.addNamed(\next_inph, g.uc4.elAt(\pgSl1, \bt, 2, 0));
+g.uc4.addNamed(\zero_inph, g.uc4.elAt(\pgSl1, \bt, 3, 0));
 
-g.uc4.addNamed(\snap, g.uc4.elAt(\pgSl1, \bt, 4));
+g.uc4.addNamed(\snap, g.uc4.elAt(\pgSl1, \bt, 4, 0));
 
-g.uc4.addNamed(\rand_pre, g.uc4.elAt(\pgSl1, \bt, 5));
-g.uc4.addNamed(\prev_pre, g.uc4.elAt(\pgSl1, \bt, 6));
-g.uc4.addNamed(\next_pre, g.uc4.elAt(\pgSl1, \bt, 7));
+g.uc4.addNamed(\rand_pre, g.uc4.elAt(\pgSl1, \bt, 5, 0));
+g.uc4.addNamed(\prev_pre, g.uc4.elAt(\pgSl1, \bt, 6, 0));
+g.uc4.addNamed(\next_pre, g.uc4.elAt(\pgSl1, \bt, 7, 0));
 
 
 // modify labels, use only semantic element names:
