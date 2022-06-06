@@ -103,7 +103,7 @@ q.nktl.elAt(\next_pre).elemDesc.label = "next MFX";
 q.nktl.elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
 q.nktl.elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
 
-q.nktl.elAt(\selMode).do { |el, i| el.elemDesc.label = "slct %".format(i+1) };
+q.nktl.elAt(\selMode).do { |el, i| el.elemDesc.label = "mod sl%".format(i+1) };
 q.nktl.elAt(\select).do { |el, i| el.elemDesc.label = "slc % snd".format(i+1) };
 
 q.nktl.elAt(\inflSet).do { |sl, i| sl.elemDesc.label = "inf" + q.inphlux.inNames[i].cs };
