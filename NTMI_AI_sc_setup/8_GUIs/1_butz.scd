@@ -99,7 +99,7 @@ if (WinBounds.makeFuncs[\wsetta].notNil) {
 	Butz(\NTMI).add(\wsetta, { WinBounds.showOrMake(\wsetta) });
 };
 
-Butz('interfaces');
+Butz('interfaces').addMiniMax;
 
 Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
 
