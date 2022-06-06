@@ -112,8 +112,6 @@ Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
 };
 
 
-
-
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 WinBounds.addMake('inphlux', { g.makeGui.inphlux.alpha_(g.alpha) });
 
@@ -198,7 +196,7 @@ Butz(\interfaces).add('nanoKtl', {
 		(q.dir.user +/+ "3_interfaces/optionals/7_nanoKtl.scd".postcs).loadPaths;
 	} {
 		WinBounds.addMake('nanoKtl', {
-			MKtl('nanoKtl').gui.parent
+			MKtl('nanoKtl').gui.showLabels.parent
 		});
 		WinBounds.showOrMake('nanoKtl')
 	};

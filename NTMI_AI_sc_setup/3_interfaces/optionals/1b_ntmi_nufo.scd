@@ -274,8 +274,6 @@ MFdef(\moveON).add(\nUFO, {
 	}
 });
 
-MFdef(\moveON).value;
-
 MFdef(\moveOFF).add(\nUFO, {
 	"ntmi - moveOFF".postln;
 	MFdef(\nUFOImuFunc).disable(\setInflux);
