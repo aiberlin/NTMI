@@ -1,6 +1,8 @@
 // Reinhold Friedel special, HH 2022
 
 // a Gendy Synth with filters
+// adc: switched Gendy5 to gendy1 so we dont need SC3-plugins,
+// and Gendy3 to gendy2 for stability (gendy3 is unstable on macOS
 
 (
 Ndef(\gendhy).addSpec(\minfreq, [1, 200, \exp]);
@@ -21,19 +23,19 @@ Ndef(\gendhy, { |amp=0.2
 	rq1=0.5, rq2=1, filter=0.5, balance=0
 	|
 
-	var ge = Gendy5.ar(
+	var ge = Gendy1.ar(
 		ampdist ! q.numChans,
-		durdist + [0, 3] % 6,
+		durdist + [0, 3] % 7,
 		minfreq:minfreq,
 		maxfreq:[500, 750].reverse,
 		mul:0.2*amp
 	);
-	var ge3 = Gendy3.ar(
-		ampdist + [0, 2] % 6,
-		durdist + [1, 5] % 6,
+	var ge3 = Gendy2.ar(
+		ampdist + [0, 2] % 7,
+		durdist + [1, 5] % 7,
 		mul:0.2*amp
 	);
-	var ffr = Gendy5.ar(
+	var ffr = Gendy1.ar(
 		ampdistF ! 2,
 		durdistF,
 		minfreq: 0.03, maxfreq:40
