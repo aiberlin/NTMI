@@ -188,7 +188,7 @@ Tdef(\wsetta, {
 
 	ev.pos = ev.pos ? 0;
 
-	q.wse.wses.postln;
+	// q.wse.wses.postln;
 
 	inf.do { |i|
 		var event;
