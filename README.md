@@ -24,5 +24,17 @@ You can personalize this setup later with
 Recommended: also install SC3-plugins 
 (some sound processes may require UGens from SC3-plugins)
 https://github.com/supercollider/sc3-plugins
-and if you switch between projects in SuperCollider, try 
+
+And if you switch between projects in SuperCollider, try 
 Quarks.install("StartupFile");
+// recompile, then make an ntmi startup file:
+StartupFile.writeStartupFileToExternalPath('ntmi',
+ (Quark("NTMI").localPath +/+ "NTMI_AI_sc_setup/00_loadMe.scd")
+);
+
+// test that the file is there:
+StartupFile.pathsDict.keys.includes('ntmi');
+// and write a startup.scd that redirects to the NTMI loadMe:
+StartupFile.writeRedirectFile('ntmi');
+
+
