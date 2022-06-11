@@ -132,6 +132,7 @@ Tdef(\wsetta).addSpec(\pos, [0, 10000, 0, 1]);
 //////// get these params from Ndef:
 Ndef(\wsetta).set(\num, 10, \progress, 10);
 Ndef(\wsetta).set(\legato, 1, \repeats, 1);
+Ndef(\wsetta).set(\amp, 0);
 Ndef(\wsetta).set(\wsamp, 0.25);
 Ndef(\wsetta).set(\rate, 1, \rate2, 1);
 Ndef(\wsetta).set(\pan, 0); // actually rand panwidth
@@ -144,7 +145,7 @@ Ndef(\wsetta).addSpec(\rate2, [0.25, 4, \exp]);
 Ndef(\wsetta).addSpec(\legatoDev, [1, 10, \exp]);
 Ndef(\wsetta).addSpec(\wsamp, \amp);
 
-Ndef(\wsetta).addSpec(\progress, [-7, 150, 6, 1]);
+Ndef(\wsetta).addSpec(\progress, [-34, 34, 0, 1]);
 
 // ndef source is the Tdef ...
 Ndef(\wsetta).prime(Tdef(\wsetta));
