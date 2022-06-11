@@ -193,7 +193,7 @@ Butz(\interfaces).add('uc4', {
 
 Butz(\interfaces).add('nanoKtl', {
 	if (MKtl.all['nanoKtl'].isNil) {
-		(q.dir.user +/+ "3_interfaces/optionals/7_nanoKtl.scd".postcs).loadPaths;
+		(q.dir.user +/+ "3_interfaces/optionals/7_nanoktl.scd".postcs).loadPaths;
 	} {
 		WinBounds.addMake('nanoKtl', {
 			MKtl('nanoKtl').gui.showLabels.parent
