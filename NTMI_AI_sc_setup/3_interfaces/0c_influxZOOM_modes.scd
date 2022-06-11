@@ -51,6 +51,6 @@ MFdef(\inphModeSetIndex).add(\set, { |modeIndex = 0|
 });
 
 MFdef(\inphModeStep).add(\step, { |inc = 1|
-	inc = inc ?? { 3.rand };
+	inc = inc ?? { q.inph.modes.size.rand };
 	MFdef(\inphModeSetIndex).value(q.inph.modeIndex + inc);
 });
