@@ -130,12 +130,6 @@ Tdef(\wsetta).addSpec(\pos, [0, 10000, 0, 1]);
 
 (
 //////// get these params from Ndef:
-Ndef(\wsetta).set(\num, 10, \progress, 10);
-Ndef(\wsetta).set(\legato, 1, \repeats, 1);
-Ndef(\wsetta).set(\amp, 0);
-Ndef(\wsetta).set(\wsamp, 0.25);
-Ndef(\wsetta).set(\rate, 1, \rate2, 1);
-Ndef(\wsetta).set(\pan, 0); // actually rand panwidth
 
 Ndef(\wsetta).addSpec(\num, [1, 100, \exp, 1]);
 Ndef(\wsetta).addSpec(\repeats, [1, 100, \exp, 1]);
@@ -157,15 +151,11 @@ Ndef(\wsetta).put(5, { |amp,
 	legato = 1, rate = 1, rate2 = 1, pan = 0.5|
 	Silent.ar(2);
 });
+// get default settings:
+Ndef(\wsetta).supplementNodeMap;
 );
 
-// // sync the specs if ever needed
-// Ndef(\wsetta).getSpec.keysValuesDo { |name, spec|
-// 	Tdef(\wsetta).addSpec(name, spec);
-// };
-
-
-// simple, no rand var except pan
+// simple, no random variation except pan
 (
 Tdef(\wsetta).quant_(0);
 Tdef(\wsetta, {
