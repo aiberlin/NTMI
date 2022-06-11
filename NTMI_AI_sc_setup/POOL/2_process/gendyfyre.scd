@@ -1,0 +1,228 @@
+// GendyChor adapt from historic SC2 to SC3
+
+// fixed setup params go to Tdef,
+// modulatable params to Ndef,
+
+// Tdef('envGendy1').set(\maxVoices, 6);
+/*
+s.options.memSize = 8192 * 16;
+s.reboot;
+
+Ndef(\gendyfyre).gui(14);
+Ndef(\gendyfyre).play;
+s.latency = 0.1;
+s.plotTree;
+
+Guide Tutorial
+*/
+
+
+// data to keep and mutate
+q.gendy = q.gendy ? ();
+q.gendy.maxSegs = 42;
+
+q.gendy.levels = { 1.0.bilinrand }.dup(41);
+q.gendy.times = { exprand(3, 300) }.dup(42);
+
+/*
+q.gendy.times = { 30 }.dup(42);
+q.gendy.levels = ([1, -1] / (1..21)).flat.keep(41);
+
+// debug
+q.gendy.times.round(0.1).postln.plot;
+
+*/
+
+// a synthdef that plays one gendy segment
+
+SynthDef('envGendy1', { |out, amp = 0.25, pan, curve = 0, numsegs = 42, timescale = 1, sustain = 0.1|
+	var segGates = (numsegs - (1..q.gendy.maxSegs)).clip(0, 1);
+	var levels = \levels.ir({ 1.0.bilinrand }.dup(q.gendy.maxSegs - 1)) * segGates.drop(1);
+	var samps = \times.ir({ exprand(3, 300) }.dup(q.gendy.maxSegs)) * segGates;
+	var cutoff = Env.cutoff(0.001).kr(2);
+	var env = Env([0] ++ levels ++ [0], samps * (timescale / s.sampleRate), curve);
+	OffsetOut.ar(out,
+		Pan2.ar(EnvGen.ar(env, doneAction: 2), pan, amp)
+	);
+}).add;
+
+/*
+(instrument: 'envGendy1').play;
+(instrument: 'envGendy1', numsegs: 42).play;
+(instrument: 'envGendy1', numsegs: 21, pan: 1).play;
+(instrument: 'envGendy1', timescale: exprand(0.3, 10), pan: 1.0.rand).play;
+(instrument: 'envGendy1', amp: exprand(0.1, 1.0)).play;
+(instrument: 'envGendy1', timescale: 10, curve: 8.0.rand2).play;
+
+(instrument: 'envGendy1',
+levels:
+curve: 8.0.rand2).play;
+
+
+*/
+(
+// Tdef(\gendyfyre, { |ev|
+// 	"boom".postln;
+// }).play;
+
+Ndef(\gendyfyre).prime(Tdef(\gendyfyre));
+
+// dummy so we own that bus, and have these storable param names
+Ndef(\gendyfyre).put(5, { |amp=0,
+	numsegs = 11.23, playprob = 1, curve = 0, ampdrift = 0.25,
+	mintime = 10, maxtime = 100, timescale = 1, timedrift = 0.25
+	// pandrift = 0.25
+	|
+	Silent.ar(2);
+});
+
+Ndef(\gendyfyre).supplementNodeMap;
+
+Ndef(\gendyfyre).stop;
+
+
+s.latency = 0.1;
+
+Ndef(\gendyfyre).addSpec(\numsegs, [3, 42, \exp]);
+Ndef(\gendyfyre).addSpec(\playprob, [0, 1, -1]);
+Ndef(\gendyfyre).addSpec(\curve, [-10, 10]);
+Ndef(\gendyfyre).addSpec(\ampdrift, [0, 1, \amp]);
+Ndef(\gendyfyre).addSpec(\mintime, [3, 300, \exp]);
+Ndef(\gendyfyre).addSpec(\maxtime, [3, 300, \exp]);
+Ndef(\gendyfyre).addSpec(\timescale, [0.25, 4, \exp]);
+Ndef(\gendyfyre).addSpec(\timedrift, [0, 1, \amp]);
+Ndef(\gendyfyre).addSpec(\pandrift, [0, 1, \amp]);
+
+);
+
+(
+Tdef(\gendyfyre).quant = 0;
+Tdef(\gendyfyre, { |ev|
+	var levels, times, maxtime, mintime;
+	var numsegs, numSamps, dur = 0.02, timespec;
+	var ndef = Ndef(\gendyfyre);
+	var mymap = ndef.nodeMap;
+
+	"Tdef(\gendyfyre) starts".postln;
+
+	ndef.play;
+	ndef.set(\pan, 0);
+
+	loop {
+		// "gendyfier".postln;
+		levels = q.gendy.levels;
+		times = q.gendy.times;
+
+		// mymap[\pan] = (mymap[\pan] + mymap[\pandrift].bilinrand).clip(-0.9, 0.9);
+
+		levels.collectInPlace { |lev, i|
+			(lev + mymap[\ampdrift].bilinrand).clip(-1, 1);
+		};
+
+		timespec = [mymap[\mintime], mymap[\maxtime]].sort.add(\exp).asSpec;
+		times.collectInPlace { |lev, i|
+			timespec.map(timespec.unmap(lev) + mymap[\timedrift].bilinrand)
+		};
+		numsegs = (mymap[\numsegs] + 1.0.rand).asInteger;
+		numSamps = times.keep(numsegs).sum;
+		dur = numSamps * (mymap[\timescale] / s.sampleRate);
+		// mymap[\numSamps] = numSamps;
+		mymap[\freq] = 1/dur;
+
+		if (mymap[\playprob].coin) {
+			[levels, levels.reverse].do { |mylevels, i|
+				Synth('envGendy1', [
+					levels: mylevels,
+					times: times,
+					timescale: mymap[\timescale],
+					pan: mymap[\pan],
+					numsegs: numsegs,
+					curve: mymap[\curve],
+					pan: mymap[\pan] + [-0.5, 0.5][i],
+					amp: mymap[\amp],
+					out: ndef.index
+				]);
+			}
+		};
+
+		max(dur, 0.003).wait;
+	};
+});
+);
+
+
+Ndef(\gendyfyre);
+
+
+// avgDur = durchschnittl. dauer einer gendy-note + pause,
+// avgDens = durchschnittl. wahrscheinlichkeit, dass  stimmen spielen
+// (0 alle pause, 1 alle spielen dauernd.)
+//
+//
+// (
+// Items.funcInit({ arg it, maxVoices,
+// 	numsegs,
+// 	mintime, maxtime, timedrift,
+// 	maxamp, ampdrift, warp, float,
+// 	avgDur, avgDens;
+// 	var pre;
+// 	maxVoices.sp(5, 1, 20, 1);
+// 	maxVoices.lockIf({ it.isPlaying; });
+// 	it.name = "GendyChor 0.1";
+//
+// 	pre = Preset(
+// 		numsegs.sp(20, 3, 100, 1),
+// 		mintime.sp(3, 3, 1000, 1, \exponential),
+// 		maxtime.sp(100, 3, 1000, 1, \exponential),
+// 		timedrift.sp(1, 0, 1000, 0.01),
+// 		avgDur.sp(2, 0, 30, 0.1),
+// 		avgDens.sp(0.5),
+// 		maxamp.sp(0.2, 0.0, 1.0, 0.001),
+// 		ampdrift.sp(0.01, 0.0, 1.0, 0.0001),
+// 		warp.sp(0, -16, 16, 0.01)
+// 	);
+// 	pre.name = "Speicherbare Parameter:";
+//
+// 	it.sound_({
+// 		var gendys, samp1time;
+// 		samp1time = Synth.sampleRate.reciprocal;
+// 		gendys = Array.fill(5, { arg i;
+// 			var times, amps, liveFlag;
+//
+// 			liveFlag = avgDens.value.coin;
+//
+// 			thisSynth.repeat(0.02, 0.02, {
+// 				if ( (0.02 / avgDur.value).coin, {
+// 					liveFlag = avgDens.value.coin;
+// 				});
+// 			});
+//
+// 			times = FloatArray.fill(100, 50);
+// 			amps = FloatArray.fill(100, 0.0);
+//
+// 			Spawn.ar({ arg sp; var envT, nSegs;
+// 				nSegs = numsegs.value.asInteger;
+//
+// 				if (liveFlag, {
+// 					nSegs.value.asInteger.do({ arg i;
+// 						times.put(i, (times.at(i) + timedrift.value.rand2).clip( mintime.value, maxtime.value));
+// 						amps.put(i, (amps.at(i) + ampdrift.value.rand2).fold2(maxamp.value));
+// 					});
+// 					amps.put(0, 0).put(nSegs - 1, 0);
+// 					envT = times.copyFromStart(nSegs - 1).round(1) * samp1time;
+//
+// 					sp.nextTime = envT.sum;
+// 					EnvGen.ar(
+// 						Env(amps.copyFromStart(nSegs), envT, warp.value)
+// 					)
+// 				}, { sp.nextTime = 0.01; nil });
+// 			})
+// 		});
+//
+// 		Mix.ar(Pan2.ar(gendys, Array.series(5, -1, 0.5)));
+//
+// 	});
+// 	it.setItems(maxVoices, pre, CR(10), it.vol.nslider.name_("vol"));
+//
+// }).show;
+// )
