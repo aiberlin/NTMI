@@ -6,9 +6,12 @@ g.makeGui.mainFX = {
 
 	q.mfx.highKeys = [];
 	q.mfx.srcKeys = q.mFX.slotNames;
+	q.mfx.maxItems = (Window.availableBounds.height - 50 / 20).round.asInteger;
 
 	try { q.mfx.win.close };
-	q.mfx.win = Window('mainFX', Rect(0,0, 520, 800)).front;
+	q.mfx.win = Window('mainFX',
+		Rect(0,0, 520, min(800, Window.availableBounds.height - 20));
+		).front;
 	q.mfx.win.addFlowLayout;
 
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
@@ -59,7 +62,9 @@ g.makeGui.mainFX = {
 	//
 	// q.mfx.slotPrePop.valueAction_(11);
 	//
-	q.mfx.mgui = q.mfx.chain.gui(50, parent: q.mfx.win);
+	q.mfx.mgui = q.mfx.chain.gui(
+			min(q.mfx.maxItems, 50),
+			parent: q.mfx.win);
 	q.mfx.win.bounds_(q.mfx.win.bounds.moveTo(790, 1200));
 	q.mfx.win.alpha_(0.85);
 
