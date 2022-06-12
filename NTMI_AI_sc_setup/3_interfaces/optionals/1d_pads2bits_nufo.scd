@@ -12,7 +12,7 @@ MFdef(\capsToInph).disable(\set);
 (
 q.bin = q.bin ? ();
 
-// tweak bin-threshold to your nufo!
+// tweak bin-threshold to your nUFO!
 // when pressing fully, 0.4 is reached after 3 frames,
 // and reached again falling from full level after 3-4 frames.
 
@@ -26,7 +26,7 @@ MFdef(\randOrb).value(64.rand);
 MFdef(\capsToInph).add(\binKey, {
 	// var binMap = [ 128, 64, 32, 16, 8, 4, 2,   1];
 	var binMap = [ 2,    8, 32, 128, 1, 4, 16, 64];
-	var caps = MKtl('ntmi').collAt(\caps);
+	var caps = MKtl('nUFO').collAt(\caps);
 	var vals = caps.value;
 	var bins = vals.collect { |val| (val > q.bin.thresh).binaryValue };
 	var newNum = (bins * binMap).sum;

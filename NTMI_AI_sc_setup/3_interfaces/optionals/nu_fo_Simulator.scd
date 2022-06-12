@@ -58,26 +58,26 @@ q.net.secondIP = NetAddr("192.168.8.175", 57120);
 q.net.secondIP.sendMsg(\helloNTMI, "are you listening?");
 */
 
-MKtl('ntmi').device.oscFuncDictionary.keys(Array).sort.cs;
+MKtl('nUFO').device.oscFuncDictionary.keys(Array).sort.cs;
 // [ 'battery', 'bt_1', 'bt_2', 'bt_3', 'bt_4', 'bt_5', 'bt_6', 'bt_7', 'bt_8', 'caps', 'enc', 'imu' ]
 
 // the fast ones we want: \imu, \caps;
 // to send sim to a second machine (raspi), change addrs to mb18:
-// MKtl('ntmi').device.updateSrcDstAddr(~mb18_hyper5.hostname, ~mb18_hyper5.port);
+// MKtl('nUFO').device.updateSrcDstAddr(~mb18_hyper5.hostname, ~mb18_hyper5.port);
 
 /*
 // on first machine, send to raspi
-q.net.ntmiTestAddr = q.net.secondIP;
+q.net.nUFOTestAddr = q.net.secondIP;
 
 // to send to myself, do
-q.net.ntmiTestAddr = q.net.myIP;
-MKtl('ntmi').device.updateSrcDstAddr(q.net.myIP.hostname, q.net.myIP.port).source;
+q.net.nUFOTestAddr = q.net.myIP;
+MKtl('nUFO').device.updateSrcDstAddr(q.net.myIP.hostname, q.net.myIP.port).source;
 */
 
 (
 (
 Tdef(\simImu, {
-	var coll = MKtl('ntmi').collAt(\imu);
+	var coll = MKtl('nUFO').collAt(\imu);
 	var elems =  coll.elements;
 	var msgName = coll.elemDesc.oscPath;
 	var dataGens = elems.collect { |elem|
@@ -89,7 +89,7 @@ Tdef(\simImu, {
 		var data = dataGens.collect(_.next).round(0.01);
 		// "simImu sends:".postln;
 		// data.postln;
-		q.net.ntmiTestAddr.sendMsg(msgName, *data);
+		q.net.nUFOTestAddr.sendMsg(msgName, *data);
 		0.04.wait;
 	}
 });
@@ -97,7 +97,7 @@ Tdef(\simImu, {
 
 (
 Tdef(\simCaps, {
-	var coll = MKtl('ntmi').collAt(\caps);
+	var coll = MKtl('nUFO').collAt(\caps);
 	var elems =  coll.elements;
 	var msgName = coll.elemDesc.oscPath;
 	var dataGens = elems.collect { |elem|
@@ -109,7 +109,7 @@ Tdef(\simCaps, {
 		var data = dataGens.collect(_.next).round(0.01);
 		// "simImu sends:".postln;
 		// data.postln;
-		q.net.ntmiTestAddr.sendMsg(msgName, *data);
+		q.net.nUFOTestAddr.sendMsg(msgName, *data);
 		0.04.wait;
 	}
 });
@@ -119,17 +119,17 @@ Tdef(\simCaps, {
 // could be smarter by modeling shift-actions too.
 (
 Tdef(\simButs, {
-	var buts = MKtl('ntmi').elAt(\bt).elements;
+	var buts = MKtl('nUFO').elAt(\bt).elements;
 	inf.do { |i|
 		buts.do { |elem, i|
 			var currval, newval;
 			if (0.01.coin) {
 				elem.name.postln;
 				elem.value_(1-elem.value);
-				q.net.ntmiTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
+				q.net.nUFOTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
 				defer ({
 					elem.value_(1-elem.value);
-					q.net.ntmiTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
+					q.net.nUFOTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
 				}, 0.2)
 			}
 		};

@@ -1,10 +1,6 @@
 /*
 
 TODO:
-- ntmi_esp should be shown on maingui
-+ change colors on preButs - 6 cols, red, yell, green, cyan, blue, magenta
-
-
 
 ALL Controller Mappings on NTMI_esp32_v1:
 
@@ -30,14 +26,8 @@ OK --- hat + preUP + Down -> mainFX rand
 
 ?? --- encHat - add snapshot? later.
 
-
-
 OSCFunc.trace;
 OSCFunc.trace (false);
-
-TODO:
-- unify/merge xosc and ntmi as much as possible!
-q.osc is shared space
 
 */
 
@@ -45,7 +35,7 @@ q.osc is shared space
 (
 // use this dict for everything osc related
 q.osc = q.osc ? ();
-q.osc.nufo = q.osc.nufo ? ();
+q.osc.nUFO = q.osc.nUFO ? ();
 
 
 ///////// make a new
@@ -248,7 +238,7 @@ MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 /////////// add funcs to inphMode switching so NTMI can do it /////////
 
 MFdef(\touchON).add(\nUFO, {
-	"ntmi - touchON".postln;
+	"nUFO - touchON".postln;
 	MFdef(\capsToInph).enable(\set);
 	q.slots.nowPlaying.do { |obj|
 		if (q.inph.decoupled.includes(obj.key).not) {
@@ -258,14 +248,14 @@ MFdef(\touchON).add(\nUFO, {
 });
 
 MFdef(\touchOFF).add(\nUFO, {
-	"ntmi - touchOFF".postln;
+	"nUFO - touchOFF".postln;
 	q.slots.nowPlaying.do { |nd| q.inphlux.action.disable(nd.key) };
 	MFdef(\capsToInph).disable(\set);
 	q.inphlux.set(*q.inphlux.getHalo(\padNames).collect([_, 0]).flat);
 });
 
 MFdef(\moveON).add(\nUFO, {
-	"ntmi - moveON".postln;
+	"nUFO - moveON".postln;
 	MFdef(\nUFOImuFunc).enable(\setInflux);
 	q.slots.nowPlaying.do { |obj|
 		if (q.inph.decoupled.includes(obj.key).not) {
@@ -275,14 +265,14 @@ MFdef(\moveON).add(\nUFO, {
 });
 
 MFdef(\moveOFF).add(\nUFO, {
-	"ntmi - moveOFF".postln;
+	"nUFO - moveOFF".postln;
 	MFdef(\nUFOImuFunc).disable(\setInflux);
 	/////// pads set inphlux in unipolar, 0-1 range!
 	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
 
 MFdef(\binON).add(\nUFO, {
-	"ntmi - binON".postln;
+	"nUFO - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
 	// q.slots.nowPlaying.do { |obj|
 	// 	MFdef(\inphDecouple).(obj)
@@ -290,7 +280,7 @@ MFdef(\binON).add(\nUFO, {
 });
 
 MFdef(\binOFF).add(\nUFO, {
-	"ntmi - binOFF".postln;
+	"nUFO - binOFF".postln;
 	MFdef(\capsToInph).disable(\binKey);
 });
 
@@ -577,8 +567,8 @@ MFdef(\nUFOImuFunc).disable( \setInflux );
 MFdef(\nUFOImuFunc).enable( \setInflux );
 */
 
-q.osc.nufoSkipLogin.stop.free;
-q.osc.nufoSkipLogin = SkipJack({
+q.osc.nUFOSkipLogin.stop.free;
+q.osc.nUFOSkipLogin = SkipJack({
 	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login")
 } }, 0.5);
 
@@ -592,8 +582,8 @@ OSCdef(\imuAlive, { |msg, time|
 }, "/imu").permanent_(true);
 
 ///////// update slot LEDs
-q.osc.nufoSkip.stop.free;
-q.osc.nufoSkip = SkipJack({
+q.osc.nUFOSkip.stop.free;
+q.osc.nUFOSkip = SkipJack({
 	var cols = [[0,0,0], [0,1,0]], col;
 	fork {
 		MKtl(\nUFO).elAt(\led, \bk, (0..3)).do { |led, ledi|
@@ -602,7 +592,7 @@ q.osc.nufoSkip = SkipJack({
 			if (newval != led.prevValue) {
 				led.value = newval;
 				col = cols[newval];
-				// "ntmi: sending changed color to led_bk %: %\n".postf(ledi, col);
+				// "nUFO: sending changed color to led_bk %: %\n".postf(ledi, col);
 				2.do {
 					rrand(0.03, 0.07).wait;
 					try {
