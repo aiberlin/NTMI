@@ -6,7 +6,7 @@ g.makeGui.presets = { |dict, name = \presets|
 	var px = q.currxoscPx ? q.ndefs[0];
 	var currPreset;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
-	w = Window(name, Rect(450, 5, 387+100, 500)).front;
+	w = Window(name, Rect(450, 0, 387+100, 440)).front;
 	// q.ndefPresetGlobalWin = w; // glob main win!
 	hlv = HLayoutView(w, w.bounds.moveTo(0,0));
 	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height))
@@ -103,7 +103,7 @@ g.makeGui.presets = { |dict, name = \presets|
 	*/
 	pp = px.getHalo(\ndefPreset); // assumes there is! ToDo: default to making it!
 	ppg = NdefPresetGui(pp, 0, vlv2);
-	ng = NdefGui(px, 21, vlv2);
+	ng = NdefGui(px, 20, vlv2);
 	ng.skipjack.dt=0.1;
 
 	q.uniWin = w;

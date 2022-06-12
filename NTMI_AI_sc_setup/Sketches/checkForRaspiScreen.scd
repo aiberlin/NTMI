@@ -16,16 +16,12 @@ Window.allWindows.do { |w|
 };
 
 OK: wsetta
+OK: ndefMixer
+OK: presets
+OK: uc4
+OK: nUFO
 
 too high: slotSounds 609.0
-too high: presets 500.0
-too high: ndefMixer 540.0
 too high: mainFX 609.0 // needs fixing
-
-too high: nUFO 462.0
 too wide: nanoKtl 912.0
-too high: uc4 510.0
-q.slots.choices.collect(_.size);
-q.keys(Array).sort
-g.ndefMixer.numItems
-NdefMixer(s, 21).parent.bounds.height;
+

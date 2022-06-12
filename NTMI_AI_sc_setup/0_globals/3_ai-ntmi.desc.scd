@@ -149,7 +149,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: 'accelAxis', ioType: \collectiveIn,
 						\spec: 'accelAxis' ),
 					elements: [\x, \y, \z].collect { |name, i|
-						(key: name, style: (row: 0, column: i * 0.9 + 0, height: 2))
+						(key: name, style: (row: 0, column: i * 0.84 + 0, height: 1.5))
 					}
 				),
 				(
@@ -157,7 +157,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
 						\spec: 'gyroAxis' ),
 					elements: [\pitch, \roll, \yaw].collect{ |name, i|
-						(key: name, style: (row: 0, column: i * 0.9 + 3, height: 2))
+						(key: name, style: (row: 0, column: i * 0.85 + 2.85, height: 1.5))
 					}
 				),
 				(
@@ -165,7 +165,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
 						\spec: 'magnetAxis' ),
 					elements: [\pitch, \roll, \yaw].collect { |name, i|
-						(key: name, style: (row: 0, column: i* 0.9  + 6, height: 2))
+						(key: name, style: (row: 0, column: i* 0.85  + 5.7, height: 1.5))
 					}
 				),
 
@@ -175,7 +175,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: \slider, spec: \cap, ioType: \collectiveIn),
 					elements:  (1..8).collect { |num, i|
 						(key: num.asSymbol,
-							style: (column: [2, 6][i div: 4], row: i % 4 + 3, width: 1, height: 1.2)
+							style: (column: [2, 5.5][i div: 4], row: i % 4 + 2, width: 1, height: 1.2)
 						)
 
 					}
@@ -186,7 +186,7 @@ MKtlDesc.fromDict(
 					shared: (elementType: \switch, spec: \switch, \oscPath: '/ntmi/btns'),
 					elements:  (1..8).collect { |num, i|
 						( key: num.asSymbol, argTemplate: [ i ],
-							style: (column: [1,7][i div: 4], row: i % 4 + 3)
+							style: (column: [1,6.5][i div: 4], row: i % 4 + 2)
 						)
 					}
 				),
@@ -194,18 +194,19 @@ MKtlDesc.fromDict(
 				(
 					key: \enc, oscPath: '/ntmi/enc', ioType: \in,
 					elementType: \encoder, spec: \enc,
-					style: (column: 7, row: 2)
+					style: (column: 9, row: 1)
 
 				),
 
 				(
 					key: \temp, elementType: 'slider', ioType: \collectiveIn,
-					\spec: 'temp', style: (column: 9.5, height: 2) ),
+					\spec: 'temp', style: (column: 9, row: 2, height: 1.5) ),
 
 				// 1 float indicating the current battery voltage
 				(
 					key: \battery, oscPath: '/ntmi/batt', ioType: \in,
-					elementType: \slider, spec: \batVolt, style: (column: 10.5, height: 2)),
+					elementType: \slider, spec: \batVolt,
+					style: (column: 9, row: 3.5, height: 1.5)),
 
 
 				////// leds are out elements
@@ -218,7 +219,7 @@ MKtlDesc.fromDict(
 								key: num.asSymbol,
 								oscPath: '/ntmi/ledCtl/front',
 								argTemplate: [ i ],
-								style: (column: [3, 5][i div: 4], row: i % 4 + 3)
+								style: (column: [3, 4.5][i div: 4], row: i % 4 + 2)
 							)
 						}),
 						(key: \bk, elements: (1..8).collect { |num, i|
@@ -226,7 +227,7 @@ MKtlDesc.fromDict(
 								key: num.asSymbol,
 								oscPath: '/ntmi/ledCtl/back',
 								argTemplate: [ i ],
-								style: (column: [0, 8][i div: 4], row: i % 4 + 3)
+								style: (column: [0, 7.5][i div: 4], row: i % 4 + 2)
 							)
 						}),
 					]
