@@ -135,7 +135,8 @@ WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
 ///// then add makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	// numItems could also be q.process.allNames.size;
-	var ndefMixer = NdefMixer(s, max(q.process.allNames.size, 24));
+	var maxVisible = 21; // (Window.screenBounds.height - 30 / 20);
+	var ndefMixer = NdefMixer(s, min(q.process.allNames.size, maxVisible));
 	ndefMixer.parent.name_(name);
 	g[name] = ndefMixer;
 	ndefMixer.moveTo(5, 5);
@@ -207,18 +208,18 @@ Butz(\interfaces).add('nanoKtl', {
 WinBounds.stored.putAll( (
 	'randomOrbitz': Rect(768.0, 817.0, 434.0, 188.0),
 	'slotSounds': Rect(726.0, 138.0, 782.0, 720.0),
-	'MakeGui': Rect(0.0, 180.0, 170.0, 580.0),
+//	'MakeGui': Rect(0.0, 180.0, 170.0, 580.0),
 	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
 
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
-	'ndefMixer': Rect(200.0, 289.0, 684.0, 540.0),
-	'mainFX': Rect(1156.0, 223.0, 524.0, 782.0),
+	'ndefMixer': Rect(200.0, 289.0, 684.0, 440),
+	'mainFX': Rect(1156.0, 223.0, 524.0, 440),
 	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
 	'NTMI': Rect(42.0, 2.0, 700.0, 462.0),
 
-	'presets': Rect(725.0, 289.0, 487.0, 500.0),
+	'presets': Rect(725.0, 289.0, 487.0, 440),
 	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
 	'NdefGui_liveInput': Rect(971.0, 557.0, 394.0, 180.0),
 	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0)
-) );
+).collect(WinBounds.limitRectToScreen(_)));
 )
