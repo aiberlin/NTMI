@@ -494,7 +494,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		if ([\full, \move].includes(q.inph.mode)) {
 			// "move mode vis".postln;
 			star = g.main.movevals.collect { |val, i|
-				Polar(val.linlin( 0, 1, 40, 240), i / 9 * 2pi).asPoint + center;
+				Polar(val.linlin( 0, 1, 40, 240), i + 0.75 / -9 * 2pi).asPoint + center;
 			};
 			// star.postln;
 			Pen.color = Color.yellow; Pen.width = 3;
@@ -548,7 +548,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
 				or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
-				g.main.movevals = q.osc.rawImuBiValues.biuni;
+				g.main.movevals = q.osc.calibImuVals;
 				if (q.inph.mode == \binary) {
 					g.main.padCols = q.bin.bins.collect { |val, i|
 						Color.white.alpha_(val);

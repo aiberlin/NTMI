@@ -527,11 +527,15 @@ q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
 
 MFdef(\nUFOImuFunc).add(\setInflux, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
+	var calibImuValsBi = imuInvalsBi - q.zero.imu;
 	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
-		var value = imuInvalsBi[i] - q.zero.imu[i];
+		var value = calibImuValsBi[i];
 		[name, value]
 	}.flat;
 	q.osc.rawImuBiValues = imuInvalsBi;
+	q.osc.calibImuValsBi = calibImuValsBi;
+	q.osc.calibImuVals = calibImuValsBi.biuni;
+
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	q.inphlux.set(*keysvals);
 });
