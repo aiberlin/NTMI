@@ -20,8 +20,7 @@ OK: ndefMixer
 OK: presets
 OK: uc4
 OK: nUFO
-
-too high: slotSounds 609.0
-too high: mainFX 609.0 // needs fixing
+OK: mainFX
+OK: slotSounds
 too wide: nanoKtl 912.0
 
