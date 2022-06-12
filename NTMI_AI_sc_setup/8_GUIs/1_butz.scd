@@ -50,13 +50,13 @@ g.butzNames = [
 ];
 
 // Butz.clear;
-Butz.numButz = g.butzNames.size + 5;
+Butz.numButz = g.butzNames.size + 3;
 
 // set Butz window style params:
 Butz.style;
 Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(120@16);
-Butz.style.font.name = g.fontName;
+Butz.style.font.name = Font.defaultMonoFace;
 Butz.style.font.size = 16;
 
 Butz.show;
