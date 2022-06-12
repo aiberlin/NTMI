@@ -61,7 +61,7 @@ if (q.hasGui) {
 	WinBounds.addMake(\wsetta, {
 		// "~/src/aiberlin/NTMI/NTMI_AI_sc_setup/POOL/2_process/wsetta.scd".openOS;
 
-		q.wse.win = \Window.asClass.new("wsetta").front;
+		q.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 150)).front;
 		q.wse.win.view.addFlowLayout;
 		Button(q.wse.win, 100@30).states_([["new files"]]);
 		// Button(q.wse.win, 100@30).states_([["add files"]]);
