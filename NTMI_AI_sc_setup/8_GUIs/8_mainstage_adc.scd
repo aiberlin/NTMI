@@ -22,6 +22,7 @@ g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 
 // quick and dirty removal of nufo from gui:
 g.hasNufo = { MKtl.all[\nUFO].notNil };
+q.bat = q.bat ? ();
 
 /////// Clock display shows how long something has been running
 /*
