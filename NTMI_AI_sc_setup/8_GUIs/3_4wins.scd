@@ -10,19 +10,26 @@ g.makeGui.slotSounds;
 
 g.makeGui.slotSounds = { |dict, name = \slotSounds|
 	var scbn = Window.availableBounds;
+	var maxHeight = 440; // scbn.height - 20;
+	var maxNumSlots = (maxHeight / 2 - 50 / 20 + 0.2).asInteger;
+
+
 	var w = Window(name,
 		Rect(scbn.width - 800,
 			scbn.height - 650,
 			780,
-			800)
+			min(800, maxHeight))
 	).front;
 	var slotNames = q.ndefs.collect(_.key);
 
+	("maxNumSlots: " + maxNumSlots).postln;
 	w.addFlowLayout;
 	w.alpha_(0.8);
 	g.ndefPreGuis = q.ndefs.keep(4).collect { |px, i|
 		var ndefPre = NdefPreset(px);
-		var gui = NdefPresetGui(ndefPre, 15, w);
+		var gui = NdefPresetGui(ndefPre, maxNumSlots, w);
+		var zonebounds = gui.zone.bounds;
+		gui.zone.bounds = zonebounds.height = zonebounds.height + 10;
 		if (i.odd) { w.view.decorator.shift(0, 10) };
 		g.tuneNameView(gui.proxyGui);
 		gui;
