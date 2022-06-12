@@ -69,22 +69,6 @@ q.inphlux.addHalo(\padNames, q.inphlux.inNames.drop(9));
 q.inphlux.addHalo(\capNames, q.inphlux.inNames.drop(9));
 
 
-// // too simple capture for zero position for imu and pads
-// /* // get zero values while xosc is running:
-// MFdef(\ZERO).value;
-// */
-// MFdef(\ZERO).add(\set, {
-// 	q.zero.imu = q.osc.rawImuBiValues;
-// 	q.zero.pads = q.osc.rawPads;
-// 	"*** ZERO was set: ".postln;
-// 	"imu: %\n".postf(q.zero.imu.round(0.001));
-// 	"pads: %\n".postf(q.zero.imu.round(0.001));
-// 	q.zero.write;
-// });
-
-
-// xosc sends battery voltage as float in volts, usable range 3.2-4.1 volts
-
 // ntmi currently sends analog in values as int from 0-4095,
 // above 4000 means charger is connected,
 // usable range from maxval 3800 = quite full
