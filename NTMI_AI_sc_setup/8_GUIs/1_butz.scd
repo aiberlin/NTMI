@@ -119,6 +119,7 @@ Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 	g.liveGui = q.liveInput.gui.name_(name).moveTo(600, 5);
 	g.tuneNameView(g.liveGui);
+	ProxyMeter.addNdefGui(g.liveGui);
 	g.liveGui.parent.alpha_(g.alpha);
 });
 

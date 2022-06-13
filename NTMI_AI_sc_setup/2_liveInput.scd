@@ -1,7 +1,7 @@
 q=q?();
 q.liveInput = NodeProxy(s, \audio, 1);
 
-q.liveInput.source = { |inChanA=0, inAmpA=1, inChanB=1, inAmpB=0, threshG=0.1|
+q.liveInput.source = { |inChanA=0, inAmpA=1, inChanB=1, inAmpB=0, threshG=0.01|
 	var in = SoundIn.ar([inChanA, inChanB], [inAmpA, inAmpB]).sum;
 	var amp = Amplitude.kr(in, 0, 2);
 	in = (amp>threshG) * in;
