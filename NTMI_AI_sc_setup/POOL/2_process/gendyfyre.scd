@@ -55,7 +55,7 @@ SynthDef('envGendy1', { |out, amp = 0.25, pan, curve = 0, numsegs = 42, timescal
 (instrument: 'envGendy1', timescale: 10, curve: 8.0.rand2).play;
 
 (instrument: 'envGendy1',
-levels:
+levels: [Array.rand2(42, 1.0)],
 curve: 8.0.rand2).play;
 
 
@@ -81,9 +81,9 @@ Ndef(\gendyfyre).supplementNodeMap;
 Ndef(\gendyfyre).stop;
 
 
-s.latency = 0.1;
+// s.latency = 0.1;
 
-Ndef(\gendyfyre).addSpec(\numsegs, [3, 42, \exp]);
+Ndef(\gendyfyre).addSpec(\numsegs, [8, 42, \exp]);
 Ndef(\gendyfyre).addSpec(\playprob, [0, 1, -1]);
 Ndef(\gendyfyre).addSpec(\curve, [-10, 10]);
 Ndef(\gendyfyre).addSpec(\ampdrift, [0, 1, \amp]);
@@ -131,9 +131,20 @@ Tdef(\gendyfyre, { |ev|
 
 		if (mymap[\playprob].coin) {
 			[levels, levels.reverse].do { |mylevels, i|
-				Synth('envGendy1', [
-					levels: mylevels,
-					times: times,
+				// Synth('envGendy1', [
+				// 	levels: mylevels,
+				// 	times: times,
+				// 	timescale: mymap[\timescale],
+				// 	pan: mymap[\pan],
+				// 	numsegs: numsegs,
+				// 	curve: mymap[\curve],
+				// 	pan: mymap[\pan] + [-0.5, 0.5][i],
+				// 	amp: mymap[\amp],
+				// 	out: ndef.index
+				// ]);
+				(instrument: 'envGendy1',
+					levels: [mylevels],
+					times: [times],
 					timescale: mymap[\timescale],
 					pan: mymap[\pan],
 					numsegs: numsegs,
@@ -141,11 +152,11 @@ Tdef(\gendyfyre, { |ev|
 					pan: mymap[\pan] + [-0.5, 0.5][i],
 					amp: mymap[\amp],
 					out: ndef.index
-				]);
+				).play;
 			}
 		};
 
-		max(dur, 0.003).wait;
+		max(dur, 0.001).wait;
 	};
 });
 );
