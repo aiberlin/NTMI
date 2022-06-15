@@ -90,23 +90,23 @@ q.ferr = q.ferr ? (); // sub-Dict for all things gamePad
 
 ///// look for wired and wireless
 if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
+	"*** wired Ferrari  found!".postln;
 	MKtl.all['ferrari'].free;
 	MKtl('ferrari', "*run-n-drive");
 	q.ferr.mktl = MKtl('ferrari');
 } {
 	if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size == 1) {
+	"*** wireless Ferrari  found!".postln;
 		MKtl.all['ferrari'].free;
 		q.ferr.mktl = MKtl('ferrari', "*run-n-drive-wireless");
 	};
 };
 
-// // or make it anyway:
-// MKtl.all['ferrari'].free;
-// MKtl('ferrari', "*run-n-drive*");
-// q.ferr.mktl = MKtl('ferrari');
-
 if (q.ferr.mktl.isNil) {
-	"No Ferrari Gamepad present - not loading Gamepad patch.".postln;
+	"No Ferrari Gamepad found - creating virtual one.".postln;
+	MKtl.all['ferrari'].free;
+	MKtl('ferrari', "*run-n-drive");
+	q.ferr.mktl = MKtl('ferrari');
 } {
 	"*** Ferrari Gamepad found - loading it!".postln;
 
@@ -196,7 +196,7 @@ if (q.ferr.mktl.isNil) {
 		// var inName = q.inphlux.inNames[i + 9 + 4];
 		var inName = [\p, \l][i];
 		el.elemDesc.label = "infl" + inName.cs;
-		el.action = { |el| q.inphlux.set(inName, el.value) };
+		el.action = { |el| q.inphlux.set(inName, el.value.unibi) };
 	};
 
 	// joyhat L R switches prev/next preset on inphlux, both: rand
@@ -273,6 +273,7 @@ if (q.ferr.mktl.isNil) {
 	// sets main vol when bt 10 is down;
 	// sets slot volume when or more buttons of 1-4 are down
 	q.ferr.uniMainVolOffset = 0;
+	q.ferr.mktl.elAt(\wheel).elemDesc.label = "set vol";
 	q.ferr.mktl.elAt(\wheel).action.add(\setvol, { |wheel|
 		var indices;
 		if (q.ferr.mode == \slot) {
@@ -296,6 +297,8 @@ if (q.ferr.mktl.isNil) {
 	});
 
 	// use compass for navigation of presets and sounds:
+	q.ferr.mktl.elAt(\compass).elemDesc.label = "step pre";
+
 	q.ferr.mktl.elAt(\compass).action.add(\stepPre, { |cp|
 		var val = (cp.value * 7).round.asInteger;
 		var slotFlags = q.ferr.mktl.elAt(\sndButs).value.collect(_ > 0);
@@ -324,6 +327,7 @@ if (q.ferr.mktl.isNil) {
 	});
 
 	// bt 9 -> random preset
+	q.ferr.mktl.elAt(\bt, \9).elemDesc.label = "rand pre";
 	q.ferr.mktl.elAt(\bt, \9).action.add(\randPre, {
 		if (q.ferr.mode == \slot) {
 			q.ferr.sndButs.do { |bt, slIndex|
@@ -333,6 +337,7 @@ if (q.ferr.mktl.isNil) {
 	});
 
 	// bt 9 -> random sound func
+	q.ferr.mktl.elAt(\bt, \10).elemDesc.label = "rand snd";
 	q.ferr.mktl.elAt(\bt, \10).action.add(\randPre, {
 		if (q.ferr.mode == \slot) {
 			q.ferr.sndButs.do { |bt, slIndex|
@@ -341,6 +346,7 @@ if (q.ferr.mktl.isNil) {
 		}
 	});
 
+	q.ferr.mktl.elAt(\bt, \6).elemDesc.label = "snap Pre";
 	q.ferr.mktl.elAt(\bt, \6).action.add(\snapPre, {
 		MFdef('snapshot').value;
 	});

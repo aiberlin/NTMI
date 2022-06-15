@@ -176,7 +176,8 @@ Butz(\interfaces).add('ferrari', {
 		(q.dir.user +/+ "3_interfaces/optionals/3_ferrari.scd".postcs).loadPaths;
 	} {
 		WinBounds.addMake('ferrari', {
-			MKtl(\ferrari).gui.showLabels.parent
+			q.ferrgui = MKtl(\ferrari).gui.showLabels;
+			q.ferrgui.parent
 		});
 		WinBounds.showOrMake('ferrari')
 	};
