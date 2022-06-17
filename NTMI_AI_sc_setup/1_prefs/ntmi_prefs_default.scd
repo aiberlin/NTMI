@@ -7,24 +7,41 @@
   what to change for what effect.
 
   filenames of code files to load can be:
-* relative, like "serverBasic2.scd", which will be taken from the project folder, or
-* absolute, like "~/mycode/ntmi/myServerSetup23.scd", which is a full path.
+* relative to q.dir.ntmi (i.e. in the project folder), like "serverBasic2.scd";
+* or absolute, like "~/mycode/ntmi/myServerSetup23.scd", which is a full path.
 
 */
 
+q = q ? ();
+q.hostName = Platform.userHomeDir.basename.asSymbol;
+// q.hostName = \patch; // test raspi/patchbox
+
+// use the same prefs file fo different users
+q.startNdefs = (
+	// specific person's laptop
+	adc: [  'bleepo', 'pulselet', 'rjkChaos', 'revFB' ],
+	// all raspberries with patchbox OS, user 'patch',
+	// use gendyn synthesis patches
+	patch: [ 'gendhy', 'gendy2', 'gendyfyre', 'rjkChaos' ]
+);
 
 (
-'name': 'default', // <- put your user name here
+'name': q.myname ? q.hostName, // <- if not hostname, put your user name here
 'numIns': 2,       // number of input channels to use
 'numChans': 2,     // number of output channels to use in the slot sounds and MainFX
 
 // flag whether to run gui-related code or not - true for macOS,
 /// false for headless systems, e.g. raspberry or bela
-'hasGui': true,
+'hasGui': \Window.asClass.isNil,
+// //// or set to false for testing?
+// 'hasGui': true,
 
-// four stages where personalized extra code can be inserted:
+'rebootServer': false,
 
-// after first globals are loaded, a script to configure the server
+// there are four stages where personalized extra code can be inserted:
+
+// after first globals are loaded,
+// a script to try to configure the server
 //////// filename for the server setup
 'serverSetup': "serverBasic2.scd",
 
@@ -53,7 +70,7 @@
 // ],
 
 // THE 4 sounds to load into the slots on startup
-'defaultActives': [ 'cat', 'xFMSH', 'robTron', 'revFB' ],
+'defaultActives': q.startNdefs[q.hostName] ? [ 'cat', 'xFMSH', 'robTron', 'revFB' ],
 
 // /// TODO: which Ndef-presets to select for each sound slots
 // presetNames: [

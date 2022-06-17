@@ -2,10 +2,12 @@
 
 /*
 // read current settings from user prefs:
-// this copies the default prefs to user home dir if not there
 q.prefs.readUser;
 
-// open user prefs:
+// copy default prefs to user location to customize:
+q.prefs.copyDefaultToUser;
+
+// open user prefs to edit:
 q.prefs.open;
 
 */
@@ -15,9 +17,14 @@ q.prefs.defaultPath = "ntmi_prefs_default.scd".resolveRelative;
 ////// multiple example prefs with app?
 // q.prefs.found = "ntmi_prefs_*".resolveRelative.pathMatch;
 q.prefs.default = q.prefs.defaultPath.load;
-q.prefs.userPrefPath = (Platform.userAppSupportDir +/+  "ntmi_prefs.scd");
 
+q.prefs.userPrefPath = (Platform.userAppSupportDir +/+  "ntmi_prefs.scd");
 q.prefs.open = { q.prefs.userPrefPath.openOS };
+
+q.prefs.deleteUserPrefs = {
+	"deleting user prefs: ".postln;
+	unixCmd(("rm" + quote(q.prefs.userPrefPath)).postcs);
+};
 
 q.prefs.readUser = {
 	var prefdict;
@@ -25,32 +32,27 @@ q.prefs.readUser = {
 	if (File.exists(q.prefs.userPrefPath)) {
 		prefdict = q.prefs.userPrefPath.load;
 		q.prefs.fromUser = prefdict;
-		"... found user prefs ...  ".postln;
-		// prefdict.postcs;
+		"NTMI: user prefs found.".postln;
 	} {
-		"copying default prefs to user dir: ".postln;
-		unixCmd(
-			("cp" + quote(q.prefs.defaultPath) + quote(q.prefs.userPrefPath).postcs
-			)
-		);
+		"NTMI: no user prefs found -".postln
 	}
 };
 
-// q.prefs.writeUser = {
-// 	var dict = (
-// 		name: q.myname,
-// 		numChans: q.numChans,
-// 		defaultActives: q.slots.actives.collect(_.key)
-// 	);
-// 	File.use(q.prefs.userPrefPath, "w", { |f| f.write(dict.cs) });
-// 	"*** stored user prefs: ".postln;
-// 	dict.postcs
-// };
+// only do this by hand
+q.prefs.copyDefaultToUser = {
+	"NTMI: copying default prefs to user dir: ".postln;
+	unixCmd(
+		("cp" + quote(q.prefs.defaultPath) + quote(q.prefs.userPrefPath).postcs
+		)
+	);
+};
 
 q.prefs.readUser;
 
 // set
-q.prefs.active = q.prefs.fromUser ? q.prefs.default;
-
+q.prefs.active = q.prefs.fromUser ?? {
+	"- using default prefs.".postln;
+	q.prefs.default;
+};
 "";
 
