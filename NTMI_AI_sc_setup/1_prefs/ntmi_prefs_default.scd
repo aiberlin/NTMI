@@ -46,16 +46,16 @@ q.startNdefs = (
 'serverSetup': "serverBasic2.scd",
 
 // last code file to load before booting
-'preBootSetup': "~/Desktop/nufo/preBootSetup.scd",
+'preBootSetup': "~/Desktop/ntmi/preBootSetup.scd",
 
 // first code file to load right after server has booted
-'postBootSetup': "~/Desktop/nufo/postBootSetup.scd",
+'postBootSetup': "~/Desktop/ntmi/postBootSetup.scd",
 
 /// ... load all sound processes and their presets ...
 /// ... load all interfaces, postres and GUIs etc ...
 
 // personalize after loadMe file setup is finished
-'finalSetup': "~/Desktop/nufo/finalSetup.scd",
+'finalSetup': "~/Desktop/ntmi/finalSetup.scd",
 
 ///////////// OPTIONAL: ////////////////
 //////// specify wich specific processNames to load

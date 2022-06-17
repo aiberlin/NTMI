@@ -132,7 +132,7 @@ Task {
 	// these may have been set in startup file already:
 	q.usesMidi = q.prefs.active.usesMidi ? true;
 	q.usesHid  = q.prefs.active.usesHid  ? true;
-	q.interfacesToLoad  = q.prefs.active.interfacesToLoad ? [ "nufo", "uc4" ];
+	q.interfacesToLoad  = q.prefs.active.interfacesToLoad ? [ "uc4" ];
 	q.reboot = q.prefs.active.reboot  ? false;
 
 	// turning this off does not work yet
