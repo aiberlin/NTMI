@@ -186,8 +186,19 @@ Task {
 
 		q.helloSnd ?? {
 			// if q.helloSnd is not already defined in startup file, do:
-			"*** server booted, plays 3 pings on left chan.".postln;
-			fork { 3.do { Env.perc.test; 0.3.wait } };
+			fork {
+				q.numChans.do { |i|
+					{ LFDNoise3.ar(
+						XLine.kr(
+							exprand(2000, 5000),
+							exprand(2000, 20000),
+							0.25, doneAction: 2),
+						0.1
+					)
+					}.play(outbus: i);
+					0.25.wait;
+				};
+			};
 		};
 
 		"\n".postln;
