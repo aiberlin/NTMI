@@ -54,7 +54,7 @@ Task {
 	q.dir.fullNames = (q.dir.ntmi +/+ "*/").pathMatch;
 	q.dir.names = q.dir.fullNames.collect { |path| path.basename };
 
-	// check user dir, make it and migrate pool there if needed
+	// check user dir, make it and migrate pool there if desired
 	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
 
@@ -85,7 +85,6 @@ Task {
 		q.dir.userPOOL = q.dir.user +/+ "POOL";
 		q.dir.user.openOS;
 	};
-
 
 	// loads local or absolute filenames or paths,
 	// with wait time and posted load time info:
@@ -137,7 +136,7 @@ Task {
 	q.reboot = q.prefs.active.reboot  ? false;
 
 	// turning this off does not work yet
-	q.usesMainFX  = /*q.q.prefs.active.usesMainFX  ?*/ true;
+	q.usesMainFX  = /*q.prefs.active.usesMainFX  ?*/ true;
 
 	// "*** Modality: find MIDI and HID devices if enabled ***".postln;
 	if (q.usesMidi) {
