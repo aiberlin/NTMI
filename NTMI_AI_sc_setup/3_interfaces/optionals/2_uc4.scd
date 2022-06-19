@@ -141,7 +141,7 @@ g.uc4.elAt(\snap).action = { |el|
 };
 
 // sliders set first 8 influx inputs
-q.nktl.elAt(\inflSet).do { |sl, i|
+g.uc4.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		q.slots.nowPlaying.do { |ndef|
 			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value), q.zoom);
@@ -196,8 +196,6 @@ g.uc4.elAt(\zero_inph).action = { |el| if (el.isOn) { q.inphlux.resetInvals } };
 g.uc4.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
 g.uc4.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
 g.uc4.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
-
-
 
 /**** add UC4 page2 - direct mode:
 8 sliders on page2 PullSet set first 8 process params
