@@ -187,6 +187,8 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	});
 	g.main.nufoView = nufoView;
 
+	g.main.imuUV.background_(Color.grey(0.5, 0.5));
+
 	Button(w, Rect(rightCol, 340 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
 		["Reset Clock", Color.white, butGrey],
 	]).font_(font)
@@ -357,6 +359,15 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		emmy;
 	};
 	g.main.rMViews = rMViews;
+
+	// snapshot button
+	g.main.snapBounds = rMViews[0].bounds
+	.moveBy(0, rMViews[0].bounds.height.neg)
+	.height_(50);
+	Button(g.main.w, g.main.snapBounds.postln)
+	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)]])
+	.action_(MFdef(\snapshot))
+	.font_(fatfont);
 
 	///// unify all mview behaviours :
 
