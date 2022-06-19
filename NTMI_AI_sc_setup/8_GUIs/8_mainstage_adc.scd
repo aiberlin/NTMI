@@ -79,7 +79,7 @@ MFdef('guiSlots').add(\set, {
 		if (presetName == \curr) {
 			ndefRandSeed = ndef.getHalo(\randSeed);
 			ndefRandSeed !? {
-				newLabel = newLabel + "rd:" + ndefRandSeed
+				newLabel = newLabel + "rd." ++ ndefRandSeed
 			};
 		} {
 			newLabel = newLabel + presetName

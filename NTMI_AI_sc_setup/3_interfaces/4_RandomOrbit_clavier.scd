@@ -15,15 +15,14 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 			// don't set decoupled proxies:
 			q.slots.nowPlaying.reject { |px| q.inph.decoupled.includes(px.key) }.do { |px|
 				var pre = NdefPreset(px);
+
 				// if outside presets, use newNum as random seed
 				if(newNum >= pre.settings.size){
-					pre.setRand(q.zoom, seed: newNum);
+					pre.setCurrIndex(newNum, q.zoom);
 					">>> % setRand seed: %\n".postf(pre, newNum);
 					pre.proxy.addHalo(\randSeed, newNum);
 				}{
-					// if within presets, jump to the existing preset at that index
-					newSetName = pre.getSetNames.wrapAt(newNum);
-					pre.setCurr(newSetName).setProxy(newSetName);
+					pre.setCurrIndex(newNum, q.zoom);
 					">>> % preset index: %\n".postf(pre, newNum);
 					pre.proxy.addHalo(\randSeed, nil);
 				}
