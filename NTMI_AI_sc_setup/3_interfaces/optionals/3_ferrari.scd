@@ -177,27 +177,57 @@ if (q.ferr.mktl.isNil) {
 	// 	}
 	// });
 
-	////////// 4 joyaxes set influx inputs
+	// ////////// 4 joyaxes set influx inputs
+	// q.ferr.mktl.elAt(\joyAxes).do { |el, i|
+	// 	///// orig:
+	// 	// var inName = q.inphlux.inNames[i + 9];
+	// 	// hand-choose ins: take first 6 pad ins,
+	// 	// skip the ones that have amp plus and minus on it:
+	// 	var inName = [\q, \o, \n, \m][i];
+	// 	var sign = (x: 1, y: -1)[el.key];
+	// 	[el, sign].postln;
+	// 	el.elemDesc.label = "infl" + inName.cs;
+	// 	el.action = { |el| q.inphlux.set(inName, el.value.unibi * sign) };
+	// };
+	//
+	// ////////// 2 throttles set influx inputs
+	// q.ferr.mktl.elAt(\throt).do { |el, i|
+	// 	// influx inputs: ampPlus is input \l, ampminus  p
+	// 	// var inName = q.inphlux.inNames[i + 9 + 4];
+	// 	var inName = [\p, \l][i];
+	// 	el.elemDesc.label = "infl" + inName.cs;
+	// 	el.action = { |el| q.inphlux.set(inName, el.value.unibi) };
+	// };
+
+	////////// 4 joyaxes set relative influx inputs
 	q.ferr.mktl.elAt(\joyAxes).do { |el, i|
-		///// orig:
-		// var inName = q.inphlux.inNames[i + 9];
-		// hand-choose ins: take first 6 pad ins,
-		// skip the ones that have amp plus and minus on it:
-		var inName = [\q, \o, \n, \m][i];
+		var inIndex = [9, 11, 12, 13][i];
 		var sign = (x: 1, y: -1)[el.key];
-		[el, sign].postln;
-		el.elemDesc.label = "infl" + inName.cs;
-		el.action = { |el| q.inphlux.set(inName, el.value.unibi * sign) };
+		el.elemDesc.label = "infl" + inIndex;
+		el.action = { |el|
+			// [el.name, el.value].postln;
+			q.slots.nowPlaying.do {|ndef|
+				q.inphlux.setRel(ndef, inIndex,
+					(el.value - el.prevValue), q.zoom * sign)
+			}
+		}
 	};
 
-	////////// 2 throttles set influx inputs
+	////////// 2 throttles set relative influx inputs
 	q.ferr.mktl.elAt(\throt).do { |el, i|
 		// influx inputs: ampPlus is input \l, ampminus  p
 		// var inName = q.inphlux.inNames[i + 9 + 4];
-		var inName = [\p, \l][i];
-		el.elemDesc.label = "infl" + inName.cs;
-		el.action = { |el| q.inphlux.set(inName, el.value.unibi) };
+		var inIndex = [10, 14][i];
+		el.elemDesc.label = "infl" + inIndex;
+		el.action = { |el|
+			// [el.name, el.value].postln;
+			q.slots.nowPlaying.do {|ndef|
+				q.inphlux.setRel(ndef, inIndex,
+					(el.value - el.prevValue), q.zoom)
+			}
+		};
 	};
+
 
 	// joyhat L R switches prev/next preset on inphlux, both: rand
 	/// FIXME: mark modalAction has happened,
