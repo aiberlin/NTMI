@@ -140,27 +140,50 @@ g.uc4.elAt(\snap).action = { |el|
 	}
 };
 
-////////// sliders (hard-)set or SoftSet inphlux:
-if (q.inphlux.respondsTo(\get).not) {
-	"///////// sliders hard-set influx directly ".postln;
-	g.uc4.elAt(\inflx).do { |sl, i|
-		sl.action = { |sl|
-			// make sure we get to amp control (inphlux.inNames[8])
-			var name = q.inphlux.inNames[i + 1];
-			q.inphlux.set(name, sl.value.unibi)
-		};
-	}
-} {
-	///////// BETTER: SoftSet, works with current Influx update
-	"//// sliders SoftSet influx ".postln;
-	g.uc4.elAt(\inflx).do { |sl, i|
-		sl.action = { |sl|
-			// make sure we get to amp control (inphlux.inNames[8])
-			var name = q.inphlux.inNames[i + 1];
-			SoftSet(q.inphlux, name, sl.value.unibi, lastVal: sl.prevValue.unibi);
-		};
+// sliders set first 8 influx inputs
+q.nktl.elAt(\inflSet).do { |sl, i|
+	sl.action = { |sl|
+		q.slots.nowPlaying.do { |ndef|
+			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value), q.zoom);
+		}
 	}
 };
+
+// ////////// sliders (hard-)set or SoftSet inphlux:
+// if (q.inphlux.respondsTo(\get).not) {
+// 	"///////// sliders hard-set influx directly ".postln;
+// 	g.uc4.elAt(\inflx).do { |sl, i|
+// 		sl.action = { |sl|
+// 			// make sure we get to amp control (inphlux.inNames[8])
+// 			var name = q.inphlux.inNames[i + 1];
+// 			q.inphlux.set(name, sl.value.unibi)
+// 		};
+// 	}
+// } {
+// 	///////// BETTER: SoftSet, works with current Influx update
+// 	"//// sliders SoftSet influx ".postln;
+// 	g.uc4.elAt(\inflx).do { |sl, i|
+// 		sl.action = { |sl|
+// 			// make sure we get to amp control (inphlux.inNames[8])
+// 			var name = q.inphlux.inNames[i + 1];
+// 			SoftSet(q.inphlux, name, sl.value.unibi, lastVal: sl.prevValue.unibi);
+// 		};
+// 	}
+// };
+
+"///////// sliders relative-set influx directly ".postln;
+g.uc4.elAt(\inflx).do { |sl, i|
+	sl.action = { |sl|
+		q.slots.nowPlaying.do { |ndef|
+			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value),
+				q.zoom,
+				ndef.controlKeys
+			);
+		}
+	}
+};
+
+
 
 // Left 3 bottom buttons: inphPre rand, -1, +1
 g.uc4.elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil) } };

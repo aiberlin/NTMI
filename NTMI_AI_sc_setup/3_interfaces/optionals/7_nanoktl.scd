@@ -123,11 +123,23 @@ q.nktl.elAt(\playBts).do { |el, i|
 	};
 };
 
-// sliders set influx inputs
+// // sliders set influx inputs
+// q.nktl.elAt(\inflSet).do { |sl, i|
+// 	sl.action = { |sl|
+// 		var name = q.inphlux.inNames[i];
+// 		q.inphlux.set(name, sl.value.unibi);
+// 	}
+// };
+
+// new relative set for 7 sliders
 q.nktl.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
-		var name = q.inphlux.inNames[i];
-		q.inphlux.set(name, sl.value.unibi);
+		q.slots.nowPlaying.do { |ndef|
+			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value),
+				q.zoom,
+				ndef.controlKeys
+			);
+		}
 	}
 };
 
