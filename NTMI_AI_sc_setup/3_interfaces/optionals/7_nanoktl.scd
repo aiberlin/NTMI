@@ -147,6 +147,9 @@ q.nktl.elAt(\inflSet).do { |sl, i|
 q.nktl.elAt(\main).action = { |sl| MFdef(\mainVol).value(sl.value) };
 q.nktl.elAt(\main).value = 0.5;
 
+// rightmost slider is main volume (into limiter)
+q.nktl.elAt(\main).action = { |sl| MFdef(\mainVol).value(sl.value) };
+q.nktl.elAt(\main).value = 0.5;
 
 // normal: select next setting
 // hat down: select next sound
@@ -171,5 +174,9 @@ q.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 
 q.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
 q.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
 q.nktl.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
+
+// snapshot
+q.nktl.elAt(\tr, 'mset').elemDesc.label = "snap pre!";
+q.nktl.elAt(\tr, 'mset').action = { |el| if (el.isOn, MFdef(\snapshot)) };
 
 q.nktl;
