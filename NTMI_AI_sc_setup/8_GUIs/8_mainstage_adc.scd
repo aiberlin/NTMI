@@ -385,6 +385,42 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		mv.uv.focus(true).refresh;
 		mv.uv.focus(false).refresh;
 	};
+	// add click to
+	g.main.ndefMViews.do { |mview, i|
+		var downx, didDrag;
+		// prepare for toggle or volume change
+		mview.uv.mouseDownAction = { |uv, x|
+			// ("down" + x).postln;
+			downx = x;
+			didDrag = false;
+		};
+		// volume change, no on/off toggle
+		mview.uv.mouseMoveAction = { |uv, x|
+			var ndef = q.slots.actives[i];
+			var wid = uv.bounds.width;
+			var step = (x - downx / wid * 1.6);
+			var spec = \amp.asSpec;
+			var currvol = ndef.vol;
+			var currvolnorm = spec.unmap(currvol);
+			var newvolnorm = (currvolnorm + step).clip(0, 1);
+			var newvol = spec.map(newvolnorm);
+
+			downx = x;
+			didDrag = true;
+			ndef.vol = newvol;
+			uv.refresh;
+		};
+		// no move, just click ->  on/off toggle
+		mview.uv.mouseUpAction = {|uv, x|
+			var ndef = q.slots.actives[i];
+			if (didDrag.not) {
+				didDrag = false;
+				\toggle.postln;
+				q.slots.toggleAt(i);
+				uv.refresh;
+			};
+		}
+	};
 
 	MFdef('stepInphWPre').add(\updateMain, {
 		defer { protect {
