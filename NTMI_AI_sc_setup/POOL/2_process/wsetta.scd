@@ -44,6 +44,8 @@ MFdef('loadWSEs').add(\load, { |dir, add = false|
 		q.wse.sfdir = dir ? q.wse.sfdir;
 		q.wse.soundfiles = SoundFile.collect(q.wse.sfdir +/+ "*");
 		"... analysing % files for WavesetsEvent ...\n".postf(q.wse.soundfiles.size);
+
+		while { s.serverRunning.not } { 0.03.wait };
 		q.wse.wses = q.wse.soundfiles.collect { |file|
 			var wse = WavesetsEvent.read(file.path);
 			try { s.sync; 0.1.wait; };
@@ -75,7 +77,11 @@ if (q.hasGui) {
 
 // load the default here:
 MFdef('loadWSEs').value(q.wse.sfdir);
-// and maybe call MFdef('loadWSEs') again later to update
+
+// and call MFdef('loadWSEs') again later to switch buufers,
+// and to reload afer a server reboot:
+ServerBoot.add({ MFdef('loadWSEs').value }, s);
+
 );
 
 

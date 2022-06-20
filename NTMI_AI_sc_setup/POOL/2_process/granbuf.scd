@@ -56,18 +56,25 @@ Ndef(\granbuf, { |
 });
 
 // // load all soundfiles from example local "soundfiles" folder:
-MFdef(\bufLoad).(
-	// path of dir with samples:
-	(q.dir.user +/+ "soundfiles"),
-	// function to run when loaded:
-	{ |bufs, listname|
-		// set an Ndef's buffer range to new loaded buffers
-		MFdef(\setBufRange).(Ndef(\granbuf), bufs, listname);
-		Ndef(\granbuf).end;
-	},
-	// name by which to store loaded buffers under q.bufs.granbufs;
-	'granbufs'
-);
+MFdef('reloadBufs').add(\granbufs, {
+
+	MFdef(\bufLoad).(
+		// path of dir with samples:
+		(q.dir.user +/+ "soundfiles"),
+		// function to run when loaded:
+		{ |bufs, listname|
+			// set the Ndef's buffer range to the new loaded buffers
+			MFdef(\setBufRange).(Ndef(\granbuf), bufs, listname);
+			Ndef(\granbuf).end;
+		},
+		// name by which to store loaded buffers under q.bufs.granbufs;
+		'granbufs'
+	);
+});
+
+// and do it once when the file runs
+MFdef('reloadBufs').funcDict[\granbufs].value;
+
 
 // Preset: don't store amp and sndbuf
 Ndef(\granbuf).addHalo(\namesToStore, Ndef(\granbuf).controlKeys.drop(2));
