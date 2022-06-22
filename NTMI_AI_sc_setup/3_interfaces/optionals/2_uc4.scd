@@ -40,7 +40,7 @@ g.uc4.addNamed(\playBts, g.uc4.elAt(\pgKn1, \pbt, (4..7), 0));
 // select preset or sounds
 g.uc4.addNamed(\select, g.uc4.elAt(\pgKn1, \kn, (0..3)));
 // if but up, select preset, if down, sound
-g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (0..3), 0));
+g.uc4.addNamed(\selMode, g.uc4.elAt(\pgKn1, \pbt, (0..3)));
 
 g.uc4.addNamed(\rand_inph, g.uc4.elAt(\pgSl1, \bt, 0, 0));
 g.uc4.addNamed(\prev_inph, g.uc4.elAt(\pgSl1, \bt, 1, 0));
@@ -59,7 +59,7 @@ g.uc4.elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
 g.uc4.elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
 
 g.uc4.elAt(\select).do { |el, i| el.elemDesc.label = "select".format(i+1) };
-g.uc4.elAt(\selMode).do { |el, i| el.elemDesc.label = "^-pre v-snd".format(i+1) };
+g.uc4.elAt(\selMode).do { |el, i| el.elAt(0).elemDesc.label = "^-pre v-snd".format(i+1) };
 
 g.uc4.elAt(\inflx).do { |sl, i| sl.elemDesc.label = "inf" + q.inphlux.inNames[i].cs };
 
