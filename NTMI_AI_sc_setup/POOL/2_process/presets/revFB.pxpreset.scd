@@ -1,6 +1,14 @@
-///// NdefPreset('revFB') settings:
+/*
+///// These are the settings for NdefPreset('revFB'):
+///// you can edit the textfile, e.g. choosing better preset names,
+///// tuning parameter values, or deleting unwanted presets.
+///// When done, save the textfile where it is, and
+///// then load the edited settings again with:
+NdefPreset('revFB').loadSettings;
+*/
+
 List[
-	('curr' -> [ [ 'direct', 0.44965695182691 ], [ 'feedback', 0.19352830505343 ], [ 'revTime', 4.3191936845257 ], [ 'animRate', 0.022228613981988 ], [ 'animDepth', 0.21348609059488 ], [ 'hfDamping', 0.7878166437149 ], [ 'predelay', 0.01573763442232 ], [ 'inFilter', 0.69058376312256 ], [ 'leakCoeff', 0.98448666501045 ], [ 'combScale', 1.2605469634834 ] ]),
+	('curr' -> [ [ 'direct', 0.027958699982506 ], [ 'feedback', 0.17472242297529 ], [ 'revTime', 0.95009177883935 ], [ 'animRate', 4.5038607764799 ], [ 'animDepth', 0.93577456779384 ], [ 'hfDamping', 0.081995248794556 ], [ 'predelay', 0.048493839414914 ], [ 'inFilter', 0.81098089456558 ], [ 'leakCoeff', 0.9232805211544 ], [ 'combScale', 1.4449966502267 ] ]),
 	('ghosty' -> [ [ 'direct', 0.23666377902122 ], [ 'feedback', 0.5 ], [ 'revTime', 1.6870630786162 ], [ 'animRate', 1.0534727025524 ], [ 'animDepth', 0.18569779536804 ], [ 'hfDamping', 0.60653027298769 ], [ 'predelay', 0.012686528505571 ], [ 'inFilter', 0.0 ], [ 'leakCoeff', 0.96000051753915 ], [ 'combScale', 0.55780561241398 ] ]),
 	('densss' -> [ [ 'direct', 0.28431428686636 ], [ 'feedback', 0.5 ], [ 'revTime', 49.283249316336 ], [ 'animRate', 0.34724518976418 ], [ 'animDepth', 0.12918192252305 ], [ 'hfDamping', 0.70750629107101 ], [ 'predelay', 0.057922758003472 ], [ 'inFilter', 0.0 ], [ 'leakCoeff', 0.97023749730547 ], [ 'combScale', 0.62069001603814 ] ]),
 	('chrchr' -> [ [ 'direct', 0.2979219550519 ], [ 'feedback', 0.16530690605604 ], [ 'revTime', 0.10204530454229 ], [ 'animRate', 100.0 ], [ 'animDepth', 0.15602277430295 ], [ 'hfDamping', 0.51996065566885 ], [ 'predelay', 0.12707708225473 ], [ 'inFilter', 0.83350999675338 ], [ 'leakCoeff', 0.9971389251549 ], [ 'combScale', 2.0 ] ]),
@@ -16,3 +24,4 @@ List[
 	('brite' -> [ [ 'direct', 0.81431421633111 ], [ 'feedback', 0.19925733145134 ], [ 'revTime', 14.045215240401 ], [ 'animRate', 0.097577723074292 ], [ 'animDepth', 0.165032344275 ], [ 'hfDamping', 0.2441050957188 ], [ 'predelay', 0.1762977674957 ], [ 'inFilter', -0.44147545700223 ], [ 'leakCoeff', 0.9932864530534 ], [ 'combScale', 1.4595578010473 ] ]),
 	('looong' -> [ [ 'direct', 0.79619434652036 ], [ 'feedback', 0.06251230466689 ], [ 'revTime', 36.500856149436 ], [ 'animRate', 0.44722723616753 ], [ 'animDepth', 0.012024474079169 ], [ 'hfDamping', 0.53013169155018 ], [ 'predelay', 0.13982481054656 ], [ 'inFilter', -0.61611935068879 ], [ 'leakCoeff', 0.998 ], [ 'combScale', 1.0474335694819 ] ])
 ]
+
