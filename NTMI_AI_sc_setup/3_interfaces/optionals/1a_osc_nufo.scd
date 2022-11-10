@@ -1,5 +1,5 @@
 /////// all shared osc things between xosc and ntmi go here,
-/////// yto avoid code duplication / overwriting
+/////// to avoid code duplication / overwriting
 /*
 OSCFunc.trace;
 OSCFunc.trace (false);
