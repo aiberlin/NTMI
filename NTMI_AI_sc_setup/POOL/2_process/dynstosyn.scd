@@ -7,7 +7,7 @@ Ndef(\dynstosyn).addSpec(\bpRatio, [ 0, 1, \lin, 0, 0.5 ]);
 Ndef(\dynstosyn).addSpec(\freqA, [ 27.5, 2093, \exp, 0, 27.5 ]);
 Ndef(\dynstosyn).addSpec(\freqB, [ 27.5, 2093, \exp, 0, 2093 ]);
 Ndef(\dynstosyn).addSpec(\maxDurSt, [ 0, 1, \amp, 0, 0.1]);
-Ndef(\dynstosyn).addSpec(\maxAmp, [ 0.01, 1, \exp, 0, 0.1 ]);
+Ndef(\dynstosyn).addSpec(\maxAmp, [ 0.1, 1, \exp, 0, 0.1 ]);
 Ndef(\dynstosyn).addSpec(\maxAmSt, [ 0, 1, \amp, 0, 0.1]);
 
 Ndef(\dynstosyn,
