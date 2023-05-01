@@ -2,6 +2,9 @@
 // adapted for NTMI by adc, 2022
 // \Dynamic_Stochastic_Synthesis
 
+q = q ? ();
+q.numChans = q.numChans ? 2;
+
 // specifications for the GUI
 Ndef(\dynstosyn).addSpec(\bpRatio, [ 0, 1, \lin, 0, 0.5 ]);
 Ndef(\dynstosyn).addSpec(\freqA, [ 27.5, 2093, \exp, 0, 27.5 ]);
@@ -9,15 +12,16 @@ Ndef(\dynstosyn).addSpec(\freqB, [ 27.5, 2093, \exp, 0, 2093 ]);
 Ndef(\dynstosyn).addSpec(\maxDurSt, [ 0, 1, \amp, 0, 0.1]);
 Ndef(\dynstosyn).addSpec(\maxAmp, [ 0.1, 1, \exp, 0, 0.1 ]);
 Ndef(\dynstosyn).addSpec(\maxAmSt, [ 0, 1, \amp, 0, 0.1]);
+Ndef(\dynstosyn).addSpec(\numBps, [ 2, 160, \exp, 1]);
 
 Ndef(\dynstosyn,
 	{| amp = 0, bpRatio = 0.5, freqA = 27.5, freqB = 2093, maxDurSt = 0.1, maxAmp = 0.1, maxAmSt = 0.1 |
-		var numBps, maxNumBps = 1603, freqs, maxDur, minDur, maxDurStep, maxAmpStep;
+		var numBps, maxNumBps = 160, freqs, maxDur, minDur, maxDurStep, maxAmpStep;
 
 		freqs = [ min(freqA, freqB), max(freqA, freqB) ];
 		maxDur = SampleRate.ir / freqs[0];
 		minDur = SampleRate.ir / freqs[1];
-		numBps = (minDur * bpRatio).trunc.clip(1, maxNumBps);
+		numBps = (minDur * bpRatio).trunc.clip(2, maxNumBps);
 		maxDur = maxDur / numBps;
 		minDur = minDur / numBps;
 		maxDurStep = (maxDur - minDur) * maxDurSt;
@@ -34,4 +38,4 @@ Ndef(\dynstosyn,
 			) * SampleDur.ir)
 		} ! q.numChans )
 		* amp.lag(0.2);
-});
+}).play;
