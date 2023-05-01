@@ -31,7 +31,6 @@ z = NdefGui(Ndef(\allArm));
 g.tuneNameView(s);
 */
 
-Butz.clear;
 Butz(\NTMI).clear;
 
 Butz.curr_(\NTMI);
