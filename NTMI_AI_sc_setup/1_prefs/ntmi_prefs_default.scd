@@ -27,8 +27,8 @@ q.startNdefs = (
 
 (
 'name': q.myname ? q.hostName, // <- if not hostname, put your user name here
-'numIns': 2,       // number of input channels to use
-'numChans': 2,     // number of output channels to use in the slot sounds and MainFX
+'numIns': q.numMics ? 4,       // number of input channels to use
+'numChans': q.numChans ? 2,     // number of output channels to use in the slot sounds and MainFX
 
 // flag whether to run gui-related code or not - true for macOS,
 /// false for headless systems, e.g. raspberry or bela
