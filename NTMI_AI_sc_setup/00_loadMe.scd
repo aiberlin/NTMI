@@ -184,6 +184,8 @@ Task {
 		// avoid late messages while loading
 		s.latency = nil;
 
+		q.ndefGroups = q.ndefGroups ? ();
+
 		q.helloSnd ?? {
 			// if q.helloSnd is not already defined in startup file, do:
 			fork {
@@ -243,7 +245,12 @@ Task {
 			0.05.wait;
 		};
 
+
 		q.load("2a_preset*.scd");
+
+		q.ndef = q.ndef ? ();
+		q.ndef.groups = q.ndef.groups ? ();
+		q.ndef.groups.put(\NTMI, q.process.allNames.collect(Ndef(_)));
 
 		"\n\n".postln;
 
