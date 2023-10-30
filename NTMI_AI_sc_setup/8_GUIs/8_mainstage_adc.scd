@@ -95,6 +95,10 @@ MFdef('guiSlots').add(\set, {
 			mview.label_( newLabel );
 		};
 
+		if (NdefPreset(ndef).settings.size != prepop.items.size) {
+			prepop.items = NdefPreset(ndef).getSetNames;
+		};
+
 		if (NdefPreset(ndef).currIndex != prepop.value) {
 			prepop.value = NdefPreset(ndef).currIndex;
 		};
@@ -364,10 +368,21 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.snapBounds = rMViews[0].bounds
 	.moveBy(0, rMViews[0].bounds.height.neg)
 	.height_(50);
-	Button(g.main.w, g.main.snapBounds.postln)
-	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)]])
+	g.main.snapBut = Button(g.main.w, g.main.snapBounds.postln)
+	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
+		["¡SNAP!", Color.white, Color.red]
+	])
 	.action_(MFdef(\snapshot))
 	.font_(fatfont);
+
+	MFdef(\snapshot).add(\show, {
+		if (g.main.w.isClosed.not) {
+			defer { try { g.main.snapBut.value_(1);
+				MFdef(\guiSlots).value;
+			} };
+			defer ({ try { g.main.snapBut.value_(0) } }, 1);
+		};
+	});
 
 	///// unify all mview behaviours :
 
