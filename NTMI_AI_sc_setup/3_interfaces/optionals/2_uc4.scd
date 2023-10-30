@@ -145,7 +145,7 @@ g.uc4.elAt(\snap).action = { |el|
 g.uc4.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		q.slots.nowPlaying.do { |ndef|
-			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value), q.zoom);
+			q.inphlux.setRel(ndef, i + 9, (sl.prevValue - sl.value), q.zoom);
 		}
 	}
 };
@@ -173,10 +173,24 @@ g.uc4.elAt(\inflSet).do { |sl, i|
 // };
 
 "///////// sliders relative-set influx directly ".postln;
+/*
+which influx input offsets to use?
+amptweaked ins are are 8 (nUFO nose up/down),
+and 10 (nUFO left mid finger power)
+and 14 (nUFO right mid finger, break).
+so with offset 1, last slider becomes amp control,
+but all sliders overlap with nUFO ...
+-> for nufo setups, use offset 9, for non-nufo, use offset 1
+*/
+q.inph.sliderOffset = q.inph.sliderOffset ? 1;
+
+// offset influx inIndex by 1,
+			// so we get ampTweak channel 8 on last slider!
+
 g.uc4.elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
 		q.slots.nowPlaying.do { |ndef|
-			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value),
+			q.inphlux.setRel(ndef, i + q.inph.sliderOffset, (sl.prevValue - sl.value),
 				q.zoom,
 				ndef.controlKeys
 			);

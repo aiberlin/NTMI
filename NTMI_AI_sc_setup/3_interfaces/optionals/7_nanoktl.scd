@@ -135,7 +135,9 @@ q.nktl.elAt(\playBts).do { |el, i|
 q.nktl.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		q.slots.nowPlaying.do { |ndef|
-			q.inphlux.setRel(ndef, i, (sl.prevValue - sl.value),
+			// add sliderOffset + 1, so we get to channel 8 for amp tweak
+			q.inphlux.setRel(ndef, i + q.inph.sliderOffset ? 1 + 1,
+				(sl.prevValue - sl.value),
 				q.zoom,
 				ndef.controlKeys
 			);

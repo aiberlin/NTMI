@@ -59,6 +59,18 @@ q.inph.randSeeds.do { |seed|
 
 q.inph.backupWeights = q.inphlux.presets.deepCopy;
 
+/*
+which influx input offsets to use?
+amptweaked ins are are 8 (nUFO nose up/down),
+and 10 (nUFO left mid finger power)
+and 14 (nUFO right mid finger, break).
+so with offset 1, last slider becomes amp control,
+but all sliders overlap with nUFO ...
+-> for nufo setups, use offset 9, for non-nufo, use offset 1
+*/
+
+q.inph.sliderOffset = q.inph.sliderOffset ? 1;
+
 /////////// BIG AMP TWEAK:
 /////////// comment out if you dont like it!
 MFdef(\ampFirstTweakOn).add(\on, {
