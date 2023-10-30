@@ -47,6 +47,7 @@ g.uc4.addNamed(\prev_inph, g.uc4.elAt(\pgSl1, \bt, 1, 0));
 g.uc4.addNamed(\next_inph, g.uc4.elAt(\pgSl1, \bt, 2, 0));
 g.uc4.addNamed(\zero_inph, g.uc4.elAt(\pgSl1, \bt, 3, 0));
 
+// use record button for snapshots
 g.uc4.addNamed(\snap, g.uc4.elAt(\pgSl1, \bt, 4, 0));
 
 g.uc4.addNamed(\rand_pre, g.uc4.elAt(\pgSl1, \bt, 5, 0));

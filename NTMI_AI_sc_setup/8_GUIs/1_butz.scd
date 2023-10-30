@@ -17,7 +17,7 @@ g.screenScale = min(Window.availableBounds.width / 1920,
 // make nameViews bigger and better
 g.tuneNameView = { |q, obj|
 	if (obj.respondsTo(\nameView)) {
-		obj.nameView.font_(g.fontName, 16)
+		obj.nameView.font_(Font(g.fontName, 16))
 		.stringColor_(Color.white)
 		.background_(Color.blue)
 	} {
