@@ -1,6 +1,15 @@
-///// NdefPreset('xFMSH') settings:
+/*
+///// These are the settings for NdefPreset('xFMSH'):
+///// you can edit the textfile, e.g. choosing better preset names,
+///// tuning parameter values, or deleting unwanted presets.
+///// When done, save the textfile where it is, and
+///// then load the edited settings again with:
+NdefPreset('xFMSH').loadSettings(clear: true);
+*/
+
 List[
 	('curr' -> [ [ 'freqA', 294.67424276586 ], [ 'freqB', 0.12993050053072 ], [ 'modA_B', 3.1721935272217 ], [ 'modB_A', 2.9953029155731 ], [ 'shape', 0.35919153132064 ], [ 'blend', 0.94973361492157 ], [ 'lag', 4.7130689129968 ] ]),
+	('zine' -> [ [ 'freqA', 100.25642627688 ], [ 'freqB', 0.1 ], [ 'modA_B', 0.0 ], [ 'modB_A', 0.0 ], [ 'shape', 1.0 ], [ 'blend', 0.5 ], [ 'lag', 0.0 ] ]),
 	('saaad' -> [ [ 'freqA', 3.8442216674288 ], [ 'freqB', 5.7418798717463 ], [ 'modA_B', 6.0 ], [ 'modB_A', 6.0 ], [ 'shape', 6.1531015276837 ], [ 'blend', 1.0 ], [ 'lag', 5.0 ] ]),
 	('suichi' -> [ [ 'freqA', 30.645391438998 ], [ 'freqB', 13.33473630047 ], [ 'modA_B', 5.3629413727815 ], [ 'modB_A', 5.6266423385924 ], [ 'shape', 0.27527214976778 ], [ 'blend', 1.0 ], [ 'lag', 5.0 ] ]),
 	('dadadidi' -> [ [ 'freqA', 2.4554185475172 ], [ 'freqB', 634.96365876157 ], [ 'modA_B', 0.76237066303511 ], [ 'modB_A', 0.57271293296428 ], [ 'shape', 3.2741526416919 ], [ 'blend', 0.064290427473539 ], [ 'lag', 0.091477737321107 ] ]),
@@ -28,3 +37,4 @@ List[
 	('hiccups' -> [ [ 'freqA', 498.67158467306 ], [ 'freqB', 15.706835329815 ], [ 'modA_B', 6.0 ], [ 'modB_A', 3.2491033065599 ], [ 'shape', 3.1827089149168 ], [ 'blend', 1.0 ], [ 'lag', 3.4308219938608 ] ]),
 	('sparsy' -> [ [ 'freqA', 5.3860091964332 ], [ 'freqB', 23.015544861872 ], [ 'modA_B', 5.9045201115006 ], [ 'modB_A', 6.0 ], [ 'shape', 1.0515423796899 ], [ 'blend', 0.8635568945183 ], [ 'lag', 5.0 ] ])
 ]
+

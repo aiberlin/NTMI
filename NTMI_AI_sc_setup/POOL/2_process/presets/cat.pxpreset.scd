@@ -1,4 +1,12 @@
-///// NdefPreset('cat') settings:
+/*
+///// These are the settings for NdefPreset('cat'):
+///// you can edit the textfile, e.g. choosing better preset names,
+///// tuning parameter values, or deleting unwanted presets.
+///// When done, save the textfile where it is, and
+///// then load the edited settings again with:
+NdefPreset('cat').loadSettings(clear: true);
+*/
+
 List[
 	('curr' -> [ [ 'pFreq', 300.93141889351 ], [ 'modFreq', 14.761715199091 ], [ 'filt', 1.0300602900568 ], [ 'q', 1.3282463093534 ], [ 'pWidth', 0.3594677028222 ], [ 'moDepth', 2.0076599121094 ] ]),
 	('set1' -> [ [ 'pFreq', 122.58499103809 ], [ 'pWidth', 0.0692519681415 ], [ 'filt', 9.2904652019561 ], [ 'q', 43.384350182843 ], [ 'modFreq', 12.853013595319 ], [ 'moDepth', 40.301969396669 ] ]),
@@ -17,5 +25,6 @@ List[
 	('slowowow' -> [ [ 'pFreq', 83.155850299173 ], [ 'modFreq', 0.69832795035341 ], [ 'filt', 1.6678845089685 ], [ 'q', 16.806951137303 ], [ 'pWidth', 0.01776922315348 ], [ 'moDepth', 70.903826145668 ] ]),
 	('pidgin' -> [ [ 'pFreq', 46.552989534663 ], [ 'modFreq', 5.3339924072477 ], [ 'filt', 7.2165893521089 ], [ 'q', 210.18761595145 ], [ 'pWidth', 0.087341414794079 ], [ 'moDepth', 5.6475610609069 ] ]),
 	('muwaouw' -> [ [ 'pFreq', 72.665980831377 ], [ 'modFreq', 1.6145611268739 ], [ 'filt', 2.0124360298167 ], [ 'q', 3.4224446605113 ], [ 'pWidth', 0.16135731871196 ], [ 'moDepth', 40.456944329264 ] ]),
-	('spikey' -> [ [ 'pFreq', 97.006592695338 ], [ 'modFreq', 2.3280208477968 ], [ 'filt', 1.0494143547807 ], [ 'q', 139.88104683654 ], [ 'pWidth', 0.104241472204 ], [ 'moDepth', 73.508741207039 ] ]),
+	('spikey' -> [ [ 'pFreq', 97.006592695338 ], [ 'modFreq', 2.3280208477968 ], [ 'filt', 1.0494143547807 ], [ 'q', 139.88104683654 ], [ 'pWidth', 0.104241472204 ], [ 'moDepth', 73.508741207039 ] ])
 ]
+

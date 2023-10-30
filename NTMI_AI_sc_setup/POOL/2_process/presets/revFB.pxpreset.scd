@@ -4,7 +4,7 @@
 ///// tuning parameter values, or deleting unwanted presets.
 ///// When done, save the textfile where it is, and
 ///// then load the edited settings again with:
-NdefPreset('revFB').loadSettings;
+NdefPreset('revFB').loadSettings(clear: true);
 */
 
 List[
