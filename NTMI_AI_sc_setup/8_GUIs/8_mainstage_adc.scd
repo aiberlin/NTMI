@@ -557,9 +557,9 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		if ([\full, \move].includes(q.inph.mode)) {
 			// "move mode vis".postln;
 			star = g.main.movevals.collect { |val, i|
-				Polar(val.linlin( 0, 1, 40, 240), i + 0.75 / -9 * 2pi).asPoint + center;
-			};
-			// star.postln;
+			// offset -1.25 means noseDown is lowest star axis
+				Polar(val.linlin( 0, 1, 40, 240), i -1.25 / -9 * 2pi).asPoint + center;
+			};			// star.postln;
 			Pen.color = Color.yellow; Pen.width = 3;
 			star.wrapExtend(10).doAdjacentPairs { |p1, p2| Pen.line(p1, p2); };
 			Pen.stroke;
