@@ -46,6 +46,7 @@ q.xt = (knobMode: \infl);
 q.xtm.gui.showLabels;
 
 if (MKtlLookup.findByIDInfo("X-TOUCH MINI").size > 0) {
+
 	q.xtm.free;
 	q.xtm = MKtl('xtm', "*x-touch-mini*");
 
@@ -54,7 +55,7 @@ if (MKtlLookup.findByIDInfo("X-TOUCH MINI").size > 0) {
 	q.xtm.elAt(\main).elemDesc.label = "Main Vol";
 	q.xtm.elAt(\main).action = { |sl| MFdef(\mainVol).value(sl.value) };
 
-	// play buttons
+	// play buttons for the four slots
 	q.xtm.addNamed(\playBts, q.xtm.elAt(\A, \chan, (0..3), \bt, \A, 0));
 	q.xtm.elAt(\playBts).do { |el, i| el.elemDesc.label = "play" + (i + 1) };
 	q.xtm.elAt(\playBts).do { |el, i|
@@ -79,7 +80,7 @@ if (MKtlLookup.findByIDInfo("X-TOUCH MINI").size > 0) {
 		};
 	};
 
-	// new relative set for 7 sliders
+	// try new relative set for 8 sliders
 	// this means the knobs never jump
 	q.xtm.elAt(\enc).do { |enc, i|
 		enc.action = { |enc|
