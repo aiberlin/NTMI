@@ -17,6 +17,16 @@ q.select(_.isFunction).keys.postcs; "";
 //// and also on the main UFO window,
 //// and can and should be put on substitute interfaces as well.
 
+
+////// 0. first GLOBAL controls:
+
+// set main volume from a unipolar (0-1 linear) element:
+MFdef(\mainVol).value(univalue);
+
+// test with random values:
+MFdef(\mainVol).value([0, 0.25, 0.5, 0.75, 1].choose.postln);
+
+
 ///////// 1. FOUR SLOTS have these functions:
 
 q.slots.keys(Array).sort.cs;
@@ -58,7 +68,10 @@ MFdef('stepSlotPres').value(step);
 q.pre.stepNdefInf( ndef, step );
 
 // change volume on a specific ndef:
-MFdef('stepVol').(ndef);
+MFdef('stepVol').(ndef, increment);
+
+// make ndef in slot 1 louder by 0.1
+MFdef('stepVol').(q.ndefs[0], 0.1);
 
 
 /////////// quick-store the current setting of a single sound preset with datestamp:
