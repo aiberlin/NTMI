@@ -10,6 +10,7 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 		q.bin.binkey = newNum;
 
 		if(newNum > 0) {
+			// "randOrb newNum: %\n".postf(newNum);
 			// was:
 			// q.slots.nowPlaying.do { |px| };
 			// don't set decoupled proxies:
@@ -22,7 +23,9 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 					">>> % setRand seed: %\n".postf(pre, newNum);
 					pre.proxy.addHalo(\randSeed, newNum);
 				}{
+					var name = pre.settings[newNum].key;
 					pre.setCurrIndex(newNum, q.zoom);
+					pre.setProxy(name);
 					">>> % preset index: %\n".postf(pre, newNum);
 					pre.proxy.addHalo(\randSeed, nil);
 				}
