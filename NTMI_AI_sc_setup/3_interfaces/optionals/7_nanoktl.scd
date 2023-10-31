@@ -112,7 +112,7 @@ q.nktl.elAt(\inflSet).do { |sl, i| sl.elemDesc.label = "inf" + q.inphlux.inNames
 /// left top 4 knobs change slots volume
 q.nktl.elAt(\vols).do { |el, i|
 	el.action = { |el|
-		q.ndefs[i].softVol_(el.value.postln, lastVal: el.prevValue);
+		q.ndefs[i].softVol_(el.value, lastVal: el.prevValue);
 	};
 };
 
@@ -123,7 +123,7 @@ q.nktl.elAt(\playBts).do { |el, i|
 	};
 };
 
-// // sliders set influx inputs
+// // sliders set influx inputs - absolute:
 // q.nktl.elAt(\inflSet).do { |sl, i|
 // 	sl.action = { |sl|
 // 		var name = q.inphlux.inNames[i];
@@ -132,6 +132,9 @@ q.nktl.elAt(\playBts).do { |el, i|
 // };
 
 // new relative set for 7 sliders
+"//// nanoKontrol - relative-set \n"
+"//// influx inputs %..% \n\n".postf(*q.inph.sliderOffset + 1 + [0, q.nktl.elAt(\inflSet).size]);
+
 q.nktl.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		q.slots.nowPlaying.do { |ndef|
