@@ -67,17 +67,6 @@ MFdef('snapshot1').value(ndef);
 MFdef('snapshot').value;
 
 
-///////// 2. nUFO /////////
-// step thru main nUFO modes
-// - full, touch, binary
-MFdef('inphModeStep').();
-
-// set ZERO offsets position for nUFO imu and pads,
-/// so sound presets will be heard as stored
-// when interactor is at zero position
-MFdef('calibrate').();
-
-
 //////// 3. INPHLUX ////////////
 // change inphlux preset:
 // by step (1 is up by one, -1 is down, wrapping)
@@ -98,7 +87,6 @@ q.setZoom(0.62);
 q.incZoom(0.05);
 q.incZoom(-0.1);
 
-
 /////////// MainFX: //////////////
 // step mainFX preset: 1 -> up, -1 -> down,   nil -> random.
 MFdef('mainPreStep').(1);
@@ -109,6 +97,19 @@ MFdef('mainPreStep').(); // rand
 MFdef('mainPre').('theology');
 
 
+
+///////// 2. nUFO modes and calibration /////////
+// step thru main nUFO modes
+// - full, touch, binary
+MFdef('inphModeStep').();
+
+// set ZERO offsets position for nUFO imu and pads,
+/// so sound presets will be heard as stored
+// when interactor is at zero position
+MFdef('calibrate').();
+
+
+
 /////////////////// INTERNAL / HELPER FUNCTIONS //////////////
 
 ///////// 1. UFO /////////
@@ -117,6 +118,7 @@ MFdef('imuFunc');
 // set influx from pads
 MFdef('touchToInph');
 
+//// obsolete by now
 // switch xosc mode between simulation and real XOSC
 MFdef('switchToSim');
 MFdef('switchToXOSC');
