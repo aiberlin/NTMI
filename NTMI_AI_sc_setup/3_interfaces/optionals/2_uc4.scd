@@ -141,18 +141,9 @@ g.uc4.elAt(\snap).action = { |el|
 	}
 };
 
-// sliders set first 8 influx inputs
-g.uc4.elAt(\inflSet).do { |sl, i|
-	sl.action = { |sl|
-		q.slots.nowPlaying.do { |ndef|
-			q.inphlux.setRel(ndef, i + 9, (sl.prevValue - sl.value), q.zoom);
-		}
-	}
-};
-
 // ////////// sliders (hard-)set or SoftSet inphlux:
 // if (q.inphlux.respondsTo(\get).not) {
-// 	"///////// sliders hard-set influx directly ".postln;
+// 	"////  UC4 - sliders hard-set influx directly ".postln;
 // 	g.uc4.elAt(\inflx).do { |sl, i|
 // 		sl.action = { |sl|
 // 			// make sure we get to amp control (inphlux.inNames[8])
@@ -162,7 +153,7 @@ g.uc4.elAt(\inflSet).do { |sl, i|
 // 	}
 // } {
 // 	///////// BETTER: SoftSet, works with current Influx update
-// 	"//// sliders SoftSet influx ".postln;
+// 	"//// UC4 - sliders SoftSet influx ".postln;
 // 	g.uc4.elAt(\inflx).do { |sl, i|
 // 		sl.action = { |sl|
 // 			// make sure we get to amp control (inphlux.inNames[8])
@@ -172,7 +163,6 @@ g.uc4.elAt(\inflSet).do { |sl, i|
 // 	}
 // };
 
-"///////// sliders relative-set influx directly ".postln;
 /*
 which influx input offsets to use?
 amptweaked ins are are 8 (nUFO nose up/down),
@@ -186,6 +176,9 @@ q.inph.sliderOffset = q.inph.sliderOffset ? 1;
 
 // offset influx inIndex by 1,
 			// so we get ampTweak channel 8 on last slider!
+
+"//// UC4 - sliders relative-set 8 influx inputs: ".postln;
+"//// from % to %.\n\n".postf(*q.inph.sliderOffset + [0, 7]);
 
 g.uc4.elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
