@@ -11,6 +11,6 @@
 		"JITLibExtensions", "adclib", "Influx", "Modality-toolkit",
 		"Vowel", "KeyPlayer", "KtlLoop",
 		"https://github.com/musikinformatik/WavesetsEvent",
-		"StartupFile"
+		"StartupFile", "SafetyNet"
 	]
 )
