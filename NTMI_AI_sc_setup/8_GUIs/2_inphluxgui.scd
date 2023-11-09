@@ -168,6 +168,56 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 		SkipJack({ q.inph.ioUV.refresh }, 0.2, { q.inph.ioWin.isClosed }, "inphIOW");
 	);
 
+	(
+		MFdef(\infMouse).add(\base, { |uv, x, y, mod=0|
+			////// three possible actions:
+			////// 1. on inputs, post input name and value,
+			////// 1+ if shift, move = drag value
+			////// 2. on weights, post weight indices and value
+			////// 3. on outs, post name, index, value
+			var uvbounds = uv.bounds;
+			var uvW = uvbounds.width, uvH = uvbounds.height;
+			var isUp = y <= (uvH * 0.62);
+			var isLeft = x <= (uvW * 0.38);
+			var indexY, indexX;
+			// "isUp % isLeft %\n".postf(isUp, isLeft);
+
+			if (isUp) {
+				indexY = (y / (uvH * 0.62) * q.inphlux.inNames.size).asInteger;
+				if (isLeft) {
+					var newval;
+					var inName = q.inphlux.inNames.clipAt(indexY);
+					"influx in % % : %\n".postf(indexY, inName.cs,
+						q.inphlux.inValDict[inName].round(0.0001));
+					if (mod.isShift) {
+						newval = (x / (uvW * 0.38)).unibi;
+						"*** setting influx % to %\n".postf(inName, newval);
+						q.inphlux.set(inName, newval);
+					};
+				} {
+					indexX = (x - (uvW * 0.38) / (uvW * 0.62)
+						* q.inphlux.inNames.size).asInteger;
+					"influx weight at [%][%]: %\n".postf(
+						indexX, indexY, q.inphlux.weights[indexX][indexY].round(0.0001));
+				}
+			} {
+				if (isLeft.not) {
+					var outName;
+					indexX = (x - (uvW * 0.38) / (uvW * 0.62)
+						* q.inphlux.inNames.size).asInteger;
+					outName = q.inphlux.outNames.clipAt(indexX);
+					"influx out % % : %\n".postf(indexX, outName.cs,
+						q.inphlux.outValDict[outName].round(0.0001)
+					)
+
+				};
+			}
+		});
+
+		q.inph.ioUV.mouseDownAction = MFdef(\infMouse);
+		q.inph.ioUV.mouseMoveAction = MFdef(\infMouse);
+	);
+
 	q.inph.ioWin;
 
 };
