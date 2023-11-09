@@ -66,6 +66,7 @@ q.slots.chooseNext(0);
 MFdef('stepSlotPres').value(step);
 // change preset on a single sound:
 q.pre.stepNdefInf( ndef, step );
+q.pre.stepNdefInf( Ndef(\cat, 1 ));
 
 // change volume on a specific ndef:
 MFdef('stepVol').(ndef, increment);

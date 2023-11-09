@@ -101,6 +101,7 @@ if (WinBounds.makeFuncs[\wsetta].notNil) {
 Butz('interfaces').addMiniMax;
 
 Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
+Butz(\NTMI).add(\personalize, { (q.dir.ntmi +/+ "HOW_TO_PERSONALIZE/").openOS });
 
 [ 	'nUFO',
 	'nanoKtl',

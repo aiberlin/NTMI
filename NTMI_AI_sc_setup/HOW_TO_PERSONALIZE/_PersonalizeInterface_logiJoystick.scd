@@ -114,3 +114,10 @@ m.elAt(\bt, 0).action = { |sl|
 m.elAt(\bt, 0).elemDesc.label = "trig";
 m.elAt(\slider).elemDesc.label = "VOL";
 
+WinBounds.addMake(\logi, { m.gui.showLabels });
+Butz(\interfaces).add(\logi, {
+	WinBounds.showOrMake(\logi);
+});
+
+Window.closeAll
+Butz.show
