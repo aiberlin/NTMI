@@ -155,6 +155,17 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 					fontbig, green2);
 			};
 
+			/// left bottom: info text
+
+			Pen.stringCenteredIn(
+				"click/drag to post,\n"
+				"shift-click/drag\n"
+				"to set inputs",
+				Rect(0, tHi, lWid, bHi),
+				Font(Font.defaultMonoFace, 10 * wid / 340),
+				Color.white
+			);
+
 			/// right bottom: outvals as line
 
 			inph.outNames.do { |name, i|
