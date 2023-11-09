@@ -6,14 +6,16 @@ q.prefs;
 
 // the user prefs file is here:
 q.prefs.userPrefPath
-// and can be opened like this:
+// and can be opened like this for
+// detailed reading and editing!
 q.prefs.open;
 
-// this is a copy of the default prefs file in the quark,
-// which is here:
+// There is a copy of the default prefs file in the quark,
+// which is here - may be useful for comparisons/repairs
 q.prefs.defaultPath
-// and has these settings:
+// It has these settings:
 q.prefs.default
 
 q.keys(Array).sort;
 q.prefs.userPrefPath.openOS;
+
