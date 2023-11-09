@@ -15,7 +15,7 @@ q.mFX.clear;
 q.mFX = MainFX.new(server: s,
 	numChannels: q.numChans,
 	slotNames: // q.prefs.active.mfxSlotNames ?
-		ProxyChain.allSources.keys(Array).sort,
+	ProxyChain.allSources.keys(Array).sort,
 	busIndex: 0
 );
 
@@ -51,6 +51,14 @@ fork ({
 }, AppClock);
 );
 
+// make sure MainFX wake up fully after cmd-period:
+ServerTree.add({
+	fork ({
+		s.sync;
+		0.2.wait;
+		q.mfx.chain.proxy.rebuild.send
+	})
+}, s);
 
 ////////// MFX presets taken from Ars Brevis ///////////////
 //// to be replaced with ProxyChainPreset when done ... ////
