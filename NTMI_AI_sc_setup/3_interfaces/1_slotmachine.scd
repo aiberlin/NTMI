@@ -52,6 +52,7 @@ q.slots.fadeoutTime = 0.2;
 q.slots.defaultVol = 0.25;
 q.slots.defaultAmp = 0.25;
 
+q.slots.zz = [ Ndef(\zz1), Ndef(\zz2), Ndef(\zz3), Ndef(\zz4)];
 
 q.slots.nowPlaying = {
 	q.slots.actives.select { |ndef| ndef.monitor.isPlaying  };
@@ -115,6 +116,7 @@ q.slots.addActive = { |sl, index, obj|
 			q.slots.stopAt(index); // stop the old one
 		};
 		q.slots.actives.put(index, obj);
+		q.slots.zz[index].source = obj;
 		q.slots.stopAt(index); // stop the new one
 		q.slots.updateChoices;
 	}
