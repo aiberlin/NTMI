@@ -1,4 +1,12 @@
-///// NdefPreset('moogSing') settings:
+/*
+///// These are the settings for NdefPreset('moogSing'):
+///// you can edit the textfile, e.g. choosing better preset names,
+///// tuning parameter values, or deleting unwanted presets.
+///// When done, save the textfile where it is, and
+///// then load the edited settings again with:
+NdefPreset('moogSing').loadSettings(clear: true);
+*/
+
 List[
 	('curr' -> [ [ 'moogRoot', 29.5 ], [ 'lpRatio', 30.91875195014 ], [ 'lfDepth', 24.335492263317 ], [ 'lfSpeed', 0.11431941997091 ], [ 'reso', 15.977228301962 ], [ 'strobe', 0.41741142707201 ], [ 'dense', 0.74736241216295 ] ]), 
 	('ovatony' -> [ [ 'moogRoot', 29.5 ], [ 'lpRatio', 30.91875195014 ], [ 'lfDepth', 24.335492263317 ], [ 'lfSpeed', 0.11431941997091 ], [ 'reso', 15.977228301962 ], [ 'strobe', 0.41741142707201 ], [ 'dense', 0.74736241216295 ] ]), 
@@ -10,3 +18,4 @@ List[
 	('lizzes' -> [ [ 'moogRoot', 21.0 ], [ 'lpRatio', 40.380411650526 ], [ 'lfDepth', 32.912741206848 ], [ 'lfSpeed', 0.17227852429913 ], [ 'reso', 13.433526375872 ], [ 'strobe', 2.9032929038659 ], [ 'dense', 0.90080418244563 ] ]), 
 	('speek' -> [ [ 'moogRoot', 31.0 ], [ 'lpRatio', 29.600768038635 ], [ 'lfDepth', 48.0 ], [ 'lfSpeed', 10.0 ], [ 'reso', 8.2163196206931 ], [ 'strobe', 1.8804665047879 ], [ 'dense', 0.75471102159028 ] ]) 
 ]
+

@@ -1,4 +1,12 @@
-///// NdefPreset('frya') settings:
+/*
+///// These are the settings for NdefPreset('frya'):
+///// you can edit the textfile, e.g. choosing better preset names,
+///// tuning parameter values, or deleting unwanted presets.
+///// When done, save the textfile where it is, and
+///// then load the edited settings again with:
+NdefPreset('frya').loadSettings(clear: true);
+*/
+
 List[
 	('curr' -> [ [ 'baseFreq', 989.54862147083 ], [ 'loopNode', 1.0 ], [ 'curve', 3.9580786309758 ], [ 'driftA', 0.9308635069397 ], [ 'driftT', 0.14596660422046 ], [ 'wrap', 0.91153693199158 ], [ 'wEt', 0.99526380557882 ], [ 'ring', 0.30411200126862 ], [ 'ampRing', 0.27844245548562 ], [ 'oPole', 0.77897754438698 ], [ 'fLag', 404.83276218902 ], [ 'stereo', 0.99898306909767 ], [ 'minfreq', 119.0 ], [ 'maxfreq', 31.0 ], [ 'lag1', 0.25215418086934 ], [ 'lag2', 0.74228155329619 ] ]), 
 	('set1' -> [ [ 'baseFreq', 10.182959482819 ], [ 'loopNode', 11.0 ], [ 'curve', 55.181966637528 ], [ 'driftA', 14.124122074432 ], [ 'driftT', 0.010954816582575 ], [ 'wrap', 1.8428730964661 ], [ 'wEt', 0.44465887546539 ], [ 'ring', 0.042803755739057 ], [ 'ampRing', 0.73875303657932 ], [ 'fLag', 1.8347543616705 ], [ 'oPole', 0.61654514289799 ], [ 'stereo', 0.4793743983809 ], [ 'minfreq', 6464.4019624645 ], [ 'maxfreq', 1111.336513816 ] ]), 
@@ -26,3 +34,4 @@ List[
 	('calm' -> [ [ 'baseFreq', 46.402224545704 ], [ 'loopNode', 1.0 ], [ 'curve', 0.63645826056955 ], [ 'driftA', 0.9308635069397 ], [ 'driftT', 0.14596660422046 ], [ 'wrap', 0.91153693199158 ], [ 'wEt', 0.99351630576828 ], [ 'ring', 0.054305495814591 ], [ 'ampRing', 1.0 ], [ 'oPole', 0.97656901465986 ], [ 'fLag', 2.0415948120057 ], [ 'stereo', 0.99898306909767 ], [ 'minfreq', 1701.0 ], [ 'maxfreq', 131.0 ], [ 'lag1', 0.25215418086934 ], [ 'lag2', 0.74228155329619 ] ]), 
 	('wada' -> [ [ 'baseFreq', 1.0 ], [ 'loopNode', 0.0 ], [ 'curve', 35.516194384815 ], [ 'driftA', 9.6961372374343 ], [ 'driftT', 7.6706370231719 ], [ 'wrap', 1.9166666666667 ], [ 'wEt', 1.0 ], [ 'ring', 0.059033646369509 ], [ 'ampRing', 0.92950978988065 ], [ 'oPole', 0.67320196372979 ], [ 'fLag', 3486.5816925556 ], [ 'stereo', 0.99967501071297 ], [ 'minfreq', 505.0 ], [ 'maxfreq', 20.0 ], [ 'lag1', 0.54123799188353 ], [ 'lag2', 2.8306878306878 ] ]) 
 ]
+
