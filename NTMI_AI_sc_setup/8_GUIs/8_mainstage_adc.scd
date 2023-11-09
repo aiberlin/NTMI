@@ -133,7 +133,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
 	var nufoView, recBut;
-	var bigUV, imuUV, imuWin;
+	var bigUV, imuUV;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
 	try { g.main.w.close };
@@ -147,15 +147,13 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	g.main.bigUV = bigUV;
 	bigUV.canFocus_(false);
 
-	// imuWin = Window("", Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale), false, false).front;
-	// imuUV = v = UserView(imuWin, imuWin.bounds.moveTo(0,0));
 	imuUV = v = UserView(w, Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale));
-	imuUV.background_(Color.clear);
+	imuUV.background_(Color.grey(0.5, 0));
 	g.main.imuUV = imuUV;
 	imuUV.canFocus_(false);
 
-	g.main.padCols = 0!8;
-	g.main.movevals = 0!9;
+	g.main.padCols = 0.5!8;
+	g.main.movevals = 0.5!9;
 
 	// stetho needs to be in a new-style layout for resizing...
 	g.main.stetho = Stethoscope(s, q.numChans, view: w.view);
@@ -190,8 +188,6 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		// "nufoView.drawFunc".postln;
 	});
 	g.main.nufoView = nufoView;
-
-	g.main.imuUV.background_(Color.grey(0.5, 0.5));
 
 	Button(w, Rect(rightCol, 340 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
 		["Reset Clock", Color.white, butGrey],
@@ -501,7 +497,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 	);
 
 	g.main.nufoViews = [
-		g.main.imuUV,
+		// g.main.imuUV,
 		g.main.nufoView,
 		g.main.rMViews.last.uv, // mode view
 		g.main.caliBut,
@@ -545,7 +541,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			// 4 left, 4 right touchpads
 			(padsLPos ++ padsRPos).collect { |pt, i|
 				Pen.addArc(pt, 60, 0, 2pi);
-				Pen.color_(g.main.padCols[i]);
+				Pen.color_(Color.grey(g.main.padCols[i], 0.5));
 				Pen.fill;
 				// rings white
 				Pen.addOval(Rect.aboutPoint(pt, 60, 60));
@@ -611,7 +607,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
 				or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
-				g.main.movevals = q.osc.calibImuVals;
+				g.main.movevals = q.osc.calibImuVals ? g.main.movevals;
 				if (q.inph.mode == \binary) {
 					g.main.padCols = q.bin.bins.collect { |val, i|
 						Color.white.alpha_(val);
