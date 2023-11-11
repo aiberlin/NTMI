@@ -53,7 +53,9 @@ q.pre.makePreset = { |pre, proxy|
 };
 
 // making all the presets here
-q.getNdefs.do { |proxy, i|	q.pre.makePreset(proxy) };
+q.pre.ntmi = q.ndef.groups[\NTMI].collect { |proxy, i|
+	q.pre.makePreset(proxy)
+};
 );
 
 // init to first preset if there are any saved ones
