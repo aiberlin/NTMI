@@ -1,7 +1,7 @@
 // all window making functions go here:
 (
-q = q ? ();
-g = g ? ();
+q = q ? (); // global dict
+g = g ? (); // gui-related dict
 
 //// set global prefs here:
 g.alpha = g.alpha ? 0.8;
@@ -45,7 +45,9 @@ g.butzNames = [
 	'randomOrbitz',
 	'ndefMixer',
 	'mainFX',
-	// '-interfaces-',
+	'-interfaces-',
+	'-Config-',
+	'-Tutorial-'
 ];
 
 // Butz.clear;
@@ -60,13 +62,13 @@ Butz.style.font.size = 16;
 
 Butz.show;
 
-// then add some one-liners:
+// add some top-level one-liners:
 Butz.addMiniMax;
 Butz.add('StartupDial', { StartupFile.dialog });
 Butz.add('CLOSEALL', { Window.allWindows.do { |w| if (w != Butz.w) { w.close } } });
-Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
 
-//////// ndefmixer - add to WinBounds call to Butz,
+//////// ndefmixer - add to WinBounds call to Butz, make func later
+Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
 
 // add a gui makeFunc for MainFX:
 Butz.add('mainFX', { WinBounds.showOrMake('mainFX') });
@@ -75,16 +77,22 @@ WinBounds.addMake('mainFX', { |dict, name = \mainFX|
 	q.mfx.win.front.name_(name);
 });
 
-Butz.add('meters', { s.meter.window.name_(\meters) });
+Butz.add('meters', { s.meter; Window.find(s.name).name_(\meters) });
 Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
 
-/// some helpers
+/// some general helpers
 Butz.add('setAll', { WinBounds.restoreAll });
 Butz.add('plotTree', { s.plotTree });
 Butz.add('chanTest', { g.makeGui.chanTest });
 
-// the main NTMI windows - funcs defined in other GUI files
-// just do the names to create the proper order in Butz:
+
+
+/****
+Make an NTMI separate Butz for windows and functions
+- many functions defined in other GUI files
+***/
+
+// add the names to create the proper order:
 g.butzNames.do (Butz(\NTMI).add(_));
 
 Butz(\NTMI).add('Main_NTMI', { WinBounds.showOrMake('Main_NTMI')});
@@ -93,15 +101,20 @@ WinBounds.addMake('Main_NTMI', {
 	g.main.w.alpha_(g.alpha ? 0.8);
 });
 
-// only add wsetta to Butz if the gui func exists:
+// only add wsetta to Butz if the gui func for it exists:
 if (WinBounds.makeFuncs[\wsetta].notNil) {
 	Butz(\NTMI).add(\wsetta, { WinBounds.showOrMake(\wsetta) });
 };
 
-Butz('interfaces').addMiniMax;
-
+// shortcuts to switch Butz pages from Main NTMI window
 Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
-Butz(\NTMI).add(\personalize, { (q.dir.ntmi +/+ "HOW_TO_PERSONALIZE/").openOS });
+Butz('NTMI').add('-Config-', { Butz.curr_('NTMI_Config') });
+Butz('NTMI').add('-Tutorial-', { Butz.curr_('NTMI_Tutorial') });
+
+
+/// put the interfaces in a separate Butz list,
+/// add detailed funcs later
+Butz('interfaces').addMiniMax;
 
 [ 	'nUFO',
 	'nanoKtl',
@@ -133,7 +146,7 @@ Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
 
 
-///// then add makefunc to WinBounds:
+///// add \ndefMixer makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	// numItems could also be q.process.allNames.size;
 	var maxVisible = 21; // (Window.screenBounds.height - 30 / 20);
@@ -156,54 +169,47 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	ndefMixer.parent;
 });
 
-Butz(\interfaces).add('nUFO', {
-	if (MKtl.all['nUFO'].isNil) {
-		[
-			"3_interfaces/optionals/1_osc_nufo.scd",
-			"3_interfaces/optionals/1b_ntmi_nufo.scd",
-			"3_interfaces/optionals/1c_allLEDs_nufo.scd",
-			"3_interfaces/optionals/1d_pads2bits_nufo.scd"
-		].do { |path| (q.dir.user +/+ path).postcs.loadPaths };
-	};
-	WinBounds.addMake('nUFO', {
-		MKtl(\nUFO).gui.showLabels.parent
-	});
-	WinBounds.showOrMake('nUFO');
-});
 
-Butz(\interfaces).add('ferrari', {
-	if (MKtl.all['ferrari'].isNil) {
-		(q.dir.user +/+ "3_interfaces/optionals/3_ferrari.scd".postcs).loadPaths;
+
+/////// the INTERFACES Butz: /////////////
+// function to load an interface file or gui:
+MFdef(\loadInterfaceFile).add(\load, { |name, filepath|
+	if (MKtl.all[name].isNil) {
+		(q.dir.user +/+ filepath.postcs).loadPaths;
 	} {
-		WinBounds.addMake('ferrari', {
-			q.ferrgui = MKtl(\ferrari).gui.showLabels;
+		WinBounds.addMake(name, {
+			q.ferrgui = MKtl(name).gui.showLabels;
 			q.ferrgui.parent
 		});
-		WinBounds.showOrMake('ferrari')
+		WinBounds.showOrMake(name);
 	};
 });
 
-Butz(\interfaces).add('uc4', {
-	if (MKtl.all['uc4'].isNil) {
-		(q.dir.user +/+ "3_interfaces/optionals/2_uc4.scd".postcs).loadPaths;
-	} {
-		WinBounds.addMake('uc4', {
-			MKtl('uc4').gui.showLabels.parent
-		});
-		WinBounds.showOrMake('uc4')
-	};
+MFdef(\addInterfaceFile).add(\butz, { |name, filepath|
+	Butz(\interfaces).add(name, {
+		MFdef(\loadInterfaceFile).(name, filepath);
+	});
 });
 
-Butz(\interfaces).add('nanoKtl', {
-	if (MKtl.all['nanoKtl'].isNil) {
-		(q.dir.user +/+ "3_interfaces/optionals/7_nanoktl.scd".postcs).loadPaths;
-	} {
-		WinBounds.addMake('nanoKtl', {
-			MKtl('nanoKtl').gui.showLabels.parent
-		});
-		WinBounds.showOrMake('nanoKtl')
-	};
-});
+// add 4 interfaces
+MFdef(\addInterfaceFile).(\ferrari,
+	"3_interfaces/optionals/3_ferrari.scd");
+
+MFdef(\addInterfaceFile).(\uc4,
+	"3_interfaces/optionals/2_uc4.scd");
+
+MFdef(\addInterfaceFile).(\nanoKtl,
+	"3_interfaces/optionals/7_nanoktl.scd");
+
+MFdef(\addInterfaceFile).(\nUFO,
+	"3_interfaces/optionals/1*nufo.scd");
+
+
+Butz(\NTMI_Config).addMiniMax;
+Butz('NTMI_Config').add('NTMI', { Butz.curr_('NTMI') });
+Butz(\NTMI_Config).add(\quark, { Quark("NTMI").localPath.openOS });
+Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
 
 
 /////////// and these are all the stored bounds:
@@ -211,6 +217,7 @@ WinBounds.stored.putAll( (
 	'randomOrbitz': Rect(768.0, 817.0, 434.0, 188.0),
 	'slotSounds': Rect(726.0, 138.0, 782.0, 720.0),
 //	'MakeGui': Rect(0.0, 180.0, 170.0, 580.0),
+	//	'MakeGui': Rect(0.0, 180.0, 170.0, 580.0),
 	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
 
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
