@@ -210,7 +210,10 @@ Butz(\NTMI_Config).clear;
 Butz(\NTMI_Config).addMiniMax;
 Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
 Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
-Butz(\NTMI_Config).add('open Quark', { Quark("NTMI").localPath.openOS });
+Butz(\NTMI_Config).add(\soundfiles, { q.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add('open setup', { q.dir.ntmi.openOS });
+
+Butz(\NTMI_Config).add('open quark', { Quark("NTMI").localPath.openOS });
 
 
 /////////// and these are all the stored bounds:
