@@ -157,7 +157,8 @@ Task {
 	q.numIns = q.prefs.active.numIns ? q.numChans;
 
 	if (s.serverRunning) {
-		"server running already, cannot adjust settings".postln;
+		"*** server running already, cannot adjust settings!".postln;
+		"may not be able to do everything in preBootSetup ...".postln;
 		q.numChans = min(q.numChans, s.options.numOutputBusChannels);
 		q.numIns =   min(q.numIns,   s.options.numInputBusChannels);
 
@@ -168,12 +169,14 @@ Task {
 		s.options.numInputBusChannels = q.numIns;
 		s.options.numOutputBusChannels = q.numChans;
 
-		q.load(q.prefs.active.preBootSetup);
 	};
 	"*** q.numChans is: %\n".postf(q.numChans);
 	"*** q.numIns is: %\n".postf(q.numIns);
 
+	q.load(q.prefs.active.preBootSetup);
+
 	"\n\n".postln;
+
 
 	s.waitForBoot {
 		var prevLatency = s.latency;
