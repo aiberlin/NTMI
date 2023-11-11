@@ -206,12 +206,11 @@ MFdef(\addInterfaceFile).(\nanoKtl,
 MFdef(\addInterfaceFile).(\nUFO,
 	"3_interfaces/optionals/1*nufo.scd");
 
-
+Butz(\NTMI_Config).clear;
 Butz(\NTMI_Config).addMiniMax;
-Butz('NTMI_Config').add('NTMI', { Butz.curr_('NTMI') });
-Butz(\NTMI_Config).add(\quark, { Quark("NTMI").localPath.openOS });
-Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
 Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
+Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add('open Quark', { Quark("NTMI").localPath.openOS });
 
 
 /////////// and these are all the stored bounds:
