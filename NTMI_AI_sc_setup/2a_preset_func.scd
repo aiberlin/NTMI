@@ -59,13 +59,23 @@ q.pre.ntmi = q.ndef.groups[\NTMI].collect { |proxy, i|
 );
 
 // init to first preset if there are any saved ones
-NdefPreset.all.do { |pre|
+q.pre.ntmi.do { |pre|
 	var secondSet;
 	if (pre.settings.size > 1) {
 		secondSet = pre.settings[1].key;
 		pre.setCurr(secondSet).setProxy(secondSet);
 	};
 };
+
+"preferred preset names:".postln;
+q.prefs.active.presetNames.do { |assoc, i|
+	var key = assoc.key, val = assoc.value.value;
+	var preset = NdefPreset(key);
+	var prekey = if (val.isKindOf(Symbol)) { val } { preset.settings.wrapAt(val).key };
+	"% : % -> % \n".postf(preset, val.cs, prekey.cs);
+	try { preset.setCurr(prekey).setProxy };
+};
+
 
 // increments and stores a random seed per ndefPreset.
 q.pre.incrementSeed = {|q, proxy, inc=1|
