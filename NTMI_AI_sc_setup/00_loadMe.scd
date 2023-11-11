@@ -34,19 +34,9 @@ Task {
 	//// Set generally useful globals:
 
 	// internally useful:
-	q.hasGui   = q.hasGui ?? { \View.asClass.notNil };
 	q.isPi     = q.isPi ?? { q.myname == 'pi' };
 	q.time0 = Main.elapsedTime;
 	q.myname = Platform.userHomeDir.basename.asSymbol;
-
-
-	if (q.hasGui) {
-		"9_optionals/warnWin.scd".loadRelative;
-	} {
-		q.warnWin = { |q, string="?!?", title="?!?"|
-			warn(title + string)
-		}
-	};
 
 	//////// DIRECTORIES:
 	q.dir = q.dir ? ();
@@ -125,14 +115,23 @@ Task {
 	///// read user prefs (if there) or default prefs early on:
 	"1_prefs/1_prefs.scd".loadRelative;
 
+	// flags for which parts to load:
+	q.hasGui = q.prefs.active.hasGui ? q.hasGui ?? { \View.asClass.notNil };
+
 	// these may have been set in startup file already:
-	q.usesMidi = q.prefs.active.usesMidi ? true;
-	q.usesHid  = q.prefs.active.usesHid  ? true;
+	q.usesMidi = q.prefs.active.usesMidi ? q.usesMidi ? true;
+	q.usesHid  = q.prefs.active.usesHid  ? q.usesHid ? true;
 	q.interfacesToLoad  = q.prefs.active.interfacesToLoad ? [ "uc4" ];
-	q.reboot = q.prefs.active.reboot  ? false;
+	q.reboot = q.prefs.active.reboot ? q.reboot ? false;
 
 	// turning this off does not work yet
-	q.usesMainFX  = /*q.prefs.active.usesMainFX  ?*/ true;
+	q.usesMainFX = q.prefs.active.usesMainFX ? q.usesMainFX ? true;
+
+	if (q.hasGui) {
+		"9_optionals/warnWin.scd".loadRelative;
+	} {
+		q.warnWin = { |q, string="?!?", title="?!?"| warn(title + string) }
+	};
 
 	// "*** Modality: find MIDI and HID devices if enabled ***".postln;
 	if (q.usesMidi) {
@@ -144,9 +143,11 @@ Task {
 
 	// Server.killAll;
 	if (q.reboot) {
+		"*** NTMI kills server to reboot.".postln;
 		s.quit; "".postln;
 		0.2.wait;
 	};
+
 
 	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
 	q.load("0_globals/*.scd");
