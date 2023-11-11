@@ -22,10 +22,9 @@ q.prefs.open = { q.prefs.userPrefPath.openOS };
 [ "finalSetup.scd", "postBootSetup.scd", "preBootSetup.scd" ].do { |file|
 	var pathInQuarkDir = q.dir.ntmi +/+ "1_prefs" +/+ file;
 	var pathInUserDir = q.dir.user +/+ file;
-	pathInQuarkDir.postcs.pathMatch.postln;
 	if (File.exists(pathInUserDir).not) {
 		unixCmd(
-			("cp" + quote(pathInQuarkDir) + quote(pathInUserDir).postcs
+			("cp" + quote(pathInQuarkDir) + quote(pathInUserDir)
 			)
 		)
 	}
