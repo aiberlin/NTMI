@@ -208,13 +208,13 @@ Task {
 		q.load(q.prefs.active.postBootSetup);
 
 
-		q.load("2_bufferLoader.scd");
-		q.load("2_liveInput.scd");
+		q.load("2_process_presets/2a_bufferLoader.scd");
+		q.load("2_process_presets/2b_liveInput.scd");
 		s.sync;
+		q.load("2_process_presets/2c_loadProcesses.scd");
 
-		q.load("2_makePresets");
 
-		MFdef(\makePresets).value;
+		/********** INTERFACES *********/
 
 		"\n\n*** *** *** FOLDER % : \n".postf("3_interfaces");
 		q.load("3_interfaces/*scd");
@@ -226,9 +226,11 @@ Task {
 		"\n\n*** *** *** FOLDER % : \n".postf("5_postres");
 		q.load("5_postres/*scd");
 
+
 		if (q.usesMainFX) {
 			q.load("6_MainFX.scd");
 		};
+
 
 		if (q.hasGui) {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
