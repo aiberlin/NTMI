@@ -174,15 +174,17 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 /////// the INTERFACES Butz: /////////////
 // function to load an interface file or gui:
 MFdef(\loadInterfaceFile).add(\load, { |name, filepath|
-	if (MKtl.all[name].isNil) {
-		(q.dir.user +/+ filepath.postcs).loadPaths;
-	} {
-		WinBounds.addMake(name, {
-			q.ferrgui = MKtl(name).gui.showLabels;
-			q.ferrgui.parent
-		});
-		WinBounds.showOrMake(name);
+	if (PathName(filepath).isRelativePath) {
+		filepath = (q.dir.ntmi +/+ filepath);
 	};
+	if (MKtl.all[name].isNil) {
+		filepath.postcs.loadPaths;
+	};
+	WinBounds.addMake(name, {
+		q.ferrgui = MKtl(name).gui.showLabels;
+		q.ferrgui.parent
+	});
+	WinBounds.showOrMake(name);
 });
 
 MFdef(\addInterfaceFile).add(\butz, { |name, filepath|
@@ -216,8 +218,6 @@ Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
 WinBounds.stored.putAll( (
 	'randomOrbitz': Rect(768.0, 817.0, 434.0, 188.0),
 	'slotSounds': Rect(726.0, 138.0, 782.0, 720.0),
-//	'MakeGui': Rect(0.0, 180.0, 170.0, 580.0),
-	//	'MakeGui': Rect(0.0, 180.0, 170.0, 580.0),
 	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
 
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
