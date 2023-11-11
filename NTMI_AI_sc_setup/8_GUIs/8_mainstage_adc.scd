@@ -20,6 +20,7 @@ g.makeGui['NTMI_Main'].value;
 g.main = g.main ? ();
 g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 
+
 // quick and dirty removal of nufo from gui:
 g.hasNufo = { MKtl.all[\nUFO].notNil };
 q.bat = q.bat ? ();
@@ -227,56 +228,57 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		MFdef('calibrate').value(1, { |ok| but.value_(if (ok, 2, 0).postln) })
 	});
 
-
-	g.main.mfxBut = Button(w,
-		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 50 * scrscale)
-	).states_([
-		["MainFX\n<<  RAND  >>", Color.white, butGrey],
-	]).font_(font)
-	.mouseDownAction_({ |bt, x, y, mod|
-		var zone = x div: (bt.bounds.width div: 3);
-		var stepVal = [-1, nil, 1][zone];
-		MFdef('mainPreStep').value(stepVal);
-		// [bt, x, y, mod].postcs;
-	});
-	g.main.mfxBut.visible_(q.usesMainFX);
-
-
-	g.main.mainSl = MView(
-		q.mFX.proxyChain.proxy.get(\mainVol),
-		g.main.w,
-		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
-	);
+	if (q.usesMainFX) {
+		g.main.mfxBut = Button(w,
+			Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 50 * scrscale)
+		).states_([
+			["MainFX\n<<  RAND  >>", Color.white, butGrey],
+		]).font_(font)
+		.mouseDownAction_({ |bt, x, y, mod|
+			var zone = x div: (bt.bounds.width div: 3);
+			var stepVal = [-1, nil, 1][zone];
+			MFdef('mainPreStep').value(stepVal);
+			// [bt, x, y, mod].postcs;
+		});
+		g.main.mfxBut.visible_(q.usesMainFX);
 
 
-	g.main.mainSl.uv.alpha_(0.7).refresh;
-	g.main.mainSl.label_(\mainVol);
-	g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
-	g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
-	g.main.mainSl.dict.round_(1/100);
-	g.main.mainSl.dict.font_(Font(g.fontName, 30 * scrscale));
-	g.main.mainSl.action.add(\setMain, { |mv|
-		q.mFX.proxyChain.proxy.set(\mainVol, mv.value)
-	});
-	g.main.mainSl.drawFunc.add(\label, {
-		Pen.stringCenteredIn(
-			g.main.mainSl.label,
-			g.main.mainSl.bounds.moveTo(0,0),
-			Font(g.fontName, 50 * scrscale),
-			Color.blue
-		)
-	});
-	g.main.mainVolDisplay = {
-		var nuval = q.mFX.proxyChain.proxy.get(\mainVol);
-		if (g.main.mainSl.value != nuval) {
-			g.main.mainSl.value = nuval
+		g.main.mainSl = MView(
+			q.mFX.proxyChain.proxy.get(\mainVol),
+			g.main.w,
+			Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
+		);
+
+
+		g.main.mainSl.uv.alpha_(0.7).refresh;
+		g.main.mainSl.label_(\mainVol);
+		g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
+		g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
+		g.main.mainSl.dict.round_(1/100);
+		g.main.mainSl.dict.font_(Font(g.fontName, 30 * scrscale));
+		g.main.mainSl.action.add(\setMain, { |mv|
+			q.mFX.proxyChain.proxy.set(\mainVol, mv.value)
+		});
+		g.main.mainSl.drawFunc.add(\label, {
+			Pen.stringCenteredIn(
+				g.main.mainSl.label,
+				g.main.mainSl.bounds.moveTo(0,0),
+				Font(g.fontName, 50 * scrscale),
+				Color.blue
+			)
+		});
+		g.main.mainVolDisplay = {
+			var nuval = q.mFX.proxyChain.proxy.get(\mainVol);
+			if (g.main.mainSl.value != nuval) {
+				g.main.mainSl.value = nuval
+			};
 		};
-	};
-	g.main.mainSl.dict[\focusCol] = Color.grey(1.0, 0.8);
-	g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
-	g.main.mainSl.uv.focus(true).refresh;
-	g.main.mainSl.uv.focus(false).refresh;
+		g.main.mainSl.dict[\focusCol] = Color.grey(1.0, 0.8);
+		g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
+		g.main.mainSl.uv.focus(true).refresh;
+		g.main.mainSl.uv.focus(false).refresh;
 
+	};
 
 	// 4 popups to select sounds, 4 mviews for volume levels
 	// add play buttons?
@@ -553,7 +555,7 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 		if ([\full, \move].includes(q.inph.mode)) {
 			// "move mode vis".postln;
 			star = g.main.movevals.collect { |val, i|
-			// offset -1.25 means noseDown is lowest star axis
+				// offset -1.25 means noseDown is lowest star axis
 				Polar(val.linlin( 0, 1, 40, 240), i -1.25 / -9 * 2pi).asPoint + center;
 			};			// star.postln;
 			Pen.color = Color.yellow; Pen.width = 3;
