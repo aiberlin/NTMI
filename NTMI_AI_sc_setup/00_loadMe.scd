@@ -38,7 +38,7 @@ Task {
 	q.time0 = Main.elapsedTime;
 	q.myname = Platform.userHomeDir.basename.asSymbol;
 
-	//////// DIRECTORIES:
+	//////// determine DIRECTORIES: ///////////////
 	q.dir = q.dir ? ();
 	q.dir.ntmi = thisProcess.nowExecutingPath.dirname;
 	q.dir.fullNames = (q.dir.ntmi +/+ "*/").pathMatch;
@@ -73,8 +73,9 @@ Task {
 		};
 	};
 
-	// loads local or absolute filenames or paths,
+	// load function - loads local or absolute filenames or paths,
 	// with wait time and posted load time info:
+	// maybe move to LoadMe class eventually
 	q.load = { |q, filename, here, wait = 0.05, dirsup = 0, preText = "", postText = ""|
 		var paths, path;
 		if (filename.isNil) { warn("path was nil!") } {
@@ -128,7 +129,7 @@ Task {
 	q.usesMainFX = q.prefs.active.usesMainFX ? q.usesMainFX ? true;
 
 	if (q.hasGui) {
-		"9_optionals/warnWin.scd".loadRelative;
+		"8_GUIs/warnWin.scd".loadRelative;
 	} {
 		q.warnWin = { |q, string="?!?", title="?!?"| warn(title + string) }
 	};
@@ -147,7 +148,6 @@ Task {
 		s.quit; "".postln;
 		0.2.wait;
 	};
-
 
 	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
 	q.load("0_globals/*.scd");
