@@ -2,12 +2,10 @@
 
 /*
 // read current settings from user prefs:
+// this copies the default prefs to user home dir if not there
 q.prefs.readUser;
 
-// copy default prefs to user location to customize:
-q.prefs.copyDefaultToUser;
-
-// open user prefs to edit:
+// open user prefs:
 q.prefs.open;
 
 */
@@ -17,13 +15,20 @@ q.prefs.defaultPath = "ntmi_prefs_default.scd".resolveRelative;
 ////// multiple example prefs with app?
 // q.prefs.found = "ntmi_prefs_*".resolveRelative.pathMatch;
 q.prefs.default = q.prefs.defaultPath.load;
-
 q.prefs.userPrefPath = (Platform.userAppSupportDir +/+  "ntmi_prefs.scd");
+
 q.prefs.open = { q.prefs.userPrefPath.openOS };
 
-q.prefs.deleteUserPrefs = {
-	"deleting user prefs: ".postln;
-	unixCmd(("rm" + quote(q.prefs.userPrefPath)).postcs);
+[ "finalSetup.scd", "postBootSetup.scd", "preBootSetup.scd" ].do { |file|
+	var pathInQuarkDir = q.dir.ntmi +/+ "1_prefs" +/+ file;
+	var pathInUserDir = q.dir.user +/+ file;
+	pathInQuarkDir.postcs.pathMatch.postln;
+	if (File.exists(pathInUserDir).not) {
+		unixCmd(
+			("cp" + quote(pathInQuarkDir) + quote(pathInUserDir).postcs
+			)
+		)
+	}
 };
 
 q.prefs.readUser = {
@@ -32,27 +37,21 @@ q.prefs.readUser = {
 	if (File.exists(q.prefs.userPrefPath)) {
 		prefdict = q.prefs.userPrefPath.load;
 		q.prefs.fromUser = prefdict;
-		"NTMI: user prefs found.".postln;
+		"... found user prefs ...  ".postln;
+		// prefdict.postcs;
 	} {
-		"NTMI: no user prefs found -".postln
+		"copying default prefs to user dir: ".postln;
+		unixCmd(
+			("cp" + quote(q.prefs.defaultPath) + quote(q.prefs.userPrefPath).postcs
+			)
+		);
 	}
-};
-
-// only do this by hand
-q.prefs.copyDefaultToUser = {
-	"NTMI: copying default prefs to user dir: ".postln;
-	unixCmd(
-		("cp" + quote(q.prefs.defaultPath) + quote(q.prefs.userPrefPath).postcs
-		)
-	);
 };
 
 q.prefs.readUser;
 
 // set
-q.prefs.active = q.prefs.fromUser ?? {
-	"- using default prefs.".postln;
-	q.prefs.default;
-};
+q.prefs.active = q.prefs.fromUser ? q.prefs.default;
+
 "";
 
