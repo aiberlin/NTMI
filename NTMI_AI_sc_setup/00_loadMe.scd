@@ -54,19 +54,8 @@ Task {
 	q.dir.fullNames = (q.dir.ntmi +/+ "*/").pathMatch;
 	q.dir.names = q.dir.fullNames.collect { |path| path.basename };
 
-	// check user dir, make it and migrate pool there if desired
-	q.dir.user = Platform.userHomeDir +/+ "NTMI";
 
-
-	// ///////// set for dev mode here :
-	// if (q.myname == \adcxxx) {
-	// 	q.dev = true;
-	// } {
-	// 	q.dev = false;
-	// };
-
-	/// user mode not working yet, so switching to dev mode for now:
-	q.dev = true;
+	q.dev = q.dev ? false;
 
 	if(q.dev) {
 		///////////// WHILE DEVELOPING, direct back to dev/project dir!
@@ -74,16 +63,24 @@ Task {
 		q.dir.userPOOL = q.dir.ntmi +/+ "POOL";
 	} {
 		///////////// non-dev: copy pool to user home dir
+		// check user dir, make it and migrate pool there if desired
+		q.dir.user = Platform.userHomeDir +/+ "NTMI";
+		q.dir.userPOOL = q.dir.user +/+ "POOL";
+		"NTMI: q.dir.user is %\n".postf(q.dir.user);
+		"NTMI: q.dir.userPOOL is %\n".postf(q.dir.userPOOL);
+
 		if (File.exists(q.dir.user).not) {
-			"NTMI: making user home dir".postln;
+			"NTMI: making q.dir.user".postln;
 			unixCmd("mkdir" + quote(q.dir.user));
+		};
+		if (File.exists(q.dir.userPOOL).not) {
+			"NTMI: copying POOL folder to q.dir.user".postln;
 			unixCmd("cp -nR"
 				+ quote(q.dir.ntmi +/+ "POOL")
 				+ quote(q.dir.user +/+ "POOL")
 			);
+			q.dir.userPOOL.openOS;
 		};
-		q.dir.userPOOL = q.dir.user +/+ "POOL";
-		q.dir.user.openOS;
 	};
 
 	// loads local or absolute filenames or paths,
@@ -123,7 +120,6 @@ Task {
 	};
 
 	"\n\n".post;
-
 
 	//******* PREFERENCES
 	///// read user prefs (if there) or default prefs early on:
