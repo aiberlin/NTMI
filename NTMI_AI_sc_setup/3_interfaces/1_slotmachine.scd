@@ -74,12 +74,20 @@ q.slots.playAt = { |sl, index|
 	"using preset % as influx offset.\n".postf(currPreName.cs);
 };
 
-// maybe make a flag for stop or end?
 q.slots.stopAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	if (obj.isPlaying) {
+		"SLOT %: % stops.\n".postf(index, obj);
+		obj.stop(q.slots.fadeoutTime)
+	};
+	try { q.inphlux.removeMapped(obj.key) };
+};
+
+q.slots.endAt = { |sl, index|
+	var obj = q.slots.actives[index];
+	if (obj.isPlaying) {
 		"SLOT %: % ends.\n".postf(index, obj);
-		obj.end(q.slots.fadeoutTime);
+		obj.end(q.slots.fadeoutTime)
 	};
 	try { q.inphlux.removeMapped(obj.key) };
 };
@@ -87,8 +95,8 @@ q.slots.stopAt = { |sl, index|
 q.slots.toggleAt = { |sl, index|
 	var obj = q.slots.actives[index];
 	var isPlaying = if (obj.isKindOf(NodeProxy))
-		{ obj.monitor.isPlaying }
-		{ obj.isPlaying };
+	{ obj.monitor.isPlaying }
+	{ obj.isPlaying };
 
 	if (isPlaying) {
 		q.slots.stopAt(index);
@@ -113,11 +121,12 @@ q.slots.addActive = { |sl, index, obj|
 	{ q.slots.choices[index].includes(obj.key).not } { "q.slots.addActive - obj is not in choices: %\n".postf(obj) }
 	{		// all is well
 		if (q.slots.actives[index] != obj) {
-			q.slots.stopAt(index); // stop the old one
+			q.slots.endAt(index); // end the old one
 		};
 		q.slots.actives.put(index, obj);
-		q.slots.zz[index].source = obj;
-		q.slots.stopAt(index); // stop the new one
+		"slots: % source is %\n".postf(q.slots.zz[index], obj);
+		q.slots.zz[index].postln.source = { obj.ar };
+		// q.slots.stopAt(index);
 		q.slots.updateChoices;
 	}
 };
