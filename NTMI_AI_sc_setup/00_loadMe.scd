@@ -109,7 +109,7 @@ Task {
 					if (s.serverRunning) { try { s.sync } };
 					loadDur = (Main.elapsedTime - t0).round(0.001);
 					" % secs. %\n".postf(loadDur, postText);
-					wait.wait;
+					if (wait > 0) { wait.wait };
 				};
 
 				"";
@@ -149,14 +149,14 @@ Task {
 
 	"*** Modality: find MIDI and HID devices if enabled ***".postln;
 	if (q.usesMidi) {
-		MKtl.find(\midi); 0.5.wait;
+		MKtl.find(\midi); 0.1.wait;
 	};
 
 	if (q.usesHid) {
 		Platform.case(\windows) {
 			"HID on windows is not working in SC3.13.0.".warn
 		} {
-			MKtl.find(\hid); 0.5.wait;
+			MKtl.find(\hid); 0.1.wait;
 		};
 	};
 
@@ -252,7 +252,7 @@ Task {
 		if (q.hasGui) {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
-			0.2.wait;
+			// 0.1.wait;
 			if (q.hasSmallScreen != true) {
 				g.makeGui[\Main_NTMI].value;
 			} {
