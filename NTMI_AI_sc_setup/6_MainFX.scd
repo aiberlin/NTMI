@@ -79,7 +79,7 @@ q.mfx.preNames = [
 (
 q.mfx.preMap = (
 	'baseset': (
-		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.1], \ampFin],
+		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.05], \ampFin],
 		settings: [\postAmp, 1, \ampLimit, 0.8, \noisefloor, 0.0001],
 		// randomize: [\noisefloor ]
 	),
