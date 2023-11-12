@@ -1,6 +1,6 @@
 // Sound from Jonas, uses internal feedback and the LinCongN Chaotic Ugen
 
-(
+
 // specs
 Ndef(\lincong).addSpec(\chaos, [1, 5, \exp]);
 Ndef(\lincong).addSpec(\fbQ, [0.1, 2, 1]);

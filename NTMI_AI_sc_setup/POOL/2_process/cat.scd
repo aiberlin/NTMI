@@ -1,5 +1,5 @@
 // SOUND 2 // the DubCat example from our Class:
-(
+
 // controlspecs
 Ndef(\cat).addSpec(\pFreq, [20, 400, \exp]);
 Ndef(\cat).addSpec(\pWidth, [0.01, 0.5, \exp]);
