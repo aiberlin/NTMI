@@ -240,10 +240,6 @@ Task {
 			q.load("3_interfaces/*/*%*scd".format(name));
 		};
 
-		// empty ATM
-		// "\n\n*** *** *** FOLDER % : \n".postf("5_postres");
-		// q.load("5_postres/*scd");
-
 		if (q.usesMainFX) {
 			q.load("6_MainFX.scd");
 		};
