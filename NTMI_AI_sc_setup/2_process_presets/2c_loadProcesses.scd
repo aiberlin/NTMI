@@ -33,16 +33,18 @@ forkIfNeeded {
 
 	// load preferred processNames, or all:
 	q.process.namesToLoad.do { |name|
-		q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process").postln;
+		q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
 		s.sync;
-		0.05.wait;
 	};
 
 	q.ndef = q.ndef ? ();
 	q.ndef.groups = q.ndef.groups ? ();
 
 	q.ndef.groups.put(\NTMI,
-		q.process.namesToLoad.collect(Ndef.all[s.name][_]));
+		q.process.namesToLoad.collect(Ndef.all[s.name][_]);
+	);
+	// kill them all again for startup
+	defer ({ q.ndef.groups.at(\NTMI).do(_.end) }, 0.1);
 
 	q.load("2_process_presets/2d_preset*.scd");
 
