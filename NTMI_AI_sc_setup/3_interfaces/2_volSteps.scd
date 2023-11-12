@@ -17,7 +17,7 @@ MFdef(\stepVol).add(\step, { |ndef, step = 1|
 	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * acceleration * stepsize))
 });
 
-MFdef(\stepSlotPres).add(\step, { |step = 1|
+MFdef(\stepSlotPres).add(\step, { |step|
 	var activeNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
 	activeNdefs.do { |nd, j|
 		q.pre.stepNdefInf( nd, step );
