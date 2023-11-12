@@ -1,6 +1,10 @@
 // Sound from Jonas, uses internal feedback and the LinCongN Chaotic Ugen
 
 (
+// specs
+Ndef(\lincong).addSpec(\chaos, [1, 5, \exp]);
+Ndef(\lincong).addSpec(\fbQ, [0.1, 2, 1]);
+Ndef(\lincong).addSpec(\freq, [100, 1500, \exp]);
 
 Ndef(\lincong, {|amp = 0.0, freq=567, chaos=2, fbQ=1.0|
 	var src, kaos, local, soundIn, ampIn;
@@ -25,19 +29,3 @@ Ndef(\lincong, {|amp = 0.0, freq=567, chaos=2, fbQ=1.0|
 
 	Limiter.ar(Splay.ar(src.sum, 1, amp), 0.99);
 });
-
-//Ndef(\lincong).controlKeys.postln;
-
-// specs
-Ndef(\lincong).addSpec(\chaos, [1, 5, \exp]);
-Ndef(\lincong).addSpec(\fbQ, [0.1, 2, 1]);
-Ndef(\lincong).addSpec(\freq, [100, 1500, \exp]); // need to write default specs? or how to?
-
-Ndef(\lincong).addHalo(\namesToStore, [\freq, \chaos, \fbQ]);
-
-// NdefPreset(\lincong).namesToStore;
-// NdefPreset(Ndef(\lincong)).loadSettings;
-
-)
-//Ndef(\lincong).vol_(0.75);	// don't play it yet, just prepare
-//NdefPreset(Ndef(\lincong)).loadSettings;

@@ -8,13 +8,6 @@ Ndef(\cat).addSpec(\q, [1, 1000, \exp]);
 Ndef(\cat).addSpec(\modFreq, [0, 200, 7]);
 Ndef(\cat).addSpec(\moDepth, [0, 12*8]);
 
-Ndef(\cat).addSpec(\pFreq, [20, 400, \exp]);
-Ndef(\cat).addSpec(\pWidth, [0.01, 0.5, \exp]);
-Ndef(\cat).addSpec(\filt, [1, 32, \exp]);
-Ndef(\cat).addSpec(\q, [1, 1000, \exp]);
-Ndef(\cat).addSpec(\modFreq, [0, 200, 7]);
-Ndef(\cat).addSpec(\moDepth, [0, 12*8]);
-
 // a Synth with 6 control parameters
 (
 Ndef(\cat, { |amp=0, pFreq=100, modFreq=0, filt=2, q=1, pWidth=0.5,  moDepth=12|
@@ -37,9 +30,3 @@ Ndef(\cat, { |amp=0, pFreq=100, modFreq=0, filt=2, q=1, pWidth=0.5,  moDepth=12|
 	Limiter.ar(signal) * amp;
 })
 );
-
-Ndef(\cat).vol_(0.25);	// don't play it yet, just prepare
-);
-
-fork { s.sync; 0.1.wait; Ndef(\cat).end };
-Ndef(\cat);

@@ -1,5 +1,8 @@
+Ndef(\brushes).addSpec(\rabisco, [1, 40, \exp]);
+Ndef(\brushes).addSpec(\trig, [1.0, 10, \lin, 0.1]);
+Ndef(\brushes).addSpec(\cf, [80, 1600, \exp]);
+Ndef(\brushes).addSpec(\rq, [0.2, 12, \exp]);
 
-//Ndef(\brushes).ar(2);
 (
 Ndef(\brushes, {|amp, rabisco=4, trig=4, cf=400, rq=0.2|
 	var tri, sig, modulator, papel, env;
@@ -25,13 +28,4 @@ Ndef(\brushes, {|amp, rabisco=4, trig=4, cf=400, rq=0.2|
 	sig = Pan2.ar(sig, LFNoise2.kr(trig/5+(rabisco/5), 0.8));
 	sig = Compander.ar(sig, sig, 1, 0.75, 0.25, 0.002);
 });
-Ndef(\brushes).addSpec(\rabisco, [1, 40, \exp]);
-Ndef(\brushes).addSpec(\trig, [1.0, 10, \lin, 0.1]);
-Ndef(\brushes).addSpec(\cf, [80, 1600, \exp]);
-Ndef(\brushes).addSpec(\rq, [0.2, 12, \exp]);
 );
-
-//Ndef(\brushes).gui
-
-fork { s.sync; 0.1.wait; Ndef(\brushes).end };
-Ndef(\brushes);

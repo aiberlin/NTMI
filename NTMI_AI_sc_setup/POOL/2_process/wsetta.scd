@@ -249,8 +249,5 @@ Tdef(\wsetta, {
 })
 );
 
-// end ndef just to make sure
-fork { s.sync; 0.1.wait; Ndef(\wsetta).end };
-
 // return the Ndef!
 Ndef(\wsetta);

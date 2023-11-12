@@ -94,42 +94,4 @@ Ndef(\moogSing).addHalo(\stepFreq, { arg val; var curr;
 	Ndef(\moogSing).set(\moogRoot, curr);
 });
 
-fork { s.sync; 0.1.wait; Ndef(\moogSing).end };
-
 Ndef(\moogSing);
-
-
-
-/* tests of extra functions
-Ndef(\moogSing).set(\amp, 0.2).play;
-Ndef(\moogSing).gui;
-Ndef(\moogSing).getHalo(\stepLfSpeed).value;
-Ndef(\moogSing).getHalo(\stepReso).value;
-Ndef(\moogSing).getHalo(\stepFreq).value;
-*/
-
-/* // for reference, the GamePad mapping
-GamePad.putProxy(6, \s6_moogSing,
-	(
-		joyRY: { arg val; ~s6_moogSing.set(\amp, \amp.asSpec.map(val) )  },
-		joyLX: { arg val; ~s6_moogSing.set(\lpRatio, \lpRatio.asSpec.map(val)) },
-		joyLY: { arg val; ~s6_moogSing.set(\moogRoot, \moogRoot.asSpec.map(val)) },
-		joyRX: { arg val; ~s6_moogSing.set(\lfDepth,\lfDepth.asSpec.map(val)) },
-
-		lHat: { arg val; var curr;
-			if (val == 0) { "moogsing - lfSpeed: ".post;
-				curr = ~s6_moogSing.getKeysValues([\lfSpeed])[0][1];
-				curr = if (curr < 10, curr.postln * 1.618, 0.1).postln;
-				~s6_moogSing.set(\lfSpeed, curr)
-			};
-		},
-		rHat: { arg val; var curr;
-			if (val == 0) { "moogsing - rq: ".post;
-				curr = ~s6_moogSing.getKeysValues([\rq])[0][1];
-				curr = if (curr > 0.01, curr.postln / 1.618, 1.0).postln;
-				~s6_moogSing.set(\rq, curr)
-			};
-		}
-	)
-);
-*/

@@ -1,24 +1,7 @@
 // nonstandard cross FM - Joker Nies style
 // hh ca. 2010...
 // 2019- made quad/MC
-(
-// sound description in SC JITLib style:
-Ndef(\xFMSH, { |amp=0, freqA=440, freqB=44, modA_B=0.1, modB_A=0.9, shape=1, blend=0, lag=0.05|
-	var sig, fb = LocalIn.ar(2);
-	var sh =  Latch.ar(fb, fb.reverse);
-	var freqs =  2.pow([modB_A, modA_B].lag2(lag)).pow(sh) * [freqA, freqB].lag2(lag);
-	var oscs = SinOsc.ar(freqs).pow(shape.lag(lag));
-	LocalOut.ar(oscs);
-	sig = blend(
-		oscs.product.dup,
-		oscs,
-		blend.lag(lag)
-	);
-	sig.collect{|si, i| // multichannel expansion
-		PanAz.ar(2, si, SinOsc.kr(Rand(0.1, 0.2), 0, Rand(1, 2)), amp)
-	}.sum;
-});
-);
+
 // parameter range Specifications
 Ndef(\xFMSH).addSpec(\blend, [0, 1]);
 Ndef(\xFMSH).addSpec(\modA_B, [0, 6]);
@@ -37,6 +20,21 @@ Ndef(\xFMSH).addHalo(\gamePadMap, (
 	joyRX: \modA_B,
 	joyRY: \amp)
 );
-
-fork { s.sync; 0.1.wait; Ndef(\xFMSH).end };
-Ndef(\xFMSH);
+(
+// sound description in SC JITLib style:
+Ndef(\xFMSH, { |amp=0, freqA=440, freqB=44, modA_B=0.1, modB_A=0.9, shape=1, blend=0, lag=0.05|
+	var sig, fb = LocalIn.ar(2);
+	var sh =  Latch.ar(fb, fb.reverse);
+	var freqs =  2.pow([modB_A, modA_B].lag2(lag)).pow(sh) * [freqA, freqB].lag2(lag);
+	var oscs = SinOsc.ar(freqs).pow(shape.lag(lag));
+	LocalOut.ar(oscs);
+	sig = blend(
+		oscs.product.dup,
+		oscs,
+		blend.lag(lag)
+	);
+	sig.collect{|si, i| // multichannel expansion
+		PanAz.ar(2, si, SinOsc.kr(Rand(0.1, 0.2), 0, Rand(1, 2)), amp)
+	}.sum;
+});
+);

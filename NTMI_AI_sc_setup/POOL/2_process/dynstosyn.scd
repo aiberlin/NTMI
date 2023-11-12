@@ -38,4 +38,4 @@ Ndef(\dynstosyn,
 			) * SampleDur.ir)
 		} ! q.numChans )
 		* amp.lag(0.2);
-}).play;
+});

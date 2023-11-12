@@ -1,3 +1,8 @@
+Ndef(\vowel).addSpec(\distort, [0.01, 10, \exp]);
+Ndef(\vowel).addSpec(\ffreq, [5, 100, \exp]);
+Ndef(\vowel).addSpec(\freqDev, [0.1, 11, \exp]);
+Ndef(\vowel).addSpec(\fold, [0.005, 1, \exp]);
+
 (
 Ndef(\vowel, { | amp , freqDev= 1.02,ffreq = 176, distort = 2, fold=1.4, pan= 0.6 |
 
@@ -11,15 +16,4 @@ Ndef(\vowel, { | amp , freqDev= 1.02,ffreq = 176, distort = 2, fold=1.4, pan= 0.
 	sig = LeakDC.ar(sig)*amp;
  //out = OffsetOut.ar(0, ruin)
 });
-
-//Ndef(\vowel).gui
-
-Ndef(\vowel).addSpec(\distort, [0.01, 10, \exp]);
-Ndef(\vowel).addSpec(\ffreq, [5, 100, \exp]);
-Ndef(\vowel).addSpec(\freqDev, [0.1, 11, \exp]);
-Ndef(\vowel).addSpec(\fold, [0.005, 1, \exp]);
-
 );
-
-fork { s.sync; 0.1.wait; Ndef(\vowel).end };
-Ndef(\vowel);

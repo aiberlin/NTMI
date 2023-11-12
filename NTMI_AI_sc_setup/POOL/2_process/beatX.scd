@@ -69,5 +69,4 @@ Ndef(\beatX, { arg amp=0, seqSel=0, att=0.002, dcy=0.05, ffreq=5000, reso=2, mod
 });
 );
 
-fork { s.sync; 0.1.wait; Ndef(\beatX).end };
 Ndef(\beatX);

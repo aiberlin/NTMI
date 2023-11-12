@@ -1,6 +1,9 @@
 // simple varsaw modulation network, adc&hh 2014
 // maybe add kr/lofreq VarSaws as strobes on the output?
 
+/* listening to \varsawFB: "Klatschen die alle?" - "nein, das klingt nur so" - "Und was klingt so wie grüne Augen, wie grünes Gras?" (JH)
+*/
+
 Ndef(\varsawFB).addSpec(\minFreq, [1, 20000, \exp]);
 Ndef(\varsawFB).addSpec(\maxFreq, \widefreq);
 Ndef(\varsawFB).addSpec(\width, [0.001, 0.999]);
@@ -8,15 +11,6 @@ Ndef(\varsawFB).addSpec(\lagFreq, [200, 20000, \exp]);
 Ndef(\varsawFB).addSpec(\freqDev, [0, 1, \amp]);
 Ndef(\varsawFB).addSpec(\freqRate, [0.01, 100, \exp]);
 Ndef(\varsawFB).addSpec(\dens, [0.2, 1, 2]);
-
-/*Spec.add(\minFreq, \widefreq);
-Spec.add(\maxFreq, \widefreq);
-Spec.add(\width, [0.001, 0.999]);
-Spec.add(\lagFreq, [200, 20000, \exp]);
-Spec.add(\freqDev, [0, 1, \amp]);
-Spec.add(\freqRate, [0.01, 100, \exp]);
-Spec.add(\dens, [0, 1, 2]);*/
-
 
 // VarSaw, strobe variant:
 (
@@ -47,18 +41,3 @@ Ndef(\varsawFB, { |amp = 0.25, width = 0.5,
 	LeakDC.ar(SplayAz.ar(q.numChans, saws) * strobe.lag(5/lagFreq, 10/lagFreq) * (ampcomp));
 })
 );
-
-fork { s.sync; 0.1.wait; Ndef(\varsawFB).end };
-Ndef(\varsawFB);
-
-
-/*
-
-Ndef(\varsawFB).gui;
-Ndef(\varsawFB).play;
-
-b.attachToButton(2, Ndef(\varsawFB));
-
-*/
-/* listening to \varsawFB: "Klatschen die alle?" - "nein, das klingt nur so" - "Und was klingt so wie grüne Augen, wie grünes Gras?" (JH)
-*/

@@ -10,12 +10,7 @@ s.reboot;
 
 Ndef(\gendyfyre).gui(14);
 Ndef(\gendyfyre).play;
-s.latency = 0.1;
-s.plotTree;
-
-Guide Tutorial
 */
-
 
 // data to keep and mutate
 q.gendy = q.gendy ? ();
@@ -161,79 +156,4 @@ Tdef(\gendyfyre, { |ev|
 });
 );
 
-
 Ndef(\gendyfyre);
-
-
-// avgDur = durchschnittl. dauer einer gendy-note + pause,
-// avgDens = durchschnittl. wahrscheinlichkeit, dass  stimmen spielen
-// (0 alle pause, 1 alle spielen dauernd.)
-//
-//
-// (
-// Items.funcInit({ arg it, maxVoices,
-// 	numsegs,
-// 	mintime, maxtime, timedrift,
-// 	maxamp, ampdrift, warp, float,
-// 	avgDur, avgDens;
-// 	var pre;
-// 	maxVoices.sp(5, 1, 20, 1);
-// 	maxVoices.lockIf({ it.isPlaying; });
-// 	it.name = "GendyChor 0.1";
-//
-// 	pre = Preset(
-// 		numsegs.sp(20, 3, 100, 1),
-// 		mintime.sp(3, 3, 1000, 1, \exponential),
-// 		maxtime.sp(100, 3, 1000, 1, \exponential),
-// 		timedrift.sp(1, 0, 1000, 0.01),
-// 		avgDur.sp(2, 0, 30, 0.1),
-// 		avgDens.sp(0.5),
-// 		maxamp.sp(0.2, 0.0, 1.0, 0.001),
-// 		ampdrift.sp(0.01, 0.0, 1.0, 0.0001),
-// 		warp.sp(0, -16, 16, 0.01)
-// 	);
-// 	pre.name = "Speicherbare Parameter:";
-//
-// 	it.sound_({
-// 		var gendys, samp1time;
-// 		samp1time = Synth.sampleRate.reciprocal;
-// 		gendys = Array.fill(5, { arg i;
-// 			var times, amps, liveFlag;
-//
-// 			liveFlag = avgDens.value.coin;
-//
-// 			thisSynth.repeat(0.02, 0.02, {
-// 				if ( (0.02 / avgDur.value).coin, {
-// 					liveFlag = avgDens.value.coin;
-// 				});
-// 			});
-//
-// 			times = FloatArray.fill(100, 50);
-// 			amps = FloatArray.fill(100, 0.0);
-//
-// 			Spawn.ar({ arg sp; var envT, nSegs;
-// 				nSegs = numsegs.value.asInteger;
-//
-// 				if (liveFlag, {
-// 					nSegs.value.asInteger.do({ arg i;
-// 						times.put(i, (times.at(i) + timedrift.value.rand2).clip( mintime.value, maxtime.value));
-// 						amps.put(i, (amps.at(i) + ampdrift.value.rand2).fold2(maxamp.value));
-// 					});
-// 					amps.put(0, 0).put(nSegs - 1, 0);
-// 					envT = times.copyFromStart(nSegs - 1).round(1) * samp1time;
-//
-// 					sp.nextTime = envT.sum;
-// 					EnvGen.ar(
-// 						Env(amps.copyFromStart(nSegs), envT, warp.value)
-// 					)
-// 				}, { sp.nextTime = 0.01; nil });
-// 			})
-// 		});
-//
-// 		Mix.ar(Pan2.ar(gendys, Array.series(5, -1, 0.5)));
-//
-// 	});
-// 	it.setItems(maxVoices, pre, CR(10), it.vol.nslider.name_("vol"));
-//
-// }).show;
-// )

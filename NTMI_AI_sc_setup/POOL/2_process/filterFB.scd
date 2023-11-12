@@ -48,6 +48,3 @@ Ndef(\filterFB, {
 });
 );
 
-fork { s.sync; 0.1.wait; Ndef(\filterFB).end };
-Ndef(\filterFB);
-

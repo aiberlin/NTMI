@@ -85,7 +85,6 @@ Ndef(\blippoo,{|
 
 });
 
-fork { s.sync; 0.1.wait; Ndef(\blippoo).end };
 Ndef(\blippoo);
 
 

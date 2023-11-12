@@ -28,8 +28,3 @@ Ndef(\dog, { |amp=0, freq=250, intv=19, timescale=1, curve=0, loopnode=0, dens =
     Splay.ar(form * dusty, level: amp * 4) ;
 });
 );
-
-Ndef(\dog).addHalo(\orderedNames, Ndef(\dog).controlKeys);
-
-fork { s.sync; 0.1.wait; Ndef(\dog).end };
-Ndef(\dog);

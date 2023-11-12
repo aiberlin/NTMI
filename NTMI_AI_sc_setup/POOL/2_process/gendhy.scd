@@ -49,5 +49,4 @@ Ndef(\gendhy, { |amp=0.2
 
 	blend(filt, in, 1-filter).tanh;
 });
-
 );

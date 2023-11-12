@@ -79,5 +79,4 @@ MFdef('reloadBufs').funcDict[\granbufs].value;
 // Preset: don't store amp and sndbuf
 Ndef(\granbuf).addHalo(\namesToStore, Ndef(\granbuf).controlKeys.drop(2));
 
-fork { s.sync; 0.1.wait; Ndef(\granbuf).end };
 Ndef(\granbuf);

@@ -94,6 +94,6 @@ Ndef(\frya, { |
 	pan + snd.wrapExtend(q.numChans).madd(-12.dbamp);
 
 
-}).vol_(0);
+});
 );
 

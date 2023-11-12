@@ -7,7 +7,8 @@ Ndef('xf-bufFun').addSpec(\direct, \amp);
 Ndef('xf-bufFun').addSpec(\secs, [0.1, 10, \exp]);
 Ndef('xf-bufFun').addSpec(\flip, [0, 1, 0, 1]);
 Ndef('xf-bufFun').addSpec(\freeze, [0, 1, 3, 1]);
-Ndef('xf-bufFun').ar(2);
+
+
 Ndef('xf-bufFun', { arg amp=0.1, newLvl=1, oldLvl=0.1, secs=1, pitch1= -2, pitch2=1, flip=1, freeze=0, lag=1;
 	var inChan=0, phaW, trans, env, sd, frams, bs, ot, usedframs, offs=0, phaR;
 	var buf = LocalBuf.new(10  * 44100, 2);
@@ -37,6 +38,3 @@ Ndef('xf-bufFun', { arg amp=0.1, newLvl=1, oldLvl=0.1, secs=1, pitch1= -2, pitch
 		+ (ot * oldLvl.lag(0.7).cubed), buf, phaW); // loop rec into the buf
 	ot * amp
 });
-
-fork { s.sync; 0.1.wait; Ndef('xf-bufFun').end };
-Ndef('xf-bufFun');
