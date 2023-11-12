@@ -208,6 +208,7 @@ MFdef(\addInterfaceFile).(\nUFO,
 
 Butz(\NTMI_Config).clear;
 Butz(\NTMI_Config).addMiniMax;
+Butz(\NTMI_Config).add(\userDir, { q.dir.user.openOS });
 Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
 Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
 Butz(\NTMI_Config).add(\soundfiles, { q.dir.userPOOL.openOS });
@@ -218,19 +219,19 @@ Butz(\NTMI_Config).add('open quark', { Quark("NTMI").localPath.openOS });
 
 /////////// and these are all the stored bounds:
 WinBounds.stored.putAll( (
-	'randomOrbitz': Rect(768.0, 817.0, 434.0, 188.0),
+	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
+	'NTMI': Rect(42.0, 2.0, 700.0, 462.0),
+	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
+	'NdefGui_liveInput': Rect(971.0, 557.0, 394.0, 180.0),
 	'slotSounds': Rect(726.0, 138.0, 782.0, 720.0),
-	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
+	'presets': Rect(725.0, 289.0, 487.0, 440),
+	'randomOrbitz': Rect(768.0, 817.0, 434.0, 188.0),
 
-	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
 	'ndefMixer': Rect(200.0, 289.0, 684.0, 440),
 	'mainFX': Rect(1156.0, 223.0, 524.0, 440),
-	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
-	'NTMI': Rect(42.0, 2.0, 700.0, 462.0),
+	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
 
-	'presets': Rect(725.0, 289.0, 487.0, 440),
-	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
-	'NdefGui_liveInput': Rect(971.0, 557.0, 394.0, 180.0),
-	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0)
+	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0),
+	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
 ).collect(WinBounds.limitRectToScreen(_)));
 )
