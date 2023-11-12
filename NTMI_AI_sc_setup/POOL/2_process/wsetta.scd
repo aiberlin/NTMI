@@ -39,7 +39,7 @@ q.wse.sfdir = q.wse.sfdir ?? { q.dir.ntmi +/+ "soundfiles" };
 q.wse.minWaitDur = q.wse.minWaitDur ? 0.001;
 
 MFdef('loadWSEs').add(\load, { |dir, add = false|
-	forkIfNeeded {
+	fork {
 		var t0 = Main.elapsedTime;
 		q.wse.sfdir = dir ? q.wse.sfdir;
 		q.wse.soundfiles = SoundFile.collect(q.wse.sfdir +/+ "*");
