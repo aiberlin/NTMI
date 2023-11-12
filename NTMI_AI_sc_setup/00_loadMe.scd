@@ -47,36 +47,43 @@ Task {
 
 	q.dev = q.dev ? false;
 
+	"*** NTMI: setup dir q.dir.ntmi is %\n".postf(q.dir.ntmi.cs);
+
 	if(q.dev) {
-		///////////// WHILE DEVELOPING, direct back to dev/project dir!
+		// ONLY WHILE DEVELOPING, direct back to dev/project dir!
 		q.dir.user = q.dir.ntmi;
 		q.dir.userPOOL = q.dir.ntmi +/+ "POOL";
 	} {
-		///////////// non-dev: copy pool to user home dir
-		// check user dir, make it and migrate pool there if desired
+		///////////// normal use:
 		q.dir.user = Platform.userHomeDir +/+ "NTMI";
 		q.dir.userPOOL = q.dir.user +/+ "POOL";
-		"NTMI: q.dir.user is %\n".postf(q.dir.user);
-		"NTMI: q.dir.userPOOL is %\n".postf(q.dir.userPOOL);
 
+		// check for user dir and make it if needed
 		if (File.exists(q.dir.user).not) {
 			"NTMI: making q.dir.user".postln;
 			unixCmd("mkdir" + quote(q.dir.user));
 		};
+
+		//// check if POOL is already in user home dir,
+		//// and if not, copy it there
 		if (File.exists(q.dir.userPOOL).not) {
-			"NTMI: copying POOL folder to q.dir.user".postln;
+			"*** NTMI: copying POOL folder to q.dir.user".postln;
 			unixCmd("cp -nR"
 				+ quote(q.dir.ntmi +/+ "POOL")
 				+ quote(q.dir.user +/+ "POOL")
 			);
 			q.dir.userPOOL.openOS;
 		};
+		"*** NTMI: q.dir.user is %\n".postf(q.dir.user.cs);
+		"*** NTMI: q.dir.userPOOL is %\n".postf(q.dir.userPOOL.cs);
 	};
 
-	// load function - loads local or absolute filenames or paths,
+
+	// custom load function:
+	// loads local or absolute filenames or paths,
 	// with wait time and posted load time info:
-	// maybe move to LoadMe class eventually
-	q.load = { |q, filename, here, wait = 0.05, dirsup = 0, preText = "", postText = ""|
+	// maybe move to LoadMe class eventually.
+	q.load = { |q, filename, here, wait = 0.0, dirsup = 0, preText = "", postText = ""|
 		var paths, path;
 		if (filename.isNil) { warn("path was nil!") } {
 
@@ -113,19 +120,25 @@ Task {
 	"\n\n".post;
 
 	//******* PREFERENCES
-	///// read user prefs (if there) or default prefs early on:
+	///// read user prefs (if there) or copy default prefs there:
 	"1_prefs/1_prefs.scd".loadRelative;
 
-	// flags for which parts to load:
+	// Set flags for which parts to load:
+	// on headless systems, dont use guis
 	q.hasGui = q.prefs.active.hasGui ? q.hasGui ?? { \View.asClass.notNil };
+	q.hasSmallScreen = q.prefs.active.hasSmallScreen ? q.hasSmallScreen ?? false;
 
+	// which types of controllers will be used?
 	// these may have been set in startup file already:
 	q.usesMidi = q.prefs.active.usesMidi ? q.usesMidi ? true;
 	q.usesHid  = q.prefs.active.usesHid  ? q.usesHid ? true;
+	// which of the supported interfaces should be loaded?
+	// can include custom ones in userPOOL
 	q.interfacesToLoad  = q.prefs.active.interfacesToLoad ? [ "uc4" ];
+	// reboot server when starting NTMI?
 	q.reboot = q.prefs.active.reboot ? q.reboot ? false;
 
-	// turning this off does not work yet
+	// turn off MainFX if desired (loses mainVol control)
 	q.usesMainFX = q.prefs.active.usesMainFX ? q.usesMainFX ? true;
 
 	if (q.hasGui) {
@@ -134,16 +147,22 @@ Task {
 		q.warnWin = { |q, string="?!?", title="?!?"| warn(title + string) }
 	};
 
-	// "*** Modality: find MIDI and HID devices if enabled ***".postln;
+	"*** Modality: find MIDI and HID devices if enabled ***".postln;
 	if (q.usesMidi) {
 		MKtl.find(\midi); 0.5.wait;
 	};
+
 	if (q.usesHid) {
-		MKtl.find(\hid); 0.5.wait;
+		Platform.case(\windows) {
+			"HID on windows is not working in SC3.13.0.".warn
+		} {
+			MKtl.find(\hid); 0.5.wait;
+		};
 	};
 
-	// Server.killAll;
+
 	if (q.reboot) {
+		// Server.killAll; // ?
 		"*** NTMI kills server to reboot.".postln;
 		s.quit; "".postln;
 		0.2.wait;
@@ -168,8 +187,8 @@ Task {
 
 		s.options.numInputBusChannels = q.numIns;
 		s.options.numOutputBusChannels = q.numChans;
-
 	};
+
 	"*** q.numChans is: %\n".postf(q.numChans);
 	"*** q.numIns is: %\n".postf(q.numIns);
 
@@ -183,8 +202,6 @@ Task {
 
 		// avoid late messages while loading
 		s.latency = nil;
-
-		q.ndefGroups = q.ndefGroups ? ();
 
 		q.helloSnd ?? {
 			// if q.helloSnd is not already defined in startup file, do:
@@ -210,7 +227,7 @@ Task {
 
 		q.load("2_process_presets/2a_bufferLoader.scd");
 		q.load("2_process_presets/2b_liveInput.scd");
-		s.sync;
+
 		q.load("2_process_presets/2c_loadProcesses.scd");
 
 
@@ -223,9 +240,9 @@ Task {
 			q.load("3_interfaces/*/*%*scd".format(name));
 		};
 
-		"\n\n*** *** *** FOLDER % : \n".postf("5_postres");
-		q.load("5_postres/*scd");
-
+		// empty ATM
+		// "\n\n*** *** *** FOLDER % : \n".postf("5_postres");
+		// q.load("5_postres/*scd");
 
 		if (q.usesMainFX) {
 			q.load("6_MainFX.scd");
@@ -236,7 +253,7 @@ Task {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
 			q.load("8_GUIs/*scd");
 			0.2.wait;
-			if (q.isPi != true) {
+			if (q.hasSmallScreen != true) {
 				g.makeGui[\Main_NTMI].value;
 			} {
 				g.makeGui['miniNTMI'].value;
