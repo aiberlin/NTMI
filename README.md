@@ -6,35 +6,32 @@ The code is all in SuperCollider, and is best installed as a SuperCollider Quark
 
 Instructions to run this setup within SuperCollider:
 
-- install as Quark (which installs all other required quarks)
-`Quarks.install("NTMI");` or if this doesn't work: `Quarks.install("https://github.com/aiberlin/NTMI")`
+- install the NTMI Quark with:
+`Quarks.install("NTMI");`
+This installs all other required quarks.
 
-- update all installed Quarks to their current versions:
-`Quarks.installed.do(_.update);`
+- update all quraks that NTMI depends onto their current versions:
+`Quark("NTMI").dependencies.do(_.update);`
 
 - recompile the class library
 
-- run the file "00loadMe.scd"
+- for a first test, run the file "00loadMe.scd"
+-> you should see a big red GUI window called ntmi_mainStage.
 
-You can personalize this setup later with
-- a startup file so NTMI loads automatically
-- a personalized ntmi preferences file for your settings
-- inserting your own code in the loading process, for adding your own sound processes, presets, interfaces, or other modifications.
-
-Recommended: also install SC3-plugins 
-(some sound processes may require UGens from SC3-plugins)
+Recommendations: 
+Also install SC3-plugins 
+(some sound processes require UGens from SC3-plugins)
 https://github.com/supercollider/sc3-plugins
 
-And if you switch between projects in SuperCollider, try 
-Quarks.install("StartupFile");
-// recompile, then make an ntmi startup file:
+For auto-loading NTMI on startup, use the StartupFile quark:
+```
 StartupFile.writeStartupFileToExternalPath('ntmi',
  (Quark("NTMI").localPath +/+ "NTMI_AI_sc_setup/00_loadMe.scd")
 );
-
 // test that the file is there:
 StartupFile.pathsDict.keys.includes('ntmi');
-// and write a startup.scd that redirects to the NTMI loadMe:
+// and write a startup.scd that redirects to NTMI loadMe:
 StartupFile.writeRedirectFile('ntmi');
+```
 
-
+Then start reading in NTMI_Config ...
