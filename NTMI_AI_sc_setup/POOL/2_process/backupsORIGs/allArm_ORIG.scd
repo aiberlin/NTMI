@@ -4,19 +4,6 @@
 q=q?();
 q.numChans = q.numChans ? 2;
 
-Ndef(\allArm).addSpec(\topfreq, [20, 100000, \exp, 1]);
-Ndef(\allArm).addSpec(\filtfreq, [8, 100000, \exp, 1]);
-Ndef(\allArm).addSpec(\divefreq, [0.05, 20, \exp, 0.01]);
-
-// basic mapping notes
-Ndef(\allArm).addHalo(\gamePadMap, (
-	joyLX: \topfreq,
-	joyLY: \divefreq,
-	joyRX: \filtfreq,
-	joyRY: \amp)
-);
-
-
 Ndef(\allArm, { arg amp=0, divefreq=0.2, topfreq= 10000, filtfreq=20;
 	var mintime, source;
 	mintime = (LFDNoise0.kr(20! q.numChans, 0.5, 1) * topfreq).reciprocal;
@@ -40,6 +27,22 @@ Ndef(\allArm, { arg amp=0, divefreq=0.2, topfreq= 10000, filtfreq=20;
 		)
 	);
 });
+
+Ndef(\allArm).addSpec(\topfreq, [20, 100000, \exp, 1]);
+Ndef(\allArm).addSpec(\filtfreq, [8, 100000, \exp, 1]);
+Ndef(\allArm).addSpec(\divefreq, [0.05, 20, \exp, 0.01]);
+
+// basic mapping notes
+Ndef(\allArm).addHalo(\gamePadMap, (
+	joyLX: \topfreq,
+	joyLY: \divefreq,
+	joyRX: \filtfreq,
+	joyRY: \amp)
+);
+
+fork { s.sync; 0.1.wait; Ndef(\allArm).end };
+
+Ndef(\allArm);
 
 /* tests
 Ndef(\allArm).gui;

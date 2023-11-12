@@ -134,15 +134,10 @@ Ndef(\robTron).source =  {
 }
 );
 
-
-/*fork {
-0.5.wait;
-Ndef(\robTron).supplementNodeMap;
-0.5.wait;
-Ndef(\robTron).play(vol: 0);
-0.2.wait;
-Ndef(\robTron).fadeTime = 3;
-};*/
+/*
+Ndef(\robTron).gui;
+{ Ndef(\robTron).getHalo(\reloadFunc).value; }.defer(1);
+*/
 //////////////////////////////////////////////////////////////////////
 
 
@@ -164,10 +159,4 @@ Ndef(\robTron).addHalo(\reloadFunc, {
 	}
 });
 
-fork { s.sync; 0.1.wait; Ndef(\robTron).end };
 Ndef(\robTron);
-
-
-//		Ndef(\robTron).gui;
-//		{ Ndef(\robTron).getHalo(\reloadFunc).value; }.defer(1);
-// "\n\nrobtron loaded\n".postln;

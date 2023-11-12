@@ -4,8 +4,6 @@
 	// sound is stereo, (shift shifts cycles between left and right)
 
 (
-q = q ? ();
-
 Ndef(\bleepo).ar(q.numChans);
 
 Ndef(\bleepo).addSpec(\rateB, [0.01, 5000, \exp]);
@@ -24,6 +22,8 @@ Ndef(\bleepo).addSpec(\ramp,  [100, 30000, \exp, 1]);
 Ndef(\bleepo).addSpec(\wshape, [0.001, 0.999]);
 Ndef(\bleepo).addSpec(\shift, [0, 1]);
 
+q = q ? ();
+p = Ndef.dictFor(s);
 
 Ndef(\bleepo, { arg amp = 0,
 	rateA=0.0216, rateB=0.3, peak1=1114, peak2=77,
@@ -68,4 +68,80 @@ Ndef(\bleepo, { arg amp = 0,
 	}.sum;
 
 });
+
+Ndef(\bleepo).supplementNodeMap;
 );
+
+fork { s.sync; 0.1.wait; Ndef(\bleepo).end };
+Ndef(\bleepo);
+
+
+// NdefPreset( Ndef(\bleepo) ).loadSettings;
+
+// q.makeBleepoGui = {
+// 	var w, m, z, k, sc;
+// 	var useScope = false; // (s == Server.internal);
+// 	w = Window("< Bleepo >",
+// 		Rect(Window.screenBounds.width - 410, 464, 410, 410 + (200 * useScope.binaryValue))
+// 	).front;
+// 	w.addFlowLayout;
+//
+// 	"q.dir: %\n\n".postf(q);
+//
+// 	m = ProxyMonitorGui(p[\bleepo], w, Rect(0, 0, 325, 20));
+// 	w.view.decorator.shift(0, 5);
+// 	q.bliPreset = NdefPreset(p[\bleepo]);
+//
+// 	ProxyPresetGui(q.bliPreset, bounds: 350@80, parent: w);
+//
+// 	k = p[\bleepo].getKeysValues.collect { |list, i|
+// 		var name, val, kn; #name, val = list;
+// 		kn = EZKnob(w, 56 @ 96, name, name.asSpec, { arg kn; p[\bleepo].set(name, kn.value); }, val);
+// 		w.view.decorator.shift(24);
+// 		kn
+// 	};
+//
+// 	SkipJack({
+// 		p[\bleepo].getKeysValues.do { |list, i| k[i].value_(list[1]) };
+// 	}, 0.2, { w.isClosed }, \bleepo);
+//
+// 	w.view.decorator.shift(0, 5);
+//
+// 	t = TdefGui(Tdef(\bleepoDrift), parent: w);
+// 	t.zone.resize_(2);
+// 	// q.bliPreset.storePath = q.dir +/+ "bleepo.pxpreset.scd";
+// 	q.bliPreset.loadSettings;
+//
+// 	if (useScope) {
+// 		sc = CompositeView(w, Rect(0,0,330, 200));
+// 		sc.addFlowLayout;
+// 		Stethoscope(s, 2, ~bleepo.index, zoom: 10, view: sc);
+// 	};
+// };
+
+
+// Task {
+// 	0.5.wait;
+// 	s.sync;
+//
+// 	0.5.wait;
+// 	q.makeBleepoGui;
+//
+// 	0.5.wait;
+// 	//	q.bliPreset.loadSettings;
+// 	p[\bleepo].setRates(\dens, 0.0,\rateA, 0.2, \rateB, 0.2,
+// 	\fm_b2a, 0.2, \fm_a2b, 0.2, \sh2Filt, 0.2, \sh2RateA, 1.2);
+//
+// 	0.25.wait;
+// 	p[\bleepo].pause;
+//
+// 	0.5.wait;
+// 	//	p[\bleepo].playN((0..q.numChans - 1).scramble.keep(4).clump(2), vol: 0.0);
+//
+//
+// 	Tdef(\bleepoDrift, { inf.do {
+// 		exprand(0.2, 10).wait;
+// 		q.bliPreset.setRand([0.001, 0.01, 0.1].wchoose([9, 3, 1] / 13));
+// 	} });
+// }.play(AppClock);
+// );
