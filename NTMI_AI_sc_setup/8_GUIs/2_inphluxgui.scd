@@ -202,7 +202,7 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 						q.inphlux.inValDict[inName].round(0.0001));
 					if (mod.isShift) {
 						newval = (x / (uvW * 0.38)).unibi;
-						"*** setting influx % to %\n".postf(inName, newval);
+						"*** setting influx % to %\n".postf(inName, newval.round(0.0001));
 						q.inphlux.set(inName, newval);
 					};
 				} {
