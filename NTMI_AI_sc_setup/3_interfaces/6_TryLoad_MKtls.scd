@@ -32,10 +32,10 @@ if (foundInfos.notEmpty) {
 if (filenames.isEmpty) {
 	// use beatstep as default when nothing found:
 	"... no supported MKtl device found, default to nanoKtl2.".postln;
-	filenames.add("7_nanoktl1.scd")
+	filenames.add("7_nanoktl.scd")
 };
 
 filenames.do { |filename| try {
-	(here +/+ "optionals" +/+ filename).loadPaths
+	LoadMe(filename, here +/+ "optionals")
 } };
 )

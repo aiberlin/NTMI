@@ -9,9 +9,9 @@ Tdef(\simImu).play;
 }).play;
 */
 
-q.net = q.net ? ();
+NTMI.net = NTMI.net ? ();
 ////// f0s trick to free 57120 by force if necessary:
-q.net.freeDefPort = {
+NTMI.net.freeDefPort = {
 	Platform.case(
 		\linux, {
 			unixCmd("kill -9"
@@ -23,17 +23,17 @@ q.net.freeDefPort = {
 };
 
 // get broadcast address
-q.net.getBroad = {
+NTMI.net.getBroad = {
 	"ifconfig".unixCmdGetStdOut
 	.findRegexp("(?=(?<=broadcast )|(?<=Bcast:))(?:[0-9]{1,3}[.]){3}[0-9]{1,3}")[0][1];
 };
 
-q.net.getMyIP = {
+NTMI.net.getMyIP = {
 	// get my own IP
 	var res = "ifconfig".unixCmdGetStdOut
 	.findRegexp("(?:[0-9]{1,3}[.]){3}[0-9]{1,3}(?=(?=.{10,30}broadcast )|(?=.{1,10}Bcast:))");
 	if (res.notEmpty) { res[0][1] } {
-		"*** NO NETWORK FOUND! q.net.getMyIP returns localhost: 127.0.0.1".postln;
+		"*** NO NETWORK FOUND! NTMI.net.getMyIP returns localhost: 127.0.0.1".postln;
 		"127.0.0.1"
 	};
 };
@@ -41,21 +41,21 @@ q.net.getMyIP = {
 ///// get my network name - macOS only
 /// need to know which device is active, then ask:
 Platform.case(\osx, {
-	q.net.getWifiName = {
+	NTMI.net.getWifiName = {
 		"networksetup -getairportnetwork en0".unixCmdGetStdOut.split($:).last.drop(1).drop(-1).cs;
 		// network sends alive message, with network SSID/name;
 	}
 });
 
 //// NetAddr("192.168.8.169", NetAddr.langPort);
-q.net.myIP = NetAddr(q.net.getMyIP, NetAddr.langPort);
+NTMI.net.myIP = NetAddr(NTMI.net.getMyIP, NetAddr.langPort);
 
 /*
 // example: raspi in adc home network
-q.net.secondIP = NetAddr("192.168.8.175", 57120);
+NTMI.net.secondIP = NetAddr("192.168.8.175", 57120);
 
 // on second machine, open OSCdef.trace on other machine, then test-send:
-q.net.secondIP.sendMsg(\helloNTMI, "are you listening?");
+NTMI.net.secondIP.sendMsg(\helloNTMI, "are you listening?");
 */
 
 MKtl('nUFO').device.oscFuncDictionary.keys(Array).sort.cs;
@@ -67,11 +67,11 @@ MKtl('nUFO').device.oscFuncDictionary.keys(Array).sort.cs;
 
 /*
 // on first machine, send to raspi
-q.net.nUFOTestAddr = q.net.secondIP;
+NTMI.net.nUFOTestAddr = NTMI.net.secondIP;
 
 // to send to myself, do
-q.net.nUFOTestAddr = q.net.myIP;
-MKtl('nUFO').device.updateSrcDstAddr(q.net.myIP.hostname, q.net.myIP.port).source;
+NTMI.net.nUFOTestAddr = NTMI.net.myIP;
+MKtl('nUFO').device.updateSrcDstAddr(NTMI.net.myIP.hostname, NTMI.net.myIP.port).source;
 */
 
 (
@@ -89,7 +89,7 @@ Tdef(\simImu, {
 		var data = dataGens.collect(_.next).round(0.01);
 		// "simImu sends:".postln;
 		// data.postln;
-		q.net.nUFOTestAddr.sendMsg(msgName, *data);
+		NTMI.net.nUFOTestAddr.sendMsg(msgName, *data);
 		0.04.wait;
 	}
 });
@@ -109,7 +109,7 @@ Tdef(\simCaps, {
 		var data = dataGens.collect(_.next).round(0.01);
 		// "simImu sends:".postln;
 		// data.postln;
-		q.net.nUFOTestAddr.sendMsg(msgName, *data);
+		NTMI.net.nUFOTestAddr.sendMsg(msgName, *data);
 		0.04.wait;
 	}
 });
@@ -126,10 +126,10 @@ Tdef(\simButs, {
 			if (0.01.coin) {
 				elem.name.postln;
 				elem.value_(1-elem.value);
-				q.net.nUFOTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
+				NTMI.net.nUFOTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
 				defer ({
 					elem.value_(1-elem.value);
-					q.net.nUFOTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
+					NTMI.net.nUFOTestAddr.sendMsg(elem.elemDesc.oscPath, i, elem.value);
 				}, 0.2)
 			}
 		};

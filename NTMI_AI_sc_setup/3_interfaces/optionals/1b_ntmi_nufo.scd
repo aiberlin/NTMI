@@ -34,8 +34,8 @@ OSCFunc.trace (false);
 
 (
 // use this dict for everything osc related
-q.osc = q.osc ? ();
-q.osc.nUFO = q.osc.nUFO ? ();
+NTMI.osc = NTMI.osc ? ();
+NTMI.osc.nUFO = NTMI.osc.nUFO ? ();
 
 
 ///////// make a new
@@ -82,18 +82,18 @@ MKtl(\nUFO).elAt(\battery).action = { |bat|
 
 // prepare for modalization:
 // left buttons set up modes for right side and <>
-q.osc.leftDown = List[];
-q.osc.rightDown = List[];
-q.osc.shiftWasUsed = false;
-q.osc.leftWasUsed = false;
-q.osc.rightWasUsed = false;
+NTMI.osc.leftDown = List[];
+NTMI.osc.rightDown = List[];
+NTMI.osc.shiftWasUsed = false;
+NTMI.osc.leftWasUsed = false;
+NTMI.osc.rightWasUsed = false;
 
 /*
 //////// to test left side actions:
-q.osc.rightDown.clear.add(\preUp);
-q.osc.rightDown.clear.add(\preDown);
-q.osc.rightDown.clear.add(\touchMove);
-q.osc.rightDown.clear;
+NTMI.osc.rightDown.clear.add(\preUp);
+NTMI.osc.rightDown.clear.add(\preDown);
+NTMI.osc.rightDown.clear.add(\touchMove);
+NTMI.osc.rightDown.clear;
 */
 
 //////// calibrate imu and pads:
@@ -103,17 +103,17 @@ q.osc.rightDown.clear;
 MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 
 	"*** calibrating nUFO ***".postln;
-	q.capture = ();
+	NTMI.capture = ();
 
-	q.capture.imu = List[];
-	q.capture.pads = List[];
+	NTMI.capture.imu = List[];
+	NTMI.capture.pads = List[];
 
 	MFdef(\nUFOImuFunc).add(\capture, {
-		q.capture.imu.add(q.osc.rawImuBiValues);
+		NTMI.capture.imu.add(NTMI.osc.rawImuBiValues);
 	});
 
 	MFdef(\capsin).add(\capture, {
-		q.capture.pads.add(q.osc.rawPads);
+		NTMI.capture.pads.add(NTMI.osc.rawPads);
 	});
 
 	defer ({
@@ -123,23 +123,23 @@ MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 		MFdef(\capsin).remove(\capture);
 
 		"*** nUFO calibration: ***".postln;
-		captureOK = q.capture.imu.size > 5;
+		captureOK = NTMI.capture.imu.size > 5;
 		if (captureOK.not) {
 			"no values captured - calibration impossible.".postln;
 		} {
-			"q.zero.imu = mean of % captured values:\n".postf( q.capture.imu.size);
-			q.zero.imu = q.capture.imu.mean;
-			q.zero.imu.round(0.001).postln;
+			"NTMI.zero.imu = mean of % captured values:\n".postf( NTMI.capture.imu.size);
+			NTMI.zero.imu = NTMI.capture.imu.mean;
+			NTMI.zero.imu.round(0.001).postln;
 
-			padsflopped = q.capture.pads.flop;
+			padsflopped = NTMI.capture.pads.flop;
 			padmaxes = padsflopped.collect(_.maxItem);
 			padmeans = padsflopped.collect(_.mean);
 			padjitters = padsflopped.collect { |vals, i| (vals - padmeans[i]).abs.maxItem };
 
-			"q.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( q.capture.pads.size);
-			q.zero.pads = padmaxes + (padjitters * 0.5);
-			q.zero.pads.round(0.001).postln;
-			q.zero.write;
+			"NTMI.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( NTMI.capture.pads.size);
+			NTMI.zero.pads = padmaxes + (padjitters * 0.5);
+			NTMI.zero.pads.round(0.001).postln;
+			NTMI.zero.write;
 			"*** nUFO calibrated. ***".postln;
 		};
 		whenDone.value(captureOK);
@@ -179,10 +179,10 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 		var butIndex = but.indexInGroup;
 		// when is button pressed: set up for mode
 		if (but.isOn) {
-			q.osc.leftDown.add(butIndex);
+			NTMI.osc.leftDown.add(butIndex);
 		} {
 			// when button was released: remove shifter
-			q.osc.leftDown.removeAllSuchThat(_ == butIndex);
+			NTMI.osc.leftDown.removeAllSuchThat(_ == butIndex);
 		}
 	});
 
@@ -191,18 +191,18 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 
 		var actionFunc;
 		var playsNow;
-		var slotObj = q.slots.actives[i];
+		var slotObj = NTMI.slots.actives[i];
 
 		if (but.isOn.not) {
 			// determine whether we are in a mode
-			if (q.osc.rightDown.size == 0) {
+			if (NTMI.osc.rightDown.size == 0) {
 				// reset if we just left a mode
-				if (q.osc.leftWasUsed) {
-					q.osc.leftWasUsed = false;
+				if (NTMI.osc.leftWasUsed) {
+					NTMI.osc.leftWasUsed = false;
 				} {
 					// if there was no mode, do the default action
 					// " % default action: toggle\n".postf(but.name);
-					playsNow = q.slots.toggleAt(i);
+					playsNow = NTMI.slots.toggleAt(i);
 					// send led value to show play state on NTMI immediately
 					MKtl(\nUFO).elAt(\led, \bk, i).value = playsNow.binaryValue;
 				}
@@ -211,7 +211,7 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 				if (MKtl(\nUFO).elAt(\encHat).isOn) {
 					MFdef(\clutch).value(slotObj);
 				};
-				q.osc.rightWasUsed = true;
+				NTMI.osc.rightWasUsed = true;
 			}
 		}
 	});
@@ -225,12 +225,12 @@ MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 		// 0 is button pressed:
 		MKtl(\nUFO).elAt(\led, \bk, i + 4).value = but.value;
 		if (but.value == 1) {
-			q.osc.rightDown.add(btname);
-			// "rightdown: %\n".postf(q.osc.rightDown);
+			NTMI.osc.rightDown.add(btname);
+			// "rightdown: %\n".postf(NTMI.osc.rightDown);
 		} {
 			// button was released: remove shifter
-			q.osc.rightDown.removeAllSuchThat(_ == btname);
-			// "rightdown: %\n".postf(q.osc.rightDown);
+			NTMI.osc.rightDown.removeAllSuchThat(_ == btname);
+			// "rightdown: %\n".postf(NTMI.osc.rightDown);
 		}
 	});
 };
@@ -240,8 +240,8 @@ MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 MFdef(\touchON).add(\nUFO, {
 	"nUFO - touchON".postln;
 	MFdef(\capsToInph).enable(\set);
-	q.slots.nowPlaying.do { |obj|
-		if (q.inph.decoupled.includes(obj.key).not) {
+	NTMI.slots.nowPlaying.do { |obj|
+		if (NTMI.inph.decoupled.includes(obj.key).not) {
 			MFdef(\inphCouple).(obj)
 		}
 	}
@@ -249,16 +249,16 @@ MFdef(\touchON).add(\nUFO, {
 
 MFdef(\touchOFF).add(\nUFO, {
 	"nUFO - touchOFF".postln;
-	q.slots.nowPlaying.do { |nd| q.inphlux.action.disable(nd.key) };
+	NTMI.slots.nowPlaying.do { |nd| NTMI.inphlux.action.disable(nd.key) };
 	MFdef(\capsToInph).disable(\set);
-	q.inphlux.set(*q.inphlux.getHalo(\padNames).collect([_, 0]).flat);
+	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\padNames).collect([_, 0]).flat);
 });
 
 MFdef(\moveON).add(\nUFO, {
 	"nUFO - moveON".postln;
 	MFdef(\nUFOImuFunc).enable(\setInflux);
-	q.slots.nowPlaying.do { |obj|
-		if (q.inph.decoupled.includes(obj.key).not) {
+	NTMI.slots.nowPlaying.do { |obj|
+		if (NTMI.inph.decoupled.includes(obj.key).not) {
 			MFdef(\inphCouple).(obj);
 		}
 	}
@@ -268,13 +268,13 @@ MFdef(\moveOFF).add(\nUFO, {
 	"nUFO - moveOFF".postln;
 	MFdef(\nUFOImuFunc).disable(\setInflux);
 	/////// pads set inphlux in unipolar, 0-1 range!
-	q.inphlux.set(*q.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
+	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 });
 
 MFdef(\binON).add(\nUFO, {
 	"nUFO - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
-	// q.slots.nowPlaying.do { |obj|
+	// NTMI.slots.nowPlaying.do { |obj|
 	// 	MFdef(\inphDecouple).(obj)
 	// };
 });
@@ -297,11 +297,11 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		{ MFdef(\mainPreStep).value(nil) }
 
 		// slot mode: rand preset
-		{ q.osc.leftDown.size > 0 }
+		{ NTMI.osc.leftDown.size > 0 }
 		{
-			q.osc.leftDown.do { |slotIndex|
-				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
-				q.pre.stepNdefInf( q.ndefs[slotIndex], nil )
+			NTMI.osc.leftDown.do { |slotIndex|
+				// "% - choose rand ndef preset.\n".postf(NTMI.ndefs[slotIndex]);
+				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], nil )
 			}
 		}
 	}
@@ -314,7 +314,7 @@ MFdef(\inphModeSetIndex).add(\modeSwColor, {
 		[ 1, 0, 0 ], // red is touch
 		[ 0, 0, 1 ], // [ blue is move ]
 		[ 0, 0, 0 ]  // [ black is off ]
-	].clipAt(q.inph.modeIndex);
+	].clipAt(NTMI.inph.modeIndex);
 	// send 3 times to make sure it arrives
 	fork { 3.do {
 		0.02.wait;
@@ -327,7 +327,7 @@ MFdef(\inphModeSetIndex).add(\modeSwColor, {
 
 MFdef(\setInphWPre).add(\setLEDs, {
 	fork {
-		var ledCol = q.inph.currPresetCol.asArray.keep(3).round.collect(_.asInteger);
+		var ledCol = NTMI.inph.currPresetCol.asArray.keep(3).round.collect(_.asInteger);
 		0.1.wait;
 		[5, 6].do { |ledIndex|
 			try {
@@ -345,15 +345,15 @@ MFdef(\setInphWPre).add(\setLEDs, {
 
 MFdef(\encHatUsed).add(\used, {
 	if (MKtl(\nUFO).elAt(\encHat).isOn) {
-		q.osc.encHatUsed = true;
+		NTMI.osc.encHatUsed = true;
 	}
 });
 
 MKtl(\nUFO).elAt(\encHat).action.add(\snap, { |bt|
 	if (bt.isOn) {
-		q.osc.encHatUsed = false;
+		NTMI.osc.encHatUsed = false;
 	} {
-		if (q.osc.encHatUsed.not) {
+		if (NTMI.osc.encHatUsed.not) {
 			MFdef('snapshot').value;
 		}
 	}
@@ -369,8 +369,8 @@ MKtl(\nUFO).elAt(\enc).action.add(\enchat, MFdef(\encHatUsed));
 MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 	defer ({
 		MFdef(\resetModePreLEDs).postln;
-		MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
-		MFdef(\setInphWPre).value(q.inph.at(\presIndex));
+		MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+		MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
 	}, delay);
 });
 
@@ -389,13 +389,13 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		}
 
 		// slot mode: rand preset
-		{ q.osc.leftDown.size > 0 }
+		{ NTMI.osc.leftDown.size > 0 }
 		{
-			q.osc.leftDown.do { |slotIndex|
-				// "% - choose rand ndef preset.\n".postf(q.ndefs[slotIndex]);
-				q.pre.stepNdefInf( q.ndefs[slotIndex], nil )
+			NTMI.osc.leftDown.do { |slotIndex|
+				// "% - choose rand ndef preset.\n".postf(NTMI.ndefs[slotIndex]);
+				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], nil )
 			};
-			q.osc.leftWasUsed = true;
+			NTMI.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{
@@ -421,16 +421,16 @@ MKtl(\nUFO).elAt(\steps)[0].action.add(\modal, {|bt|
 		}
 
 		// slot mode: ndef preset up by one
-		{ q.osc.leftDown.size > 0 }
+		{ NTMI.osc.leftDown.size > 0 }
 		{
-			q.osc.leftDown.do { |slotIndex|
-				"%  ndef preset up 1.\n".postf(q.ndefs[slotIndex]);
-				q.pre.stepNdefInf( q.ndefs[slotIndex], 1 );
+			NTMI.osc.leftDown.do { |slotIndex|
+				"%  ndef preset up 1.\n".postf(NTMI.ndefs[slotIndex]);
+				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], 1 );
 				// reset button color
-				MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
-				MFdef(\setInphWPre).value(q.inph.at(\presIndex));
+				MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+				MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
 			};
-			q.osc.leftWasUsed = true;
+			NTMI.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{ MFdef(\stepInphWPre).value(1) }
@@ -453,16 +453,16 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 		}
 
 		// slot mode: ndef preset down by one
-		{ q.osc.leftDown.size > 0 }
+		{ NTMI.osc.leftDown.size > 0 }
 		{
-			q.osc.leftDown.do { |slotIndex|
-				"%  ndef preset down 1.\n".postf(q.ndefs[slotIndex]);
-				q.pre.stepNdefInf( q.ndefs[slotIndex], -1 );
+			NTMI.osc.leftDown.do { |slotIndex|
+				"%  ndef preset down 1.\n".postf(NTMI.ndefs[slotIndex]);
+				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], -1 );
 				// reset button color
-				MFdef(\inphModeSetIndex).value(q.inph.modeIndex);
-				MFdef(\setInphWPre).value(q.inph.at(\presIndex));
+				MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+				MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
 			};
-			q.osc.leftWasUsed = true;
+			NTMI.osc.leftWasUsed = true;
 		}
 		// default: step inph preset down
 		{ MFdef(\stepInphWPre).value(-1) }
@@ -476,7 +476,7 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 // -- sl+hat mode -> inc/dec sounds
 
 MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
-	var slotDown = (q.osc.leftDown.size > 0).binaryValue;
+	var slotDown = (NTMI.osc.leftDown.size > 0).binaryValue;
 	var hatDown = MKtl(\nUFO).elAt(\encHat).isOn.binaryValue;
 	var modeNum = slotDown * 2 + hatDown;
 
@@ -487,24 +487,24 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 		},
 		1, {
 			// "hat: zoom".postln;
-			q.incZoom(enc.deviceValue * \zoom.asSpec.step.max(0.01));
+			NTMI.incZoom(enc.deviceValue * \zoom.asSpec.step.max(0.01));
 		},
 		2, {
 
-			q.osc.leftWasUsed = true;
-			// "q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
-			q.osc.leftDown.do { |slotIndex|
+			NTMI.osc.leftWasUsed = true;
+			// "NTMI.osc.leftWasUsed: %\n".postf(NTMI.osc.leftWasUsed);
+			NTMI.osc.leftDown.do { |slotIndex|
 				"SLOT %: ".postf(slotIndex);
-				MFdef(\stepVol).(q.slots.actives[slotIndex], enc.deviceValue);
+				MFdef(\stepVol).(NTMI.slots.actives[slotIndex], enc.deviceValue);
 			};
 		},
 		3, {
 			// "slotHat - select sound: ".post;
-			q.osc.leftWasUsed = true;
-			// "q.osc.leftWasUsed: %\n".postf(q.osc.leftWasUsed);
-			q.osc.leftDown.do { |slotIndex|
-				q.slots.stepNext(slotIndex, enc.deviceValue);
-				"   % : %\n".postf(slotIndex, q.slots[slotIndex]);
+			NTMI.osc.leftWasUsed = true;
+			// "NTMI.osc.leftWasUsed: %\n".postf(NTMI.osc.leftWasUsed);
+			NTMI.osc.leftDown.do { |slotIndex|
+				NTMI.slots.stepNext(slotIndex, enc.deviceValue);
+				"   % : %\n".postf(slotIndex, NTMI.slots[slotIndex]);
 			};
 
 		}
@@ -523,47 +523,47 @@ MKtl(\nUFO).collectivesDict[\imu].action = {
 };
 
 // set the first 9 values of the inphlux from the imu params:
-q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
+NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 
 MFdef(\nUFOImuFunc).add(\setInflux, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
-	var calibImuValsBi = imuInvalsBi - q.zero.imu;
-	var keysvals = q.inphlux.getHalo(\imuNames).collect { |name, i|
+	var calibImuValsBi = imuInvalsBi - NTMI.zero.imu;
+	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
 		var value = calibImuValsBi[i];
 		[name, value]
 	}.flat;
-	q.osc.rawImuBiValues = imuInvalsBi;
-	q.osc.calibImuValsBi = calibImuValsBi;
-	q.osc.calibImuVals = calibImuValsBi.biuni;
+	NTMI.osc.rawImuBiValues = imuInvalsBi;
+	NTMI.osc.calibImuValsBi = calibImuValsBi;
+	NTMI.osc.calibImuVals = calibImuValsBi.biuni;
 
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
-	q.inphlux.set(*keysvals);
+	NTMI.inphlux.set(*keysvals);
 });
 
 
-q.frame = q.frame ? ();
-q.frame.ring = Array.fill(10, 0);
-q.frame.index = 0;
-q.frame.rate = {
+NTMI.frame = NTMI.frame ? ();
+NTMI.frame.ring = Array.fill(10, 0);
+NTMI.frame.index = 0;
+NTMI.frame.rate = {
 	var now = Main.elapsedTime;
-	var newest = q.frame.ring.wrapAt(q.frame.index - 1);
-	var oldest = q.frame.ring.at(q.frame.index);
+	var newest = NTMI.frame.ring.wrapAt(NTMI.frame.index - 1);
+	var oldest = NTMI.frame.ring.at(NTMI.frame.index);
 	if (now - newest < 0.5) {
-		q.frame.ring.size - 1 / (newest - oldest);
+		NTMI.frame.ring.size - 1 / (newest - oldest);
 	} {
 		// oops, dropout?
-		q.frame.ring.size - 1 / (now - oldest);
+		NTMI.frame.ring.size - 1 / (now - oldest);
 	};
 };
-q.frame.rateStr = { "nUFO @ % fps".format(q.frame.rate.round(1)) };
+NTMI.frame.rateStr = { "nUFO @ % fps".format(NTMI.frame.rate.round(1)) };
 /*
-q.frame.rate
-q.frame.rateStr
+NTMI.frame.rate
+NTMI.frame.rateStr
 */
 
 MFdef(\nUFOImuFunc).add(\frame, {
-	q.frame.ring.put(q.frame.index, Main.elapsedTime);
-	q.frame.index = q.frame.index + 1 % q.frame.ring.size;
+	NTMI.frame.ring.put(NTMI.frame.index, Main.elapsedTime);
+	NTMI.frame.index = NTMI.frame.index + 1 % NTMI.frame.ring.size;
 });
 
 /*
@@ -571,27 +571,27 @@ MFdef(\nUFOImuFunc).disable( \setInflux );
 MFdef(\nUFOImuFunc).enable( \setInflux );
 */
 
-q.osc.nUFOSkipLogin.stop.free;
-q.osc.nUFOSkipLogin = SkipJack({
+NTMI.osc.nUFOSkipLogin.stop.free;
+NTMI.osc.nUFOSkipLogin = SkipJack({
 	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login")
 } }, 0.5);
 
 // for monitoring the incoming osc activity by timetag
-q.osc.lastInTime = 0;
-q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
-q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
+NTMI.osc.lastInTime = 0;
+NTMI.osc.timeSinceLast = { Main.elapsedTime - NTMI.osc.lastInTime };
+NTMI.osc.timeSinceLast = { Main.elapsedTime - NTMI.osc.lastInTime };
 
 OSCdef(\imuAlive, { |msg, time|
-	q.osc.lastInTime = time;
+	NTMI.osc.lastInTime = time;
 }, "/imu").permanent_(true);
 
 ///////// update slot LEDs
-q.osc.nUFOSkip.stop.free;
-q.osc.nUFOSkip = SkipJack({
+NTMI.osc.nUFOSkip.stop.free;
+NTMI.osc.nUFOSkip = SkipJack({
 	var cols = [[0,0,0], [0,1,0]], col;
 	fork {
 		MKtl(\nUFO).elAt(\led, \bk, (0..3)).do { |led, ledi|
-			var isPlaying = q.ndefs[ledi].monitor.isPlaying;
+			var isPlaying = NTMI.ndefs[ledi].monitor.isPlaying;
 			var newval = isPlaying.binaryValue;
 			if (newval != led.prevValue) {
 				led.value = newval;
@@ -617,16 +617,16 @@ q.osc.nUFOSkip = SkipJack({
 ///////////////////////////////////////////////////////////////
 
 (
-q.inphlux.addHalo(\padNames, q.inphlux.inNames.copyRange(9, 16));
+NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 
 MFdef(\capsToInph).add(\set, {
-	var influx = q.inphlux;
+	var influx = NTMI.inphlux;
 	var pads = MKtl(\nUFO).elAt(\cap);
-	var padInNames = q.inphlux.getHalo(\padNames);
+	var padInNames = NTMI.inphlux.getHalo(\padNames);
 	var keysValues = pads.collect { |pad, i|
 		[ padInNames[i], pad.value]
 	}.flat;
-	q.inphlux.set(*keysValues);
+	NTMI.inphlux.set(*keysValues);
 });
 
 ////// this is the action that gets triggered
@@ -646,12 +646,12 @@ MFdef(\capsin).add(\set, { |coll|
 
 	// reorder for proper order of pads and leds
 	values = values[[1, 4, 0, 3, 5, 6, 2, 7]];
-	q.osc.rawPads = values;
+	NTMI.osc.rawPads = values;
 
-	// q.zero.pads is the rest state of the pads
+	// NTMI.zero.pads is the rest state of the pads
 	// use it to stretch to a range of 0-1
 	values.do { |rawval, i|
-		var zeroOffset = q.zero.pads.asArray.wrapAt(i);
+		var zeroOffset = NTMI.zero.pads.asArray.wrapAt(i);
 		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
 		values.put(i, stretched);
 	};
@@ -677,8 +677,8 @@ MFdef(\capsin).add(\set, { |coll|
 /// do global set only once, from MFdef(\touchToInph)
 MKtl(\nUFO).elAt(\cap).do { |pad, i|
 	pad.action.add(\setInflux, {|ana|
-		var name = 	q.inphlux.getHalo(\padNames).clipAt(i);
-		q.inphlux.set(name, ana.value.pow(3));
+		var name = 	NTMI.inphlux.getHalo(\padNames).clipAt(i);
+		NTMI.inphlux.set(name, ana.value.pow(3));
 		//.pow(6));
 		// the pow(6) helps toflatten the steep curve of the FSRs as they are now.
 		ana.value

@@ -6,24 +6,24 @@ OSCFunc.trace (false);
 */
 
 // use this dict for everything osc related
-q.osc = q.osc ? ();
+NTMI.osc = NTMI.osc ? ();
 
 
 // for monitoring incoming osc activity by timetag -
-q.osc.lastInTime = 0;
-q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
-q.osc.timeSinceLast = { Main.elapsedTime - q.osc.lastInTime };
-q.osc.deviceName = '???';
+NTMI.osc.lastInTime = 0;
+NTMI.osc.timeSinceLast = { Main.elapsedTime - NTMI.osc.lastInTime };
+NTMI.osc.timeSinceLast = { Main.elapsedTime - NTMI.osc.lastInTime };
+NTMI.osc.deviceName = '???';
 
 // should play LED ballet every time we go from
 // OSC silence to receiving stuff from nufo
 
 OSCdef(\xoscAlive, { |msg, time|
-	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
+	if (NTMI.osc.lastInTime == 0 or: { NTMI.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
-	q.osc.deviceName = \xosc;
-	q.osc.lastInTime = time;
+	NTMI.osc.deviceName = \xosc;
+	NTMI.osc.lastInTime = time;
 }, "/imu").permanent_(true);
 
 /*
@@ -33,40 +33,40 @@ NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
 */
 OSCdef(\nUFOAlive, { |msg, time|
 	// \nUFOAlive.postln;
-	if (q.osc.lastInTime == 0 or: { q.osc.timeSinceLast > 10 }) {
+	if (NTMI.osc.lastInTime == 0 or: { NTMI.osc.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
-	q.osc.deviceName = \nUFO;
-	q.osc.lastInTime = time;
+	NTMI.osc.deviceName = \nUFO;
+	NTMI.osc.lastInTime = time;
 }, "ntmi/imu").permanent_(true);
 
 
 // init zero values
-q.zero = q.zero ? ();
-q.osc.rawPads = (0!8);
-q.osc.rawImuBiValues = (0!9);
+NTMI.zero = NTMI.zero ? ();
+NTMI.osc.rawPads = (0!8);
+NTMI.osc.rawImuBiValues = (0!9);
 
-q.zero.imu = q.osc.rawImuBiValues;
-q.zero.pads = q.osc.rawPads;
+NTMI.zero.imu = NTMI.osc.rawImuBiValues;
+NTMI.zero.pads = NTMI.osc.rawPads;
 
-q.zero.path = Platform.userAppSupportDir +/+ "zeroes.scd";
+NTMI.zero.path = Platform.userAppSupportDir +/+ "zeroes.scd";
 
-q.zero.write = {
-	File.use(q.zero.path, "w", { |file|
-		file.write("q.zero.imu =" +  q.zero.imu ++";\n");
-		file.write("q.zero.pads =" +  q.zero.pads ++";\n");
-		(q.zero.path + "written.").postln;
+NTMI.zero.write = {
+	File.use(NTMI.zero.path, "w", { |file|
+		file.write("NTMI.zero.imu =" +  NTMI.zero.imu ++";\n");
+		file.write("NTMI.zero.pads =" +  NTMI.zero.pads ++";\n");
+		(NTMI.zero.path + "written.").postln;
 	})
 };
-q.zero.read = { "reading zeroes file.".postln; q.zero.path.load };
+NTMI.zero.read = { "reading zeroes file.".postln; NTMI.zero.path.load };
 
 // read old zero values if there
-q.zero.read;
+NTMI.zero.read;
 
 // set the first 9 values of the inphlux from the imu params:
-q.inphlux.addHalo(\imuNames, q.inphlux.inNames.keep(9));
-q.inphlux.addHalo(\padNames, q.inphlux.inNames.drop(9));
-q.inphlux.addHalo(\capNames, q.inphlux.inNames.drop(9));
+NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
+NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.drop(9));
+NTMI.inphlux.addHalo(\capNames, NTMI.inphlux.inNames.drop(9));
 
 
 // ntmi currently sends analog in values as int from 0-4095,
@@ -76,7 +76,7 @@ q.inphlux.addHalo(\capNames, q.inphlux.inNames.drop(9));
 
 // this func is just for ntmi.
 
-q.bat = (
+NTMI.bat = (
 	resetVals: { |bat|
 		bat.putAll((
 			string: "battery?",
@@ -90,28 +90,28 @@ q.bat = (
 		))
 	}
 );
-q.bat.resetVals;
+NTMI.bat.resetVals;
 
 MFdef('battery').add(\calc, { |intVal = 0|
 	// keep startvals for estimate
-	if (q.bat.time0.isNil) {
-		q.bat.time0 = Main.elapsedTime;
-		q.bat.intval0 = intVal;
+	if (NTMI.bat.time0.isNil) {
+		NTMI.bat.time0 = Main.elapsedTime;
+		NTMI.bat.intval0 = intVal;
 	};
 
-	q.bat.intval = intVal;
-	q.bat.lastTime = Main.elapsedTime;
-	q.bat.percent = intVal.linlin(q.bat.minval, q.bat.maxval, 0, 100).round(1);
+	NTMI.bat.intval = intVal;
+	NTMI.bat.lastTime = Main.elapsedTime;
+	NTMI.bat.percent = intVal.linlin(NTMI.bat.minval, NTMI.bat.maxval, 0, 100).round(1);
 
 	// calculate likely remaintime
 	// conservative guess: known max time
-	q.bat.remain = intVal.linlin(q.bat.minval, q.bat.maxval, 0, q.bat.totaltime).round(1).asInteger;
+	NTMI.bat.remain = intVal.linlin(NTMI.bat.minval, NTMI.bat.maxval, 0, NTMI.bat.totaltime).round(1).asInteger;
 
 	// calculate average loss, use to predict remaining time. stabilizes after maybe 30 mins
-	q.bat.avgLoss = q.bat.intval0 - q.bat.intval / (q.bat.lastTime - q.bat.time0).max(2);
-	// q.bat.avgLoss;
-	q.bat.predictedRemain = (q.bat.intval - q.bat.minval / q.bat.avgLoss.clip(0.01, 0.1) / 60);
+	NTMI.bat.avgLoss = NTMI.bat.intval0 - NTMI.bat.intval / (NTMI.bat.lastTime - NTMI.bat.time0).max(2);
+	// NTMI.bat.avgLoss;
+	NTMI.bat.predictedRemain = (NTMI.bat.intval - NTMI.bat.minval / NTMI.bat.avgLoss.clip(0.01, 0.1) / 60);
 
-	q.bat.string = "bat: %% %m".format(q.bat.percent, "%", q.bat.remain);
-	q.bat.string
+	NTMI.bat.string = "bat: %% %m".format(NTMI.bat.percent, "%", NTMI.bat.remain);
+	NTMI.bat.string
 });
