@@ -32,7 +32,7 @@ WavesetsEvent.prepareSynthDefs;
 q.wse = q.wse ? ();
 
 /////// default soundfiles dir / unless overwritten
-q.wse.sfdir = q.wse.sfdir ?? { q.dir.ntmi +/+ "soundfiles" };
+q.wse.sfdir = q.wse.sfdir ?? { NTMI.dir.setup +/+ "soundfiles" };
 
 // tweak for your machine, so very fast overlapped
 // wavesets dont bring it down:
