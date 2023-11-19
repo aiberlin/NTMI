@@ -1,51 +1,50 @@
 // add all global filter functions to use - these are then available by name.
-q=q?();
-q.mfx = q.mfx ? ();
-q.numChans = q.numChans ? 2;
+NTMI.mfx = NTMI.mfx ? ();
+NTMI.numChans = NTMI.numChans ? 2;
 
-(q.prefs.active.effects ? ["*.scd" ]).do { |filename|
-	LoadMe(filename, q.dir.userPOOL +/+ "4_effects");
+(NTMI.prefs.active.effects ? ["*.scd" ]).do { |filename|
+	LoadMe(filename, NTMI.dir.userPOOL +/+ "4_effects");
 };
 
 //////// check integrity of all param specs - complains when specs are missing.
 ProxyChain.checkDicts;
 
 (
-q.mFX.clear;
-q.mFX = MainFX.new(server: s,
-	numChannels: q.numChans,
-	slotNames: // q.prefs.active.mfxSlotNames ?
+NTMI.mFX.clear;
+NTMI.mFX = MainFX.new(server: s,
+	numChannels: NTMI.numChans,
+	slotNames: // NTMI.prefs.active.mfxSlotNames ?
 	ProxyChain.allSources.keys(Array).sort,
 	busIndex: 0
 );
 
 // tweak
-q.mfx.chain = q.mFX.proxyChain;
-q.mfx.chain.proxy.fadeTime = 2;
+NTMI.mfx.chain = NTMI.mFX.proxyChain;
+NTMI.mfx.chain.proxy.fadeTime = 2;
 
 // apply all know specs to proxy just in case:
 ProxyChain.sourceDicts.do { |dict|
-	dict.specs.do { |spec| q.mfx.chain.proxy.addSpec(spec) }
+	dict.specs.do { |spec| NTMI.mfx.chain.proxy.addSpec(spec) }
 };
 
 ////////// experimental:
-q.mfx.pcPre = ProxyChainPreset(\say);
+NTMI.mfx.pcPre = ProxyChainPreset(\say);
 
-q.mfx.pxPres = ();
+NTMI.mfx.pxPres = ();
 
 /*
-q.mfx.pxPres['3AdCVerb'].setRand(0.25);
+NTMI.mfx.pxPres['3AdCVerb'].setRand(0.25);
 */
 
 fork ({
 	0.1.wait;
-	q.mfx.chain.add('00_in', 1);
+	NTMI.mfx.chain.add('00_in', 1);
 	0.1.wait;
-	q.mfx.chain.add('0_DBComp', 1);
+	NTMI.mfx.chain.add('0_DBComp', 1);
 	0.1.wait;
-	q.mfx.chain.add('3AdCVerb', 0.05);
+	NTMI.mfx.chain.add('3AdCVerb', 0.05);
 	0.1.wait;
-	q.mfx.chain.add('ampFin', 1);
+	NTMI.mfx.chain.add('ampFin', 1);
 	0.1.wait;
 
 }, AppClock);
@@ -56,14 +55,14 @@ ServerTree.add({
 	fork ({
 		s.sync;
 		0.2.wait;
-		q.mfx.chain.proxy.rebuild.send
+		NTMI.mfx.chain.proxy.rebuild.send
 	})
 }, s);
 
 ////////// MFX presets taken from Ars Brevis ///////////////
 //// to be replaced with ProxyChainPreset when done ... ////
 
-q.mfx.preNames = [
+NTMI.mfx.preNames = [
 	'baseset',
 	'theology',
 	'magic',
@@ -77,7 +76,7 @@ q.mfx.preNames = [
 ];
 
 (
-q.mfx.preMap = (
+NTMI.mfx.preMap = (
 	'baseset': (
 		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.05], \ampFin],
 		settings: [\postAmp, 1, \ampLimit, 0.8, \noisefloor, 0.0001],
@@ -135,21 +134,21 @@ q.mfx.preMap = (
 
 (
 MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
-	var chain = q.mfx.chain;
-	var dict = q.mfx.preMap[domainName];
+	var chain = NTMI.mfx.chain;
+	var dict = NTMI.mfx.preMap[domainName];
 	var randSettings;
 
 	if (dict.isNil) {
 		"*** MainPre: no domain %, not switching.".postf(domainName);
 	} {
-		q.mfx.prevDomain = q.mfx.currDomain;
-		q.mfx.currDomain =  domainName;
-		q.mfx.domainIndex = q.mfx.preNames.indexOf(domainName);
+		NTMI.mfx.prevDomain = NTMI.mfx.currDomain;
+		NTMI.mfx.currDomain =  domainName;
+		NTMI.mfx.domainIndex = NTMI.mfx.preNames.indexOf(domainName);
 
 
 		// remove all but...
-		q.mfx.srcKeys
-		.reject({|it| q.mfx.preMap.baseset.chainElements.includes(it) })
+		NTMI.mfx.srcKeys
+		.reject({|it| NTMI.mfx.preMap.baseset.chainElements.includes(it) })
 		.reject({|it| (dict.chainElements ? []).includes(it) })
 		.do( chain.remove(_));
 		// add all
@@ -177,16 +176,16 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 
 
 MFdef(\mainVol).add(\main, { |univol = 0.5|
-	q.mFX.pxChain.proxy.setUni(\mainVol, univol);
+	NTMI.mFX.pxChain.proxy.setUni(\mainVol, univol);
 });
 
 MFdef(\mainPre).value(\baseset);
 
 MFdef(\mainPreStep).add(\inc, { |inc|
 	var nextIndex, nextName;
-	inc = inc ?? { rrand(1, q.mfx.preNames.lastIndex) };
-	nextIndex = q.mfx.domainIndex + inc % q.mfx.preNames.size;
-	nextName = q.mfx.preNames[nextIndex];
+	inc = inc ?? { rrand(1, NTMI.mfx.preNames.lastIndex) };
+	nextIndex = NTMI.mfx.domainIndex + inc % NTMI.mfx.preNames.size;
+	nextName = NTMI.mfx.preNames[nextIndex];
 	MFdef(\mainPre).(nextName);
 });
 );
