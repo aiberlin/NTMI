@@ -14,7 +14,7 @@ if (ProxyPreset.findMethod(\addsToTop).notNil) {
 	q.pre.addsToTop = true;
 } {
 	"*** ProxyPreset: cannot add new presets to top - Please do:\n"
-	" Quark(\"JITLibExtensions\");\n".postln;
+	" Quark(\"JITLibExtensions\").update;\n".postln;
 };
 
 (
@@ -67,13 +67,14 @@ q.pre.ntmi.do { |pre|
 	};
 };
 
-"preferred preset names:".postln;
+"set preferred preset names:".postln;
+q.prefs.active.presetNames.printAll;
 q.prefs.active.presetNames.do { |assoc, i|
 	var key = assoc.key, val = assoc.value.value;
-	var preset = NdefPreset(key);
+	var preset = NdefPreset.all[key];
 	var prekey = if (val.isKindOf(Symbol)) { val } { preset.settings.wrapAt(val).key };
 	"% : % -> % \n".postf(preset, val.cs, prekey.cs);
-	try { preset.setCurr(prekey).setProxy };
+	try { preset.setCurr(prekey).setProxy(prekey) };
 };
 
 
@@ -88,6 +89,7 @@ q.pre.incrementSeed = {|q, proxy, inc=1|
 		seed;
 	}{ "%: sorry, no preset present.\n".postf(proxy) }
 };
+
 
 ///// add a preset on the fly while playing
 MFdef(\snapshot1).add(\getset, { |proxy|
@@ -128,4 +130,3 @@ q.pre.stepNdefInf = { |dict, ndef, inc|
 		q.inphlux.offsetsFromPreset(*[pre, nextName]);
 	};
 };
-
