@@ -33,8 +33,7 @@ forkIfNeeded {
 
 	// load preferred processNames, or all:
 	q.process.namesToLoad.do { |name|
-		q.load(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
-		s.sync;
+		LoadMe(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
 	};
 
 	q.ndef = q.ndef ? ();
@@ -46,9 +45,6 @@ forkIfNeeded {
 	// kill them all again for startup
 	defer ({ q.ndef.groups.at(\NTMI).do(_.end) }, 0.1);
 
-	q.load("2_process_presets/2d_preset*.scd");
-
-	0.2.wait;
 	// activate the ndefs given in prefs:
 	q.ndefs = q.prefs.active.defaultActives.collect(Ndef(_));
 	"\n\n".postln;

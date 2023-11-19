@@ -4,7 +4,7 @@ q.mfx = q.mfx ? ();
 q.numChans = q.numChans ? 2;
 
 (q.prefs.active.effects ? ["*.scd" ]).do { |filename|
-	q.load(filename, q.dir.userPOOL +/+ "4_effects");
+	LoadMe(filename, q.dir.userPOOL +/+ "4_effects");
 };
 
 //////// check integrity of all param specs - complains when specs are missing.

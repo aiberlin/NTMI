@@ -78,45 +78,6 @@ Task {
 		"*** NTMI: q.dir.userPOOL is %\n".postf(q.dir.userPOOL.cs);
 	};
 
-
-	// custom load function:
-	// loads local or absolute filenames or paths,
-	// with wait time and posted load time info:
-	// maybe move to LoadMe class eventually.
-	q.load = { |q, filename, here, wait = 0.0, dirsup = 0, preText = "", postText = ""|
-		var paths, path;
-		if (filename.isNil) { warn("path was nil!") } {
-
-			path = filename.standardizePath;
-			if (path[0].isPathSeparator.not) {
-				here = here ? q.dir.ntmi;
-				dirsup.do { here = here.dirname };
-				path = (here +/+ path);
-			};
-
-			paths = path.pathMatch;
-
-			forkIfNeeded ({
-				var loadDur, t0 = Main.elapsedTime;
-
-				if (paths.size == 0) { "*** no files found for % :\n".postf(path.cs) };
-
-				if (paths.size > 1) { "****** % matching files for % :\n".postf(paths.size, path.cs) };
-
-				paths.do { |path|
-					"*** loading % : %".postf(path.basename, preText);
-					path.load;
-					if (s.serverRunning) { try { s.sync } };
-					loadDur = (Main.elapsedTime - t0).round(0.001);
-					" % secs. %\n".postf(loadDur, postText);
-					if (wait > 0) { wait.wait };
-				};
-
-				"";
-			}, AppClock)
-		};
-	};
-
 	"\n\n".post;
 
 	//******* PREFERENCES
@@ -169,7 +130,7 @@ Task {
 	};
 
 	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
-	q.load("0_globals/*.scd");
+	LoadMe("0_globals/*.scd");
 
 	// set q.numChans from prefs
 	q.numChans = q.prefs.active.numChans ? 2;
@@ -183,7 +144,7 @@ Task {
 
 	} {
 		"setting up server ... ".postln;
-		q.load(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
+		LoadMe(q.prefs.active.serverSetup, q.dir.user +/+ "POOL/1_*");
 
 		s.options.numInputBusChannels = q.numIns;
 		s.options.numOutputBusChannels = q.numChans;
@@ -192,7 +153,7 @@ Task {
 	"*** q.numChans is: %\n".postf(q.numChans);
 	"*** q.numIns is: %\n".postf(q.numIns);
 
-	q.load(q.prefs.active.preBootSetup);
+	LoadMe(q.prefs.active.preBootSetup);
 
 	"\n\n".postln;
 
@@ -222,32 +183,32 @@ Task {
 
 		"\n".postln;
 
-		q.load(q.prefs.active.postBootSetup);
+		LoadMe(q.prefs.active.postBootSetup);
 
+		LoadMe("2_process_presets/2a_bufferLoader.scd").postcs;
+		LoadMe("2_process_presets/2b_liveInput.scd").postcs;
+		LoadMe("2_process_presets/2c_loadProcesses.scd").postcs;
+		LoadMe("2_process_presets/2d_preset*.scd");
 
-		q.load("2_process_presets/2a_bufferLoader.scd");
-		q.load("2_process_presets/2b_liveInput.scd");
-
-		q.load("2_process_presets/2c_loadProcesses.scd");
-
+		1.wait;
 
 		/********** INTERFACES *********/
 
 		"\n\n*** *** *** FOLDER % : \n".postf("3_interfaces");
-		q.load("3_interfaces/*scd");
+		LoadMe("3_interfaces/*scd");
 
 		q.interfacesToLoad.do { |name|
-			q.load("3_interfaces/*/*%*scd".format(name));
+			LoadMe("3_interfaces/*/*%*scd".format(name));
 		};
 
 		if (q.usesMainFX) {
-			q.load("6_MainFX.scd");
+			LoadMe("6_MainFX.scd");
 		};
 
 
 		if (q.hasGui) {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
-			q.load("8_GUIs/*scd");
+			LoadMe("8_GUIs/*scd");
 			// 0.1.wait;
 			if (q.hasSmallScreen != true) {
 				g.makeGui[\Main_NTMI].value;
@@ -256,7 +217,7 @@ Task {
 			};
 		};
 
-		q.load(q.prefs.active.finalSetup);
+		LoadMe(q.prefs.active.finalSetup);
 
 		// reinstate prev. latency
 		if (s.latency.isNil) {
