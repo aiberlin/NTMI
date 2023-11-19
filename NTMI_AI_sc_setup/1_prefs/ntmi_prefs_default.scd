@@ -9,7 +9,7 @@
   filenames of code files to load can be:
 * relative, like "serverBasic2.scd", which will be taken from the project folder, or
 * absolute, like "~/mycode/ntmi/myServerSetup23.scd", which is a full path.
-* or make a path from user folder: (q.dir.user +/+ "myFile.scd")
+* or make a path from user folder: (NTMI.dir.user +/+ "myFile.scd")
 
 */
 
@@ -30,16 +30,16 @@
 'serverSetup': "serverBasic2.scd",
 
 // last code file to load before booting
-'preBootSetup': q.dir.user +/+ "preBootSetup.scd",
+'preBootSetup': NTMI.dir.user +/+ "preBootSetup.scd",
 
 // first code file to load right after server has booted
-'postBootSetup': q.dir.user +/+ "postBootSetup.scd",
+'postBootSetup': NTMI.dir.user +/+ "postBootSetup.scd",
 
 /// ... load all sound processes and their presets ...
 /// ... load all interfaces, postres and GUIs etc ...
 
 // personalize after loadMe file setup is finished
-'finalSetup': q.dir.user +/+ "finalSetup.scd",
+'finalSetup': NTMI.dir.user +/+ "finalSetup.scd",
 
 ///////// OPTIONAL: ////////////////
 //// specify wich specific processNames to load
@@ -78,7 +78,7 @@ influxPreset: 3,
 // load everything in basic collection allFX for now
 effects: [ "allFX.scd" ],
 
-// the slotNames to put into the MainFX - q.mFX :
+// the slotNames to put into the MainFX:
 mfxSlotNames: [
 	'00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal',
 	'1comby', '1holz', '1ixiDist',

@@ -175,7 +175,7 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 // function to load an interface file or gui:
 MFdef(\loadInterfaceFile).add(\load, { |name, filepath|
 	if (PathName(filepath).isRelativePath) {
-		filepath = (q.dir.ntmi +/+ filepath);
+		filepath = (NTMI.dir.setup +/+ filepath);
 	};
 	if (MKtl.all[name].isNil) {
 		filepath.postcs.loadPaths;
@@ -212,7 +212,7 @@ Butz(\NTMI_Config).add(\userDir, { q.dir.user.openOS });
 Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
 Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
 Butz(\NTMI_Config).add(\soundfiles, { q.dir.userPOOL.openOS });
-Butz(\NTMI_Config).add('open setup', { q.dir.ntmi.openOS });
+Butz(\NTMI_Config).add('open setup', { NTMI.dir.setup.openOS });
 
 Butz(\NTMI_Config).add('open quark', { Quark("NTMI").localPath.openOS });
 

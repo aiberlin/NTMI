@@ -33,7 +33,9 @@ forkIfNeeded {
 
 	// load preferred processNames, or all:
 	q.process.namesToLoad.do { |name|
-		LoadMe(name ++ ".scd", q.dir.userPOOL +/+ "2_process");
+		try { LoadMe(name ++ ".scd", q.dir.userPOOL +/+ "2_process") } {
+			"*** process load for % failed! others should be fine.\n".postf(name.cs);
+		};
 	};
 
 	q.ndef = q.ndef ? ();
