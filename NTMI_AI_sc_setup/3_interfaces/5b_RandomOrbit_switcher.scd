@@ -10,47 +10,46 @@
 
 
 (
-q = q ? ();
-q.ro = q.ro ? ();
-q.ro.bits = 0 ! 6;
-q.ro.letterKeys = "weruio"; // macOS only allows 6 keys at the same time
-q.ro.powers = [1, 2, 4, 8, 16, 32];
-q.ro.num = { |ro| (ro.powers * ro.bits).sum };
-q.ro.firstval = 1;
-q.ro.collecting = false;
-q.ro.lastval = 1;
-q.ro.str = { |ro| q.ro.bits.join + "->" + q.ro.num };
+NTMI.ro = NTMI.ro ? ();
+NTMI.ro.bits = 0 ! 6;
+NTMI.ro.letterKeys = "weruio"; // macOS only allows 6 keys at the same time
+NTMI.ro.powers = [1, 2, 4, 8, 16, 32];
+NTMI.ro.num = { |ro| (ro.powers * ro.bits).sum };
+NTMI.ro.firstval = 1;
+NTMI.ro.collecting = false;
+NTMI.ro.lastval = 1;
+NTMI.ro.str = { |ro| NTMI.ro.bits.join + "->" + NTMI.ro.num };
 
-q.ro.chordTime = 0.03;
-q.ro.fire = false;
-q.ro.font = Font(Font.defaultMonoFace, 21);
-q.ro.bigFont = Font(Font.defaultMonoFace, 34);
+NTMI.ro.chordTime = 0.03;
+NTMI.ro.fire = false;
+NTMI.ro.font = Font(Font.defaultMonoFace, 21);
+NTMI.ro.bigFont = Font(Font.defaultMonoFace, 34);
 
 MFdef(\ro).add(\collect, { |index, value|
-	if (q.ro.collecting.not) {
+	if (NTMI.ro.collecting.not) {
 		// "collecting ...".postln;
-		q.ro.firstval = q.ro.num;
-		q.ro.collecting = true;
-		defer { q.ro.uv.refresh };
+		NTMI.ro.firstval = NTMI.ro.num;
+		NTMI.ro.collecting = true;
+		defer { NTMI.ro.uv.refresh };
 	};
-	q.ro.bits[index] = value;
+	NTMI.ro.bits[index] = value;
 	// use Tdef to unschedule if already
-	q.ro.endTask.stop.play;
+	NTMI.ro.endTask.stop.play;
 });
 
 MFdef(\fire).add(\post, { "ok, fire!\n".postln });
-MFdef(\fire).add(\fire, { MFdef(\randOrb).value(q.ro.num) });
+MFdef(\fire).add(\fire, { MFdef(\randOrb).value(NTMI.ro.num) });
 MFdef(\fire).disable(\post);
 
-q.ro.endTask = TaskProxy({
-	q.ro.chordTime.wait;
+NTMI.ro.endTask = TaskProxy({
+	NTMI.ro.chordTime.wait;
 	MFdef(\fire).value;
-	q.ro.lastval = if (q.ro.num == 0, q.ro.firstval, q.ro.num);
-	defer { q.ro.uv.refresh };
-	q.ro.collecting = false;
+	NTMI.ro.lastval = if (NTMI.ro.num == 0, NTMI.ro.firstval, NTMI.ro.num);
+	defer { NTMI.ro.uv.refresh };
+	NTMI.ro.collecting = false;
 }).quant_(0);
 
-q.ro.letterKeys.do { |char, i|
+NTMI.ro.letterKeys.do { |char, i|
 	KeyPlayer(\ro).putDown(char, { |char| MFdef(\ro).(i, 1) }, noRep: true);
 	KeyPlayer(\ro).putUp(char, { |char| MFdef(\ro).(i, 0) });
 };
