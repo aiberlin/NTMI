@@ -71,7 +71,7 @@ MFdef(\miniGuiUpdate).add(\modeZoom, {
 
 g.mini = ();
 
-g.makeGui.miniNTMI = {
+WinBounds.addMake(\miniNTMI, {
 
 	var w = Window("miniNTMI", Rect(300, 300, 480, 320)).front;
 	var f = Font(g.fontName, 18);
@@ -181,4 +181,4 @@ g.makeGui.miniNTMI = {
 
 	// RETURN WINDOW!
 	g.mini.w;
-};
+});

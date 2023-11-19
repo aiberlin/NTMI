@@ -2,7 +2,7 @@
 ////// function to make a randomOrbitz KeyPlayerGui if needed
 
 (
-NTMI.g.makeGui.randomOrbitz = { |dict, name = \randomOrbitz|
+WinBounds.addMake('randomOrbitz', {
 
 	NTMI.g.kpgui = KeyPlayerGui(KeyPlayer(\ro));
 	NTMI.g.kpgui.parent.bounds_(NTMI.g.kpgui.parent.bounds.height_(300));
@@ -18,5 +18,5 @@ NTMI.g.makeGui.randomOrbitz = { |dict, name = \randomOrbitz|
 	};
 	NTMI.g.kpgui.parent.name = "randomOrbitz";
 	NTMI.g.kpgui.parent;
-}
+})
 );

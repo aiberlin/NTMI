@@ -10,9 +10,6 @@ g.alpha = g.alpha ? 0.8;
 // g.fontName = g.fontName ? Font.defaultMonoFace;
 g.fontName = g.fontName ? Font.defaultSansFace;
 
-// contains the previous GUI-making functions
-g.makeGui = g.makeGui ? ();
-
 g.screenScale = min(Window.availableBounds.width / 1920,
 	Window.availableBounds.height / 1177);
 
@@ -74,10 +71,6 @@ Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
 
 // add a gui makeFunc for MainFX:
 Butz.add('mainFX', { WinBounds.showOrMake('mainFX') });
-WinBounds.addMake('mainFX', { |dict, name = \mainFX|
-	g.makeGui.mainFX;
-	q.mfx.win.front.name_(name);
-});
 
 Butz.add('meters', { s.meter; Window.find(s.name).name_(\meters) });
 Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
@@ -85,7 +78,7 @@ Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
 /// some general helpers
 Butz.add('setAll', { WinBounds.restoreAll });
 Butz.add('plotTree', { s.plotTree });
-Butz.add('chanTest', { g.makeGui.chanTest });
+Butz.add('chanTest', { WinBounds.showOrMake(\chanTest) });
 
 
 
@@ -98,10 +91,6 @@ Make an NTMI separate Butz for windows and functions
 g.butzNames.do (Butz(\NTMI).add(_));
 
 Butz(\NTMI).add('Main_NTMI', { WinBounds.showOrMake('Main_NTMI')});
-WinBounds.addMake('Main_NTMI', {
-	g.makeGui[\Main_NTMI].value;
-	g.main.w.alpha_(g.alpha ? 0.8);
-});
 
 // only add wsetta to Butz if the gui func for it exists:
 if (WinBounds.makeFuncs[\wsetta].notNil) {
@@ -128,31 +117,27 @@ Butz('interfaces').addMiniMax;
 
 
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
-WinBounds.addMake('inphlux', { g.makeGui.inphlux.alpha_(g.alpha) });
 
 Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
-	g.liveGui = q.liveInput.gui.name_(name).moveTo(600, 5);
-	g.tuneNameView(g.liveGui);
-	ProxyMeter.addNdefGui(g.liveGui);
-	g.liveGui.parent.alpha_(g.alpha);
+	var ndefGui = Ndef(name).gui.moveTo(600, 5);
+	g.tuneNameView(ndefGui);
+	ProxyMeter.addNdefGui(ndefGui);
+	ndefGui.parent.alpha_(NTMI.g.alpha).name_(name);
 });
 
 Butz(\NTMI).add('slotSounds', { WinBounds.showOrMake('slotSounds') });
-WinBounds.addMake('slotSounds', { g.makeGui.slotSounds.alpha_(g.alpha) });
 
 Butz(\NTMI).add('presets', { WinBounds.showOrMake('presets') });
-WinBounds.addMake('presets', { g.makeGui.presets.alpha_(g.alpha) });
 
 Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
-WinBounds.addMake('randomOrbitz', { g.makeGui.randomOrbitz.alpha_(g.alpha) });
 
 
 ///// add \ndefMixer makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
-	// numItems could also be q.process.allNames.size;
+	// numItems could also be NTMI.process.allNames.size;
 	var maxVisible = 21; // (Window.screenBounds.height - 30 / 20);
-	var ndefMixer = NdefMixer(s, min(q.process.allNames.size, maxVisible));
+	var ndefMixer = NdefMixer(s, min(NTMI.process.allNames.size, maxVisible));
 	ndefMixer.parent.name_(name);
 	g[name] = ndefMixer;
 	ndefMixer.moveTo(5, 5);
@@ -182,9 +167,9 @@ MFdef(\loadInterfaceFile).add(\load, { |name, filepath|
 	if (MKtl.all[name].isNil) {
 		filepath.postcs.loadPaths;
 	};
+
 	WinBounds.addMake(name, {
-		q.ferrgui = MKtl(name).gui.showLabels;
-		q.ferrgui.parent
+		MKtl(name).gui.showLabels.parent
 	});
 	WinBounds.showOrMake(name);
 });
@@ -210,10 +195,10 @@ MFdef(\addInterfaceFile).(\nUFO,
 
 Butz(\NTMI_Config).clear;
 Butz(\NTMI_Config).addMiniMax;
-Butz(\NTMI_Config).add(\userDir, { q.dir.user.openOS });
-Butz(\NTMI_Config).add(\userPrefs, { q.prefs.userPrefPath.openOS });
-Butz(\NTMI_Config).add(\userPOOL, { q.dir.userPOOL.openOS });
-Butz(\NTMI_Config).add(\soundfiles, { q.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add(\userDir, { NTMI.dir.user.openOS });
+Butz(\NTMI_Config).add(\userPrefs, { NTMI.prefs.userPrefPath.openOS });
+Butz(\NTMI_Config).add(\userPOOL, { NTMI.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add(\soundfiles, { NTMI.dir.userPOOL.openOS });
 Butz(\NTMI_Config).add('open setup', { NTMI.dir.setup.openOS });
 
 Butz(\NTMI_Config).add('open quark', { Quark("NTMI").localPath.openOS });

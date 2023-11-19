@@ -1,8 +1,7 @@
-///// todo: move to ProxyChainPreset ...
+///// todo: move completely to ProxyChainPreset ...
 
-NTMI.g.makeGui.mainFX = {
+WinBounds.addMake(\mainFX, {
 	NTMI.mfx.font = Font(g.fontName, 18);
-
 
 	NTMI.mfx.highKeys = [];
 	NTMI.mfx.srcKeys = NTMI.mFX.slotNames;
@@ -89,5 +88,6 @@ NTMI.g.makeGui.mainFX = {
 		NTMI.mFX.proxyChain.proxy.cleanNodeMap;
 	}, 0.5, { NTMI.mfx.win.isClosed });
 
-};
+	NTMI.mfx.win;
+});
 

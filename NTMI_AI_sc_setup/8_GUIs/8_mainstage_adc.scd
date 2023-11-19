@@ -124,7 +124,7 @@ g.scaleStetho = { |g, stetho, height = 200|
 	yzoomSl.bounds = yzoomSl.bounds.top_( 30 + height);
 };
 
-g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
+WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	var w, butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
 	var bounds = Window.availableBounds;
@@ -673,4 +673,5 @@ g.makeGui['Main_NTMI'] = { |dict, name = 'ntmi_MainStage'|
 			Tdef(\clocK).get(\color)
 		)
 	};
-};
+	NTMI.g.main.w
+});

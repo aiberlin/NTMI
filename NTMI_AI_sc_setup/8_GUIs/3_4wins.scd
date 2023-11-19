@@ -13,8 +13,7 @@ NTMI.g = NTMI.g ? (); // global dict
 q = NTMI.q;
 g = NTMI.g;
 
-
-g.makeGui.slotSounds = { |dict, name = \slotSounds|
+WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 	var scbn = Window.availableBounds;
 	var maxHeight = 440; // scbn.height - 20;
 	var maxNumSlots = (maxHeight / 2 - 50 / 20 + 0.2).asInteger;
@@ -57,4 +56,4 @@ g.makeGui.slotSounds = { |dict, name = \slotSounds|
 		slotNames = newNames;
 	}, 0.2, { w.isClosed }, \presetWin);
 	w;
-};
+});

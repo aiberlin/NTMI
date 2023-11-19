@@ -16,7 +16,7 @@ NTMI.g = NTMI.g ? (); // global dict
 q = NTMI.q;
 g = NTMI.g;
 
-g.makeGui.inphlux = { |dict, name = \inphlux|
+WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 	var bnds = Window.availableBounds;
 	var size = 170;
 	var size2 = size * 2;
@@ -235,4 +235,4 @@ g.makeGui.inphlux = { |dict, name = \inphlux|
 
 	q.inph.ioWin;
 
-};
+});

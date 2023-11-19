@@ -1,7 +1,6 @@
 
-
-NTMI.g.makeGui.chanTest = {
-
+WinBounds.addMake(\chanTest, {
+	q.chantest = q.chantest ? ();
 	q.chantest.win = Window("chanTest").front;
 	q.chantest.win.addFlowLayout;
 
@@ -11,6 +10,7 @@ NTMI.g.makeGui.chanTest = {
 		q.chantest.task.stop;
 
 	});
+	q.chantest.pink.postln;
 	q.chantest.butz = (1..8).collect { |i|
 		Button(q.chantest.win, Rect(0,0,30,30)).states_([[i], [i, Color.black, Color.green]])
 		.action_({ q.chantest.pink.play(i - 1) });
@@ -21,5 +21,7 @@ NTMI.g.makeGui.chanTest = {
 
 	q.chantest.pinkgui = NdefGui(q.chantest.pink, 4, q.chantest.win);
 	q.chantest.pinkgui.name_("PINK");
+
+	q.chantest.postln;
 	q.chantest.win
-};
+});

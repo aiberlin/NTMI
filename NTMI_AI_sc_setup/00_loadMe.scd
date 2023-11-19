@@ -45,7 +45,7 @@ Task {
 	LoadMe("1_prefs/1_prefs.scd");
 
 	// temp bridge, remove later
-	q = NTMI.q;
+	// q = NTMI.q;
 
 	// Set flags for which parts to load:
 	// on headless systems, dont use guis
@@ -158,9 +158,9 @@ Task {
 			LoadMe("8_GUIs/*scd");
 			// 0.1.wait;
 			if (NTMI.hasSmallScreen != true) {
-				g.makeGui[\Main_NTMI].value;
+				WinBounds.showOrMake(\Main_NTMI);
 			} {
-				g.makeGui['miniNTMI'].value;
+				WinBounds.showOrMake(\miniNTMI);
 			};
 		};
 
