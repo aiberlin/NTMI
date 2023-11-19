@@ -57,7 +57,7 @@ MFdef('loadWSEs').add(\load, { |dir, add = false|
 });
 
 // Wsetta has extra gui -
-if (q.hasGui) {
+if (NTMI.hasGui) {
 	// this must happen after Butz was done - see GUIs/wsetta.scd
 	// Butz.add(\wsetta, { WinBounds.showOrMake(\wsetta) });
 	WinBounds.addMake(\wsetta, {
@@ -65,9 +65,7 @@ if (q.hasGui) {
 
 		q.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 150)).front;
 		q.wse.win.view.addFlowLayout;
-		Button(q.wse.win, 100@30).states_([["new files"]]);
-		// Button(q.wse.win, 100@30).states_([["add files"]]);
-
+		\Button.asClass.new(q.wse.win, 100@30).states_([["new files"]]);
 		\TdefGui.asClass.new(Tdef('wsetta'), 3, q.wse.win);
 		\NdefGui.asClass.new(Ndef('wsetta'), 12, q.wse.win);
 
@@ -137,6 +135,19 @@ Tdef(\wsetta).addSpec(\pos, [0, 10000, 0, 1]);
 (
 //////// get these params from Ndef:
 
+Ndef(\wsetta).clear;
+Ndef(\wsetta).ar(2);
+
+// and a silent dummy sound source, which determines the param names in order.
+// could also put some post-processing in here:
+Ndef(\wsetta, { |amp,
+	num = 10, repeats = 1, progress = 10,
+	legato = 1, rate = 1, rate2 = 1, pan = 0.5|
+	Silent.ar(2);
+});
+// get default settings:
+Ndef(\wsetta).supplementNodeMap;
+
 Ndef(\wsetta).addSpec(\num, [1, 100, \exp, 1]);
 Ndef(\wsetta).addSpec(\repeats, [1, 100, \exp, 1]);
 Ndef(\wsetta).addSpec(\legato, [0.1, 10, \exp]);
@@ -147,18 +158,10 @@ Ndef(\wsetta).addSpec(\wsamp, \amp);
 
 Ndef(\wsetta).addSpec(\progress, [-34, 34, 0, 1]);
 
-// ndef source is the Tdef ...
-Ndef(\wsetta).prime(Tdef(\wsetta));
 
-// and a silent dummy sound source, which determines the param names in order.
-// could also put some post-processing in here:
-Ndef(\wsetta).put(5, { |amp,
-	num = 10, repeats = 1, progress = 10,
-	legato = 1, rate = 1, rate2 = 1, pan = 0.5|
-	Silent.ar(2);
-});
-// get default settings:
-Ndef(\wsetta).supplementNodeMap;
+// ndef source is the Tdef ...
+Ndef(\wsetta).put(5, Tdef(\wsetta));
+
 );
 
 // simple, no random variation except pan
@@ -178,6 +181,8 @@ Tdef(\wsetta, {
 	var posSpec = mytdef.getSpec(\pos);
 
 	var remainDT = 0.05;
+
+	mymap.postcs;
 
 	"% runs ... \n".postf(mytdef);
 
@@ -250,4 +255,4 @@ Tdef(\wsetta, {
 );
 
 // return the Ndef!
-Ndef(\wsetta);
+Ndef(\wsetta).dump;

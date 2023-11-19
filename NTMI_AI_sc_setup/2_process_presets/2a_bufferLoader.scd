@@ -1,6 +1,6 @@
 /// load global buffers
 
-var globalBufFolder = q.prefs.active.bufferFolder;
+var globalBufFolder = NTMI.prefs.active.bufferFolder;
 var bufsName = \global;
 if (globalBufFolder.notNil) {
 

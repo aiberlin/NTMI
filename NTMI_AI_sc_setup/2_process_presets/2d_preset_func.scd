@@ -1,42 +1,37 @@
 /*
 NdefPresetGui(NdefPreset(\allArm), 20);
-q.pre.userSettingsDir.openOS;
-q.pre.incrementSeed(Ndef(\allArm));
+NTMI.pre.userSettingsDir.openOS;
+NTMI.pre.incrementSeed(Ndef(\allArm));
 */
 "\n... loading presets ...".postln;
 
-q.pre = q.pre ? ();
-q.pre.settingsDir = q.dir.userPOOL +/+ "2_process/presets/";
-q.pre.settingsDir.pathMatch;
+NTMI.pre = NTMI.pre ? ();
+NTMI.pre.settingsDir = NTMI.dir.userPOOL +/+ "2_process/presets/";
+NTMI.pre.settingsDir.pathMatch;
 
 if (ProxyPreset.findMethod(\addsToTop).notNil) {
 	"*** ProxyPreset: adding new presets to top".postln;
-	q.pre.addsToTop = true;
+	NTMI.pre.addsToTop = true;
 } {
 	"*** ProxyPreset: cannot add new presets to top - Please do:\n"
 	" Quark(\"JITLibExtensions\").update;\n".postln;
 };
 
 (
-q.pre.makePreset = { |pre, proxy|
+NTMI.pre.makePreset = { |preDict, proxy|
 
+	// all controlKeys except \amp:
 	var defaultNamesToStore = proxy.controlKeys.reject( _ == \amp);
 	var name = proxy.key;
 	var preset, presPath, namesToStore;
 
 	// set namesToStore if not already there:
 	if (proxy.getHalo(\namesToStore).isNil) {
-		// all controlKeys except \amp:
-		proxy.addHalo(\namesToStore, proxy.controlKeys.reject( _ == \amp))
+		proxy.addHalo(\namesToStore, defaultNamesToStore)
 	};
-	// uses getHalo(\namesToStore):
+	// // uses getHalo(\namesToStore):
 	preset = NdefPreset(proxy);
-	presPath = (q.pre.settingsDir +/+ name ++ ".pxpreset.scd");
-
-	//////// enable this line to tell influx to use same names;
-	//////// so Influx will not set amp values.
-	//////// e.g. if amp comes from overall interface activity etc...
-	// proxy.addHalo(\orderedNames, namesToStore);
+	presPath = (NTMI.pre.settingsDir +/+ name ++ ".pxpreset.scd");
 
 	if(File.exists(presPath)){
 		preset.loadSettings(presPath);
@@ -47,19 +42,20 @@ q.pre.makePreset = { |pre, proxy|
 	};
 	preset.storePath_(presPath);
 
-	if (q.pre.addsToTop == true){
+	if (NTMI.pre.addsToTop == true){
 		preset.perform(\addsToTop_, true);
 	};
+	preset
 };
 
 // making all the presets here
-q.pre.ntmi = q.ndef.groups[\NTMI].collect { |proxy, i|
-	q.pre.makePreset(proxy)
+NTMI.pre.presets = NTMI.ndef.groups[\NTMI].collect { |proxy, i|
+	NTMI.pre.makePreset(proxy)
 };
 );
 
 // init to first preset if there are any saved ones
-q.pre.ntmi.do { |pre|
+NTMI.pre.ntmi.do { |pre|
 	var secondSet;
 	if (pre.settings.size > 1) {
 		secondSet = pre.settings[1].key;
@@ -68,8 +64,8 @@ q.pre.ntmi.do { |pre|
 };
 
 "set preferred preset names:".postln;
-q.prefs.active.presetNames.printAll;
-q.prefs.active.presetNames.do { |assoc, i|
+NTMI.prefs.active.presetNames.printAll;
+NTMI.prefs.active.presetNames.do { |assoc, i|
 	var key = assoc.key, val = assoc.value.value;
 	var preset = NdefPreset.all[key];
 	var prekey = if (val.isKindOf(Symbol)) { val } { preset.settings.wrapAt(val).key };
@@ -79,7 +75,7 @@ q.prefs.active.presetNames.do { |assoc, i|
 
 
 // increments and stores a random seed per ndefPreset.
-q.pre.incrementSeed = {|q, proxy, inc=1|
+NTMI.pre.incrementSeed = {|q, proxy, inc=1|
 	var preset = proxy.getHalo(\ndefPreset);
 	var seed = proxy.getHalo(\seed) ? 0;
 	if(preset.notNil){
@@ -95,7 +91,7 @@ q.pre.incrementSeed = {|q, proxy, inc=1|
 MFdef(\snapshot1).add(\getset, { |proxy|
 	var presy = NdefPreset(proxy);
 	var setty = proxy.getKeysValues(presy.namesToStore);
-	var name = "%_%".format(q.myname, Date.getDate.stamp).asSymbol;
+	var name = "%_%".format(NTMI.myname, Date.getDate.stamp).asSymbol;
 	"% - preset %\n".postf(presy, name);
 	// saves to disk!
 	presy.addSet(name, setty, true);
@@ -103,14 +99,14 @@ MFdef(\snapshot1).add(\getset, { |proxy|
 
 MFdef(\snapshot).add(\getset, { |proxy|
 	"MFdef(\snapshot) stores:".postln;
-	q.slots.nowPlaying.do { |proxy|
+	NTMI.slots.nowPlaying.do { |proxy|
 		MFdef(\snapshot1).(proxy);
 	};
 });
 
 
 // inc nil: rand, 1 is next, 2 is prev in list
-q.pre.stepNdefInf = { |dict, ndef, inc|
+NTMI.pre.stepNdefInf = { |dict, ndef, inc|
 	var pre = NdefPreset(ndef.key);
 	var nextNames = pre.getSetNames.reject(_ == \curr);
 	var currName, currIndex, nextIndex, nextName;
@@ -127,6 +123,6 @@ q.pre.stepNdefInf = { |dict, ndef, inc|
 		nextName = nextNames[nextIndex];
 		">>> % setting: % at index: % \n\n".postf(pre, nextName.cs, nextIndex);
 		pre.setCurr(nextName, true).setProxy(nextName);
-		q.inphlux.offsetsFromPreset(*[pre, nextName]);
+		NTMI.inphlux.offsetsFromPreset(*[pre, nextName]);
 	};
 };
