@@ -1,30 +1,30 @@
-// q.zoom sets all the influx'es inScalers AND RandomOrbit's excursion from current state.
+// NTMI.zoom sets all the influx'es inScalers AND RandomOrbit's excursion from current state.
 
-q.zoom = q.zoom?1;
+NTMI.zoom = NTMI.zoom?1;
 
 // tune this for jitter on zoom pot on NTMI
 Spec.add(\zoom, [0, 1, \lin, 0.025]);
 
-q.setZoom = {|ev, val|
+NTMI.setZoom = {|ev, val|
 	val = \zoom.asSpec.constrain(val);
 	// "global ZOOM f. RandomOrbits and Influxes: %\n".postf(val);
-	q.zoom = val;
+	NTMI.zoom = val;
 
-	q.inphlux.inScaler = q.zoom;
-	"zoom: %\n".postf(q.zoom);
+	NTMI.inphlux.inScaler = NTMI.zoom;
+	"zoom: %\n".postf(NTMI.zoom);
    // return value
 	val
 };
 // increment / decrement
-q.incZoom = {|ev, inc=0.1|
-	q.setZoom((q.zoom + inc));
+NTMI.incZoom = {|ev, inc=0.1|
+	NTMI.setZoom((NTMI.zoom + inc));
 };
 
 // switch modes - analog in vs. IMU /// touch vs move mode
-// q.inph.modes = [\full, \move, \touch, \binary, \off];
-q.inph.modes = [\full, \touch, \binary]; //
-q.inph.modeIndex = 0;
-q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
+// NTMI.inph.modes = [\full, \move, \touch, \binary, \off];
+NTMI.inph.modes = [\full, \touch, \binary]; //
+NTMI.inph.modeIndex = 0;
+NTMI.inph.mode = { NTMI.inph.modes.wrapAt(NTMI.inph.modeIndex) };
 
 
 /////// functions that switch the main modes components on/off:
@@ -37,20 +37,20 @@ q.inph.mode = { q.inph.modes.wrapAt(q.inph.modeIndex) };
 
 
 MFdef(\inphModeSetIndex).add(\set, { |modeIndex = 0|
-	if (q.inph.modeIndex != modeIndex) {
-		q.inph.modeIndex = modeIndex % q.inph.modes.size;
-		"\n******* NEW MODE: % *****\n".postf(q.inph.mode);
+	if (NTMI.inph.modeIndex != modeIndex) {
+		NTMI.inph.modeIndex = modeIndex % NTMI.inph.modes.size;
+		"\n******* NEW MODE: % *****\n".postf(NTMI.inph.mode);
 		(
 			move:  { MFdef(\moveON).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
 			touch: { MFdef(\moveOFF).value; MFdef(\touchON).value; MFdef(\binOFF).value; },
 			full:  { MFdef(\moveON).value;  MFdef(\touchON).value; MFdef(\binOFF).value; },
 			binary: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binON).value; },
 			off: { MFdef(\moveOFF).value;  MFdef(\touchOFF).value; MFdef(\binOFF).value; },
-		)[q.inph.mode].value;
+		)[NTMI.inph.mode].value;
 	};
 });
 
 MFdef(\inphModeStep).add(\step, { |inc = 1|
-	inc = inc ?? { q.inph.modes.size.rand };
-	MFdef(\inphModeSetIndex).value(q.inph.modeIndex + inc);
+	inc = inc ?? { NTMI.inph.modes.size.rand };
+	MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex + inc);
 });
