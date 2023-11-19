@@ -8,6 +8,12 @@ g.makeGui.slotSounds;
 
 */
 
+var q, g;
+NTMI.g = NTMI.g ? (); // global dict
+q = NTMI.q;
+g = NTMI.g;
+
+
 g.makeGui.slotSounds = { |dict, name = \slotSounds|
 	var scbn = Window.availableBounds;
 	var maxHeight = 440; // scbn.height - 20;

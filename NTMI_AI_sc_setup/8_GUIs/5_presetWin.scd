@@ -1,5 +1,10 @@
 ////// function to make a presetWin if needed
 
+var q, g;
+NTMI.g = NTMI.g ? (); // global dict
+q = NTMI.q;
+g = NTMI.g;
+
 (
 g.makeGui.presets = { |dict, name = \presets|
 	var pxs = q.ndefs;

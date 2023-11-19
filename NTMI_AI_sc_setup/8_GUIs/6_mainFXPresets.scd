@@ -1,79 +1,79 @@
 ///// todo: move to ProxyChainPreset ...
 
-g.makeGui.mainFX = {
-	q.mfx.font = Font(g.fontName, 18);
+NTMI.g.makeGui.mainFX = {
+	NTMI.mfx.font = Font(g.fontName, 18);
 
 
-	q.mfx.highKeys = [];
-	q.mfx.srcKeys = q.mFX.slotNames;
-	q.mfx.maxItems = (Window.availableBounds.height - 50 / 20).round.asInteger;
+	NTMI.mfx.highKeys = [];
+	NTMI.mfx.srcKeys = NTMI.mFX.slotNames;
+	NTMI.mfx.maxItems = (Window.availableBounds.height - 50 / 20).round.asInteger;
 
-	try { q.mfx.win.close };
-	q.mfx.win = Window('mainFX',
+	try { NTMI.mfx.win.close };
+	NTMI.mfx.win = Window('mainFX',
 		Rect(0,0, 520, min(800, Window.availableBounds.height - 20));
 		).front;
-	q.mfx.win.addFlowLayout;
+	NTMI.mfx.win.addFlowLayout;
 
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
-	// q.mfx.pcnum = EZNumber(q.mfx.win, Rect(0, 0, 100, 30), 'vfxChpre', [0, 99, \lin, 1], { |nb|
-	// 	nb.value_(nb.value.asInteger.wrap(0, q.mfx.pcpop.items.size - 1));
-	// 	q.mfx.pcpop.valueAction_(nb.value);
-	// }, labelWidth: 60).font_(q.mfx.font);
-	// q.mfx.pcnum.numberView.keyDownAction = { |nv, char|
+	// NTMI.mfx.pcnum = EZNumber(NTMI.mfx.win, Rect(0, 0, 100, 30), 'vfxChpre', [0, 99, \lin, 1], { |nb|
+	// 	nb.value_(nb.value.asInteger.wrap(0, NTMI.mfx.pcpop.items.size - 1));
+	// 	NTMI.mfx.pcpop.valueAction_(nb.value);
+	// }, labelWidth: 60).font_(NTMI.mfx.font);
+	// NTMI.mfx.pcnum.numberView.keyDownAction = { |nv, char|
 	// 	if (char == $r) {
-	// 		q.mfx.pcpop.valueAction_(q.mfx.pcpop.items.size.rand);
+	// 		NTMI.mfx.pcpop.valueAction_(NTMI.mfx.pcpop.items.size.rand);
 	// 	}
 	// };
 	//
-	// q.mfx.pcpop = EZPopUpMenu(q.mfx.win, Rect(0, 0, 200, 30), \, [\a, \b, \c], { |ezp|
-	// 	q.mfx.pcnum.value_(ezp.value);
+	// NTMI.mfx.pcpop = EZPopUpMenu(NTMI.mfx.win, Rect(0, 0, 200, 30), \, [\a, \b, \c], { |ezp|
+	// 	NTMI.mfx.pcnum.value_(ezp.value);
 	// 	"not working yet ... ".post; ezp.item.postcs;
-	// }, labelWidth: 5).font_(q.mfx.font);
+	// }, labelWidth: 5).font_(NTMI.mfx.font);
 	//
-	// q.mfx.storeBut = Button(q.mfx.win, Rect(0,0,60,30))
-	// .states_([["STO"]]).font_(q.mfx.font)
+	// NTMI.mfx.storeBut = Button(NTMI.mfx.win, Rect(0,0,60,30))
+	// .states_([["STO"]]).font_(NTMI.mfx.font)
 	// .action_({ "store by name - dialog ... ".postln; });
-	// q.mfx.delBut = Button(q.mfx.win, Rect(0,0,60,30))
-	// .states_([["DEL"]]).font_(q.mfx.font)
+	// NTMI.mfx.delBut = Button(NTMI.mfx.win, Rect(0,0,60,30))
+	// .states_([["DEL"]]).font_(NTMI.mfx.font)
 	// .action_({ "deleting by name - select view ... ".postln; });
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
 
-	q.mfx.prepop = EZPopUpMenu(q.mfx.win, Rect(0,0, 320, 30), \mainPresetz, q.mfx.preNames, { |ezp|
+	NTMI.mfx.prepop = EZPopUpMenu(NTMI.mfx.win, Rect(0,0, 320, 30), \mainPresetz, NTMI.mfx.preNames, { |ezp|
 		MFdef(\mainPre).(ezp.item);
 	}, labelWidth: 120);
-	q.mfx.prepop.font_(q.mfx.font);
+	NTMI.mfx.prepop.font_(NTMI.mfx.font);
 
 	[ "¿x?", "prev", "next" ].collect { |label, i|
-		Button(q.mfx.win, Rect(0,0,50,30))
-		.states_([[label]]).font_(q.mfx.font)
+		Button(NTMI.mfx.win, Rect(0,0,50,30))
+		.states_([[label]]).font_(NTMI.mfx.font)
 		.action_({
 			MFdef(\mainPreStep).([nil, -1, 1]@i)
 		});
 	};
 
 
-	// q.mfx.slotPrePop = EZPopUpMenu(q.mfx.win, Rect(0, 0, 100, 30), \, q.mFX.slotNames.array, { |ezp|
-	// 	var newpre = q.mfx.pxPres[ezp.item];
-	// 	q.mfx.pxPreGui.object = newpre;
-	// 	q.mfx.setHighKeys(ProxyChain.atSrcDict(ezp.item).paramNames);
-	// }, labelWidth: 5); // .font_(q.mfx.font);
+	// NTMI.mfx.slotPrePop = EZPopUpMenu(NTMI.mfx.win, Rect(0, 0, 100, 30), \, NTMI.mFX.slotNames.array, { |ezp|
+	// 	var newpre = NTMI.mfx.pxPres[ezp.item];
+	// 	NTMI.mfx.pxPreGui.object = newpre;
+	// 	NTMI.mfx.setHighKeys(ProxyChain.atSrcDict(ezp.item).paramNames);
+	// }, labelWidth: 5); // .font_(NTMI.mfx.font);
 	//
-	// q.mfx.pxPreGui = NdefPresetGui(parent: q.mfx.win);
+	// NTMI.mfx.pxPreGui = NdefPresetGui(parent: NTMI.mfx.win);
 	//
-	// q.mfx.slotPrePop.valueAction_(11);
+	// NTMI.mfx.slotPrePop.valueAction_(11);
 	//
-	q.mfx.mgui = q.mfx.chain.gui(
-			min(q.mfx.maxItems, 50),
-			parent: q.mfx.win);
-	q.mfx.win.bounds_(q.mfx.win.bounds.moveTo(790, 1200));
-	q.mfx.win.alpha_(0.85);
+	NTMI.mfx.mgui = NTMI.mfx.chain.gui(
+			min(NTMI.mfx.maxItems, 50),
+			parent: NTMI.mfx.win);
+	NTMI.mfx.win.bounds_(NTMI.mfx.win.bounds.moveTo(790, 1200));
+	NTMI.mfx.win.alpha_(0.85);
 
-	q.tuneNameView(q.mfx.mgui.editGui);
+	NTMI.tuneNameView(NTMI.mfx.mgui.editGui);
 
 	// not fully working yet - needs to be triggered
-	q.mfx.setHighKeys = { |dict, highKeys|
-		q.mfx.highKeys = highKeys;
-		q.mfx.mgui.editGui.paramGui.paramViews.do { |pv|
+	NTMI.mfx.setHighKeys = { |dict, highKeys|
+		NTMI.mfx.highKeys = highKeys;
+		NTMI.mfx.mgui.editGui.paramGui.paramViews.do { |pv|
 			if (highKeys.includes(pv.label)) {
 				pv.background_(Color.green(0.8))
 			} {
@@ -82,12 +82,12 @@ g.makeGui.mainFX = {
 		}
 	};
 
-	q.mfx.skippa = SkipJack({
-		if (q.mfx.prepop.item != q.mfx.currDomain) {
-			q.mfx.prepop.value = q.mfx.domainIndex
+	NTMI.mfx.skippa = SkipJack({
+		if (NTMI.mfx.prepop.item != NTMI.mfx.currDomain) {
+			NTMI.mfx.prepop.value = NTMI.mfx.domainIndex
 		};
-		q.mFX.proxyChain.proxy.cleanNodeMap;
-	}, 0.5, { q.mfx.win.isClosed });
+		NTMI.mFX.proxyChain.proxy.cleanNodeMap;
+	}, 0.5, { NTMI.mfx.win.isClosed });
 
 };
 

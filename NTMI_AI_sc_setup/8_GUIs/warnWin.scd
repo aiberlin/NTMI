@@ -1,5 +1,5 @@
 
-q.warnWin = { |q, string="?!?", title="?!?"|
+NTMI.q.warnWin = { |q, string="?!?", title="?!?"|
 	var w = Window("Warning: %".format(title)).front.alwaysOnTop_(true);
 	var tv = StaticText(w, w.view.bounds);
 	tv.background_(Color(1, 0.75));

@@ -1,7 +1,9 @@
 // all window making functions go here:
 (
-q = q ? (); // global dict
-g = g ? (); // gui-related dict
+var q, g;
+NTMI.g = NTMI.g ? (); // dict for gui stuff
+q = NTMI.q;
+g = NTMI.g;
 
 //// set global prefs here:
 g.alpha = g.alpha ? 0.8;

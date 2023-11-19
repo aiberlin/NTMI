@@ -17,6 +17,10 @@ g.main.ndefMViews[0].label;
 g.makeGui['NTMI_Main'].value;
 */
 
+var g = NTMI.g;
+var q = NTMI.q;
+
+
 g.main = g.main ? ();
 g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 

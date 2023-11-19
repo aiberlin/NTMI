@@ -11,6 +11,10 @@ include preset number and and inScaler in  SkipJack !
 
 */
 
+var q, g;
+NTMI.g = NTMI.g ? (); // global dict
+q = NTMI.q;
+g = NTMI.g;
 
 g.makeGui.inphlux = { |dict, name = \inphlux|
 	var bnds = Window.availableBounds;

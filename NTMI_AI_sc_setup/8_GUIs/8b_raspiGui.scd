@@ -10,6 +10,10 @@
 // 	g.makeGui['miniNTMI'].value;
 // });
 
+var g = NTMI.g;
+var q = NTMI.q;
+
+
 MFdef(\miniGuiUpdate).add(\slots, {
 	// "slots...".postln;
 });

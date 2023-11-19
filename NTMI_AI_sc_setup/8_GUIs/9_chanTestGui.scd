@@ -1,6 +1,6 @@
 
 
-g.makeGui.chanTest = {
+NTMI.g.makeGui.chanTest = {
 
 	q.chantest.win = Window("chanTest").front;
 	q.chantest.win.addFlowLayout;
