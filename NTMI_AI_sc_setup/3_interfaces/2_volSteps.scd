@@ -6,7 +6,7 @@ MFdef(\mainStepVol).add(\step, { |inc = 0|
 	// 1.0 is quadratic, step1 -> 1, step 2 -> 4 etc
 	var acceleration = inc.abs ** 1.0;
 	"mainVol % by %\n".postf([\down, \up].wrapAt(inc.clip(0, 1)), inc);
-	RelSet(q.mFX.pxChain.proxy, \mainVol, inc * acceleration * 0.01);
+	RelSet(MainFX(s).proxy, \mainVol, inc * acceleration * 0.01);
 });
 
 MFdef(\stepVol).add(\step, { |ndef, step = 1|
@@ -18,9 +18,9 @@ MFdef(\stepVol).add(\step, { |ndef, step = 1|
 });
 
 MFdef(\stepSlotPres).add(\step, { |step|
-	var activeNdefs = q.inphlux.action.activeNames.collect(Ndef(_));
+	var activeNdefs = NTMI.inphlux.action.activeNames.collect(Ndef(_));
 	activeNdefs.do { |nd, j|
-		q.pre.stepNdefInf( nd, step );
+		NTMI.pre.stepNdefInf( nd, step );
 	};
 });
 

@@ -4,27 +4,27 @@ OSCdef.trace(false);
 */
 
 
-q.waitForNufo = true;
+NTMI.waitForNufo = true;
 
 // detect nUFO presence:
 OSCdef(\nUFOdetectIMU, { |msg|
-	if (q.waitForNufo) {
+	if (NTMI.waitForNufo) {
 		"*** nUFO detected! loading nUFO interface.".postln;
-		q.waitForNufo = false;
-		(q.dir.user +/+ "3_interfaces/optionals/*nufo*.scd")
+		NTMI.waitForNufo = false;
+		(NTMI.dir.user +/+ "3_interfaces/optionals/*nufo*.scd")
 		.pathMatch.do(_.loadPaths);
 		"*** nUFO loaded! .".postln;
 
 	};
 }, "/ntmi/imu").permanent;
 
-q.knownNUFOs = [];
+NTMI.knownNUFOs = [];
 // wait for nUFO ID, decide whether to connect:
 OSCdef(\nUFOdetectID, { |msg|
 	var newID = msg[1];
-	if (q.knownNUFOs.includes(newID).not) {
-		q.knownNUFOs = q.knownNUFOs.add(newID);
-		"*** q.knownNUFOs : %\n\n".postf(q.knownNUFOs.cs);
+	if (NTMI.knownNUFOs.includes(newID).not) {
+		NTMI.knownNUFOs = NTMI.knownNUFOs.add(newID);
+		"*** NTMI.knownNUFOs : %\n\n".postf(NTMI.knownNUFOs.cs);
 
 	};
 	msg.postln;
@@ -43,6 +43,6 @@ OSCdef(\nUFOdetectID, { |msg|
 //
 // }).play;
 //
-// q.nufoPresent = false;
+// NTMI.nufoPresent = false;
 //
 
