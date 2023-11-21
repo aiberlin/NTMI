@@ -2,20 +2,17 @@
 * this loadme file resides in the project folder,
 * and is not intended for user-introduced changes.
 
-(
-var types = ();
-NTMI.keysValuesDo { |key, val|
-var class = val.class;
-types.put(class, (types[class] ?? { List[] }).add(key))
-};
-types.postcs
-)
+It is configurable with variables and flags within NTMI.q.
 
-"--- contents of q: ---".postln;
-NTMI.size.postln;
-NTMI.keys(SortedList).do("NTMI.% : %\n".postf(_, _, _));
-"--- end contents of q ---".postln;
-"";
+NTMI.hasGui = false; // headless
+NTMI.usesMIDI = false; // will not use MIDI interfaces
+NTMI.usesHID = false; // will not use MIDI interfaces
+
+NTMI.reboot = false; // keep server running, dont set its options
+NTMI.usesMainFX = false; // dont load MainFX
+NTMI.usesHID = false; // will not use MIDI interfaces
+
+
 
 */
 
@@ -29,8 +26,8 @@ Task {
 	LoadMe.start;
 
 
-	q = q ? ();  // <- dict for most everything
-	g = g ? ();  // <- gui stuff goes here!
+	// q = q ? ();  // <- dict for most everything
+	// g = g ? ();  // <- gui stuff goes here!
 
 	//// Set generally useful globals:
 
@@ -40,12 +37,11 @@ Task {
 
 	LoadMe("0_setDirs.scd");
 
+	0.1.wait;
+
 	//******* PREFERENCES
 	///// read user prefs (if there) or copy default prefs there:
 	LoadMe("1_prefs/1_prefs.scd");
-
-	// temp bridge, remove later
-	// q = NTMI.q;
 
 	// Set flags for which parts to load:
 	// on headless systems, dont use guis
@@ -133,10 +129,10 @@ Task {
 
 		LoadMe(NTMI.prefs.active.postBootSetup);
 
-		LoadMe("2_process_presets/2a_bufferLoader.scd").postcs;
-		LoadMe("2_process_presets/2b_liveInput.scd").postcs;
-		LoadMe("2_process_presets/2c_loadProcesses.scd").postcs;
-		LoadMe("2_process_presets/2d_preset*.scd").postln;
+		LoadMe("2_process_presets/2a_bufferLoader.scd");
+		LoadMe("2_process_presets/2b_liveInput.scd");
+		LoadMe("2_process_presets/2c_loadProcesses.scd");
+		LoadMe("2_process_presets/2d_preset*.scd");
 
 
 		/********** INTERFACES *********/
@@ -151,7 +147,6 @@ Task {
 		if (NTMI.usesMainFX) {
 			LoadMe("6_MainFX.scd");
 		};
-
 
 		if (NTMI.hasGui) {
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
