@@ -1,19 +1,21 @@
 /*
 OSCdef.trace(true, true);
 OSCdef.trace(false);
+MKtl.all.nUFO; // exists?
 */
-
 
 NTMI.waitForNufo = true;
 
-// detect nUFO presence:
+// detect nUFO presence, assuming nufo always sends imu:
 OSCdef(\nUFOdetectIMU, { |msg|
 	if (NTMI.waitForNufo) {
-		"*** nUFO detected! loading nUFO interface.".postln;
+		"*** nUFO detected!".postln;
 		NTMI.waitForNufo = false;
-		(NTMI.dir.user +/+ "3_interfaces/optionals/*nufo*.scd")
-		.pathMatch.do(_.loadPaths);
-		"*** nUFO loaded! .".postln;
+		if (MKtl.all.nUFO.isNil) {
+			"*** loading nUFO interface.".postln;
+			LoadMe(NTMI.dir.setup +/+ "3_interfaces/optionals/*nufo*.scd");
+			"*** nUFO loaded! .".postln;
+		};
 
 	};
 }, "/ntmi/imu").permanent;
@@ -25,24 +27,11 @@ OSCdef(\nUFOdetectID, { |msg|
 	if (NTMI.knownNUFOs.includes(newID).not) {
 		NTMI.knownNUFOs = NTMI.knownNUFOs.add(newID);
 		"*** NTMI.knownNUFOs : %\n\n".postf(NTMI.knownNUFOs.cs);
-
+		if (MKtl.all.nUFO.isNil) {
+			LoadMe(NTMI.dir.setup +/+ "3_interfaces/optionals/*nufo*.scd");
+		};
 	};
 	msg.postln;
 }, "/ntmi/ID")
 
-
-
-
-// // when imu message detected, alive;
-// // keep imu messages in 5-sec buffer,
-// // count as framerate, when framerate is too low,
-// // consider dead.
-// // also check nufoID!
-// Tdef('nufoDetect').set(\nufoPresent, false);
-// Tdef('nufoDetect', { |env|
-//
-// }).play;
-//
-// NTMI.nufoPresent = false;
-//
 
