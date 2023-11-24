@@ -542,20 +542,23 @@ MFdef(\nUFOImuFunc).add(\setInflux, {
 
 
 NTMI.frame = NTMI.frame ? ();
-NTMI.frame.ring = Array.fill(10, 0);
+NTMI.frame.ring = Array.fill(100, 0);
 NTMI.frame.index = 0;
 NTMI.frame.rate = {
 	var now = Main.elapsedTime;
 	var newest = NTMI.frame.ring.wrapAt(NTMI.frame.index - 1);
 	var oldest = NTMI.frame.ring.at(NTMI.frame.index);
+	var frameRate =
 	if (now - newest < 0.5) {
 		NTMI.frame.ring.size - 1 / (newest - oldest);
 	} {
-		// oops, dropout?
+		// "// oops, dropout?".postln;
 		NTMI.frame.ring.size - 1 / (now - oldest);
 	};
+	// "old: % new: % avg: %\n".postf(*[oldest, newest, frameRate].round(0.001));
+	frameRate
 };
-NTMI.frame.rateStr = { "nUFO @ % fps".format(NTMI.frame.rate.round(1)) };
+NTMI.frame.rateStr = { "nUFO @ % fps".format(NTMI.frame.rate.round(0.1)) };
 /*
 NTMI.frame.rate
 NTMI.frame.rateStr
@@ -573,8 +576,8 @@ MFdef(\nUFOImuFunc).enable( \setInflux );
 
 NTMI.osc.nUFOSkipLogin.stop.free;
 NTMI.osc.nUFOSkipLogin = SkipJack({
-	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login")
-} }, 0.5);
+	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login") }
+}, 0.5);
 
 // for monitoring the incoming osc activity by timetag
 NTMI.osc.lastInTime = 0;
