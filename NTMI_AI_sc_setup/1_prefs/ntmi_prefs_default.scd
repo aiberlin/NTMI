@@ -9,23 +9,42 @@
   filenames of code files to load can be:
 * relative, like "serverBasic2.scd", which will be taken from the project folder, or
 * absolute, like "~/mycode/ntmi/myServerSetup23.scd", which is a full path.
-* or make a path from user folder: (NTMI.dir.user +/+ "myFile.scd")
 
 */
 
 
 (
-'name': 'default', // <- put your user name here
+'name': '???', // <- put your user name here
 'numIns': 2,       // number of input channels to use
 'numChans': 2,     // number of output channels to use in the slot sounds and MainFX
 
-// flag whether to run gui-related code or not - true for macOS,
-/// false for headless systems, e.g. raspberry or bela
+//// a flag whether to run gui-related code or not
+//// - usually true for desktop systems, macOS, windows, linux,
+/// and false for headless systems, e.g. raspberry lite or bela
 'hasGui': true,
+//// a flag whether NTMI should reboot the server if already running,
+//// so it can set server options as needed:
+reboot: true,
 
-// four stages where personalized extra code can be inserted:
+//// a flag whether to load the MainFX collection provided with NTMI:
+usesMainFX: true,
 
-// after first globals are loaded, a script to configure the server
+//// flags whether to look for MIDI resp. HID interfaces -
+//// turning them off if you dont need them will speed up loading
+usesMidi: true,
+usesHid: true,
+//// tell NTMI which default interfaces to load.
+//// turn off the ones you do not need,
+//// unless you want to use them from their GUIs:
+interfacesToLoad: [ "ferrari", "uc4", "nanoKtl" ],
+
+//// folder with soundfiles to use for buffer-using sound processes
+//// NTMI quark has some default example files here:
+bufferFolder: { NTMI.dir.setup +/+ "/soundfiles/" },
+
+// There are four stages where personalizing code can be inserted:
+
+// After the first globals are loaded, a script to configure the server
 //////// filename for the server setup
 'serverSetup': "serverBasic2.scd",
 
@@ -41,44 +60,59 @@
 // personalize after loadMe file setup is finished
 'finalSetup': NTMI.dir.user +/+ "finalSetup.scd",
 
-///////// OPTIONAL: ////////////////
-//// specify wich specific processNames to load
-//// if none given or commented out,
-//// all processes found in POOL folders will be loaded.
-processNames: [
-	'allArm', 'bleepo', 'brushes', 'cat', 'dog',
-	'etude', 'filterFB', 'formSing', 'frya', 'kiteHi',
-	'moogSing', 'revFB', 'rjkChaos', 'robTron', 'test',
-	// 'varsawFB', 'vowel',
-	'xFMSH',
-	// 'xf-bufFun', 'xf-ringMod'
-],
+///////////// OPTIONAL: ////////////////
+//////// specify wich specific processNames to load
+//////// if none given or commented out,
+//////// all processes found in POOL folders will be loaded.
+// processNames: [
+// 	// 'allArm', 'bleepo', 'brushes',
+// 	'cat', 'dog',
+// 	//'etude', 'filterFB', 'formSing', 'frya', 'kiteHi',
+// 	// 'moogSing',
+// 	'revFB', 'rjkChaos',
+// 	'robTron', 'testMissing',
+// 	'varsawFB', 'vowel', 'xFMSH',
+// 	// 'xf-bufFun', 'xf-ringMod'
+// ],
 
+// THE 4 sounds to load into the slots on startup:
+'defaultActives': [ 'bleepo', 'xFMSH', 'rjkChaos', 'revFB' ],
+// if any of these dont exist as Ndefs, available Ndefs
+// will be picked randomly for these slots.
 
-// THE 4 sounds to load into the slots on startup
-'defaultActives': [ 'cat', 'xFMSH', 'robTron', 'revFB' ],
-
-/// TODO: which Ndef-presets to select for each sound slots
+//// Define which Ndef-presets to select for all sound processes,
+//// including the four sound slots
 presetNames: [
-	'cat' -> 'katz',
-	'xFMSH' -> 'basso3',
-	'robTron' -> 'sego',
-	'revFB' -> 'slolo',
+	'bleepo' -> 'vocca',
+	'xFMSH' -> 'border',
+	\revFB -> \slolo,
+	'rjkChaos' -> 89, // can also be an index number
+	// or a function that generates an index number:
+	\robTron -> { |pre| 2000.rand },
 ],
 
-////// Make six influx presets for different random seed numbers
-////// Number 6 is fix, to allow 6 button colors on Interactor buttons!
-////// plus diagL preset for simple 1-1 control
-// /// TODO: influxPresets from code filenames if not numbers ...
-influxPresets: [ 3, 12, 37, 42, 45, 86, \diagL ],
-// the preset key/name to set it to
-influxPreset: 3,
 
+/////////// INFLUX: //////
+//// The NTMI influx uses one of weight matrices to translate
+//// input from controllers into influences on the processes.
+//// these weights can be generated from randomSeeds,
+//// or by lookup names.
+
+
+//// for influxPresets, set random seed numbers:
+//// TODO: should also take strings for codefile paths ...
+// influxPresets: [ 15, 12, 37, 42, 45, 86, \diagL ],
+influxPresets: [ 7, 13, 23, 37, 42, 86, rrand(0, 1000), \diagL ],
+
+// the preset key/name to set on startup
+influxPreset: 23,
+
+///////////// NOT ACTIVE YET : //////
 // code filenames with collections of effects funcs to load
 // load everything in basic collection allFX for now
 effects: [ "allFX.scd" ],
 
-// the slotNames to put into the MainFX:
+// the slotNames to put into the MainFX - NTMI.mFX :
 mfxSlotNames: [
 	'00_in', '0OnePolBal', '0_DBComp', '0_comp', '0_gate', '0freqBal',
 	'1comby', '1holz', '1ixiDist',
@@ -91,6 +125,6 @@ mfxSlotNames: [
 // TODO: put all stored presets here, theology etc
 mfxPresets: [ ],
 
-// TODO: the first MFX preset to switch to
+// this works already - the first MFX preset to switch to
 mfxPreset: \cybernetics
 )

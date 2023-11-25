@@ -17,7 +17,7 @@ NTMI {
 		q = (
 			run: {|dict, path|
 				path = (path ? Quark("NTMI").localPath +/+ "NTMI_AI_sc_setup/00_loadMe.scd");
-				path.load
+				path.loadPaths
 			},
 		)
 	}

@@ -18,7 +18,7 @@ q.liveInput = Ndef(\liveInput, { |inChanA=0, inAmpA=1, inChanB=1, inAmpB=0, thre
 	Limiter.ar(in);
 });
 
-
+Ndef(\liveInput);
 
 /*
 q.liveInput.playN( (1..q.numChans)-1, vol: 0);

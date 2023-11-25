@@ -145,6 +145,7 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 		NTMI.mfx.currDomain =  domainName;
 		NTMI.mfx.domainIndex = NTMI.mfx.preNames.indexOf(domainName);
 
+		"\n*** MainPre: switching to %. ***\n".postf(domainName.cs);
 
 		// remove all but...
 		NTMI.mfx.srcKeys
@@ -179,7 +180,7 @@ MFdef(\mainVol).add(\main, { |univol = 0.5|
 	NTMI.mFX.pxChain.proxy.setUni(\mainVol, univol);
 });
 
-MFdef(\mainPre).value(\baseset);
+MFdef(\mainPre).value(NTMI.prefs.active.mfxPreset ? NTMI.mfx.preNames.choose);
 
 MFdef(\mainPreStep).add(\inc, { |inc|
 	var nextIndex, nextName;
