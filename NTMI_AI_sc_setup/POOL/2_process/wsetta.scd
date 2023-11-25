@@ -162,6 +162,7 @@ Ndef(\wsetta).addSpec(\progress, [-34, 34, 0, 1]);
 // ndef source is the Tdef ...
 Ndef(\wsetta).put(5, Tdef(\wsetta));
 
+Ndef(\wsetta).end;
 );
 
 // simple, no random variation except pan
@@ -255,4 +256,4 @@ Tdef(\wsetta, {
 );
 
 // return the Ndef!
-Ndef(\wsetta).dump;
+Ndef(\wsetta);
