@@ -175,12 +175,12 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 	};
 });
 
-MFdef(\getMainVol).add(\get, { |univol = 0.5|
-	q.mFX.proxyChain.proxy.getUni(\mainVol);
+MFdef(\getMainVol).add(\get, {
+	NTMI.mFX.proxyChain.proxy.get(\mainVol);
 });
 
-MFdef(\mainVol).add(\main, { |univol = 0.5|
-	NTMI.mFX.pxChain.proxy.setUni(\mainVol, univol);
+MFdef(\mainVol).add(\main, { |vol = 1|
+	NTMI.mFX.pxChain.proxy.set(\mainVol, vol);
 });
 
 MFdef(\mainPre).value(NTMI.prefs.active.mfxPreset ? NTMI.mfx.preNames.choose);

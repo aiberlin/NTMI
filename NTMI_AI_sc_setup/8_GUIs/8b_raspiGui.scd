@@ -1,5 +1,6 @@
 // Sketch for miniature GUI for raspi-box screens:
 // designed for small fixed size, 3.5 inch, 480x320 pixels.
+//// still very incomplete!
 
 // Butz.numButz = 24;
 // Butz.w.close;
@@ -9,6 +10,7 @@
 // WinBounds.addMake('miniNTMI', {
 // 	g.makeGui['miniNTMI'].value;
 // });
+
 
 var g = NTMI.g;
 var q = NTMI.q;
@@ -37,7 +39,7 @@ MFdef(\miniGuiUpdate).value;
 
 MFdef(\miniGuiUpdate).add(\modeZoom, {
 
-	var mainvol = q.mfx.chain.proxy.get(\mainVol).round(0.001);
+	var mainvol = MFdef(\getMainVol).value.unbubble;
 
 	if (g.mini.mainVol.value != mainvol) {
 		g.mini.mainVol.value = mainvol
@@ -47,7 +49,7 @@ MFdef(\miniGuiUpdate).add(\modeZoom, {
 		g.mini.mainPop.value = q.mfx.domainIndex
 	};
 
-		// inphlux mode to color and mview labels and values
+	// inphlux mode to color and mview labels and values
 
 	if (g.mini.backCol != q.inph.currPresetCol) {
 		// "refresh win color.".postln;
@@ -129,7 +131,7 @@ WinBounds.addMake(\miniNTMI, {
 
 	// MainFX:
 	g.mini.mainPop = EZPopUpMenu(w, Rect(5, 280, 120, 30), "FX:",
-		q.mfx.preNames,
+		NTMI.mfx.preNames,
 		labelWidth: 40).font_(f);
 	["<", "?", ">"].collect { |sign, i|
 		Button(w, Rect(25 * i + 130, 280, 25, 30)).states_([[sign]]).font_(f);
