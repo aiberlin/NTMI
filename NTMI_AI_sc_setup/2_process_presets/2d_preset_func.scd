@@ -90,11 +90,10 @@ NTMI.pre.incrementSeed = {|q, proxy, inc=1|
 ///// add a preset on the fly while playing
 MFdef(\snapshot1).add(\getset, { |proxy|
 	var presy = NdefPreset(proxy);
-	var setty = proxy.getKeysValues(presy.namesToStore);
-	var name = "%_%".format(NTMI.myname, Date.getDate.stamp).asSymbol;
-	"% - preset %\n".postf(presy, name);
+	var name = "%".format(Date.getDate.stamp).asSymbol;
+	"% - adding preset %\n".postf(presy, name);
 	// saves to disk!
-	presy.addSet(name, setty, true);
+	presy.addSet(name, toDisk: true);
 });
 
 MFdef(\snapshot).add(\getset, { |proxy|
@@ -103,7 +102,6 @@ MFdef(\snapshot).add(\getset, { |proxy|
 		MFdef(\snapshot1).(proxy);
 	};
 });
-
 
 // inc nil: rand, 1 is next, 2 is prev in list
 NTMI.pre.stepNdefInf = { |dict, ndef, inc|
