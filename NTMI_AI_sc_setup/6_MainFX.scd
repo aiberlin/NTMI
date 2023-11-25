@@ -175,6 +175,9 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 	};
 });
 
+MFdef(\getMainVol).add(\get, { |univol = 0.5|
+	q.mFX.proxyChain.proxy.getUni(\mainVol);
+});
 
 MFdef(\mainVol).add(\main, { |univol = 0.5|
 	NTMI.mFX.pxChain.proxy.setUni(\mainVol, univol);

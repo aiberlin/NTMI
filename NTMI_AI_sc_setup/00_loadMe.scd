@@ -146,6 +146,18 @@ Task {
 
 		if (NTMI.usesMainFX) {
 			LoadMe("6_MainFX.scd");
+		} {
+			// fallback mainVol - use server volume
+			MFdef(\mainVol).add(\main, { |univol = 0.5|
+				var model = s.volume;
+				var spec = [model.min, model.max, \db].asSpec;
+				model.volume = spec.map(univol);
+			});
+			MFdef(\getMainVol).add(\get, {
+				var model = s.volume;
+				var spec = [model.min, model.max, \db].asSpec;
+				spec.unmap(model.volume);
+			});
 		};
 
 		if (NTMI.hasGui) {
