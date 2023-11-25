@@ -33,21 +33,20 @@ e.g. 4 buttons:
 // setup
 NTMI.inph = NTMI.inph ? ();
 
-// // find your favorite numbers for making weights by trying them out
-// // NTMI.inph.put(\randSeeds, [ 3, 12, 45, 42, 37, 86, 98, 111, 151, rrand(0, 1000).postln]);
-// NTMI.inph.randSeeds = NTMI.prefs.active.influxPresets ?? {
-// 	////// 	[ 3, 12, 45, 42, 37, 86, 98, rrand(0, 1000)]
-// 	[ 5, 8, 13, 21, 34, 55]
-// };
-/////// hardcoded for now, enable prefs again later:
-/////// FIXME - find better default numbers for the 17x20 influx
-NTMI.inph.randSeeds = [ 3, 12, 37, 42, 45, 86, \diagL ];
+///// find your favorite numbers for making weights by trying them out
+// NTMI.inph.put(\randSeeds, [ 3, 12, 45, 42, 37, 86, 98, 111, 151, rrand(0, 1000).postln]);
+// //// e.g. these
+// [ 3, 12, 45, 42, 37, 86, { rrand(0, 1000) }, \diagL ];
+
+NTMI.inph.randSeeds =
+NTMI.prefs.active.influxPresets ? NTMI.prefs.default.influxPresets;
 
 
 // create a number of seeded random weights and store them in presets
 // keys are integers 0..n-1
 (
 NTMI.inph.randSeeds.do { |seed|
+	seed = seed.value;
 	if (seed.isNumber) {
 		{
 			NTMI.inphlux.rand;
@@ -76,7 +75,7 @@ MFdef(\ampFirstTweakOn).add(\on, {
 	NTMI.inphlux.presets.keysValuesDo { |key, weights|
 		// decouple amp:
 		// decrease amp influence on all
-		weights[0] = NTMI.inph.backupWeights[3][0] * 0.25;
+		weights[0] = NTMI.inph.backupWeights[key][0] * 0.25;
 
 		// right side: middle finger pad is gas pedal
 		weights[0][14] = 1.0;
@@ -122,8 +121,10 @@ MFdef(\inphTanhOff).value;
 
 // store num pres and current
 NTMI.inph.put(\numPres, NTMI.inph.randSeeds.size);
-NTMI.inph.put(\presIndex, NTMI.inph.randSeeds.indexOf(NTMI.prefs.active.influxPreset) ? 0);
-NTMI.inphlux.setwPre(NTMI.prefs.active.influxPreset);
+NTMI.inph.put(\presIndex,
+	NTMI.inph.randSeeds.indexOf(NTMI.prefs.active.influxPreset) ?
+	NTMI.inph.randSeeds.size.rand
+);
 
 NTMI.inph.alpha = 0.7;
 // colors attributed to the n presets
@@ -141,13 +142,14 @@ MFdef(\setInphWPre).add(\set, { |index|
 	var nuIndex = (index ? NTMI.inph.at(\presIndex) ? 0).asInteger % numPres;
 	var nuPreKey = NTMI.inph.randSeeds[nuIndex];
 	var nuPreset = NTMI.inphlux.presets[nuPreKey];
-	"INFLUX preset % - magicNumber % - ".postf(nuIndex, nuPreKey);
+	"*** INFLUX preset % - magicNumber % - ".postf(nuIndex, nuPreKey);
 	// nuPreset.round(0.001).printAll;
 	NTMI.inph.put(\presIndex, nuIndex);
 	NTMI.inphlux.setwPre(nuPreKey);
 	NTMI.inph.currPresetCol = NTMI.inph.presetCols @@ NTMI.inph.at(\presIndex);
+
 	// send this to OSC/Modality device ! (RGB Col)
-	"color ".post; (NTMI.inph.currPresetCol.asArray * 255).keep(3).asInteger.postln;
+	NTMI.inph.currPresetCol.postln;
 	if (MKtl.all[\xosc].notNil) {
 		try {
 			MKtl(\xosc).elAt(\led, \6).value_(nuIndex / NTMI.inph.randSeeds.size );
