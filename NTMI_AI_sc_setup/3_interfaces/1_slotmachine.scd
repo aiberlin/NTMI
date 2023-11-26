@@ -116,9 +116,15 @@ NTMI.slots.checkIndex = { |sl, index|
 // super defensive
 NTMI.slots.addActive = { |sl, index, obj|
 	case
-	{ NTMI.slots.checkIndex(index).not } { "NTMI.slots.addActive - index not valid: %\n".postf(index) }
-	{ obj.respondsTo(\key).not } { "NTMI.slots.addActive - obj has no key: %\n".postf(obj) }
-	{ NTMI.slots.choices[index].includes(obj.key).not } { "NTMI.slots.addActive - obj is not in choices: %\n".postf(obj) }
+	{ NTMI.slots.checkIndex(index).not } {
+		"NTMI.slots.addActive - index not valid: %\n".postf(index)
+	}
+	{ obj.respondsTo(\key).not } {
+		"NTMI.slots.addActive - obj has no key: %\n".postf(obj)
+	}
+	{ NTMI.slots.choices[index].includes(obj.key).not } {
+		"NTMI.slots.addActive - obj is not in choices: %\n".postf(obj)
+	}
 	{		// all is well
 		if (NTMI.slots.actives[index] != obj) {
 			NTMI.slots.endAt(index); // end the old one
