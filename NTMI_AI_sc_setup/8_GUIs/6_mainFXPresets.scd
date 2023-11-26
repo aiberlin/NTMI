@@ -1,7 +1,8 @@
 ///// todo: move completely to ProxyChainPreset ...
 
+
 WinBounds.addMake(\mainFX, {
-	NTMI.mfx.font = Font(g.fontName, 18);
+	NTMI.mfx.font = Font(NTMI.g.fontName, 18);
 
 	NTMI.mfx.highKeys = [];
 	NTMI.mfx.srcKeys = NTMI.mFX.slotNames;

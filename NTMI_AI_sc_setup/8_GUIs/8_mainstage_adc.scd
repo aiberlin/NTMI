@@ -533,7 +533,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 		Pen.scale(myscale, myscale);
 
-		if ([\full, \touch, \binary].includes(q.inph.mode)) {
+		if ([\full, \touch, \binary].includes(q.osc.nUFO.mode)) {
 			centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 			centPadsR = center.copy.x_(center.x + (center.y * 1.8));
 			padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
@@ -557,7 +557,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		};
 
 		// visualize move mode as star of 9;
-		if ([\full, \move].includes(q.inph.mode)) {
+		if ([\full, \move].includes(q.osc.nUFO.mode)) {
 			// "move mode vis".postln;
 			star = g.main.movevals.collect { |val, i|
 				// offset -1.25 means noseDown is lowest star axis
@@ -615,7 +615,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 				or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
 				g.main.movevals = q.osc.calibImuVals ? g.main.movevals;
-				if (q.inph.mode == \binary) {
+				if (q.osc.nUFO.mode == \binary) {
 					g.main.padCols = q.bin.bins.collect { |val, i|
 						Color.white.alpha_(val);
 					};
@@ -638,8 +638,8 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			g.main.backCol = q.inph.currPresetCol;
 			g.main.w.background_(q.inph.currPresetCol);
 		};
-		if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
-		if (q.inph.mode != rMViews[3].label) { rMViews[3].label_(q.inph.mode) };
+		if (q.osc.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.osc.nUFO.mode) };
+		if (q.osc.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.osc.nUFO.mode) };
 
 		// zoom
 		if ( q.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = q.zoom };
