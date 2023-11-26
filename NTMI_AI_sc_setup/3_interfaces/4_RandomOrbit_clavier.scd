@@ -1,10 +1,13 @@
+/*
+NTMI.bin.randOrb(64.rand);
+*/
 
 (
 // RandomOrbit binary clavier:
 NTMI.bin = NTMI.bin ? ();
 NTMI.bin.binkey = 1;
 
-MFdef(\randOrb).add(\setPres, { |newNum|
+NTMI.bin.randOrb = { |dict, newNum|
 	var newSetName;
 	if (NTMI.bin.binkey != newNum) {
 		NTMI.bin.binkey = newNum;
@@ -32,5 +35,5 @@ MFdef(\randOrb).add(\setPres, { |newNum|
 			}
 		}
 	}
-});
+};
 )

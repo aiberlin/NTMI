@@ -19,7 +19,7 @@ NTMI.bin = NTMI.bin ? ();
 NTMI.bin.thresh = 0.3;
 NTMI.bin.bins = 0!8;
 /*
-MFdef(\randOrb).value(64.rand);
+NTMI.bin.randOrb(64.rand);
 */
 
 // sneak binkey function into func that triggers when pads array is received:
@@ -31,7 +31,7 @@ MFdef(\capsToInph).add(\binKey, {
 	var bins = vals.collect { |val| (val > NTMI.bin.thresh).binaryValue };
 	var newNum = (bins * binMap).sum;
 
-	MFdef(\randOrb).(newNum);
+	NTMI.bin.randOrb(newNum);
 	caps.do { |cap, i|
 		if (bins[i] != NTMI.bin.bins[i]) {
 			// cap.post; [bins[i], ~bins[i]].postln;

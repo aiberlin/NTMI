@@ -21,13 +21,12 @@ NTMI.ro.lastval = 1;
 NTMI.ro.str = { |ro| NTMI.ro.bits.join + "->" + NTMI.ro.num };
 
 NTMI.ro.chordTime = 0.03;
-NTMI.ro.fire = false;
 NTMI.ro.font = Font(Font.defaultMonoFace, 21);
 NTMI.ro.bigFont = Font(Font.defaultMonoFace, 34);
 
-MFdef(\ro).add(\collect, { |index, value|
+NTMI.ro.getPressed = { |dict, index, value|
 	if (NTMI.ro.collecting.not) {
-		// "collecting ...".postln;
+		"collecting ...".postln;
 		NTMI.ro.firstval = NTMI.ro.num;
 		NTMI.ro.collecting = true;
 		defer { NTMI.ro.uv.refresh };
@@ -35,22 +34,20 @@ MFdef(\ro).add(\collect, { |index, value|
 	NTMI.ro.bits[index] = value;
 	// use Tdef to unschedule if already
 	NTMI.ro.endTask.stop.play;
-});
+};
 
-MFdef(\fire).add(\post, { "ok, fire!\n".postln });
-MFdef(\fire).add(\fire, { MFdef(\randOrb).value(NTMI.ro.num) });
-MFdef(\fire).disable(\post);
 
 NTMI.ro.endTask = TaskProxy({
 	NTMI.ro.chordTime.wait;
-	MFdef(\fire).value;
+	NTMI.bin.randOrb(NTMI.ro.num);
+
 	NTMI.ro.lastval = if (NTMI.ro.num == 0, NTMI.ro.firstval, NTMI.ro.num);
 	defer { NTMI.ro.uv.refresh };
 	NTMI.ro.collecting = false;
 }).quant_(0);
 
 NTMI.ro.letterKeys.do { |char, i|
-	KeyPlayer(\ro).putDown(char, { |char| MFdef(\ro).(i, 1) }, noRep: true);
-	KeyPlayer(\ro).putUp(char, { |char| MFdef(\ro).(i, 0) });
+	KeyPlayer(\ro).putDown(char, { |char| NTMI.ro.getPressed(i, 1) }, noRep: true);
+	KeyPlayer(\ro).putUp(char, { |char| NTMI.ro.getPressed(i, 0) });
 };
 )
