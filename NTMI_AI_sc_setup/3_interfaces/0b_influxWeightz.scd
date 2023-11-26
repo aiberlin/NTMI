@@ -89,30 +89,31 @@ MFdef(\ampFirstTweakOn).add(\on, {
 	NTMI.inph.ampTweakIsOn = true;
 });
 // restore orig NTMI.inphlux.presets
-MFdef(\ampFirstTweakOff).add(\off, {
+NTMI.inph.ampFirstTweakOff = {
 	NTMI.inph.backupWeights.keysValuesDo { |key, val|
 		NTMI.inphlux.presets.put(key, val.copy);
 	};
 	NTMI.inph.ampTweakIsOn = false;
-});
+};
 
-MFdef(\inphTanhOn).add(\on, {
+NTMI.inph.inphTanhOn = {
 	// and compress output values by tanh, so we clip later?
 	NTMI.inphlux.addProc(\base, { |val| val.tanh * 1.1 });
 	NTMI.inph.tanhIsOn = true;
-});
+};
 
-MFdef(\inphTanhOff).add(\off, {
+NTMI.inph.inphTanhOff = {
 	// and compress output values by tanh, so we clip later?
 	NTMI.inphlux.addProc(\base, nil);
 	NTMI.inph.tanhIsOn = false;
-});
+};
 
-MFdef(\ampFirstTweakOn).value;
-MFdef(\inphTanhOn).value;
+NTMI.inph.ampFirstTweakOn;
+NTMI.inph.inphTanhOn;
+
 /*
-MFdef(\ampFirstTweakOff).value;
-MFdef(\inphTanhOff).value;
+NTMI.inph.ampFirstTweakOff;
+NTMI.inph.inphTanhOff;
 */
 
 ///////// BIG AMP TWEAK ends.
