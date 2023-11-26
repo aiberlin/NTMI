@@ -172,9 +172,9 @@ NTMI.nktl.elAt(\select).do { |el, i|
 	};
 };
 
-NTMI.nktl.elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil) } };
-NTMI.nktl.elAt(\prev_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(-1 ) } };
-NTMI.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 ) } };
+NTMI.nktl.elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };
+NTMI.nktl.elAt(\prev_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(-1 ) } };
+NTMI.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre( 1 ) } };
 
 NTMI.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
 NTMI.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };

@@ -236,10 +236,10 @@ if (MKtl('ferrari').isNil) {
 		if (hat.isOn.not) {
 			if (MKtl('ferrari').elAt(\joy, \r, \hat).isOn) {
 				q.ferr.hatWasUsed = true;
-				MFdef('stepInphWPre').value(nil); // rand
+				NTMI.inph.stepWPre(nil); // rand
 			} {
 				if (q.ferr.hatWasUsed.not) {
-					MFdef('stepInphWPre').value(-1); // prev
+					NTMI.inph.stepWPre(-1); // prev
 				};
 				q.ferr.hatWasUsed = false;
 			};
@@ -251,11 +251,11 @@ if (MKtl('ferrari').isNil) {
 		hat.elemDesc.label = "prev pre";
 		if (hat.isOn.not) {
 			if (MKtl('ferrari').elAt(\joy, \l, \hat).isOn) {
-				MFdef('stepInphWPre').value(nil); // rand
+				NTMI.inph.stepWPre(nil); // rand
 				q.ferr.mfxWasUsed = true;
 			} {
 				if (q.ferr.hatWasUsed.not) {
-					MFdef('stepInphWPre').value(1); // next
+					NTMI.inph.stepWPre(1); // next
 				};
 				q.ferr.hatWasUsed = false;
 			};

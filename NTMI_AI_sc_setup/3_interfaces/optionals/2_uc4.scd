@@ -192,11 +192,10 @@ MKtl(\uc4).elAt(\inflx).do { |sl, i|
 };
 
 
-
 // Left 3 bottom buttons: inphPre rand, -1, +1
-MKtl(\uc4).elAt(\rand_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(nil) } };
-MKtl(\uc4).elAt(\prev_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).(-1 ) } };
-MKtl(\uc4).elAt(\next_inph).action = { |el| if (el.isOn) { MFdef(\stepInphWPre).( 1 ) } };
+MKtl(\uc4).elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };
+MKtl(\uc4).elAt(\prev_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(-1 ) } };
+MKtl(\uc4).elAt(\next_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre( 1 ) } };
 MKtl(\uc4).elAt(\zero_inph).action = { |el| if (el.isOn) { NTMI.inphlux.resetInvals } };
 
 

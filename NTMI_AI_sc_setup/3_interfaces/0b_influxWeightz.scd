@@ -5,11 +5,11 @@ so we can step thru them for different instrument feel.
 
 ////////  tests
 // attach these functions to your (HW/SW) Buttons:
-MFdef(\stepInphWPre).value(1); // next
+NTMI.inph.stepWPre(1); // next
 NTMI.inphlux.presets.findKeyForValue(NTMI.inphlux.weights);
-MFdef(\stepInphWPre).value(-1); // prev
-MFdef(\setInphWPre).value;   // rand
-MFdef(\setInphWPre).value(5);   // jump to specific
+NTMI.inph.stepWPre(-1); // prev
+NTMI.inph.setWPreIndex;   // rand
+NTMI.inph.setWPreIndex(5);   // jump to specific
 
 NTMI.inphlux.weights.round(0.0001); // get current ones
 NTMI.inphlux.outOffsets;
@@ -139,7 +139,7 @@ NTMI.inph.presetCols = 6.collect {|i|
 
 
 // set weights preset by index: number is wrapped index in NTMI.inph.randSeeds
-MFdef(\setInphWPre).add(\set, { |index|
+NTMI.inph.setWPreIndex = { |dict, index|
 	var numPres = NTMI.inph.randSeeds.size;
 	var nuIndex = (index ? NTMI.inph.at(\presIndex) ? 0).asInteger % numPres;
 	var nuPreKey = NTMI.inph.randSeeds[nuIndex];
@@ -150,25 +150,27 @@ MFdef(\setInphWPre).add(\set, { |index|
 	NTMI.inphlux.setwPre(nuPreKey);
 	NTMI.inph.currPresetCol = NTMI.inph.presetCols @@ NTMI.inph.at(\presIndex);
 
-	// send this to OSC/Modality device ! (RGB Col)
 	NTMI.inph.currPresetCol.postln;
+	// send this to OSC/Modality device ! (RGB Col)
+	if (MKtl.all[\nUFO].notNil){ NTMI.inph.sendInphPre };
+
 	if (MKtl.all[\xosc].notNil) {
 		try {
 			MKtl(\xosc).elAt(\led, \6).value_(nuIndex / NTMI.inph.randSeeds.size );
 			MKtl(\xosc).elAt(\led, \7).value_(nuIndex / NTMI.inph.randSeeds.size );
 		};
 	};
-});
+};
 
 // nil -> rand, -1 is down, 1 is up
-MFdef(\stepInphWPre).add(\inc, { |inc|
+NTMI.inph.stepWPre = { |dict, inc|
 	var nuIndex;
 	inc = inc ?? { "rand: ".post; rrand(1, NTMI.inph.randSeeds.size).postln };
 	nuIndex = NTMI.inph.at(\presIndex) + inc % NTMI.inph.randSeeds.size;
-	MFdef(\setInphWPre).value(nuIndex);
-});
+	NTMI.inph.setWPreIndex(nuIndex);
+};
 
 /// INIT!
-MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
+NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 
 );
