@@ -482,8 +482,8 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 
 	modeNum.switch(
 		0, {
-			// "base: mainStepVol".postln;
-			MFdef(\mainStepVol).(enc.deviceValue);
+			// "base: mainVolStep".postln;
+			MFdef(\mainVolStep).(enc.deviceValue);
 		},
 		1, {
 			// "hat: zoom".postln;

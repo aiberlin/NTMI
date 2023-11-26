@@ -153,7 +153,7 @@ Task {
 				var spec = [model.min, model.max, \db].asSpec;
 				model.volume = spec.map(univol);
 			});
-			MFdef(\getMainVol).add(\get, {
+			MFdef(\mainVolGet).add(\get, {
 				var model = s.volume;
 				var spec = [model.min, model.max, \db].asSpec;
 				spec.unmap(model.volume);

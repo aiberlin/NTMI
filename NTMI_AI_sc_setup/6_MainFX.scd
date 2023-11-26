@@ -175,7 +175,7 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 	};
 });
 
-MFdef(\getMainVol).add(\get, {
+MFdef(\mainVolGet).add(\get, {
 	NTMI.mFX.proxyChain.proxy.get(\mainVol);
 });
 

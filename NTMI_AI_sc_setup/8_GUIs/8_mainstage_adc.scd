@@ -249,7 +249,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	};
 
 	g.main.mainSl = MView(
-		MFdef(\getMainVol).value.unbubble,
+		MFdef(\mainVolGet).value.unbubble,
 		g.main.w,
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
@@ -273,7 +273,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		)
 	});
 	g.main.mainVolDisplay = {
-		var nuval = MFdef(\getMainVol).value.unbubble;
+		var nuval = MFdef(\mainVolGet).value.unbubble;
 		if (g.main.mainSl.value != nuval) {
 			g.main.mainSl.value = nuval
 		};

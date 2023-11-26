@@ -39,7 +39,7 @@ MFdef(\miniGuiUpdate).value;
 
 MFdef(\miniGuiUpdate).add(\modeZoom, {
 
-	var mainvol = MFdef(\getMainVol).value.unbubble;
+	var mainvol = MFdef(\mainVolGet).value.unbubble;
 
 	if (g.mini.mainVol.value != mainvol) {
 		g.mini.mainVol.value = mainvol

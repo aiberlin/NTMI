@@ -1,6 +1,6 @@
 
 
-MFdef(\mainStepVol).add(\step, { |inc = 0|
+MFdef(\mainVolStep).add(\step, { |inc = 0|
 	// for fast turns, accelerate changes:
 	// 0.0 is linear, step1 -> 1, step 2 -> 2 etc
 	// 1.0 is quadratic, step1 -> 1, step 2 -> 4 etc
