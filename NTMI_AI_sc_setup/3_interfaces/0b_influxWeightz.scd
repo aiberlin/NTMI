@@ -71,7 +71,7 @@ NTMI.inph.sliderOffset = NTMI.inph.sliderOffset ? 1;
 
 /////////// BIG AMP TWEAK:
 /////////// comment out if you dont like it!
-MFdef(\ampFirstTweakOn).add(\on, {
+NTMI.inph.ampFirstTweakOn = {
 	NTMI.inphlux.presets.keysValuesDo { |key, weights|
 		// decouple amp:
 		// decrease amp influence on all
@@ -87,7 +87,8 @@ MFdef(\ampFirstTweakOn).add(\on, {
 
 	};
 	NTMI.inph.ampTweakIsOn = true;
-});
+};
+
 // restore orig NTMI.inphlux.presets
 NTMI.inph.ampFirstTweakOff = {
 	NTMI.inph.backupWeights.keysValuesDo { |key, val|
