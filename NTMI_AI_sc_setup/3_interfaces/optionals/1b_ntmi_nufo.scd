@@ -209,7 +209,7 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 			} {
 				// "... (right mode for slot buttons) ...".postln;
 				if (MKtl(\nUFO).elAt(\encHat).isOn) {
-					MFdef(\clutch).value(slotObj);
+					NTMI.clutch(slotObj);
 				};
 				NTMI.osc.rightWasUsed = true;
 			}
@@ -242,7 +242,7 @@ MFdef(\touchON).add(\nUFO, {
 	MFdef(\capsToInph).enable(\set);
 	NTMI.slots.nowPlaying.do { |obj|
 		if (NTMI.inph.decoupled.includes(obj.key).not) {
-			MFdef(\inphCouple).(obj)
+			NTMI.inph.couple(obj)
 		}
 	}
 });
@@ -259,7 +259,7 @@ MFdef(\moveON).add(\nUFO, {
 	MFdef(\nUFOImuFunc).enable(\setInflux);
 	NTMI.slots.nowPlaying.do { |obj|
 		if (NTMI.inph.decoupled.includes(obj.key).not) {
-			MFdef(\inphCouple).(obj);
+			NTMI.inph.couple(obj);
 		}
 	}
 });
@@ -275,7 +275,7 @@ MFdef(\binON).add(\nUFO, {
 	"nUFO - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
 	// NTMI.slots.nowPlaying.do { |obj|
-	// 	MFdef(\inphDecouple).(obj)
+	// 	NTMI.inph.decouple(obj)
 	// };
 });
 

@@ -50,7 +50,7 @@ NTMI.inph.centerToNewRandSeed = {|q, infl, preset, seed=2011, much=1|
 
 NTMI.inph.decoupled = Set[];
 
-MFdef(\inphCouple).add(\attachOrEnable, { |obj|
+NTMI.inph.couple = { |dict, obj|
 	var objName = obj.key;
 	if (NTMI.inphlux.action.funcDict[objName].isNil) {
 		// object is new: attach it
@@ -59,41 +59,41 @@ MFdef(\inphCouple).add(\attachOrEnable, { |obj|
 		// if known, then just enable it:
 		NTMI.inphlux.action.enable(objName)
 	};
-});
+};
 
 // only disable func, keep func and data around
-MFdef(\inphDecouple).add(\disable, { |obj|
+NTMI.inph.decouple = { |dict, obj|
 	var objName = obj.key;
 	NTMI.inphlux.action.disable(objName.postln)
-});
+};
 
 /*
-MFdef(\inphCouple).(Ndef(\revFB));
-MFdef(\inphDecouple).(Ndef(\revFB));
+NTMI.inph.couple(Ndef(\revFB));
+NTMI.inph.decouple(Ndef(\revFB));
 */
 
 // clutch and unclutch an object from influx
 // accessible from ntmi by hold-enc+slotbut
 // how to show un/clutch on mainstage gui?
 
-MFdef(\clutch).add(\toggle, { |obj|
+NTMI.clutch = { |dict, obj|
 	var objName = obj.key;
 	// if this object was decoupled, couple it now
 	if (NTMI.inph.decoupled.includes(objName)) {
 		NTMI.inph.decoupled.remove(objName);
 		if (NTMI.slots.nowPlaying.includes(obj)) {
-			MFdef(\inphCouple).(obj)
-		}
-	} {
-		// if coupled,
-		NTMI.inph.decoupled.add(objName);
-		MFdef(\inphDecouple).(obj)
-	};
-	"NTMI.inph.decoupled: % \n".postf(NTMI.inph.decoupled);
-	"NTMI.inphlux - active & coupled: % \n".postf(NTMI.inphlux.action.activeNames);
-});
+			NTMI.inph.couple(obj)
+	}
+} {
+	// if coupled,
+	NTMI.inph.decoupled.add(objName);
+	NTMI.inph.decouple(obj)
+};
+"NTMI.inph.decoupled: % \n".postf(NTMI.inph.decoupled);
+"NTMI.inphlux - active & coupled: % \n".postf(NTMI.inphlux.action.activeNames);
+};
 
 /* toggles on/off
-MFdef(\clutch).value(Ndef(\cat))
-MFdef(\clutch).value(Ndef(\formSing))
+NTMI.clutch(Ndef(\cat))
+NTMI.clutch(Ndef(\formSing))
 */
