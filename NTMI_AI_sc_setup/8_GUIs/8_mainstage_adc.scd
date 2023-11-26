@@ -449,26 +449,28 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		}
 	};
 
-	MFdef('stepInphWPre').add(\updateMain, {
-		defer { protect {
-			rMViews[1].value_(q.inph.presIndex);
-			rMViews[2].value_("seed" + q.inph.randSeeds[q.inph.presIndex]);
-		} }
+	MFdef(\mainWinUpdate).add(\inphPre, {
+		if (q.inph.presIndex != rMViews[1].value) {
+			protect {
+				rMViews[1].value_(q.inph.presIndex);
+				rMViews[2].value_("seed" + q.inph.randSeeds[q.inph.presIndex]);
+			}
+		}
 	});
 
 	rMViews[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
 	rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \zoom.asSpec);
 
 	rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
-	rMViews[1].uv.mouseDownAction = { MFdef('stepInphWPre').value(1) };
+	rMViews[1].uv.mouseDownAction = { NTMI.inph.stepWPre(1) };
 
 	rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
-	rMViews[2].uv.mouseDownAction = { MFdef('stepInphWPre').value(-1) };
+	rMViews[2].uv.mouseDownAction = { NTMI.inph.stepWPre(-1) };
 
-	rMViews[3].label_(q.inph.mode).mode_(\code);
+	rMViews[3].label_('nUFO mode').value_(q.osc.nUFO.mode).mode_(\code);
 	rMViews[3].uv.mouseDownAction.add(\cycle, { |x|
-		MFdef(\inphModeStep).value;
-		rMViews[3].label_(q.inph.mode).valueAction_(q.inph.mode);
+		NTMI.osc.nUFO.modeStep(1);
+		rMViews[3].valueAction_(q.osc.nUFO.mode);
 	});
 
 
