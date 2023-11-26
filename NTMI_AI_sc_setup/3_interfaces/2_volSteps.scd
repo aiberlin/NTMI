@@ -16,11 +16,3 @@ MFdef(\ndefVolStep).add(\step, { |ndef, step = 1|
 	"% ndefVolStep %\n".postf(ndef, step);
 	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * acceleration * stepsize))
 });
-
-MFdef(\stepSlotPres).add(\step, { |step|
-	var activeNdefs = NTMI.inphlux.action.activeNames.collect(Ndef(_));
-	activeNdefs.do { |nd, j|
-		NTMI.pre.stepNdefInf( nd, step );
-	};
-});
-

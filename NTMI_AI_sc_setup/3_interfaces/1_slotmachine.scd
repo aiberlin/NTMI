@@ -169,6 +169,13 @@ NTMI.slots.stepNext = { |sl, index, incr|
 	};
 };
 
+NTMI.slots.stepActivePres = { |dict, step|
+	var activeNdefs = NTMI.inphlux.action.activeNames.collect(Ndef(_));
+	activeNdefs.do { |nd, j|
+		NTMI.pre.stepNdefInf( nd, step );
+	};
+};
+
 //// init just to make sure
 NTMI.slots.updateChoices;
 NTMI.slots.actives.do { |ndef, i|
