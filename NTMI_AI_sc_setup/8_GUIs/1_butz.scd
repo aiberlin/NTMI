@@ -160,7 +160,7 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 
 /////// the INTERFACES Butz: /////////////
 // function to load an interface file or gui:
-MFdef(\loadInterfaceFile).add(\load, { |name, filepath|
+NTMI.loadInterfaceFile = { |dict, name, filepath|
 	if (PathName(filepath).isRelativePath) {
 		filepath = (NTMI.dir.setup +/+ filepath);
 	};
@@ -172,25 +172,25 @@ MFdef(\loadInterfaceFile).add(\load, { |name, filepath|
 		MKtl(name).gui.showLabels.parent
 	});
 	WinBounds.showOrMake(name);
-});
+};
 
-MFdef(\addInterfaceFile).add(\butz, { |name, filepath|
+NTMI.addInterfaceFile = { |dict, name, filepath|
 	Butz(\interfaces).add(name, {
-		MFdef(\loadInterfaceFile).(name, filepath);
+		NTMI.loadInterfaceFile(name, filepath);
 	});
-});
+};
 
 // add 4 interfaces
-MFdef(\addInterfaceFile).(\ferrari,
+NTMI.addInterfaceFile(\ferrari,
 	"3_interfaces/optionals/3_ferrari.scd");
 
-MFdef(\addInterfaceFile).(\uc4,
+NTMI.addInterfaceFile(\uc4,
 	"3_interfaces/optionals/2_uc4.scd");
 
-MFdef(\addInterfaceFile).(\nanoKtl,
+NTMI.addInterfaceFile(\nanoKtl,
 	"3_interfaces/optionals/7_nanoktl.scd");
 
-MFdef(\addInterfaceFile).(\nUFO,
+NTMI.addInterfaceFile(\nUFO,
 	"3_interfaces/optionals/1*nufo.scd");
 
 Butz(\NTMI_Config).clear;
