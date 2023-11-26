@@ -54,20 +54,25 @@ NTMI.inph.couple = { |dict, obj|
 	var objName = obj.key;
 	if (NTMI.inphlux.action.funcDict[objName].isNil) {
 		// object is new: attach it
-		NTMI.inphlux.attachMapped(obj)
+		NTMI.inphlux.attachMapped(obj);
 	} {
 		// if known, then just enable it:
-		NTMI.inphlux.action.enable(objName)
+		NTMI.inphlux.action.enable(objName);
 	};
+	"coupled: %\n".postf(objName);
+	NTMI.inph.decoupled.remove(objName);
 };
 
 // only disable func, keep func and data around
 NTMI.inph.decouple = { |dict, obj|
 	var objName = obj.key;
-	NTMI.inphlux.action.disable(objName.postln)
+	NTMI.inphlux.action.disable(objName);
+	NTMI.inph.decoupled.add(objName);
+	"decoupled: %\n".postf(objName);
 };
 
 /*
+NTMI.inphlux.action.activeNames
 NTMI.inph.couple(Ndef(\revFB));
 NTMI.inph.decouple(Ndef(\revFB));
 */
@@ -83,14 +88,11 @@ NTMI.clutch = { |dict, obj|
 		NTMI.inph.decoupled.remove(objName);
 		if (NTMI.slots.nowPlaying.includes(obj)) {
 			NTMI.inph.couple(obj)
-	}
-} {
-	// if coupled,
-	NTMI.inph.decoupled.add(objName);
-	NTMI.inph.decouple(obj)
-};
-"NTMI.inph.decoupled: % \n".postf(NTMI.inph.decoupled);
-"NTMI.inphlux - active & coupled: % \n".postf(NTMI.inphlux.action.activeNames);
+		}
+	} {
+		// if coupled
+		NTMI.inph.decouple(obj)
+	};
 };
 
 /* toggles on/off
