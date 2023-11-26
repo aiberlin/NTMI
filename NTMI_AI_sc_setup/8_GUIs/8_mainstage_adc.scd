@@ -368,7 +368,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	// snapshot button
 	g.main.snapBounds = rMViews[0].bounds
 	.moveBy(0, rMViews[0].bounds.height.neg)
-	.height_(50);
+	.height_(60);
 	g.main.snapBut = Button(g.main.w, g.main.snapBounds.postln)
 	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
 		["¡SNAP!", Color.white, Color.red]
