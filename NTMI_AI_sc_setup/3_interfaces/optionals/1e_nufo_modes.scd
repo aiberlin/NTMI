@@ -4,7 +4,6 @@
 // NTMI.osc.nUFO.modes = [\full, \move, \touch, \binary, \off];
 /*
 NTMI.osc.nUFO.setModeIndex(100.rand)
-
 */
 NTMI.osc.nUFO.modes = [\full, \touch, \binary]; //
 NTMI.osc.nUFO.modeIndex = 0;
@@ -32,6 +31,9 @@ NTMI.osc.nUFO.modeStep = { |dict, inc = 1|
 	NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex + inc);
 };
 
+// show modes as colors:
+// green = both, red = move, blue = touch, black = off
+
 NTMI.osc.sendNufoMode = {
 	var msg = [
 		[ 0, 1, 0 ], // green is full
@@ -47,3 +49,53 @@ NTMI.osc.sendNufoMode = {
 		}
 	} };
 };
+
+/////////// add funcs to inphMode switching so NTMI can do it /////////
+
+NTMI.osc.nUFO.touchON = {
+	"nUFO - touchON".postln;
+	MFdef(\capsToInph).enable(\set);
+	NTMI.slots.nowPlaying.do { |obj|
+		if (NTMI.inph.decoupled.includes(obj.key).not) {
+			NTMI.inph.couple(obj)
+		}
+	}
+};
+
+NTMI.osc.nUFO.touchOFF =  {
+	"nUFO - touchOFF".postln;
+	NTMI.slots.nowPlaying.do { |nd| NTMI.inphlux.action.disable(nd.key) };
+	MFdef(\capsToInph).disable(\set);
+	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\padNames).collect([_, 0]).flat);
+};
+
+NTMI.osc.nUFO.moveON =  {
+	"nUFO - moveON".postln;
+	MFdef(\nUFOImuFunc).enable(\setInflux);
+	NTMI.slots.nowPlaying.do { |obj|
+		if (NTMI.inph.decoupled.includes(obj.key).not) {
+			NTMI.inph.couple(obj);
+		}
+	}
+};
+
+NTMI.osc.nUFO.moveOFF =  {
+	"nUFO - moveOFF".postln;
+	MFdef(\nUFOImuFunc).disable(\setInflux);
+	/////// pads set inphlux in unipolar, 0-1 range!
+	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
+};
+
+NTMI.osc.nUFO.binON =  {
+	"nUFO - binON".postln;
+	MFdef(\capsToInph).enable(\binKey);
+	// NTMI.slots.nowPlaying.do { |obj|
+	// 	NTMI.inph.decouple(obj)
+	// };
+};
+
+NTMI.osc.nUFO.binOFF =  {
+	"nUFO - binOFF".postln;
+	MFdef(\capsToInph).disable(\binKey);
+};
+

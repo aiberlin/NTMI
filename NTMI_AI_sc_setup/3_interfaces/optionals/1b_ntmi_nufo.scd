@@ -235,57 +235,6 @@ MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 	});
 };
 
-/////////// add funcs to inphMode switching so NTMI can do it /////////
-
-MFdef(\touchON).add(\nUFO, {
-	"nUFO - touchON".postln;
-	MFdef(\capsToInph).enable(\set);
-	NTMI.slots.nowPlaying.do { |obj|
-		if (NTMI.inph.decoupled.includes(obj.key).not) {
-			NTMI.inph.couple(obj)
-		}
-	}
-});
-
-MFdef(\touchOFF).add(\nUFO, {
-	"nUFO - touchOFF".postln;
-	NTMI.slots.nowPlaying.do { |nd| NTMI.inphlux.action.disable(nd.key) };
-	MFdef(\capsToInph).disable(\set);
-	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\padNames).collect([_, 0]).flat);
-});
-
-MFdef(\moveON).add(\nUFO, {
-	"nUFO - moveON".postln;
-	MFdef(\nUFOImuFunc).enable(\setInflux);
-	NTMI.slots.nowPlaying.do { |obj|
-		if (NTMI.inph.decoupled.includes(obj.key).not) {
-			NTMI.inph.couple(obj);
-		}
-	}
-});
-
-MFdef(\moveOFF).add(\nUFO, {
-	"nUFO - moveOFF".postln;
-	MFdef(\nUFOImuFunc).disable(\setInflux);
-	/////// pads set inphlux in unipolar, 0-1 range!
-	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
-});
-
-MFdef(\binON).add(\nUFO, {
-	"nUFO - binON".postln;
-	MFdef(\capsToInph).enable(\binKey);
-	// NTMI.slots.nowPlaying.do { |obj|
-	// 	NTMI.inph.decouple(obj)
-	// };
-});
-
-MFdef(\binOFF).add(\nUFO, {
-	"nUFO - binOFF".postln;
-	MFdef(\capsToInph).disable(\binKey);
-});
-
-// show modes as colors:
-// green = both, red = move, blue = touch, black = off
 
 MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 	// do modal action on release
@@ -307,22 +256,6 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 	}
 });
 
-MFdef(\inphModeSetIndex).add(\modeSwColor, {
-
-	var msg = [
-		[ 0, 1, 0 ], // green is full
-		[ 1, 0, 0 ], // red is touch
-		[ 0, 0, 1 ], // [ blue is move ]
-		[ 0, 0, 0 ]  // [ black is off ]
-	].clipAt(NTMI.inph.modeIndex);
-	// send 3 times to make sure it arrives
-	fork { 3.do {
-		0.02.wait;
-		try {
-			MKtl(\nUFO).device.source.sendMsg("/ntmi/ledCtl/back", 7, *msg.keep(3));
-		}
-	} };
-});
 
 
 MFdef(\setInphWPre).add(\setLEDs, {
