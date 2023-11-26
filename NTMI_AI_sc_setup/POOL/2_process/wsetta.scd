@@ -13,7 +13,7 @@ thisProcess.recompile;
 Tdef(\wsetta).gui(16);
 Ndef(\wsetta).gui;
 
-// q.wse.sfdir.openOS;
+// NTMI.wse.sfdir.openOS;
 
 // todo:
 - if keep = true, keep earlier wavesets around
@@ -29,32 +29,32 @@ Butz.add(\wsetta, {
 WavesetsEvent.prepareSynthDefs;
 
 // a dict for all things wavesetsevent
-q.wse = q.wse ? ();
+NTMI.wse = NTMI.wse ? ();
 
 /////// default soundfiles dir / unless overwritten
-q.wse.sfdir = q.wse.sfdir ?? { NTMI.dir.setup +/+ "soundfiles" };
+NTMI.wse.sfdir = NTMI.wse.sfdir ?? { NTMI.dir.setup +/+ "soundfiles" };
 
 // tweak for your machine, so very fast overlapped
 // wavesets dont bring it down:
-q.wse.minWaitDur = q.wse.minWaitDur ? 0.001;
+NTMI.wse.minWaitDur = NTMI.wse.minWaitDur ? 0.001;
 
-MFdef('loadWSEs').add(\load, { |dir, add = false|
+NTMI.wse.loadWSEs = { |dict, dir, add = false|
 	fork {
 		var t0 = Main.elapsedTime;
-		q.wse.sfdir = dir ? q.wse.sfdir;
-		q.wse.soundfiles = SoundFile.collect(q.wse.sfdir +/+ "*");
-		"... analysing % files for WavesetsEvent ...\n".postf(q.wse.soundfiles.size);
+		NTMI.wse.sfdir = dir ? NTMI.wse.sfdir;
+		NTMI.wse.soundfiles = SoundFile.collect(NTMI.wse.sfdir +/+ "*");
+		"... analysing % files for WavesetsEvent ...\n".postf(NTMI.wse.soundfiles.size);
 
 		while { s.serverRunning.not } { 0.03.wait };
-		q.wse.wses = q.wse.soundfiles.collect { |file|
+		NTMI.wse.wses = NTMI.wse.soundfiles.collect { |file|
 			var wse = WavesetsEvent.read(file.path);
 			try { s.sync; 0.1.wait; };
 			wse;
 		};
 		"... ALL % WavesetsEvents loaded in % secs.\n\n".postf(
-			q.wse.soundfiles.size, Main.elapsedTime - t0);
+			NTMI.wse.soundfiles.size, Main.elapsedTime - t0);
 	};
-});
+};
 
 // Wsetta has extra gui -
 if (NTMI.hasGui) {
@@ -63,22 +63,22 @@ if (NTMI.hasGui) {
 	WinBounds.addMake(\wsetta, {
 		// "~/src/aiberlin/NTMI/NTMI_AI_sc_setup/POOL/2_process/wsetta.scd".openOS;
 
-		q.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 150)).front;
-		q.wse.win.view.addFlowLayout;
-		\Button.asClass.new(q.wse.win, 100@30).states_([["new files"]]);
-		\TdefGui.asClass.new(Tdef('wsetta'), 3, q.wse.win);
-		\NdefGui.asClass.new(Ndef('wsetta'), 12, q.wse.win);
+		NTMI.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 150)).front;
+		NTMI.wse.win.view.addFlowLayout;
+		\Button.asClass.new(NTMI.wse.win, 100@30).states_([["new files"]]);
+		\TdefGui.asClass.new(Tdef('wsetta'), 3, NTMI.wse.win);
+		\NdefGui.asClass.new(Ndef('wsetta'), 12, NTMI.wse.win);
 
-		q.wse.win
+		NTMI.wse.win
 	});
 };
 
 // load the default here:
-MFdef('loadWSEs').value(q.wse.sfdir);
+NTMI.wse.loadWSEs(NTMI.wse.sfdir);
 
-// and call MFdef('loadWSEs') again later to switch buufers,
+// and call NTMI.wse.loadWSEs again later to switch buffers,
 // and to reload afer a server reboot:
-ServerBoot.add({ MFdef('loadWSEs').value }, s);
+ServerBoot.add({ NTMI.wse.loadWSEs }, s);
 
 );
 
@@ -187,11 +187,11 @@ Tdef(\wsetta, {
 
 	"% runs ... \n".postf(mytdef);
 
-	mytdef.getSpec(\wse_index).maxval_(q.wse.wses.size);
+	mytdef.getSpec(\wse_index).maxval_(NTMI.wse.wses.size);
 
 	ev.pos = ev.pos ? 0;
 
-	// q.wse.wses.postln;
+	// NTMI.wse.wses.postln;
 
 	inf.do { |i|
 		var event;
@@ -200,9 +200,9 @@ Tdef(\wsetta, {
 		// i.postln; 1.wait;
 
 		/////// which wavesets? post if changed
-		wse = q.wse.wses.wrapAt((ev.wse_index ? 0).asInteger);
+		wse = NTMI.wse.wses.wrapAt((ev.wse_index ? 0).asInteger);
 		if (wse.isNil) {
-			"wsetta: no wavesets loaded in q.wse.wses!".postln;
+			"wsetta: no wavesets loaded in NTMI.wse.wses!".postln;
 			1.wait;
 		} {
 			if (wse != prevwse) {
@@ -232,7 +232,7 @@ Tdef(\wsetta, {
 			// minimal safety wait when no waveset found
 			totalDur = (event[\dur] ? 0.01 / event[\rate]);
 
-			max(totalDur, q.wse.minWaitDur).wait;
+			max(totalDur, NTMI.wse.minWaitDur).wait;
 
 			ev.pos = ev.pos + mymap[\progress] % wse.size;
 

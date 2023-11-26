@@ -275,11 +275,11 @@ MKtl(\xosc).elAt(\sw, \5).action.add(\modal, {|bt|
 });
 
 /*
-MFdef(\stepVol).(q.slots.actives[0]);
-MFdef(\stepVol).(q.slots.actives[0], -1);
+MFdef(\ndefVolStep).(q.slots.actives[0]);
+MFdef(\ndefVolStep).(q.slots.actives[0], -1);
 */
 
-MFdef(\stepVol).add(\step, { |ndef, step = 1|
+MFdef(\ndefVolStep).add(\step, { |ndef, step = 1|
 	var stepsize = 0.05; // 20 steps from 0 to 1
 	var ampspec = \amp.asSpec;
 	ndef.vol = ampspec.map(ampspec.unmap(ndef.vol) + (step * stepsize))
@@ -305,7 +305,7 @@ MKtl(\xosc).elAt(\sw, [\6, \7]).do { |elem, index|
 					MFdef(\stepInphWPre).(step);
 					MFdef(\stepSlotPres).(step);
 				},
-				{ |ndef| MFdef(\stepVol).(ndef, step) }
+				{ |ndef| MFdef(\ndefVolStep).(ndef, step) }
 			)
 		};
 	})

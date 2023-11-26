@@ -97,7 +97,7 @@ MKtl(\uc4).elAt(\pgKn1, \kn).do(_.deviceSpec_(MKtl(\uc4).getSpec(\knRel)));
 MKtl(\uc4).elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
-		MFdef(\stepVol).(ndef, ((el.deviceValue - 64) * 0.4));
+		MFdef(\ndefVolStep).(ndef, ((el.deviceValue - 64) * 0.4));
 		el.deviceValue = 64;
 	};
 };

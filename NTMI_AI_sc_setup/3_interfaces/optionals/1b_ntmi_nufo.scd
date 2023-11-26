@@ -495,7 +495,7 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 			// "NTMI.osc.leftWasUsed: %\n".postf(NTMI.osc.leftWasUsed);
 			NTMI.osc.leftDown.do { |slotIndex|
 				"SLOT %: ".postf(slotIndex);
-				MFdef(\stepVol).(NTMI.slots.actives[slotIndex], enc.deviceValue);
+				MFdef(\ndefVolStep).(NTMI.slots.actives[slotIndex], enc.deviceValue);
 			};
 		},
 		3, {
