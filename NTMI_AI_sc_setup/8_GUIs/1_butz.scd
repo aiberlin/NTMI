@@ -193,15 +193,42 @@ NTMI.addInterfaceFile(\nanoKtl,
 NTMI.addInterfaceFile(\nUFO,
 	"3_interfaces/optionals/1*nufo.scd");
 
+(
 Butz(\NTMI_Config).clear;
 Butz(\NTMI_Config).addMiniMax;
-Butz(\NTMI_Config).add(\userDir, { NTMI.dir.user.openOS });
-Butz(\NTMI_Config).add(\userPrefs, { NTMI.prefs.userPrefPath.openOS });
-Butz(\NTMI_Config).add(\userPOOL, { NTMI.dir.userPOOL.openOS });
-Butz(\NTMI_Config).add(\soundfiles, { NTMI.dir.userPOOL.openOS });
-Butz(\NTMI_Config).add('open setup', { NTMI.dir.setup.openOS });
+Butz(\NTMI_Config).add('Prefs_doc', {
+	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/1_Configure_setup.scd").openOS
+});
+Butz(\NTMI_Config).add(\Prefs_file, { NTMI.prefs.userPrefPath.openOS });
 
-Butz(\NTMI_Config).add('open quark', { Quark("NTMI").localPath.openOS });
+Butz(\NTMI_Config).add('Presets_doc', {
+	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/2_adding_presets.scd").openOS
+});
+Butz(\NTMI_Config).add('Presets_dir', {
+	(NTMI.dir.userPOOL +/+ "/2_process/presets/").openOS
+});
+
+Butz(\NTMI_Config).add(\userDir_POOL, {
+		(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3a_userDir_POOL.scd").openOS
+});
+Butz(\NTMI_Config).add(\POOL_open, { NTMI.dir.userPOOL.openOS });
+
+Butz(\NTMI_Config).add('Process_doc', {
+	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3b_adding_sound_processes.scd").openOS
+});
+Butz(\NTMI_Config).add(\Process_open, { (NTMI.dir.userPOOL +/+"2_process").openOS });
+
+Butz(\NTMI_Config).add('Interface_doc', {
+	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/4a_Connecting_new_interfaces.scd").openOS
+});
+
+Butz(\NTMI_Config).add(\SoundF_doc, {
+	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/5_Adding_soundfiles.scd").openOS
+});
+
+Butz(\NTMI_Config).add(\SoundF_open, { NTMI.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
+);
 
 
 /////////// and these are all the stored bounds:
