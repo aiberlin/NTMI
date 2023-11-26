@@ -300,7 +300,7 @@ MKtl(\nUFO).elAt(\enc).action.add(\enchat, MFdef(\encHatUsed));
 MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 	defer ({
 		MFdef(\resetModePreLEDs).postln;
-		MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+		NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex);
 		NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 	}, delay);
 });
@@ -358,7 +358,7 @@ MKtl(\nUFO).elAt(\steps)[0].action.add(\modal, {|bt|
 				"%  ndef preset up 1.\n".postf(NTMI.ndefs[slotIndex]);
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], 1 );
 				// reset button color
-				MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+				NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex);
 				NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 			};
 			NTMI.osc.leftWasUsed = true;
@@ -390,7 +390,7 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 				"%  ndef preset down 1.\n".postf(NTMI.ndefs[slotIndex]);
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], -1 );
 				// reset button color
-				MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+				NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex);
 				NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 			};
 			NTMI.osc.leftWasUsed = true;

@@ -270,7 +270,7 @@ q.octo.slotButs = [0, 1, 2, 3];
 
 MFdef.all.keys(Array).sort;
 
-MFdef(\inphModeSetIndex).value(1);
+NTMI.osc.nUFO.setModeIndex(1);
 
 q.slots.keys(Array);
 
@@ -301,7 +301,7 @@ MFdef(\randBut).add(\rand, {
 		//
 		// 	},
 		// switch influx preset
-		{ MFdef(\inphModeStep).value },
+		// { NTMI.osc.nUFO.modeStep },
 		// switch rand mainFX preset
 		{ MFdef(\mainPreStep).value },
 	].choose.value;

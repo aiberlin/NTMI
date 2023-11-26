@@ -44,7 +44,7 @@ Tdef(\allLEDs, { |ev|
 		MKtl(\nUFO).elAt(\led, \bk, i).value = playVal;
 		0.05.wait;
 	};
-	MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
+	NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex);
 	0.1.wait;
 	NTMI.inph.setWPreIndex(NTMI.inph.presIndex);
 	0.1.wait;
