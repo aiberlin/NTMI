@@ -100,7 +100,7 @@ NTMI.osc.rightDown.clear;
 //////// capture incoming values for a while
 //////// imu zero values by averaged
 //////// pad zero values by maxes + average deviation/jitter
-MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
+NTMI.osc.calibrate = { |dict, dt = 1, whenDone|
 
 	"*** calibrating nUFO ***".postln;
 	NTMI.capture = ();
@@ -144,7 +144,7 @@ MFdef(\calibrate).add(\set, { |dt = 1, whenDone|
 		};
 		whenDone.value(captureOK);
 	}, dt);
-});
+};
 
 /***************
 How the modal logic for the NTMI buttons + encoder works:
