@@ -46,7 +46,7 @@ Tdef(\allLEDs, { |ev|
 	};
 	MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
 	0.1.wait;
-	MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
+	NTMI.inph.setWPreIndex(NTMI.inph.presIndex);
 	0.1.wait;
 });
 

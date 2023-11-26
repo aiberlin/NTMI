@@ -256,9 +256,7 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 	}
 });
 
-
-
-MFdef(\setInphWPre).add(\setLEDs, {
+NTMI.inph.sendInphPre = {
 	fork {
 		var ledCol = NTMI.inph.currPresetCol.asArray.keep(3).round.collect(_.asInteger);
 		0.1.wait;
@@ -269,7 +267,7 @@ MFdef(\setInphWPre).add(\setLEDs, {
 			0.02.wait
 		}
 	}
-});
+};
 
 //// should be :
 // if hat clicked and nothing else is done,
@@ -303,7 +301,7 @@ MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
 	defer ({
 		MFdef(\resetModePreLEDs).postln;
 		MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
-		MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
+		NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 	}, delay);
 });
 
@@ -332,7 +330,7 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		}
 		// default: step inph preset
 		{
-			MFdef(\inphModeStep).value(1);
+			NTMI.osc.nUFO.modeStep(1);
 			MFdef(\resetModePreLEDs).value(0.1);
 		}
 
@@ -361,12 +359,12 @@ MKtl(\nUFO).elAt(\steps)[0].action.add(\modal, {|bt|
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], 1 );
 				// reset button color
 				MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
-				MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
+				NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 			};
 			NTMI.osc.leftWasUsed = true;
 		}
 		// default: step inph preset
-		{ MFdef(\stepInphWPre).value(1) }
+		{ NTMI.inph.stepWPre(1) }
 
 	}
 });
@@ -393,12 +391,12 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], -1 );
 				// reset button color
 				MFdef(\inphModeSetIndex).value(NTMI.inph.modeIndex);
-				MFdef(\setInphWPre).value(NTMI.inph.at(\presIndex));
+				NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 			};
 			NTMI.osc.leftWasUsed = true;
 		}
 		// default: step inph preset down
-		{ MFdef(\stepInphWPre).value(-1) }
+		{ NTMI.inph.stepWPre(-1) }
 
 	}
 });
@@ -622,4 +620,3 @@ MKtl(\nUFO).elAt(\cap).do { |pad, i|
 };
 );
 );
-
