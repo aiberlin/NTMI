@@ -5,7 +5,7 @@ var g = NTMI.g;
 
 (
 WinBounds.addMake(\presets, { |dict, name = \presets|
-	var px = q.currxoscPx ? q.ndefs[0];
+	var px = NTMI.ndefs[0];
 	var currPreset;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
 	w = Window(name, Rect(450, 0, 387+100, 440)).front;
@@ -19,9 +19,9 @@ WinBounds.addMake(\presets, { |dict, name = \presets|
 	.action_(MFdef('preButUpdate'));
 
 	Button(vlv1, Rect(0,0,100, 30)).states_([["open file"]])
-	.action_(MFdef('openPresetFile'));
+	.action_({ NTMI.pre.openPresetFile });
 
-	MFdef('preButUpdate').add(\set, {
+	NTMI.pre.butUpdate = {
 		var butNames = butrow.collect { |but| but.states[0][0] };
 		var newNames = NTMI.slots.actives.collect(_.key);
 		if (newNames != butNames) {
@@ -31,26 +31,25 @@ WinBounds.addMake(\presets, { |dict, name = \presets|
 				but.states = newstates;
 			}
 		}
-	});
+	};
 
-	MFdef('openPresetFile').add(\open, {
+	NTMI.pre.openPresetFile = {
 		ppg.object.storePath.openOS;
-	});
+	};
 
-	MFdef('setPxInPreWin').add(\set, { |proxy|
-		ng.object_(proxy);
+	NTMI.pre.setPxInWin = { |dict, proxy|
 		ppg.object_(NdefPreset(proxy));
-	});
+	};
 
-	MFdef('preButAction').add(\set, { |i|
+	NTMI.pre.butAction = { |dict, i|
 		var but = butrow[i];
 		var px = q.ndefs[i];
 		// px.resume.play;
-		currPreset = px.getHalo(\ndefPreset);
-		MFdef('setPxInPreWin').value(px.postcln);
+		currPreset = NdefPreset(px);
+		NTMI.pre.setPxInWin(px.postcln);
 		w.addHalo(\active, px); //
 		w.addHalo(\active1, i);
-	});
+	};
 
 	butrow = q.ndefs.collect({|px|
 		var name = px.key;
@@ -64,7 +63,7 @@ WinBounds.addMake(\presets, { |dict, name = \presets|
 	});
 
 	butrow.do({ |but, i|
-		but.action_({ |b| MFdef('preButAction').value(i) })
+		but.action_({ |b| NTMI.pre.butAction(i) })
 	});
 
 	w.addHalo(\butrow, butrow);
@@ -76,24 +75,23 @@ WinBounds.addMake(\presets, { |dict, name = \presets|
 
 	EZPopUpMenu(vlv1, Rect(0,0,100, 60), 'choose_pre', q.process.allNames, { |pop|
 		pop.item.postcs;
-		MFdef('setPxInPreWin').value(Ndef(pop.item));
+		NTMI.pre.setPxInWin(Ndef(pop.item));
 	}, layout: \vert);
 
 	Button(vlv1, Rect(0,0,100, 30)).states_([["play at 0.25"]]).action_({
 		ppg.object.proxy.set(\amp, 0.25).play(vol: 0.25);
 	});
 
-	pp = px.getHalo(\ndefPreset); // assumes there is! ToDo: default to making it!
-	ppg = NdefPresetGui(pp, 0, vlv2);
-	ng = NdefGui(px, 20, vlv2);
-	ng.skipjack.dt=0.1;
+	pp = NdefPreset(px);
+	ppg = NdefPresetGui(pp, 20, vlv2);
+	ng = ppg.proxyGui;
+	ppg.skipjack.dt=0.1;
 
 	g.tuneNameView(ng);
-
 	butrow[0].doAction;
 
 	SkipJack({
-		MFdef('preButUpdate').value;
+		NTMI.pre.butUpdate;
 		butrow.do({ |but, i|
 			var ndef = NTMI.slots.actives[i];
 			var playState = (ndef.monitor.notNil and: { ndef.monitor.isPlaying });
