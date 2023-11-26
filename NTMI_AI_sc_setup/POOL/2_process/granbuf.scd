@@ -59,6 +59,6 @@ Ndef(\granbuf, { |
 // Preset: don't store amp and sndbuf
 Ndef(\granbuf).addHalo(\namesToStore, Ndef(\granbuf).controlKeys.drop(2));
 
-MFdef('setBufRange').(Ndef('granbuf'), q.bufs['global'], 'global');
+MFdef('bufSetRange').(Ndef('granbuf'), q.bufs['global'], 'global');
 
 Ndef(\granbuf);

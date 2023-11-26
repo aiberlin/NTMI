@@ -73,11 +73,11 @@ MFdef(\bufLoad).add(\loadFiles, { |folderPath, doneFunc, buflistname|
 	}
 });
 
-MFdef(\setBufRange).add(\setNdefs, { |ndefs, buffers, buflistname|
+MFdef(\bufSetRange).add(\setNdefs, { |ndefs, buffers, buflistname|
 	var range;
 	////// assuming contiguous numbers
 	if (buffers.size < 1) {
-		"*** setBufRange: no buffers given, cannot set bufRange!".postln;
+		"*** bufSetRange: no buffers given, cannot set bufRange!".postln;
 	} {
 		range = [ buffers.first.bufnum, buffers.last.bufnum ];
 		ndefs.do { |ndef|
@@ -95,16 +95,16 @@ MFdef(\bufLoad).value(
 	"~/Seafile/AI_CC/granulatspeach/textbuffers/",
 	{ |buffers, buflistname|
 		// tell a specific Ndef to use these buffers:
-		MFdef(\setBufRange).(Ndef(\granbuf), buffers, buflistname);
+		MFdef(\bufSetRange).(Ndef(\granbuf), buffers, buflistname);
 	},
 	\texts // name of buffer list within q.bufs
 );
 
 /// point an Ndef to some buffers:
-MFdef(\setBufRange).(Ndef(\granbuf), q.bufs.texts, \texts);
+MFdef(\bufSetRange).(Ndef(\granbuf), q.bufs.texts, \texts);
 
 /// or several at once:
-MFdef(\setBufRange).([ Ndef(\granbuf), Ndef(\xyz)], q.bufs.texts, \texts);
+MFdef(\bufSetRange).([ Ndef(\granbuf), Ndef(\xyz)], q.bufs.texts, \texts);
 Ndef(\granbuf).getHalo.sndBufRange;
 
 */

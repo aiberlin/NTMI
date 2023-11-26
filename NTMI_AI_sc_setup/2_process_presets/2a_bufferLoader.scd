@@ -11,7 +11,7 @@ if (globalBufFolder.notNil) {
 			{|buffers| // global doneFunc
 				"*** % global buffers loaded.\n".postf(q.bufs[bufsName].size);
 				"// assign with:\n"
-				"MFdef('setBufRange').(Ndef('xyz'), q.bufs[%], %);\n"
+				"MFdef('bufSetRange').(Ndef('xyz'), q.bufs[%], %);\n"
 				.postf(bufsName.cs, bufsName.cs);
 			},
 			'global'
