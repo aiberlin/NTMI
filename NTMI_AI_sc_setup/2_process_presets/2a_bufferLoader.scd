@@ -5,7 +5,7 @@ var bufsName = \global;
 if (globalBufFolder.notNil) {
 
 	// if present, load global bufferfolder into q.bufs.global when booting
-	MFdef('reloadBufs').add(bufsName, {
+	MFdef('bufReload').add(bufsName, {
 		MFdef(\bufLoad).value(
 			globalBufFolder,
 			{|buffers| // global doneFunc
@@ -19,6 +19,6 @@ if (globalBufFolder.notNil) {
 	});
 
 	// and do it once when the file runs
-	MFdef('reloadBufs').funcDict[bufsName].value;
+	MFdef('bufReload').funcDict[bufsName].value;
 
 };
