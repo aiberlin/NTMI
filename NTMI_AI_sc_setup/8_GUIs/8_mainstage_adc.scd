@@ -586,7 +586,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 		if (showNufo) {
 			if (q.osc.timeSinceLast >= 1) {
-				MFdef(\battery).(0);
+				NTMI.bat.calc.(0);
 				q.bat.resetVals;
 				q.frame.resetVals;
 			};

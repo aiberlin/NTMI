@@ -76,7 +76,7 @@ MKtl(\nUFO).elAt(\modSw).elemDesc.label_('move Mode');
 
 ////////////// get battery value:
 MKtl(\nUFO).elAt(\battery).action = { |bat|
-	MFdef(\battery).value(bat.deviceValue);
+	NTMI.bat.calc(bat.deviceValue);
 };
 
 

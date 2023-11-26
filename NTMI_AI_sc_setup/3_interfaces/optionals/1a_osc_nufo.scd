@@ -66,7 +66,6 @@ NTMI.zero.read;
 // set the first 9 values of the inphlux from the imu params:
 NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.drop(9));
-NTMI.inphlux.addHalo(\capNames, NTMI.inphlux.inNames.drop(9));
 
 
 // ntmi currently sends analog in values as int from 0-4095,
@@ -92,7 +91,7 @@ NTMI.bat = (
 );
 NTMI.bat.resetVals;
 
-MFdef('battery').add(\calc, { |intVal = 0|
+NTMI.bat.calc = { |dict, intVal = 0|
 	// keep startvals for estimate
 	if (NTMI.bat.time0.isNil) {
 		NTMI.bat.time0 = Main.elapsedTime;
@@ -114,4 +113,4 @@ MFdef('battery').add(\calc, { |intVal = 0|
 
 	NTMI.bat.string = "bat: %% %m".format(NTMI.bat.percent, "%", NTMI.bat.remain);
 	NTMI.bat.string
-});
+};
