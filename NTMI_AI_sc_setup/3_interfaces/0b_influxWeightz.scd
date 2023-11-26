@@ -38,9 +38,18 @@ NTMI.inph = NTMI.inph ? ();
 // //// e.g. these
 // [ 3, 12, 45, 42, 37, 86, { rrand(0, 1000) }, \diagL ];
 
+// NTMI.prefs.active.influxPresets = [1, 2, 3, 4, 5, 6, 7, 8];
+
 NTMI.inph.randSeeds =
 NTMI.prefs.active.influxPresets ? NTMI.prefs.default.influxPresets;
 
+// clip to max 7 presets, so we can use the 6 back LED colors.
+if (NTMI.inph.randSeeds.size > 7) {
+	"*** influx presets can only be max 7!\n"
+	"from %,\n".postf(NTMI.inph.randSeeds);
+	NTMI.inph.randSeeds = NTMI.inph.randSeeds.keep(7);
+	"keeping %.\n".postf(NTMI.inph.randSeeds);
+};
 
 // create a number of seeded random weights and store them in presets
 // keys are integers 0..n-1
@@ -129,13 +138,19 @@ NTMI.inph.put(\presIndex,
 );
 
 NTMI.inph.alpha = 0.7;
-// colors attributed to the n presets
+// colors attributed to the 6 presets,
+// so we can set the colors on the nufo LEDs
 NTMI.inph.presetCols = 6.collect {|i|
 	var col = Color.hsv(i/6.0, 1, 1, 1);
 	var sum = col.red + col.blue + col.green;
 	// tone down mixed colors for eye comfort
 	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [NTMI.inph.alpha])
 }.add(Color.black.alpha_(NTMI.inph.alpha));
+
+NTMI.inph.counterCols = 6.collect {|i|
+	Color.hsv( (i/6.0 + 0.5).wrap(0,1), 1, 1, 1);
+}.add(Color.white).collect(_.asArray);
+
 
 
 // set weights preset by index: number is wrapped index in NTMI.inph.randSeeds
@@ -149,6 +164,7 @@ NTMI.inph.setWPreIndex = { |dict, index|
 	NTMI.inph.put(\presIndex, nuIndex);
 	NTMI.inphlux.setwPre(nuPreKey);
 	NTMI.inph.currPresetCol = NTMI.inph.presetCols @@ NTMI.inph.at(\presIndex);
+	NTMI.inph.currCounterCol = NTMI.inph.counterCols @@ NTMI.inph.at(\presIndex);
 
 	NTMI.inph.currPresetCol.postln;
 	// send this to OSC/Modality device ! (RGB Col)

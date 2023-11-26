@@ -548,7 +548,8 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			// 4 left, 4 right touchpads
 			(padsLPos ++ padsRPos).collect { |pt, i|
 				Pen.addArc(pt, 60, 0, 2pi);
-				Pen.color_(Color.grey(g.main.padCols[i], 0.5));
+
+				Pen.color_(g.main.padCols[i]);
 				Pen.fill;
 				// rings white
 				Pen.addOval(Rect.aboutPoint(pt, 60, 60));
@@ -620,8 +621,11 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 						Color.white.alpha_(val);
 					};
 				} {
-					g.main.padCols = q.osc.rawPads.collect { |val|
-						Color.yellow(val).alpha_(val);
+					g.main.padCols = q.osc.rawPads.collect { |val, i|
+						// now opposite Color.hsv
+						Color.fromArray(NTMI.inph.currCounterCol * val);
+						// was always yellow
+						// Color.yellow(val).alpha_(val);
 					};
 				};
 				g.main.imuUV.refresh;

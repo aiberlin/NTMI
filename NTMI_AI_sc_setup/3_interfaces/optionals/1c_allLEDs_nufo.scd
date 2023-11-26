@@ -1,7 +1,7 @@
 
 // test all led elements once:
 /*
-NTMI.inph.mode = \full;
+NTMI.osc.nUFO.mode = \full;
 Tdef(\allLEDs).play;
 */
 
