@@ -141,6 +141,11 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	var bigUV, imuUV;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
+	// quick fix so we can keep nufo graphics when no nUFO present
+	NTMI.osc = NTMI.osc ? ();
+	NTMI.osc.nUFO = NTMI.osc.nUFO ? ();
+	NTMI.osc.nUFO.mode = NTMI.osc.nUFO.mode ? \full;
+
 	try { g.main.w.close };
 	w = Window(name, bounds).front;
 	g.main.w = w;
@@ -157,7 +162,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	g.main.imuUV = imuUV;
 	imuUV.canFocus_(false);
 
-	g.main.padCols = 0.5!8;
+	g.main.padCols = Color.grey(0.62, 0.38) !8;
 	g.main.movevals = 0.5!9;
 
 	// stetho needs to be in a new-style layout for resizing...
@@ -642,8 +647,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			g.main.backCol = q.inph.currPresetCol;
 			g.main.w.background_(q.inph.currPresetCol);
 		};
-		if (q.osc.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.osc.nUFO.mode) };
-		if (q.osc.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.osc.nUFO.mode) };
+		if (g.hasNufo) {
+			if (q.osc.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.osc.nUFO.mode) };
+		};
 
 		// zoom
 		if ( q.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = q.zoom };
