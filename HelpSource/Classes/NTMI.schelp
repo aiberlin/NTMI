@@ -1,0 +1,64 @@
+TITLE:: NTMI
+summary:: Class for the NTMI project quark
+categories:: Utility
+related:: Overviews/Modality, Overviews/JITLib, Overviews/JITLibExtensions
+
+DESCRIPTION::
+
+NTMI is a container for a full NTMI project.
+It uses a dictionary q to store its full state dynamically.
+Its main method is code:: NTMI:run ::, which runs the setup load script
+for NTMI as configured.
+
+First code examples:
+
+code::
+// load the NTMI setup
+NTMI.run;
+
+// when NTMI setup has run, these objects are stored in NTMI.q:
+NTMI.q
+
+// under these keys:
+NTMI.keys(Array).sort
+// you can also access them directly from NTMI:
+NTMI.q.numChans
+NTMI.numChans
+
+// some are functions:
+NTMI.q.select(_.isFunction);
+// which you can use like methods:
+NTMI.setZoom(0.5);
+NTMI.warnWin("test warnwin...");
+
+// some are dictionaries for major parts of the setup
+NTMI.q.select(_.isKindOf(Event)).keys;
+// which may again contain objects and functions
+NTMI.slots;
+
+// to add a new function with arguments, use dict as first arg:
+NTMI.myTestFunc = { |dict, obj1, obj2|
+	"NTMI.myTestFunc:".postln;
+	"obj1 is %\n".postf(obj1);
+	"obj2 is %\n".postf(obj2);
+};
+NTMI.myTestFunc;
+NTMI.myTestFunc(\abc, [1, 2, 3]);
+::
+
+CLASSMETHODS::
+
+METHOD:: initClass
+initialize inner dictionary q for all of NTMIs
+inner state, i.e. its variables and functions.
+
+METHOD:: q
+access the inner dictionary.
+
+METHOD:: doesNotUnderstand
+Like dictionaries, NTMI redirects any methods it does not
+understand to its stored objects, in the dictionary q).
+This allows dynamically adding and getting state by name.
+
+INSTANCEMETHODS::
+none, because NTMI is class-only.
