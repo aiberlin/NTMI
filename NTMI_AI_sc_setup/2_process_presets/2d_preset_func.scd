@@ -32,6 +32,7 @@ NTMI.pre.makePreset = { |preDict, proxy|
 	// // uses getHalo(\namesToStore):
 	preset = NdefPreset(proxy);
 	presPath = (NTMI.pre.settingsDir +/+ name ++ ".pxpreset.scd");
+	preset.storePath_(presPath);
 
 	if(File.exists(presPath)){
 		preset.loadSettings(presPath);
@@ -40,7 +41,6 @@ NTMI.pre.makePreset = { |preDict, proxy|
 	} {
 		"--- PRESET %: no preset found! \n".postf(name);
 	};
-	preset.storePath_(presPath);
 
 	if (NTMI.pre.addsToTop == true){
 		preset.perform(\addsToTop_, true);
