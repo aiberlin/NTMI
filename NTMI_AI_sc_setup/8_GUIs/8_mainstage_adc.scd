@@ -1,6 +1,5 @@
 /**** New mainstage window: *****
 
-
 // test gui update
 MFdef('guiSlots').value;
 
@@ -73,9 +72,13 @@ MFdef('guiSlots').add(\set, {
 		var pop = g.main.popups[i];
 		var prepop = g.main.prePops[i];
 		var mview = g.main.ndefMViews[i];
+		var coupleBut = g.main.coupleButs[i];
 		var vol = ndef.vol;
+
 		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
 		var ndefRandSeed;
+
+		var isDecoupled = NTMI.inph.decoupled.includes(ndef.key);
 
 		var presetName = NdefPreset(ndef).currSet.key;
 
@@ -110,6 +113,11 @@ MFdef('guiSlots').add(\set, {
 
 		if (mview.value != vol) { mview.value = vol };
 		if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
+
+		if (coupleBut.value != isDecoupled) {
+			coupleBut.value = isDecoupled.binaryValue
+		};
+
 	};
 	// "MFdef('guiSlots') done.".postln;
 });
@@ -304,6 +312,10 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		.items_(ndefpre.getSetNames)
 		.value_(ndefpre.getSetNames.size.rand).font_(font);
 
+		var coupleBut = Button(w, Rect(emmy.bounds.right - (40 * scrscale), top, 40 * scrscale, 40 * scrscale))
+		.states_([["––"], ["- -"]])
+		.font_(font);
+
 		pop.background_(Color.grey(1.0, 0.7));
 
 		pop.action = { |pop|
@@ -311,6 +323,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			MFdef('guiSlots').value;
 			emmy.refresh;
 		};
+
 		prePop.action = { |pop|
 			var ndef = q.slots.actives[i];
 			NdefPreset(ndef).setCurr(pop.item).setProxy(pop.item);
@@ -318,6 +331,15 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			q.pre.stepNdefInf(ndef, 0);
 			MFdef('guiSlots').value;
 			emmy.refresh;
+		};
+
+		coupleBut.action = { |but|
+			var ndef = q.slots.actives[i];
+			if (but.value > 0) {
+				NTMI.inph.decouple(ndef)
+			} {
+				NTMI.inph.couple(ndef)
+			}
 		};
 
 		emmy.uv.resize_(1);
@@ -342,12 +364,13 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 				Color.blue
 			)
 		});
-		[pop,emmy, prePop];
+		[pop,emmy, prePop, coupleBut];
 	};
 
 	g.main.popups = popMVs.flop[0];
 	g.main.ndefMViews = popMVs.flop[1];
 	g.main.prePops = popMVs.flop[2];
+	g.main.coupleButs = popMVs.flop[3];
 
 	////// the 4 mviews on the right -  remove n eventually
 	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
