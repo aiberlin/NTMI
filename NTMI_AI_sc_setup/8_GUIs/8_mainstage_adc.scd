@@ -1,19 +1,5 @@
 /**** New mainstage window: *****
 
-// test gui update
-MFdef('guiSlots').value;
-
-q.slots.chooseNext(0); MFdef('guiSlots').value;
-q.slots.chooseNext(1); MFdef('guiSlots').value;
-q.slots.chooseNext(2); MFdef('guiSlots').value;
-q.slots.chooseNext(3); MFdef('guiSlots').value;
-
-q.slots.addActive(0, Ndef(\kiteHi));
-q.slots.actives[0].vol;
-
-g.main.ndefMViews[0].label_(\test).refresh;
-g.main.ndefMViews[0].label;
-g.makeGui['NTMI_Main'].value;
 */
 
 var g = NTMI.g;
@@ -28,65 +14,11 @@ g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 g.hasNufo = { MKtl.all[\nUFO].notNil };
 q.bat = q.bat ? ();
 q.frame = q.frame ? ();
+q.osc = q.osc ? ();
+q.osc.timeSinceLast = 0.2;
 
 NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 
-MFdef('guiSlots').add(\set, {
-	// "MFdef('guiSlots') runs".postln;
-
-	q.slots.actives.do { |ndef, i|
-		var pop = g.main.popups[i];
-		var prepop = g.main.prePops[i];
-		var mview = g.main.ndefMViews[i];
-		var coupleBut = g.main.coupleButs[i];
-		var vol = ndef.vol;
-
-		var playCol = if (ndef.monitor.isPlaying, g.main.sliderCols[0], g.main.sliderCols[1]);
-		var ndefRandSeed;
-
-		var isDecoupled = NTMI.inph.decoupled.includes(ndef.key);
-
-		var presetName = NdefPreset(ndef).currSet.key;
-
-		var newLabel = ndef.key.asString;
-
-		if (presetName == \curr) {
-			ndefRandSeed = ndef.getHalo(\randSeed);
-			ndefRandSeed !? {
-				newLabel = newLabel + "rd." ++ ndefRandSeed
-			};
-		} {
-			newLabel = newLabel + presetName
-		};
-
-		if (ndef.key != pop.item or: { newLabel != mview.label }) {
-			pop.items = q.slots.choices[i];
-			pop.value = pop.items.indexOf(ndef.key);
-
-			prepop.items = NdefPreset(ndef).getSetNames;
-			prepop.value = NdefPreset(ndef).currIndex;
-
-			mview.label_( newLabel );
-		};
-
-		if (NdefPreset(ndef).settings.size != prepop.items.size) {
-			prepop.items = NdefPreset(ndef).getSetNames;
-		};
-
-		if (NdefPreset(ndef).currIndex != prepop.value) {
-			prepop.value = NdefPreset(ndef).currIndex;
-		};
-
-		if (mview.value != vol) { mview.value = vol };
-		if (mview.uv.background != playCol) { mview.uv.background_(playCol) };
-
-		if (coupleBut.value != isDecoupled) {
-			coupleBut.value = isDecoupled.binaryValue
-		};
-
-	};
-	// "MFdef('guiSlots') done.".postln;
-});
 
 // rescale stethoscope height
 g.scaleStetho = { |g, stetho, height = 200|
@@ -224,82 +156,15 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
 	MFdef(\mainWinUpdate).add(\main, NTMI.g.main[\updateMainVol]);
 
+	g.main.leftMVZone = CompositeView(w,
+		Rect(200 * scrscale,
+			w.bounds.center.y + (3 + 1 * -80 * scrscale),
+			500 * scrscale,
+			160 * 4 * scrscale
+		)
+	);
 
-	// 4 popups to select sounds, 4 mviews for volume levels
-	// add play buttons?
-	popMVs = [ 3, 1, -1, -3].collect { |offset, i|
-		var ndef = q.slots.actives[i];
-		var ndefpre = NdefPreset(ndef);
-		var top = w.bounds.center.y + (offset + 1 * -80 * scrscale);
-		var left = 200 - (offset.abs * 0) * scrscale;
-
-		var emmy = MView(0.25, w, Rect(left, top, 500 * scrscale, 150 * scrscale));
-		var pop = PopUpMenu(w, Rect(left, top, 250 * scrscale, 40 * scrscale))
-		.items_(q.slots.choices[i])
-		.value_(ndef.key).font_(font);
-		var prePop = PopUpMenu(w, Rect(left + 250 * scrscale, top, 250 * scrscale, 40 * scrscale))
-		.items_(ndefpre.getSetNames)
-		.value_(ndefpre.getSetNames.size.rand).font_(font);
-
-		var coupleBut = Button(w, Rect(emmy.bounds.right - (40 * scrscale), top, 40 * scrscale, 40 * scrscale))
-		.states_([["––"], ["- -"]])
-		.font_(font);
-
-		pop.background_(Color.grey(1.0, 0.7));
-
-		pop.action = { |pop|
-			q.slots.addActive(i, Ndef(pop.item));
-			MFdef('guiSlots').value;
-			emmy.refresh;
-		};
-
-		prePop.action = { |pop|
-			var ndef = q.slots.actives[i];
-			NdefPreset(ndef).setCurr(pop.item).setProxy(pop.item);
-			// dont step, just add influx offset
-			q.pre.stepNdefInf(ndef, 0);
-			MFdef('guiSlots').value;
-			emmy.refresh;
-		};
-
-		coupleBut.action = { |but|
-			var ndef = q.slots.actives[i];
-			if (but.value > 0) {
-				NTMI.inph.decouple(ndef)
-			} {
-				NTMI.inph.couple(ndef)
-			}
-		};
-
-		emmy.uv.resize_(1);
-		emmy.uv.alpha = 0.8;
-		emmy.dict[\knobCol] = Color.grey(0, 0.7);
-		emmy.putDict(\myspec, \amp);
-		emmy.action.add(\setVol,  { |em|
-			q.slots.actives[i].vol_(em.value)
-		});
-
-		emmy.dict.keyNumFuncs
-		.put($ , { q.slots.toggleAt(i) });
-
-		emmy.drawFunc.add(\label, {
-			var labelStr = emmy.label.asString;
-			var labelStrSize = labelStr.size;
-			var fontSize = fatfont.size * (11 / labelStrSize.max(12));
-			Pen.stringCenteredIn(
-				emmy.label.asString,
-				emmy.bounds.moveTo(0,0),
-				fatfont.copy.size_(fontSize),
-				Color.blue
-			)
-		});
-		[pop,emmy, prePop, coupleBut];
-	};
-
-	g.main.popups = popMVs.flop[0];
-	g.main.ndefMViews = popMVs.flop[1];
-	g.main.prePops = popMVs.flop[2];
-	g.main.coupleButs = popMVs.flop[3];
+	LoadMe("subsParts/slotGuis.scd", NTMI.g.dir);
 
 	////// the 4 mviews on the right -  remove n eventually
 	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
@@ -323,10 +188,8 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	g.main.rMViews = rMViews;
 
 	// snapshot button
-	g.main.snapBounds = rMViews[0].bounds
-	.moveBy(0, rMViews[0].bounds.height.neg)
-	.height_(60);
-	g.main.snapBut = Button(g.main.w, g.main.snapBounds.postln)
+	g.main.snapBounds = Rect.aboutPoint(NTMI.g.main.w.bounds.center - (0@250), 100, 30);
+	g.main.snapBut = Button(g.main.w, g.main.snapBounds)
 	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
 		["¡SNAP!", Color.white, Color.red]
 	])
@@ -355,8 +218,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			dict[\width] = dict[\bounds].width;
 			dict[\focusCol] = Color.grey(1.0, 0.8);
 			dict[\backCol] = Color.grey(1.0, 0.6);
-			dict[\round] = (1/100);
-
+			dict[\round] = (1/1000);
 
 			dict[\bounds00] = dict[\bounds].moveTo(0,0);
 			dict[\boundsLabel] = dict[\bounds00].copy.height_(24);
@@ -368,42 +230,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		// force right side mviews to use lightly transparent colors
 		mv.uv.focus(true).refresh;
 		mv.uv.focus(false).refresh;
-	};
-	// add click to
-	g.main.ndefMViews.do { |mview, i|
-		var downx, didDrag;
-		// prepare for toggle or volume change
-		mview.uv.mouseDownAction = { |uv, x|
-			// ("down" + x).postln;
-			downx = x;
-			didDrag = false;
-		};
-		// volume change, no on/off toggle
-		mview.uv.mouseMoveAction = { |uv, x|
-			var ndef = q.slots.actives[i];
-			var wid = uv.bounds.width;
-			var step = (x - downx / wid * 1.6);
-			var spec = \amp.asSpec;
-			var currvol = ndef.vol;
-			var currvolnorm = spec.unmap(currvol);
-			var newvolnorm = (currvolnorm + step).clip(0, 1);
-			var newvol = spec.map(newvolnorm);
-
-			downx = x;
-			didDrag = true;
-			ndef.vol = newvol;
-			uv.refresh;
-		};
-		// no move, just click ->  on/off toggle
-		mview.uv.mouseUpAction = {|uv, x|
-			var ndef = q.slots.actives[i];
-			if (didDrag.not) {
-				didDrag = false;
-				\toggle.postln;
-				q.slots.toggleAt(i);
-				uv.refresh;
-			};
-		}
 	};
 
 	MFdef(\mainWinUpdate).add(\inphPre, {
@@ -570,7 +396,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		if (g.hasNufo) {
 			// only if values changed!
 			if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
-				or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
+			or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
 
 				g.main.movevals = q.osc.calibImuVals ? g.main.movevals;
 				if (q.osc.nUFO.mode == \binary) {
@@ -608,7 +434,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	});
 
-	MFdef(\mainWinUpdate).add(\slots, MFdef('guiSlots'));
+	MFdef(\mainWinUpdate).add(\slots, NTMI.g.main[\updateSlots]);
 
 	NTMI.g.main.w
 });
