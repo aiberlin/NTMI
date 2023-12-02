@@ -230,22 +230,37 @@ Butz(\NTMI_Config).add(\SoundF_open, { NTMI.dir.userPOOL.openOS });
 Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
 );
 
-
 /////////// and these are all the stored bounds:
 WinBounds.stored.putAll( (
 	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
 	'NTMI': Rect(42.0, 2.0, 700.0, 462.0),
 	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
 	'NdefGui_liveInput': Rect(971.0, 557.0, 394.0, 180.0),
-	'slotSounds': Rect(726.0, 138.0, 782.0, 720.0),
 	'presets': Rect(725.0, 289.0, 487.0, 440),
 	'randomOrbitz': Rect(768.0, 817.0, 434.0, 188.0),
-
-	'ndefMixer': Rect(200.0, 289.0, 684.0, 440),
 	'mainFX': Rect(1156.0, 223.0, 524.0, 440),
-	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
 
+	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
+	'uc4': Rect(1166.0, 412.0, 490.0, 450.0),
+
+	// for raspi:
+	// bit too high
+	'slotSounds': Rect(726.0, 138.0, 782.0, 496),
+	// too wide - fixed below
 	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0),
-	'uc4': Rect(1166.0, 412.0, 490.0, 510.0),
+	// too wide when expanded - use NdefMixer.small
+	'ndefMixer': Rect(200.0, 289.0, 684.0, 440),
+
 ).collect(WinBounds.limitRectToScreen(_)));
-)
+
+// make MKtlGUIs fit on raspi screen,
+// needed for nanoKtl:
+if (NTMI.hasSmallScreen) {
+	MKtlGUI.maxSize = 780;
+	MKtlGUI.minViewSize = 32;
+	WinBounds.stored.putAll((
+		'nanoKtl': Rect(128.0, 42.0, 780, 170.0),
+	))
+};
+
+);

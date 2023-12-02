@@ -6,6 +6,8 @@ q.ndefs
 
 g.makeGui.slotSounds;
 
+ParamGUI
+
 */
 
 var q, g;
@@ -13,11 +15,12 @@ NTMI.g = NTMI.g ? (); // global dict
 q = NTMI.q;
 g = NTMI.g;
 
+
 WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 	var scbn = Window.availableBounds;
-	var maxHeight = 440; // scbn.height - 20;
-	var maxNumSlots = (maxHeight / 2 - 50 / 20 + 0.2).asInteger;
-
+	var maxHeight = 470; // scbn.height - 20;
+	var maxNumSlots = (maxHeight / 2 - 96 / 20 + 0.2).asInteger;
+	var slotNames = q.ndefs.collect(_.key);
 
 	var w = Window(name,
 		Rect(scbn.width - 800,
@@ -25,15 +28,16 @@ WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 			780,
 			min(800, maxHeight))
 	).front;
-	var slotNames = q.ndefs.collect(_.key);
 
 	("maxNumSlots: " + maxNumSlots).postln;
 	w.addFlowLayout;
 	w.alpha_(0.8);
+	w.background_(Color.grey(0.5));
 	g.ndefPreGuis = q.ndefs.keep(4).collect { |px, i|
 		var ndefPre = NdefPreset(px);
 		var gui = NdefPresetGui(ndefPre, maxNumSlots, w);
 		var zonebounds = gui.zone.bounds;
+		gui.proxyGui.paramGui.zone.bounds.postln;
 		gui.zone.bounds = zonebounds.height = zonebounds.height + 10;
 		if (i.odd) { w.view.decorator.shift(0, 10) };
 		g.tuneNameView(gui.proxyGui);
