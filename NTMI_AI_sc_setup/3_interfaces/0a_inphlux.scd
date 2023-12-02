@@ -52,15 +52,19 @@ NTMI.inph.decoupled = Set[];
 
 NTMI.inph.couple = { |dict, obj|
 	var objName = obj.key;
-	if (NTMI.inphlux.action.funcDict[objName].isNil) {
-		// object is new: attach it
-		NTMI.inphlux.attachMapped(obj);
-	} {
-		// if known, then just enable it:
-		NTMI.inphlux.action.enable(objName);
-	};
-	"coupled: %\n".postf(objName);
 	NTMI.inph.decoupled.remove(objName);
+	if (NTMI.slots.nowPlaying.includes(obj)) {
+		if (NTMI.inphlux.action.funcDict[objName].isNil) {
+			// object is new: attach it
+			NTMI.inphlux.attachMapped(obj);
+		} {
+			// if known, then just enable it:
+			NTMI.inphlux.action.enable(objName);
+		};
+		"coupled: %\n".postf(objName);
+	} {
+		"will be coupled: %\n".postf(objName);
+	};
 };
 
 // only disable func, keep func and data around
