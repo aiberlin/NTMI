@@ -5,12 +5,19 @@ NTMI.g = NTMI.g ? (); // dict for gui stuff
 q = NTMI.q;
 g = NTMI.g;
 
+g.bounds = Window.availableBounds;
+g.screenScale = min(Window.availableBounds.width / 1920,
+	Window.availableBounds.height / 1177);
+
 //// set global prefs here:
 g.alpha = g.alpha ? 0.8;
 g.fontName = g.fontName ? Font.defaultSansFace;
+g.font = Font(g.fontName, (36 * g.screenScale).round);
+g.fatfont = Font(g.fontName, (72 * g.screenScale).round);
 
-g.screenScale = min(Window.availableBounds.width / 1920,
-	Window.availableBounds.height / 1177);
+g.butGrey = Color.grey(0.3, 0.3);
+g.butGreen = Color.green(1, 0.7);
+
 
 // make nameViews bigger and better
 g.tuneNameView = { |q, obj|

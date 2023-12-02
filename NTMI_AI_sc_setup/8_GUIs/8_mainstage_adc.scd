@@ -29,41 +29,7 @@ g.hasNufo = { MKtl.all[\nUFO].notNil };
 q.bat = q.bat ? ();
 q.frame = q.frame ? ();
 
-/////// Clock display shows how long something has been running
-/*
-Tdef(\clocK).gui;
-
-Tdef(\clocK).set(\isRunning, true);
-// jumps back to zero when stopped
-Tdef(\clocK).set(\isRunning, false);
-
-// watch some Tdef to see how long a piece has been running
-Tdef(\clocK).set(\isRunning, { Tdef(\watchMe).isPlaying });
-
-Tdef(\watchMe).play;
-Tdef(\watchMe).stop;
-*/
-
-Tdef(\clocK).clock = SystemClock;
-Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 1]);
-Tdef(\clocK).set(\runtime, 0, \isRunning, true);
-
-Tdef(\clocK, { |envir|
-	var dt = 1;
-	inf.do { |i|
-		envir.timeStr = envir.runtime.asTimeString.drop(-4);
-		defer { try { envir.timeUV.refresh } };
-
-		dt.wait;
-		if (envir.isRunning == true) {
-			envir.runtime = envir.runtime ? 0 + dt;
-		} {
-			envir.runtime = 0;
-		};
-
-	}
-}).play;
-
+NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 
 MFdef('guiSlots').add(\set, {
 	// "MFdef('guiSlots') runs".postln;
@@ -134,9 +100,9 @@ g.scaleStetho = { |g, stetho, height = 200|
 
 WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
-	var w, butGrey = Color.grey(0.3, 0.3), butGreen = Color.green(1, 0.7);
-	var bounds = Window.availableBounds;
-	var wheight = bounds.height, wwidth = bounds.width;
+	var w, butGrey = g.butGrey, butGreen = g.butGreen;
+	var bounds = g.bounds;
+	var wheight = g.bounds.height, wwidth = g.bounds.width;
 	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
 
 	var font = Font(g.fontName, (36 * scrscale).round);
@@ -149,6 +115,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	var bigUV, imuUV;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
+	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
 	// quick fix so we can keep nufo graphics when no nUFO present
 	NTMI.osc = NTMI.osc ? ();
 	NTMI.osc.nUFO = NTMI.osc.nUFO ? ();
@@ -207,13 +174,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	});
 	g.main.nufoView = nufoView;
 
-	Button(w, Rect(rightCol, 340 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
-		["Reset Clock", Color.white, butGrey],
-	]).font_(font)
-	.action_({
-		Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
-	});
-
 	recBut = Button(w, Rect(rightCol, 450 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["RECORD?", Color.white, butGrey],
 		["Recording!", Color.black, butGreen]
@@ -226,6 +186,12 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			s.stopRecording;
 		}
 	});
+
+	g.main.clockZone = CompositeView(w,
+		Rect(rightCol, 240 * scrscale, 300 * scrscale, 160 * scrscale)
+	).background_(Color.grey(1.0, 0.1));
+
+	LoadMe("subsParts/clock.scd", NTMI.g.dir);
 
 	Button(w, Rect(rightCol, 580 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
 		["show recordings", Color.white, butGrey]
@@ -683,29 +649,5 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	MFdef(\mainWinUpdate).add(\main, g.main[\mainVolDisplay]);
 
-
-	/////// Clock display shows how long something has been running
-	/*
-	Tdef(\clocK).set(\isRunning, true);
-	// jumps back to zero when stopped
-	Tdef(\clocK).set(\isRunning, false);
-	*/
-
-	/// add gui for the clock here:
-	Tdef(\clocK).set(\timeUV, UserView(w,
-		Rect(rightCol, 240 * scrscale, 300 * scrscale, 100 * scrscale)
-	).front);
-	Tdef(\clocK).set(\font, fatfont.copy.size_(60 * scrscale));
-	Tdef(\clocK).set(\color, Color.white);
-
-	Tdef(\clocK).get(\timeUV).drawFunc = { |uv|
-		var font = fatfont.copy.size_(60 * scrscale);
-		var timeStr = Tdef(\clocK).get(\timeStr);
-		Pen.stringCenteredIn(timeStr,
-			Rect(0,0, uv.bounds.width, uv.bounds.height),
-			Tdef(\clocK).get(\font),
-			Tdef(\clocK).get(\color)
-		)
-	};
 	NTMI.g.main.w
 });
