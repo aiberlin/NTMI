@@ -212,19 +212,10 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	});
 
 	if (q.usesMainFX) {
-		g.main.mfxBut = Button(w,
-			Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85), 150 * scrscale, 50 * scrscale)
-		).states_([
-			["MainFX\n<<  RAND  >>", Color.white, butGrey],
-		]).font_(font)
-		.mouseDownAction_({ |bt, x, y, mod|
-			var zone = x div: (bt.bounds.width div: 3);
-			var stepVal = [-1, nil, 1][zone];
-			MFdef('mainPreStep').value(stepVal);
-			// [bt, x, y, mod].postcs;
-		});
-		g.main.mfxBut.visible_(q.usesMainFX);
-
+		g.main.fxZone = CompositeView(w,
+			Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85),
+				250 * scrscale, 50 * scrscale));
+		LoadMe("subsParts/mainFXBut.scd", NTMI.g.dir);
 	};
 
 	NTMI.g.main.mainVolZone = CompositeView(w,
