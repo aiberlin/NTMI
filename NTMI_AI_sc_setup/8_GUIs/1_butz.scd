@@ -120,7 +120,7 @@ Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 	var ndefGui = Ndef(name).gui.moveTo(600, 5);
-	g.tuneNameView(ndefGui);
+	NTMI.g.tuneNameView(ndefGui);
 	ProxyMeter.addNdefGui(ndefGui);
 	ndefGui.parent.alpha_(NTMI.g.alpha).name_(name);
 });
@@ -147,8 +147,9 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	ProxyMeter.skipjack.dt = 0.2;
 	defer ({ ProxyMeter.hideKrs }, 1);
 
-	g[\ndefMixer].arGuis.do(g.tuneNameView(_));
-	g.tuneNameView(g[\ndefMixer].editGui);
+	ndefMixer.arGuis.do(g.tuneNameView(_));
+	NTMI.g.tuneNameView(ndefMixer.editGui);
+	g.ndefMixer = ndefMixer;
 	// alwways return the window,
 	// so WinBounds can resize and place it
 	ndefMixer.parent;
