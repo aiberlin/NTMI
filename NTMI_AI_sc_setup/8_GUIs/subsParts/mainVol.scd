@@ -33,13 +33,15 @@ g.main.mainSl.drawFunc.add(\label, {
 		Color.blue
 	)
 });
-g.main.mainVolDisplay = {
+
+g.main.mainSl.dict[\focusCol] = Color.grey(1.0, 0.8);
+g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
+g.main.mainSl.uv.focus(true).refresh;
+
+g.main.updateMainVol = {
 	var nuval = MFdef(\mainVolGet).value.unbubble;
 	if (g.main.mainSl.value != nuval) {
 		g.main.mainSl.value = nuval
 	};
 };
-g.main.mainSl.dict[\focusCol] = Color.grey(1.0, 0.8);
-g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
-g.main.mainSl.uv.focus(true).refresh;
 

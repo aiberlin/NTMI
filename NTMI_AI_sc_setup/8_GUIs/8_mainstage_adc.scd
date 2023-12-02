@@ -231,6 +231,8 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
 	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
+	MFdef(\mainWinUpdate).add(\main, NTMI.g.main[\updateMainVol]);
+
 
 	// 4 popups to select sounds, 4 mviews for volume levels
 	// add play buttons?
@@ -616,8 +618,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	});
 
 	MFdef(\mainWinUpdate).add(\slots, MFdef('guiSlots'));
-
-	MFdef(\mainWinUpdate).add(\main, g.main[\mainVolDisplay]);
 
 	NTMI.g.main.w
 });
