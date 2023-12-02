@@ -227,40 +227,10 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	};
 
-	g.main.mainSl = MView(
-		MFdef(\mainVolGet).value.unbubble,
-		g.main.w,
+	NTMI.g.main.mainVolZone = CompositeView(w,
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
-
-
-	g.main.mainSl.uv.alpha_(0.7).refresh;
-	g.main.mainSl.label_(\mainVol);
-	g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
-	g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
-	g.main.mainSl.dict.round_(1/100);
-	g.main.mainSl.dict.font_(Font(g.fontName, 30 * scrscale));
-	g.main.mainSl.action.add(\setMain, { |mv|
-		MFdef(\mainVol).(mv.value);
-	});
-	g.main.mainSl.drawFunc.add(\label, {
-		Pen.stringCenteredIn(
-			g.main.mainSl.label,
-			g.main.mainSl.bounds.moveTo(0,0),
-			Font(g.fontName, 50 * scrscale),
-			Color.blue
-		)
-	});
-	g.main.mainVolDisplay = {
-		var nuval = MFdef(\mainVolGet).value.unbubble;
-		if (g.main.mainSl.value != nuval) {
-			g.main.mainSl.value = nuval
-		};
-	};
-	g.main.mainSl.dict[\focusCol] = Color.grey(1.0, 0.8);
-	g.main.mainSl.dict[\backCol] = Color.grey(1.0, 0.6);
-	g.main.mainSl.uv.focus(true).refresh;
-	g.main.mainSl.uv.focus(false).refresh;
+	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
 
 	// 4 popups to select sounds, 4 mviews for volume levels
 	// add play buttons?
