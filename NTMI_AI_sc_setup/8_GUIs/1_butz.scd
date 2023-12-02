@@ -7,7 +7,6 @@ g = NTMI.g;
 
 //// set global prefs here:
 g.alpha = g.alpha ? 0.8;
-// g.fontName = g.fontName ? Font.defaultMonoFace;
 g.fontName = g.fontName ? Font.defaultSansFace;
 
 g.screenScale = min(Window.availableBounds.width / 1920,
@@ -137,9 +136,8 @@ Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	// numItems could also be NTMI.process.allNames.size;
 	var maxVisible = 21; // (Window.screenBounds.height - 30 / 20);
-	var ndefMixer = NdefMixer(s, min(NTMI.process.allNames.size, maxVisible));
+	var ndefMixer = NdefMixer.small(s, min(NTMI.process.allNames.size, maxVisible));
 	ndefMixer.parent.name_(name);
-	g[name] = ndefMixer;
 	ndefMixer.moveTo(5, 5);
 	// set popupmenu to 'activeProxies' ?
 	// ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
@@ -263,4 +261,4 @@ if (NTMI.hasSmallScreen) {
 	))
 };
 
-);
+)
