@@ -37,11 +37,13 @@ if (NTMI.g.main.clockZone.notNil and: {
 NTMI.g.clok.uv = UserView(
 	NTMI.g.clok.zone,
 	NTMI.g.clok.extent * [1, 0.5]
-)
+);
 //.background_(Color.rand)
-.drawFunc_({ |uv|
-	var font = NTMI.g.fatfont;
+NTMI.g.clok.uv.drawFunc_({ |uv|
 	var timeStr = Tdef(\clocK).get(\timeStr);
+	var font = NTMI.g.font.copy;
+	var strBounds = timeStr.bounds(font);
+	font.size_((font.size * (uv.bounds.width * 0.9 / strBounds.width)).round);
 	Pen.stringCenteredIn(timeStr, uv.bounds, font, Color.white)
 });
 
@@ -60,6 +62,7 @@ NTMI.g.clok.but = Button(
 Tdef(\clocK).clock = SystemClock;
 Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 1]);
 Tdef(\clocK).set(\runtime, 0, \isRunning, true);
+Tdef(\clocK).set(\timeStr, "00:00:00");
 
 Tdef(\clocK, { |envir|
 	var dt = 1;
