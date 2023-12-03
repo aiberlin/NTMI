@@ -126,11 +126,19 @@ Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 
 Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
-	var ndefGui = Ndef(name).gui.moveTo(600, 5);
+	var ndefGui = Ndef(\liveInput).gui.postln;
+	var win = ndefGui.parent;
 	NTMI.g.tuneNameView(ndefGui);
 	ProxyMeter.addNdefGui(ndefGui);
-	ndefGui.parent.alpha_(NTMI.g.alpha).name_(name);
+	win.alpha_(NTMI.g.alpha);
+	defer({ win.name = name.postln }, 0.2);
+	win;
 });
+
+WinBounds.showOrMake(\liveInput);
+
+
+Window("blabla").front.name_(\otto);
 
 Butz(\NTMI).add('slotSounds', { WinBounds.showOrMake('slotSounds') });
 
@@ -236,8 +244,9 @@ Butz(\NTMI_Config).add(\SoundF_open, { NTMI.dir.userPOOL.openOS });
 Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
 );
 
+
 /////////// and these are all the stored bounds:
-WinBounds.stored.putAll( (
+WinBounds.stored.clear.putAll( (
 	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
 	'NTMI': Rect(42.0, 2.0, 700.0, 462.0),
 	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
@@ -247,14 +256,8 @@ WinBounds.stored.putAll( (
 	'mainFX': Rect(1156.0, 223.0, 524.0, 440),
 
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
-	'uc4': Rect(1166.0, 412.0, 490.0, 450.0),
 
-	// for raspi:
-	// bit too high
 	'slotSounds': Rect(726.0, 138.0, 782.0, 496),
-	// too wide - fixed below
-	'nanoKtl': Rect(128.0, 42.0, 912.0, 194.0),
-	// too wide when expanded - use NdefMixer.small
 	'ndefMixer': Rect(200.0, 289.0, 684.0, 440),
 
 ).collect(WinBounds.limitRectToScreen(_)));
@@ -264,9 +267,6 @@ WinBounds.stored.putAll( (
 if (NTMI.hasSmallScreen) {
 	MKtlGUI.maxSize = 780;
 	MKtlGUI.minViewSize = 32;
-	WinBounds.stored.putAll((
-		'nanoKtl': Rect(128.0, 42.0, 780, 170.0),
-	))
 };
 
 )
