@@ -2,11 +2,6 @@
 // make 4 NdefGuis for them
 // these show changes for all of them
 /*
-q.ndefs
-
-g.makeGui.slotSounds;
-
-ParamGUI
 
 */
 
@@ -18,7 +13,7 @@ g = NTMI.g;
 
 WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 	var scbn = Window.availableBounds;
-	var maxHeight = 470; // scbn.height - 20;
+	var maxHeight = 480; // scbn.height - 20;
 	var maxNumSlots = (maxHeight / 2 - 96 / 20 + 0.2).asInteger;
 	var slotNames = q.ndefs.collect(_.key);
 
@@ -26,7 +21,7 @@ WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 		Rect(scbn.width - 800,
 			scbn.height - 650,
 			780,
-			min(800, maxHeight))
+			min(800, maxHeight - 20))
 	).front;
 
 	("maxNumSlots: " + maxNumSlots).postln;

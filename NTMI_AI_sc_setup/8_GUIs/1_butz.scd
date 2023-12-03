@@ -137,9 +137,6 @@ WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 
 WinBounds.showOrMake(\liveInput);
 
-
-Window("blabla").front.name_(\otto);
-
 Butz(\NTMI).add('slotSounds', { WinBounds.showOrMake('slotSounds') });
 
 Butz(\NTMI).add('presets', { WinBounds.showOrMake('presets') });
@@ -153,6 +150,7 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	var maxVisible = 21; // (Window.screenBounds.height - 30 / 20);
 	var ndefMixer = NdefMixer.small(s, min(NTMI.process.allNames.size, maxVisible));
 	ndefMixer.parent.name_(name);
+	ndefMixer.switchSize(2, true);
 	ndefMixer.moveTo(5, 5);
 	// set popupmenu to 'activeProxies' ?
 	// ndefMixer.parent.view.children.first.children.first.children[0].valueAction_(1);
@@ -257,8 +255,8 @@ WinBounds.stored.clear.putAll( (
 
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
 
-	'slotSounds': Rect(726.0, 138.0, 782.0, 496),
-	'ndefMixer': Rect(200.0, 289.0, 684.0, 440),
+	'slotSounds': Rect(726.0, 4, 782.0, 460),
+	'ndefMixer': Rect(200.0, 289.0, 400, 440)
 
 ).collect(WinBounds.limitRectToScreen(_)));
 
