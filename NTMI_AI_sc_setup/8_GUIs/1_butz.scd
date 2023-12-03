@@ -135,8 +135,6 @@ WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 	win;
 });
 
-WinBounds.showOrMake(\liveInput);
-
 Butz(\NTMI).add('slotSounds', { WinBounds.showOrMake('slotSounds') });
 
 Butz(\NTMI).add('presets', { WinBounds.showOrMake('presets') });
@@ -244,14 +242,14 @@ Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
 
 /////////// and these are all the stored bounds:
 WinBounds.stored.clear.putAll( (
-	'Main_NTMI': Rect(0.0, 0.0, 1680.0, 1005.0),
-	'inphlux': Rect(675.0, 665.0, 680.0, 340.0),
-	'liveInput': Rect(971.0, 557.0, 394.0, 180.0),
-	'slotSounds': Rect(726.0, 4, 782.0, 460),
+	'Main_NTMI': Window.availableBounds,
+	'inphlux': Rect(875.0, 665.0, 680.0, 340.0),
+	'liveInput': Rect(200, 5, 394.0, 180.0),
+	'slotSounds': Rect(726.0, 5, 782.0, 460),
 	'presets': Rect(184.0, 158.0, 487.0, 440.0),
 	'randomOrbitz': Rect(237.0, 627.0, 434.0, 188.0),
 
-	'ndefMixer': Rect(200.0, 100, 400, 440),
+	'ndefMixer': Rect(200.0, 10, 400, 431),
 	'mainFX': Rect(1156.0, 4, 524.0, 659.0),
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
 
