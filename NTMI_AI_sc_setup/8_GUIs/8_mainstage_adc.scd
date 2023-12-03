@@ -154,7 +154,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
 	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
-	MFdef(\mainWinUpdate).add(\main, NTMI.g.main[\updateMainVol]);
+	NTMI.g.main.winUpdate = MFunc();
+
+	NTMI.g.main[\winUpdate].add(\main, NTMI.g.main[\updateMainVol]);
 
 	g.main.leftMVZone = CompositeView(w,
 		Rect(200 * scrscale,
@@ -232,7 +234,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		mv.uv.focus(false).refresh;
 	};
 
-	MFdef(\mainWinUpdate).add(\inphPre, {
+	NTMI.g.main[\winUpdate].add(\inphPre, {
 		if (q.inph.presIndex != rMViews[1].value) {
 			protect {
 				rMViews[1].value_(q.inph.presIndex);
@@ -356,13 +358,11 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		};
 	};
 
-	MFdef(\mainWinUpdate);
-
 	g.main.skipper.stop;
-	g.main.skipper = SkipJack(MFdef(\mainWinUpdate),  0.1, { w.isClosed }, name: \mainUV);
+	g.main.skipper = SkipJack(NTMI.g.main[\winUpdate],  0.1, { w.isClosed }, name: \mainUV);
 
 	// update OSC and battery status
-	MFdef(\mainWinUpdate).add(\nufoView, {
+	NTMI.g.main[\winUpdate].add(\nufoView, {
 		var showNufo = g.hasNufo;
 		g.main.nufoViews.do { |view|
 			if (view.visible != showNufo) {
@@ -392,7 +392,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		};
 	});
 
-	MFdef(\mainWinUpdate).add(\imuPad, {
+	NTMI.g.main[\winUpdate].add(\imuPad, {
 		if (g.hasNufo) {
 			// only if values changed!
 			if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
@@ -418,7 +418,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		};
 	});
 
-	MFdef(\mainWinUpdate).add(\modeZoom, {
+	NTMI.g.main[\winUpdate].add(\modeZoom, {
 		// inphlux mode to color and mview labels and values
 		if (g.main.backCol != q.inph.currPresetCol) {
 			// "refresh win color.".postln;
@@ -434,7 +434,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	});
 
-	MFdef(\mainWinUpdate).add(\slots, NTMI.g.main[\updateSlots]);
+	NTMI.g.main[\winUpdate].add(\slots, NTMI.g.main[\updateSlots]);
 
 	NTMI.g.main.w
 });
