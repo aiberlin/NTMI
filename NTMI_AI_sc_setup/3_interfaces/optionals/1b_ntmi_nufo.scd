@@ -209,7 +209,7 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 			} {
 				// "... (right mode for slot buttons) ...".postln;
 				if (MKtl(\nUFO).elAt(\encHat).isOn) {
-					NTMI.clutch(slotObj);
+					NTMI.inph.clutch(slotObj);
 				};
 				NTMI.osc.rightWasUsed = true;
 			}
