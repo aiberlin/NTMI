@@ -5,7 +5,10 @@ NTMI.g = NTMI.g ? (); // dict for gui stuff
 q = NTMI.q;
 g = NTMI.g;
 
-g.bounds = Window.availableBounds;
+// use NTMI.g.bounds to test for different screen sizes,
+// e.g. NTMI.g.bounds = Rect(0,0,1024, 768);
+g.bounds = g.bounds ? Window.availableBounds;
+
 g.screenScale = min(Window.availableBounds.width / 1920,
 	Window.availableBounds.height / 1177);
 
@@ -242,7 +245,7 @@ Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
 
 /////////// and these are all the stored bounds:
 WinBounds.stored.clear.putAll( (
-	'Main_NTMI': Window.availableBounds,
+	'Main_NTMI': NTMI.g.bounds,
 	'inphlux': Rect(875.0, 665.0, 680.0, 340.0),
 	'liveInput': Rect(200, 5, 394.0, 180.0),
 	'slotSounds': Rect(726.0, 5, 782.0, 460),
@@ -253,7 +256,7 @@ WinBounds.stored.clear.putAll( (
 	'mainFX': Rect(1156.0, 4, 524.0, 659.0),
 	'chanTest': Rect(743.0, 348.0, 400.0, 400.0),
 
-).collect(WinBounds.limitRectToScreen(_)));
+).collect(WinBounds.limitRectToScreen(_, 0, NTMI.g.bounds)));
 
 // make MKtlGUIs fit on raspi screen,
 // needed for nanoKtl:
@@ -262,3 +265,4 @@ if (NTMI.hasSmallScreen) {
 	MKtlGUI.minViewSize = 32;
 };
 )
+
