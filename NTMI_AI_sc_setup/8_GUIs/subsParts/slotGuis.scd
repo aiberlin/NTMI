@@ -23,7 +23,7 @@ var popMVs;
 if (NTMI.g.main.leftMVZone.isNil or: {
 	NTMI.g.main.leftMVZone.isClosed
 }) {
-	NTMI.g.main.leftMVZone = CompositeView(nil, Rect(158.0, 258.0, 393.0, 504.0)).front;
+	NTMI.g.main.leftMVZone = CompositeView(nil, Rect(158.0, 258.0, 300, 400)).front;
 	SkipJack(NTMI.g.main[\updateSlots], 0.2, {
 		NTMI.g.main.leftMVZone.isClosed
 	}, \slotGuis);

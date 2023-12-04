@@ -1,4 +1,14 @@
 /**** New mainstage window: *****
+reconsider layout so it scales better!
+butz scope - meters - nufo status -
+butz scope - meters - nufo calibrate
+-------------- snap
+butz slot1  nufo  nufo   zoom
+butz slot2    CENTER     preUp
+butz slot3    CENTER     preDn
+butz slot4  nufo  nufo   nufmod
+            MAINFX RAND
+            MAIN VOLUME
 
 */
 
@@ -20,16 +30,6 @@ q.osc.timeSinceLast = 0.2;
 NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 
 
-// rescale stethoscope height
-g.scaleStetho = { |g, stetho, height = 200|
-	var scopeV = stetho.scopeView;
-	var cycleSl = stetho.view.children[5];
-	var yzoomSl = stetho.view.children[6];
-	scopeV.bounds = scopeV.bounds.height_(height);
-	cycleSl.bounds = cycleSl.bounds.height_(height);
-	yzoomSl.bounds = yzoomSl.bounds.top_( 30 + height);
-};
-
 WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	var w, butGrey = g.butGrey, butGreen = g.butGreen;
@@ -44,7 +44,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
 	var nufoView, recBut;
-	var bigUV, imuUV;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
 	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
@@ -59,52 +58,21 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	g.main.w.background_(q.inph.currPresetCol);
 	g.main.w.alpha_(g.alpha ? 0.8);
 
-	bigUV = UserView(w, Rect.aboutPoint( bounds.center, wheight * 0.5, wheight * 0.5));
-	bigUV.background_(Color.clear);
-	g.main.bigUV = bigUV;
-	bigUV.canFocus_(false);
+	g.main.bigUVBounds = Rect.aboutPoint( w.view.bounds.center, wheight * 0.5, wheight * 0.5);
+	LoadMe("subsParts/bigUV.scd", NTMI.g.dir);
 
-	imuUV = v = UserView(w, Rect.aboutPoint( w.bounds.center, 240 * scrscale, 300 * scrscale));
-	imuUV.background_(Color.grey(0.5, 0));
-	g.main.imuUV = imuUV;
-	imuUV.canFocus_(false);
+	g.main.imuUVBounds = Rect.aboutPoint( w.view.bounds.center, 240 * scrscale, 300 * scrscale);
+	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
-	g.main.padCols = Color.grey(0.62, 0.38) !8;
-	g.main.movevals = 0.5!9;
+	LoadMe("subsParts/stetho.scd", NTMI.g.dir);
 
-	// stetho needs to be in a new-style layout for resizing...
-	g.main.stetho = Stethoscope(s, q.numChans, view: w.view);
-	// resize quick and dirty
-	defer ({
-		g.main.stetho.view.bounds_(Rect(130, 0.0, 250.0, 250.0));
-		g.scaleStetho(g.main.stetho, 230 * scrscale);
+	NTMI.g.main.meterCenterTop = NTMI.g.main.w.bounds.center.x @ 0;
+	LoadMe("subsParts/meter.scd", NTMI.g.dir);
 
-	}, 0.1);
-	// ServerMeter does not scale at all...
-	// put it in its own window?
-	//
-	g.main.meterWidth = ServerMeterView.getWidth(q.numIns ? q.numChans, q.numChans);
-	g.main.meterLeft = (g.main.w.bounds.width - g.main.meterWidth) div: 2;
-	g.main.meter = ServerMeterView(s, w, g.main.meterLeft@0, q.numIns ? q.numChans, q.numChans);
-
-	nufoView = UserView(w, Rect(rightCol, 20 * scrscale, 300 * scrscale, 150 * scrscale));
-	nufoView.background_(butGrey);
-	nufoView.drawFunc_({ |uv|
-		var bounds = uv.bounds.extent.asRect;
-		Pen.addRect(bounds).color_(Color.white).stroke;
-		Pen.addRect(bounds.copy.width_(bounds.width * (q.bat.percent ? 0 * 0.01)));
-		Pen.color_(Color.green(0.75, 0.8)).fill;
-		Pen.stringCenteredIn(
-			q.wifiStr
-			++ "\n" ++ q.frame.rateStr
-			++ "\n" ++ q.bat.string,
-			bounds,
-			font.copy.size_(font.size * 0.8),
-			Color.white
-		);
-		// "nufoView.drawFunc".postln;
-	});
-	g.main.nufoView = nufoView;
+	// why not loading?
+	NTMI.g.main.nufoInfoZone = CompositeView(w,
+		Rect(rightCol, 20 * scrscale, 300 * scrscale, 150 * scrscale));
+	LoadMe("subsParts/nufoInfo.scd", NTMI.g.dir);
 
 	recBut = Button(w, Rect(rightCol, 450 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
 		["RECORD?", Color.white, butGrey],
@@ -259,104 +227,12 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	});
 
 
-	// circle shape in the background
-	(
-		bigUV.drawFunc = { |uv|
-			var center = uv.bounds.extent * 0.5;
-			var mainIndex = q.mfx.domainIndex;
-			var domainName = q.mfx.preNames[mainIndex];
-
-			"bigUV updating.".postln;
-			Pen.translate(center.x, center.y);
-
-			Pen.addArc(0@0, center.y * 0.9, 0, 2pi);
-			// shape:
-			Pen.color_(Color.white);
-			Pen.width = 3;
-			Pen.stroke;
-
-
-			Pen.rotate(mainIndex.linlin(-1, q.mfx.preNames.size, 0.5pi, -0.5pi));
-			Pen.scale(1.618, 1.618);
-			Pen.stringCenteredIn(domainName,
-				Rect.aboutPoint(0@0, center.x, 40),
-				fatfont,
-				Color.grey(1.0, 0.3)
-
-			);
-		};
-		g.main.bigUV.visible_(q.usesMainFX);
-	);
-
 	g.main.nufoViews = [
 		// g.main.imuUV,
 		g.main.nufoView,
 		g.main.rMViews.last.uv, // mode view
 		g.main.caliBut,
 	];
-
-	MFdef('mainPreStep').add(\updateMain, {
-		defer {
-			if (q.usesMainFX) {
-				g.main.bigUV.refresh;
-			};
-		}
-	});
-
-	// possible fixes here:
-	// do basic geometry of locations only once rel to center,
-	// move to center, then scale,
-	// and only paint the ones that are needed.
-
-	// small UV in the middle for cheaper pads/axes drawing
-	imuUV.drawFunc = { |uv|
-		var myscale = Window.screenBounds.width / 1680;
-		var bounds = uv.bounds.moveTo(0, 0);
-		var center = bounds.center / myscale; // reverse scale
-		var centPadsL, padsLPos, centPadsR, padsRPos;
-		var star;
-
-		Pen.scale(myscale, myscale);
-
-		if ([\full, \touch, \binary].includes(q.osc.nUFO.mode)) {
-			centPadsL = center.copy.x_(center.x - (center.y * 1.8));
-			centPadsR = center.copy.x_(center.x + (center.y * 1.8));
-			padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
-				Polar(center.y * 1.5, angle * 0.8).asPoint + centPadsL;
-			};
-
-			padsRPos = [ 0.6, 0.2, -0.2, -0.6].collect { |angle|
-				Polar(center.y * -1.5 + pi, angle * 0.8).asPoint + centPadsR;
-			};
-
-			Pen.width_(2);
-			// 4 left, 4 right touchpads
-			(padsLPos ++ padsRPos).collect { |pt, i|
-				Pen.addArc(pt, 60, 0, 2pi);
-
-				Pen.color_(g.main.padCols[i]);
-				Pen.fill;
-				// rings white
-				Pen.addOval(Rect.aboutPoint(pt, 60, 60));
-				Pen.color_(Color.white).stroke;
-			};
-		};
-
-		// visualize move mode as star of 9;
-		if ([\full, \move].includes(q.osc.nUFO.mode)) {
-			// "move mode vis".postln;
-			star = g.main.movevals.collect { |val, i|
-				// offset -1.25 means noseDown is lowest star axis
-				Polar(val.linlin( 0, 1, 40, 240), i -1.25 / -9 * 2pi).asPoint + center;
-			};			// star.postln;
-			Pen.color = Color.yellow; Pen.width = 3;
-			star.wrapExtend(10).doAdjacentPairs { |p1, p2| Pen.line(p1, p2); };
-			Pen.stroke;
-			star.do { |p1| Pen.line(p1, center); };
-			Pen.color = Color.white; Pen.width = 1.5;
-			Pen.stroke;
-		};
-	};
 
 	g.main.skipper.stop;
 	g.main.skipper = SkipJack(NTMI.g.main[\winUpdate],  0.1, { w.isClosed }, name: \mainUV);
@@ -392,31 +268,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		};
 	});
 
-	NTMI.g.main[\winUpdate].add(\imuPad, {
-		if (g.hasNufo) {
-			// only if values changed!
-			if (q.osc.rawImuBiValues != q.osc.rawImuBiValuesOLD
-			or: { q.osc.rawPads != q.osc.rawPadsOLD }) {
-
-				g.main.movevals = q.osc.calibImuVals ? g.main.movevals;
-				if (q.osc.nUFO.mode == \binary) {
-					g.main.padCols = q.bin.bins.collect { |val, i|
-						Color.white.alpha_(val);
-					};
-				} {
-					g.main.padCols = q.osc.rawPads.collect { |val, i|
-						// now opposite Color.hsv
-						Color.fromArray(NTMI.inph.currCounterCol * val);
-						// was always yellow
-						// Color.yellow(val).alpha_(val);
-					};
-				};
-				g.main.imuUV.refresh;
-			};
-			q.osc.rawImuBiValuesOLD = q.osc.rawImuBiValues;
-			q.osc.rawPadsOLD = q.osc.rawPads;
-		};
-	});
 
 	NTMI.g.main[\winUpdate].add(\modeZoom, {
 		// inphlux mode to color and mview labels and values
