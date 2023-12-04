@@ -9,7 +9,7 @@ g = NTMI.g;
 // e.g. NTMI.g.bounds = Rect(0,0,1024, 768);
 g.bounds = g.bounds ? Window.availableBounds;
 
-g.screenScale = min(Window.availableBounds.width / 1920,
+g.screenScale = min(g.bounds.width / 1920,
 	Window.availableBounds.height / 1177);
 
 //// set global prefs here:
@@ -64,11 +64,13 @@ Butz.numButz = g.butzNames.size + 3;
 // set Butz window style params:
 Butz.style;
 Butz.style.winCol = Color.red(1, 0.8);
-Butz.style.winExtent_(120@16);
+Butz.style.winExtent_(60@16);
 Butz.style.font.name = Font.defaultMonoFace;
-Butz.style.font.size = 16;
+Butz.style.font.size = (18 * (NTMI.g.screenScale ** 0.5)).round;
+Butz.style.font.postcs;
 
 Butz.show;
+Butz.w.bounds;
 
 // add some top-level one-liners:
 Butz.addMiniMax;
