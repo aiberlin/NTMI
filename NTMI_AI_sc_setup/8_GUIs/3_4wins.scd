@@ -12,7 +12,7 @@ g = NTMI.g;
 
 
 WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
-	g.bounds; // screenbounds
+	// g.bounds; // screenbounds
 	var maxHeight = 480; // g.bounds.height - 20;
 	var maxNumSlots = (maxHeight / 2 - 96 / 20 + 0.2).asInteger;
 	var slotNames = q.ndefs.collect(_.key);
