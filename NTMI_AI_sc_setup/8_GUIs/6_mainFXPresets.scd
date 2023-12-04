@@ -6,11 +6,11 @@ WinBounds.addMake(\mainFX, {
 
 	NTMI.mfx.highKeys = [];
 	NTMI.mfx.srcKeys = NTMI.mFX.slotNames;
-	NTMI.mfx.maxItems = (Window.availableBounds.height - 50 / 20).round.asInteger;
+	NTMI.mfx.maxItems = (NTMI.g.bounds.height - 50 / 20).round.asInteger;
 
 	try { NTMI.mfx.win.close };
 	NTMI.mfx.win = Window('mainFX',
-		Rect(0,0, 520, min(800, Window.availableBounds.height - 20));
+		Rect(0,0, 520, min(800, NTMI.g.bounds.height - 20));
 		).front;
 	NTMI.mfx.win.addFlowLayout;
 

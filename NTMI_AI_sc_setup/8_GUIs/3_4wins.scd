@@ -12,14 +12,14 @@ g = NTMI.g;
 
 
 WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
-	var scbn = Window.availableBounds;
-	var maxHeight = 480; // scbn.height - 20;
+	g.bounds; // screenbounds
+	var maxHeight = 480; // g.bounds.height - 20;
 	var maxNumSlots = (maxHeight / 2 - 96 / 20 + 0.2).asInteger;
 	var slotNames = q.ndefs.collect(_.key);
 
 	var w = Window(name,
-		Rect(scbn.width - 800,
-			scbn.height - 650,
+		Rect(g.bounds.width - 800,
+			g.bounds.height - 650,
 			780,
 			min(800, maxHeight - 20))
 	).front;

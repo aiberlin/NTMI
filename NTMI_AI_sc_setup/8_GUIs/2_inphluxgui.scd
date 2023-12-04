@@ -17,7 +17,7 @@ q = NTMI.q;
 g = NTMI.g;
 
 WinBounds.addMake('inphlux', { |dict, name = \inphlux|
-	var bnds = Window.availableBounds;
+	var bnds = g.bounds;
 	var size = 170;
 	var size2 = size * 2;
 
