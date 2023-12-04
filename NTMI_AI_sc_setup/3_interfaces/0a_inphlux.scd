@@ -85,7 +85,7 @@ NTMI.inph.decouple(Ndef(\revFB));
 // accessible from ntmi by hold-enc+slotbut
 // how to show un/clutch on mainstage gui?
 
-NTMI.clutch = { |dict, obj|
+NTMI.inph.clutch = { |dict, obj|
 	var objName = obj.key;
 	// if this object was decoupled, couple it now
 	if (NTMI.inph.decoupled.includes(objName)) {
@@ -100,6 +100,6 @@ NTMI.clutch = { |dict, obj|
 };
 
 /* toggles on/off
-NTMI.clutch(Ndef(\cat))
-NTMI.clutch(Ndef(\formSing))
+NTMI.inph.clutch(Ndef(\cat))
+NTMI.inph.clutch(Ndef(\formSing))
 */
