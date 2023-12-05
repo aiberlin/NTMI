@@ -1,6 +1,6 @@
-//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// make 4 NdefGuis for them
-// these show changes for all of them
+ //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// make 4 NdefGuis for the processes in the 4 NTMI slots.
+// when playing with influx, these show changes for the active ones.
 /*
 
 */
@@ -24,7 +24,7 @@ WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 			min(800, maxHeight - 20))
 	).front;
 
-	("maxNumSlots: " + maxNumSlots).postln;
+	("slotSounds Gui maxNumSlots: " + maxNumSlots).postln;
 	w.addFlowLayout;
 	w.alpha_(0.8);
 	w.background_(Color.grey(0.5));
@@ -32,8 +32,7 @@ WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 		var ndefPre = NdefPreset(px);
 		var gui = NdefPresetGui(ndefPre, maxNumSlots, w);
 		var zonebounds = gui.zone.bounds;
-		gui.proxyGui.paramGui.zone.bounds.postln;
-		gui.zone.bounds = zonebounds.height = zonebounds.height + 10;
+		gui.zone.bounds = zonebounds.height_(zonebounds.height + 10);
 		if (i.odd) { w.view.decorator.shift(0, 10) };
 		g.tuneNameView(gui.proxyGui);
 		gui;
