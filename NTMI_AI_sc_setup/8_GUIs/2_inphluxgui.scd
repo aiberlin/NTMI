@@ -162,11 +162,11 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 			/// left bottom: info text
 
 			Pen.stringCenteredIn(
-				"click/drag to post,\n"
-				"shift-click/drag\n"
+				"click to post,\n"
+				"click-drag\n"
 				"to set inputs",
 				Rect(0, tHi, lWid, bHi),
-				Font(Font.defaultMonoFace, 10 * wid / 340),
+				Font(Font.defaultMonoFace, 14 * wid / 340),
 				Color.white
 			);
 
@@ -202,17 +202,20 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 				if (isLeft) {
 					var newval;
 					var inName = q.inphlux.inNames.clipAt(indexY);
-					"influx in % % : %\n".postf(indexY, inName.cs,
-						q.inphlux.inValDict[inName].round(0.0001));
-					if (mod.isShift) {
+					if (NTMI.inph.canSet) {
 						newval = (x / (uvW * 0.38)).unibi;
-						"*** setting influx % to %\n".postf(inName, newval.round(0.0001));
+						"influx in '%' -> %\n".postf(inName, newval.round(0.0001));
 						q.inphlux.set(inName, newval);
+					} {
+						"influx in % '%' : %\n".postf(indexY, inName,
+							q.inphlux.inValDict[inName].round(0.0001));
+
+						NTMI.inph.canSet = true;
 					};
 				} {
 					indexX = (x - (uvW * 0.38) / (uvW * 0.62)
 						* q.inphlux.inNames.size).asInteger;
-					"influx weight at [%][%]: %\n".postf(
+					"influx weight [%][%]: %\n".postf(
 						indexX, indexY, q.inphlux.weights[indexX][indexY].round(0.0001));
 				}
 			} {
@@ -221,16 +224,17 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 					indexX = (x - (uvW * 0.38) / (uvW * 0.62)
 						* q.inphlux.inNames.size).asInteger;
 					outName = q.inphlux.outNames.clipAt(indexX);
-					"influx out % % : %\n".postf(indexX, outName.cs,
+					"influx out % '%' : %\n".postf(indexX, outName,
 						q.inphlux.outValDict[outName].round(0.0001)
 					)
 
 				};
 			}
 		});
-
+		NTMI.inph.canSet = false;
 		q.inph.ioUV.mouseDownAction = MFdef(\infMouse);
 		q.inph.ioUV.mouseMoveAction = MFdef(\infMouse);
+		q.inph.ioUV.mouseUpAction = { NTMI.inph.canSet = false };
 	);
 
 	q.inph.ioWin;
