@@ -24,8 +24,8 @@ ribbon 4 (on 9) does nothing at all
 SerialPort.devices;
 SerialPort.closeAll;
 
-q.octo.rout.stop;
-q.octo.serial.close;
+NTMI.octo.rout.stop;
+NTMI.octo.serial.close;
 
 // do sth in func:
 MFdef(\kr_pots).add(\post, {|v| v.postln; });
@@ -40,12 +40,13 @@ MFdef(\kr_pots).disable(\post);
 
 (
 
-q.octo = q.octo ? ();
+NTMI.octo = NTMI.octo ? ();
 
 // open Serial port:
 (
+SerialPort.closeAll;
 
-q.octo.serial = SerialPort(
+NTMI.octo.serial = SerialPort(
 	"/dev/tty.usbmodem*".pathMatch.first,    //edit to match your port. SerialPort.listDevices
 	baudrate: 115200,    //check that baudrate is the same as in arduino sketch
 	crtscts: true);
@@ -57,16 +58,16 @@ q.octo.serial = SerialPort(
 // r[0,500,1023,0] for 4 ribbons, also 10bit.
 
 (
-try{q.octo.rout.stop};
-q.octo.rout = Routine({
+try{NTMI.octo.rout.stop};
+NTMI.octo.rout = Routine({
 	var byte, str, res;
 	var t0 = Main.elapsedTime;
 	var t = t0;
 	inf.do { |i|
-		if(q.octo.serial.read==10, {
+		if(NTMI.octo.serial.read==10, {
 			var key, array;
 			str = "";
-			while({byte = q.octo.serial.read; byte !=13 }, {
+			while({byte = NTMI.octo.serial.read; byte !=13 }, {
 				str = str++byte.asAscii;
 			});
 			try {
@@ -139,7 +140,7 @@ q.octo.rout = Routine({
 );
 );
 
-MKtl(\kraken).free;
+MKtl.all.kraken.free;
 m = MKtl( \kraken, ~krakDesc );
 m.trace.gui;
 
@@ -189,14 +190,14 @@ MKtl( \kraken).elAt(\ribbon).action = { |el| [el.name, el.deviceValue].postln };
 // influx first:
 MFdef(\kr_pots).add(\influx, { |rawvals|
 	var values = rawvals.linlin(0, 1023, -1, 1);
-	var inNames = q.inphlux.inNames.keep(values.size);
-	q.inphlux.set(*[inNames, values].flop.flat);
+	var inNames = NTMI.inphlux.inNames.keep(values.size);
+	NTMI.inphlux.set(*[inNames, values].flop.flat);
 });
 
 MFdef(\kr_ribs).add(\influx, { |rawvals|
 	var values = rawvals.linlin(0, 1023, 0, 1) * [-1, 1];
-	var inNames = q.inphlux.inNames.drop(10).keep(values.size);
-	q.inphlux.set(*[inNames, values].flop.flat);
+	var inNames = NTMI.inphlux.inNames.drop(10).keep(values.size);
+	NTMI.inphlux.set(*[inNames, values].flop.flat);
 });
 MFdef(\kr_ribs).disable(\influx);
 MFdef(\kr_pots).disable(\influx);
@@ -211,35 +212,32 @@ second four buttons switch preset or sound process in slots 1-4;
 ******/
 
 MKtl( \kraken).elAt(\kn).action = { |el|
-	var inName = q.inphlux.inNames[8 + el.indexInGroup];
-	q.inphlux.set(inName, el.value * 2 - 1);
+	var inName = NTMI.inphlux.inNames[8 + el.indexInGroup];
+	NTMI.inphlux.set(inName, el.value * 2 - 1);
 };
 
 MKtl( \kraken).elAt(\ribbon).action = { |el|
-	var inName = q.inphlux.inNames[5 + el.indexInGroup];
-	q.inphlux.set(inName, el.value * 2 - 1);
+	var inName = NTMI.inphlux.inNames[5 + el.indexInGroup];
+	NTMI.inphlux.set(inName, el.value * 2 - 1);
 };
 
 MKtl( \kraken).elAt(\bt, (0..3)).do(_.action = { |el|
 	var slotNum = el.indexInGroup.postln;
 	if (el.isOn) {
-		q.slots.playAt(slotNum)
+		NTMI.slots.playAt(slotNum)
 	} {
-		q.slots.stopAt(slotNum)
+		NTMI.slots.stopAt(slotNum)
 	};
 });
 
-MFdef.all.keys(SortedList);
-
-q.slots.addActive(i, Ndef(pop.item));
 
 MKtl(\kraken).elAt(\bt, (4..7)).do(_.action = { |el|
 	var slotNum = (el.indexInGroup - 4).postln;
 	var nextSnd, nextPre;
 	if (el.isOn) {
 		if (0.1.coin) {
-			q.slots.addActive(slotNum, Ndef(q.slots.choices[slotNum].choose));
-			q.slots.playAt(slotNum);
+			NTMI.slots.addActive(slotNum, Ndef(NTMI.slots.choices[slotNum].choose));
+			NTMI.slots.playAt(slotNum);
 		} {
 			MFdef(\stepSlotPres).(slotNum)
 		}
@@ -263,41 +261,41 @@ press 3 times quickly -> new rand sound
 
 
 
-q.octo.prevButs = 0!10;
-q.octo.prevButs = 0!10;
+NTMI.octo.prevButs = 0!10;
+NTMI.octo.prevButs = 0!10;
 
-q.octo.slotButs = [0, 1, 2, 3];
+NTMI.octo.slotButs = [0, 1, 2, 3];
 
 MFdef.all.keys(Array).sort;
 
 NTMI.osc.nUFO.setModeIndex(1);
 
-q.slots.keys(Array);
+NTMI.slots.keys(Array);
 
-q.slots.actives.collect(_.isPlaying).selectIndices (_ == true);
+NTMI.slots.actives.collect(_.isPlaying).selectIndices (_ == true);
 
 MFdef(\randBut).add(\rand, {
 	\randBut.postln;
 	[
 		// switch an active sound
 		{
-			var nowPlayingIndices = q.slots.actives.collect(_.isPlaying)
+			var nowPlayingIndices = NTMI.slots.actives.collect(_.isPlaying)
 			.selectIndices (_ == true);
 			var indexToChange = nowPlayingIndices.choose;
 			if (indexToChange.notNil) {
-				q.slots.chooseNext(indexToChange);
-				q.slots.playAt(indexToChange)
+				NTMI.slots.chooseNext(indexToChange);
+				NTMI.slots.playAt(indexToChange)
 			};
 		},
 		// switch an active preset
 		// {
-		// 	var nowPlayingIndices = q.slots.actives.collect(_.isPlaying)
+		// 	var nowPlayingIndices = NTMI.slots.actives.collect(_.isPlaying)
 		// 	.selectIndices (_ == true);
 		// 	var indexToChange = nowPlayingIndices.choose;
 		// 	if (indexToChange.notNil) {
-		// 		q.slots.keys
+		// 		NTMI.slots.keys
 		// 		(indexToChange);
-		// 		q.slots.playAt(indexToChange)
+		// 		NTMI.slots.playAt(indexToChange)
 		//
 		// 	},
 		// switch influx preset
@@ -312,14 +310,14 @@ MFdef(\randBut).add(\rand, {
 MFdef(\kr_buts).add(\trig, { |vals|
 	vals = vals.keep(8);
 	vals.do { |val, i|
-		if (val != q.octo.prevButs[i]) {
+		if (val != NTMI.octo.prevButs[i]) {
 			"but % is now %\n".postf(i, val);
 			// first four buttons toggle sounds on /off
 			if (i < 4) {
 				if (val == 0) {
-					q.slots.stopAt(i)
+					NTMI.slots.stopAt(i)
 				} {
-					q.slots.playAt(i)
+					NTMI.slots.playAt(i)
 				};
 			} {
 				// all other buttons change something randomly
@@ -327,5 +325,5 @@ MFdef(\kr_buts).add(\trig, { |vals|
 			};
 		};
 	};
-	q.octo.prevButs = vals;
+	NTMI.octo.prevButs = vals;
 });
