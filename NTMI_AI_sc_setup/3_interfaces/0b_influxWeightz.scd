@@ -108,7 +108,7 @@ NTMI.inph.ampFirstTweakOff = {
 
 NTMI.inph.inphTanhOn = {
 	// and compress output values by tanh, so we clip later?
-	NTMI.inphlux.addProc(\base, { |val| val.tanh * 1.1 });
+	NTMI.inphlux.addProc(\base, { |val| val.tanh * 1.03 });
 	NTMI.inph.tanhIsOn = true;
 };
 
