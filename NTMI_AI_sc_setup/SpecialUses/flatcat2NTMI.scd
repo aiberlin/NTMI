@@ -33,6 +33,7 @@ OSCdef.trace(false);
 // turn flatcat-NTMI connection off and on:
 OSCdef(\flatcat).disable;
 OSCdef(\flatcat).enable;
+
 */
 
 // the OSC port number flatcat sends on
@@ -50,7 +51,14 @@ temperature
 position // angle
 velocity
 current
+
+// TODO:
+- replace measured data ranges with known good ones.
+- simple recent data display, last 5 seconds,
+- ringbuf or so.
+
 ***/
+
 
 OSCdef(\flatcat, { |msg|
 	var nums = msg.drop(1);
@@ -59,6 +67,9 @@ OSCdef(\flatcat, { |msg|
 	~now = Main.elapsedTime;
 	~dt = ~now - (~then ? ~now);
 	~then = ~now;
+
+	// forget supply voltages for now
+	nums = nums.drop(3);
 
 	// update data ranges
 	nums.do { |val, i|
@@ -78,12 +89,11 @@ OSCdef(\flatcat, { |msg|
 	// crude, but works:
 	// set 12 (or 15) first influx inputs from flatcat
 	NTMI.inphlux.set(*~bipolars.collect { |num, i|
-		[ q.inphlux.inNames[i], num ]
+		[ NTMI.inphlux.inNames[i], num ]
 	}.flat);
 
 	////// debug
 	// msg.round(0.001).postln;
 	// "~dt: %\n".postf(~dt.round(0.001));
-}, \flatcat);
-
+}, '/flatcat').enable;
 
