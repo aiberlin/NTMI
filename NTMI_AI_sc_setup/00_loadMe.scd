@@ -32,8 +32,9 @@ Task {
 	//// Set generally useful globals:
 
 	// internally useful:
-	NTMI.isPi     = NTMI.isPi ?? { NTMI.myname == 'pi' };
 	NTMI.myname = Platform.userHomeDir.basename.asSymbol;
+	NTMI.isPi     = NTMI.isPi ?? { NTMI.myname == 'pi' };
+	NTMI.isPatch     = NTMI.isPi ?? { NTMI.myname == 'patch' };
 
 	LoadMe("0_setDirs.scd");
 
@@ -112,7 +113,8 @@ Task {
 	"*** NTMI.numChans is: %\n".postf(NTMI.numChans);
 	"*** NTMI.numIns is: %\n".postf(NTMI.numIns);
 
-	LoadMe(NTMI.prefs.active.preBootSetup);
+	"*** NTMI.preBoot runs.".postln;
+	NTMI.preBoot;
 
 	"\n\n".postln;
 
@@ -127,13 +129,16 @@ Task {
 
 		NTMI.helloSound ?? { LoadMe("0_helloSound.scd") };
 
-		LoadMe(NTMI.prefs.active.postBootSetup);
+		"*** NTMI.postBoot runs.".postln;
+		NTMI.postBoot;
 
 		LoadMe("2_process_presets/2a_bufferLoader.scd");
 		LoadMe("2_process_presets/2b_liveInput.scd");
 		LoadMe("2_process_presets/2c_loadProcesses.scd");
 		LoadMe("2_process_presets/2d_preset*.scd");
 
+		"*** NTMI.postPresets runs.".postln;
+		NTMI.postPresets;
 
 		/********** INTERFACES *********/
 
@@ -143,6 +148,9 @@ Task {
 		NTMI.interfacesToLoad.do { |name|
 			LoadMe("3_interfaces/*/*%*scd".format(name));
 		};
+
+		"*** NTMI.preMainFX runs.".postln;
+		NTMI.preMainFX;
 
 		if (NTMI.usesMainFX) {
 			LoadMe("6_MainFX.scd");
@@ -161,6 +169,9 @@ Task {
 		};
 
 		if (NTMI.hasGui) {
+			"*** NTMI.preGui runs.".postln;
+			NTMI.preGui;
+
 			"\n\n*** *** *** FOLDER % : \n".postf("8_GUIs");
 			LoadMe("8_GUIs/*scd");
 			// 0.1.wait;
@@ -171,7 +182,8 @@ Task {
 			};
 		};
 
-		LoadMe(NTMI.prefs.active.finalSetup);
+		"*** NTMI.finalSetup runs.".postln;
+		NTMI.finalSetup;
 
 		// reinstate prev. latency
 		if (s.latency.isNil) {
