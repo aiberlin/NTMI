@@ -84,6 +84,7 @@ WinBounds.addMake(\presets, { |dict, name = \presets|
 	ppg.skipjack.dt=0.1;
 
 	g.tuneNameView(ng);
+	ProxyMeter.addNdefGui(ng);
 	butrow[0].doAction;
 
 	SkipJack({

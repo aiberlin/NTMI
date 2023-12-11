@@ -35,6 +35,7 @@ WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 		gui.zone.bounds = zonebounds.height_(zonebounds.height + 10);
 		if (i.odd) { w.view.decorator.shift(0, 10) };
 		g.tuneNameView(gui.proxyGui);
+		ProxyMeter.addNdefGui(gui.proxyGui);
 		gui;
 	};
 

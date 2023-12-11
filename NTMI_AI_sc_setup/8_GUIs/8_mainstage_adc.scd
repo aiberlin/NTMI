@@ -158,7 +158,10 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	g.main.rMViews = rMViews;
 
 	// snapshot button
-	g.main.snapBounds = Rect.aboutPoint(NTMI.g.main.w.bounds.center - (0@250), 100, 30);
+	NTMI.g.main.snapBounds = Rect(0,0, 200, 60)
+	.right_(NTMI.g.main.leftMVZone.bounds.right)
+	.bottom_(NTMI.g.main.leftMVZone.bounds.top);
+
 	g.main.snapBut = Button(g.main.w, g.main.snapBounds)
 	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
 		["¡SNAP!", Color.white, Color.red]
