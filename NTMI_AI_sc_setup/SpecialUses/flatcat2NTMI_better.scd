@@ -58,9 +58,6 @@ velocity
 current
 ***/
 
-MKtl(\nUFO).desc.dump;
-MKtlDesc("ai-ntmi").dump;
-MKtl.all.choose.desc.path
 
 (
 // the OSC port number flatcat sends on
@@ -71,7 +68,7 @@ thisProcess.openUDPPort(8999);
 	descName: "flatcat",
 	deviceName: "flatcat",
 	protocol: \osc,
-	deviceType: \multiController,
+	deviceType: \robotPet,
 	elementTypes: [\sensor],
 	status: (
 		linux: "unknown",
@@ -80,7 +77,8 @@ thisProcess.openUDPPort(8999);
 	),
 
 	idInfo: "flatcat",
-	// netAddrInfo: ( /*ipAddress: "169.254.1.1", */srcPort: 9000, recvPort: 8000 ), // ip for adhoc mode
+	// info for flatcat in accesspoint mode
+	netAddrInfo: (ipAddress: "192.168.4.1", srcPort: 46757, recvPort: 8999 ),
 
 	deviceInfo: (
 		vendorURI: "https://flatcat.berlin",
@@ -145,13 +143,47 @@ thisProcess.openUDPPort(8999);
 );
 MKtl.all[\flatcat].free;
 MKtl(\flatcat, ~flatcatdesc);
-// todo - add number readouts:
-MKtl(\flatcat).gui.showLabels;
+
+
+///// GUI stuff:
+NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat2NTMI_better.scd");
+
+// add number readouts to gui:
+WinBounds.addMake(\flatcat, {
+	var mg = MKtl(\flatcat).gui.showLabels;
+	var win = mg.parent;
+	var uv = UserView(win, win.view.bounds.top_(200).height_(30))
+	.background_(Color.grey);
+	win.bounds = win.bounds.height_(win.bounds.height + 30);
+	uv.drawFunc = { |uv|
+		var string = MKtl(\flatcat).elAt.deviceValue.collect { |val|
+			(val.round(0.001).asString ++ " ").clipExtend(5)
+		};
+		Pen.stringCenteredIn(string.join(" "),
+			uv.bounds.extent.asRect,
+			Font(Font.defaultMonoFace, 16.5),
+			Color.green);
+	};
+	uv.frameRate_(10).animate_(true);
+	win;
+});
+WinBounds.showOrMake(\flatcat);
 );
 
-// send a test message:
+/***
+// to send a test message without flatcat,
+// you need to adjust the source Address in the MKtl OSC device:
+MKtl(\flatcat).device.updateSrcAddr("127.0.0.1", NetAddr.langPort);
+OSCFunc.trace(true, true);
+// then this line should change the flatcat values:
+~sendFlatcatRand.value;
+
+// to switch back to real flatcat address, do:
+MKtl(\flatcat).device.updateSrcAddr("192.168.4.1", 46757);
+
+***/
 ~sendFlatcatRand = {
-	NetAddr.localAddr.sendMsg("/flatcat",
+	NetAddr("127.0.0.1", 8999).sendMsg("/flatcat",
 		// voltages:
 		4.1, 5.8, 5.9,
 		// temp, angle, velo, current
@@ -160,6 +192,10 @@ MKtl(\flatcat).gui.showLabels;
 		rrand(25.0, 40), 0.5.rand2, 0.2.rand2, 0.2.rand2,
 	);
 };
+/*
+~sendFlatcatRand.value;
+*/
+
 
 // MFdef(\flatcat): the actions to do when data come in
 (
@@ -174,6 +210,7 @@ MFdef(\flatcat).add(\post, { |el|
 MFdef(\flatcat).disable(\post);
 MFdef(\flatcat).enable(\post);
 */
+MFdef(\flatcat).disable(\post);
 
 
 // set absolute: post normalized data
@@ -193,8 +230,9 @@ MFdef(\flatcat).enable(\\setAbs);
 */
 );
 
-// play an NTMI sound slot
+/* play an NTMI sound slot
 NTMI.slots.playAt(0);
+*/
 
 MKtl(\flatcat).elAt.action = { |el|
 	var debug = "flatcat global".postln;
@@ -210,12 +248,16 @@ MKtl(\flatcat).elAt.action = { |el|
 ~sendFlatcatRand.value;
 */
 
-
-// set relative: post normalized data
+// SET-RELATIVE => Polyphonic INFLUENCE MODE !
 MFdef(\flatcat).disable(\setAbs);
 
+// use NTMI.zooms.flatcat to tune its degree of influence
+NTMI.zooms = NTMI.zooms ? ();
+NTMI.zooms.flatcat = 1;
+
+
 MFdef(\flatcat).add(\setRel, {
-	var debug = "MFdef('flatcat') - setRel".postln;
+	// var debug = "MFdef('flatcat') - setRel".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var diffs = values - MKtl(\flatcat).elAt.prevValue;
 	///////// maybe make changevectors by hand later:
@@ -236,8 +278,11 @@ MFdef(\flatcat).add(\setRel, {
 				(0..numParams-1),
 				diffs,
 				NTMI.inphlux.inScaler
+				* NTMI.zooms.flatcat
 			);
 		};
 	};
 });
+MFdef(\flatcat).enable(\setRel);
 
+MKtl(\flatcat);
