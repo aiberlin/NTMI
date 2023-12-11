@@ -120,7 +120,7 @@ NTMI.osc.calibrate = { |dict, dt = 1, whenDone|
 		var padsflopped, padmeans, padmaxes, padjitters, padoffsets;
 		var captureOK;
 		MFdef(\nUFOImuFunc).remove(\capture);
-		MFdef(\capsin).remove(\capture);
+		NTMI.osc.capsin.remove(\capture);
 
 		"*** nUFO calibration: ***".postln;
 		captureOK = NTMI.capture.imu.size > 5;
@@ -274,7 +274,7 @@ NTMI.inph.sendInphPre = {
 /// -> release stores snapshot
 // otherwise, hat was shift but for other buttons.
 
-MFdef(\encHatUsed).add(\used, {
+NTMI.osc.encHatUsed = MFunc().add(\used, {
 	if (MKtl(\nUFO).elAt(\encHat).isOn) {
 		NTMI.osc.encHatUsed = true;
 	}
@@ -291,15 +291,15 @@ MKtl(\nUFO).elAt(\encHat).action.add(\snap, { |bt|
 });
 
 //////
-MKtl(\nUFO).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, MFdef(\encHatUsed)) };
-MKtl(\nUFO).elAt(\enc).action.add(\enchat, MFdef(\encHatUsed));
+MKtl(\nUFO).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, NTMI.osc.encHatUsed) };
+MKtl(\nUFO).elAt(\enc).action.add(\enchat, NTMI.osc.encHatUsed);
 
 
 // reset right back leds to their proper values
 // e.g. after modal action of buttons for MainFX
-MFdef(\resetModePreLEDs).add(\reset, { |delay=0.1|
+NTMI.osc.resetModePreLEDs = MFunc().add(\reset, { |delay=0.1|
 	defer ({
-		MFdef(\resetModePreLEDs).postln;
+		"NTMI.osc.resetModePreLEDs".postln;
 		NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex);
 		NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 	}, delay);
@@ -315,8 +315,8 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(nil);
-			MFdef(\resetModePreLEDs).value(0.1);
-			MFdef(\encHatUsed).value;
+			NTMI.osc.resetModePreLEDs.value(0.1);
+			NTMI.osc.encHatUsed.value;
 		}
 
 		// slot mode: rand preset
@@ -331,7 +331,7 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		// default: step inph preset
 		{
 			NTMI.osc.nUFO.modeStep(1);
-			MFdef(\resetModePreLEDs).value(0.1);
+			NTMI.osc.resetModePreLEDs.value(0.1);
 		}
 
 	}
@@ -347,8 +347,8 @@ MKtl(\nUFO).elAt(\steps)[0].action.add(\modal, {|bt|
 		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(1);
-			MFdef(\resetModePreLEDs).value(0.1);
-			MFdef(\encHatUsed).value;
+			NTMI.osc.resetModePreLEDs.value(0.1);
+			NTMI.osc.encHatUsed.value;
 		}
 
 		// slot mode: ndef preset up by one
@@ -379,8 +379,8 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(-1);
-			MFdef(\resetModePreLEDs).value(0.1);
-			MFdef(\encHatUsed).value;
+			NTMI.osc.resetModePreLEDs.value(0.1);
+			NTMI.osc.encHatUsed.value;
 		}
 
 		// slot mode: ndef preset down by one
@@ -456,7 +456,7 @@ MKtl(\nUFO).collectivesDict[\imu].action = {
 // set the first 9 values of the inphlux from the imu params:
 NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 
-MFdef(\nUFOImuFunc).add(\setInflux, {
+MFdef(\nUFOImuFunc).add(\setAbs, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
 	var calibImuValsBi = imuInvalsBi - NTMI.zero.imu;
 	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
@@ -553,7 +553,7 @@ NTMI.osc.nUFOSkip = SkipJack({
 (
 NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 
-MFdef(\capsToInph).add(\set, {
+MFdef(\capsToInph).add(\setAbs, {
 	var influx = NTMI.inphlux;
 	var pads = MKtl(\nUFO).elAt(\cap);
 	var padInNames = NTMI.inphlux.getHalo(\padNames);
@@ -572,9 +572,11 @@ MKtl(\nUFO).collAt('caps').groupAction = nil;
 
 MKtl(\nUFO).addHalo(\capLedThresh, 0.3);
 
-MKtl(\nUFO).collAt('caps').groupAction = MFdef(\capsin);
+NTMI.osc.capsin = MFunc();
+MKtl(\nUFO).collAt('caps').groupAction = NTMI.osc.capsin;
 
-MFdef(\capsin).add(\set, { |coll|
+
+NTMI.osc.capsin.add(\set, { |coll|
 	var capLedThresh = MKtl(\nUFO).getHalo(\capLedThresh);
 	var values = coll.value;
 
