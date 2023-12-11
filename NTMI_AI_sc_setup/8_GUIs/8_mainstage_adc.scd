@@ -48,9 +48,8 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
 	// quick fix so we can keep nufo graphics when no nUFO present
-	NTMI.osc = NTMI.osc ? ();
-	NTMI.osc.nUFO = NTMI.osc.nUFO ? ();
-	NTMI.osc.nUFO.mode = NTMI.osc.nUFO.mode ? \full;
+	NTMI.nufo = NTMI.nufo ? ();
+	NTMI.nufo.mode = NTMI.nufo.mode ? \full;
 
 	try { g.main.w.close };
 	w = Window(name, bounds).front;
@@ -108,7 +107,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	]).font_(font)
 	.action_({ |but|
 		but.value_(1);
-		NTMI.osc.calibrate(1, { |ok| but.value_(if (ok, 2, 0).postln) })
+		NTMI.nufo.calibrate(1, { |ok| but.value_(if (ok, 2, 0).postln) })
 	});
 
 	if (q.usesMainFX) {
@@ -223,10 +222,10 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
 	rMViews[2].uv.mouseDownAction = { NTMI.inph.stepWPre(-1) };
 
-	rMViews[3].label_('nUFO mode').value_(q.osc.nUFO.mode).mode_(\code);
+	rMViews[3].label_('nUFO mode').value_(q.nufo.mode).mode_(\code);
 	rMViews[3].uv.mouseDownAction.add(\cycle, { |x|
-		NTMI.osc.nUFO.modeStep(1);
-		rMViews[3].valueAction_(q.osc.nUFO.mode);
+		NTMI.nufo.modeStep(1);
+		rMViews[3].valueAction_(q.nufo.mode);
 	});
 
 
@@ -280,7 +279,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 			g.main.w.background_(q.inph.currPresetCol);
 		};
 		if (g.hasNufo) {
-			if (q.osc.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.osc.nUFO.mode) };
+			if (q.nufo.mode != rMViews[3].label) { rMViews[3].label_(q.nufo.mode) };
 		};
 
 		// zoom

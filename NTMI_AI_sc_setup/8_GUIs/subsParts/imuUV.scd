@@ -21,7 +21,7 @@ imuUV.drawFunc = { |uv|
 
 	Pen.scale(myscale, myscale);
 
-	if ([\full, \touch, \binary].includes(NTMI.osc.nUFO.mode)) {
+	if ([\full, \touch, \binary].includes(NTMI.nufo.mode)) {
 		centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 		centPadsR = center.copy.x_(center.x + (center.y * 1.8));
 		padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
@@ -46,7 +46,7 @@ imuUV.drawFunc = { |uv|
 	};
 
 	// visualize move mode as star of 9;
-	if ([\full, \move].includes(NTMI.osc.nUFO.mode)) {
+	if ([\full, \move].includes(NTMI.nufo.mode)) {
 		// "move mode vis".postln;
 		star = NTMI.g.main.movevals.collect { |val, i|
 			// offset -1.25 means noseDown is lowest star axis
@@ -64,16 +64,16 @@ imuUV.drawFunc = { |uv|
 NTMI.g.main[\winUpdate].add(\imuPad, {
 	if (NTMI.g.hasNufo) {
 		// only if values changed!
-		if (NTMI.osc.rawImuBiValues != NTMI.osc.rawImuBiValuesOLD
-			or: { NTMI.osc.rawPads != NTMI.osc.rawPadsOLD }) {
+		if (NTMI.nufo.rawImuBiValues != NTMI.nufo.rawImuBiValuesOLD
+			or: { NTMI.nufo.rawPads != NTMI.nufo.rawPadsOLD }) {
 
-			g.main.movevals = NTMI.osc.calibImuVals ? g.main.movevals;
-			if (NTMI.osc.nUFO.mode == \binary) {
+			g.main.movevals = NTMI.nufo.calibImuVals ? g.main.movevals;
+			if (NTMI.nufo.mode == \binary) {
 				g.main.padCols = NTMI.bin.bins.collect { |val, i|
 					Color.white.alpha_(val);
 				};
 			} {
-				g.main.padCols = NTMI.osc.rawPads.collect { |val, i|
+				g.main.padCols = NTMI.nufo.rawPads.collect { |val, i|
 					// now opposite Color.hsv
 					Color.fromArray(NTMI.inph.currCounterCol * val);
 					// was always yellow
@@ -82,8 +82,8 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 			};
 			g.main.imuUV.refresh;
 		};
-		NTMI.osc.rawImuBiValuesOLD = NTMI.osc.rawImuBiValues;
-		NTMI.osc.rawPadsOLD = NTMI.osc.rawPads;
+		NTMI.nufo.rawImuBiValuesOLD = NTMI.nufo.rawImuBiValues;
+		NTMI.nufo.rawPadsOLD = NTMI.nufo.rawPads;
 	};
 });
 

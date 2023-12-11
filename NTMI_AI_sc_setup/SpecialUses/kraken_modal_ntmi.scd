@@ -268,7 +268,7 @@ NTMI.octo.slotButs = [0, 1, 2, 3];
 
 MFdef.all.keys(Array).sort;
 
-NTMI.osc.nUFO.setModeIndex(1);
+NTMI.nufo.setModeIndex(1);
 
 NTMI.slots.keys(Array);
 
@@ -299,7 +299,7 @@ MFdef(\randBut).add(\rand, {
 		//
 		// 	},
 		// switch influx preset
-		// { NTMI.osc.nUFO.modeStep },
+		// { NTMI.nufo.nUFO.modeStep },
 		// switch rand mainFX preset
 		{ MFdef(\mainPreStep).value },
 	].choose.value;

@@ -1,13 +1,13 @@
 
 // test all led elements once:
 /*
-NTMI.osc.nUFO.mode = \full;
+NTMI.nufo.nUFO.mode = \full;
 Tdef(\allLEDs).play;
 */
 
 Tdef(\allLEDs).set(\dt, 0.1);
 Tdef(\allLEDs, { |ev|
-	try { NTMI.osc.nufoSkip.stop };
+	try { NTMI.nufo.skip.stop };
 	2.do {
 		"leds back ON".postln;
 		MKtl(\nUFO).elAt(\led, \bk).do { |led|
@@ -35,7 +35,7 @@ Tdef(\allLEDs, { |ev|
 	};
 
 	// set to correct state now:
-	try { NTMI.osc.nufoSkip.stop.play };
+	try { NTMI.nufo.skip.stop.play };
 
 	// sync back LEDs state
 	0.1.wait;
@@ -44,7 +44,7 @@ Tdef(\allLEDs, { |ev|
 		MKtl(\nUFO).elAt(\led, \bk, i).value = playVal;
 		0.05.wait;
 	};
-	NTMI.osc.nUFO.setModeIndex(NTMI.osc.nUFO.modeIndex);
+	NTMI.nufo.setModeIndex(NTMI.nufo.modeIndex);
 	0.1.wait;
 	NTMI.inph.setWPreIndex(NTMI.inph.presIndex);
 	0.1.wait;

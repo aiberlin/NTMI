@@ -6,24 +6,24 @@ OSCFunc.trace (false);
 */
 
 // use this dict for everything osc related
-NTMI.osc = NTMI.osc ? ();
+NTMI.nufo = NTMI.nufo ? ();
 
 
 // for monitoring incoming osc activity by timetag -
-NTMI.osc.lastInTime = 0;
-NTMI.osc.timeSinceLast = { Main.elapsedTime - NTMI.osc.lastInTime };
-NTMI.osc.timeSinceLast = { Main.elapsedTime - NTMI.osc.lastInTime };
-NTMI.osc.deviceName = '???';
+NTMI.nufo.lastInTime = 0;
+NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
+NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
+NTMI.nufo.deviceName = '???';
 
 // should play LED ballet every time we go from
 // OSC silence to receiving stuff from nufo
 
 OSCdef(\xoscAlive, { |msg, time|
-	if (NTMI.osc.lastInTime == 0 or: { NTMI.osc.timeSinceLast > 10 }) {
+	if (NTMI.nufo.lastInTime == 0 or: { NTMI.nufo.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
-	NTMI.osc.deviceName = \xosc;
-	NTMI.osc.lastInTime = time;
+	NTMI.nufo.deviceName = \xosc;
+	NTMI.nufo.lastInTime = time;
 }, "/imu").permanent_(true);
 
 /*
@@ -33,21 +33,21 @@ NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
 */
 OSCdef(\nUFOAlive, { |msg, time|
 	// \nUFOAlive.postln;
-	if (NTMI.osc.lastInTime == 0 or: { NTMI.osc.timeSinceLast > 10 }) {
+	if (NTMI.nufo.lastInTime == 0 or: { NTMI.nufo.timeSinceLast > 10 }) {
 		Tdef(\allLEDs).play;
 	};
-	NTMI.osc.deviceName = \nUFO;
-	NTMI.osc.lastInTime = time;
+	NTMI.nufo.deviceName = \nUFO;
+	NTMI.nufo.lastInTime = time;
 }, "ntmi/imu").permanent_(true);
 
 
 // init zero values
 NTMI.zero = NTMI.zero ? ();
-NTMI.osc.rawPads = (0!8);
-NTMI.osc.rawImuBiValues = (0!9);
+NTMI.nufo.rawPads = (0!8);
+NTMI.nufo.rawImuBiValues = (0!9);
 
-NTMI.zero.imu = NTMI.osc.rawImuBiValues;
-NTMI.zero.pads = NTMI.osc.rawPads;
+NTMI.zero.imu = NTMI.nufo.rawImuBiValues;
+NTMI.zero.pads = NTMI.nufo.rawPads;
 
 NTMI.zero.path = Platform.userAppSupportDir +/+ "zeroes.scd";
 

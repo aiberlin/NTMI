@@ -224,7 +224,7 @@ NTMI.slots.fadeoutTime;
 ///////// 4. nUFO modes and calibration /////////
 // step thru main nUFO modes:
 // - full, touch, binary
-NTMI.osc.nUFO.modeStep();
+NTMI.nufo.modeStep();
 // full mode connects and imu, pads to influx
 // touch mode only connects pads to influx 9-16
 // binary uses only pads to build a "preset piano",
@@ -234,6 +234,6 @@ NTMI.osc.nUFO.modeStep();
 // set ZERO offsets position for nUFO imu and pads,
 /// so sound presets will be heard as stored
 // when interactor is at zero position
-NTMI.osc.calibrate;
+NTMI.nufo.calibrate;
 
 
