@@ -182,10 +182,12 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 	if (MKtl.all[name].isNil) {
 		filepath.postcs.loadPaths;
 	};
+	if (WinBounds.makeFuncs[name].isNil) {
+		WinBounds.addMake(name, {
+			MKtl(name).gui.showLabels.parent
+		});
+	};
 
-	WinBounds.addMake(name, {
-		MKtl(name).gui.showLabels.parent
-	});
 	WinBounds.showOrMake(name);
 };
 
@@ -224,7 +226,7 @@ Butz(\NTMI_Config).add('Presets_dir', {
 });
 
 Butz(\NTMI_Config).add(\userDir_POOL, {
-		(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3a_userDir_POOL.scd").openOS
+	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3a_userDir_POOL.scd").openOS
 });
 Butz(\NTMI_Config).add(\POOL_open, { NTMI.dir.userPOOL.openOS });
 
