@@ -15,29 +15,31 @@
 var g = NTMI.g;
 var q = NTMI.q;
 
+g.mini = g.mini ? ();
 
-MFdef(\miniGuiUpdate).add(\slots, {
+g.mini.guiUpdate = MFunc([\slots, {
 	// "slots...".postln;
-});
+}]);
 
-MFdef(\miniGuiUpdate).add(\devices, {
+
+g.mini.guiUpdate.add(\devices, {
 	// show which MKtls are physically connected:
 	// nufo, nanoK2, uc4, gamepad
 	// devices found?".postln;
 });
 
-MFdef(\miniNufoUV).add(\, {
+g.mini.drawNufo = MFunc([\draw, {
 	// draw pad values,
 	// orientation star,
 	// and network name on little uv in center
-});
+}]);
 
 /*
-q.keys
-MFdef(\miniGuiUpdate).value;
+NTMI.keys
+NTMI.g.mini.guiUpdate.value;
 */
 
-MFdef(\miniGuiUpdate).add(\modeZoom, {
+g.mini.guiUpdate.add(\modeZoom, {
 
 	var mainvol = MFdef(\mainVolGet).value.unbubble;
 
@@ -70,8 +72,6 @@ MFdef(\miniGuiUpdate).add(\modeZoom, {
 		g.mini.modePop.value = q.inph.modes.indexOf(q.inph.mode).postln;
 	};
 });
-
-g.mini = ();
 
 WinBounds.addMake(\miniNTMI, {
 
@@ -177,7 +177,7 @@ WinBounds.addMake(\miniNTMI, {
 	g.mini.skip = SkipJack({
 		// "miniskip...".postln;
 		if (g.mini.w.notNil and: { g.mini.w.isClosed.not }) {
-			MFdef(\miniGuiUpdate).value
+			g.mini.guiUpdate
 		}
 	}, 0.3, false, "mini");
 
