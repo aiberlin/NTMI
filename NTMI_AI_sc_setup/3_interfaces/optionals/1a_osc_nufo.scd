@@ -12,7 +12,6 @@ NTMI.nufo = NTMI.nufo ? ();
 // for monitoring incoming osc activity by timetag -
 NTMI.nufo.lastInTime = 0;
 NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
-NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
 NTMI.nufo.deviceName = '???';
 
 // should play LED ballet every time we go from

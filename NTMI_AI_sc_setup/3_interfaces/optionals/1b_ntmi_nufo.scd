@@ -513,7 +513,6 @@ NTMI.nufo.skipLogin = SkipJack({
 // for monitoring the incoming osc activity by timetag
 NTMI.nufo.lastInTime = 0;
 NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
-NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
 
 OSCdef(\imuAlive, { |msg, time|
 	NTMI.nufo.lastInTime = time;

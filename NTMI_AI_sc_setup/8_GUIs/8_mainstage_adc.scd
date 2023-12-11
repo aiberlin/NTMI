@@ -24,8 +24,8 @@ g.main.sliderCols = [ Color.green(1.0, 0.75), Color.grey(1.0, 0.75) ];
 g.hasNufo = { MKtl.all[\nUFO].notNil };
 q.bat = q.bat ? ();
 q.frame = q.frame ? ();
-q.osc = q.osc ? ();
-q.osc.timeSinceLast = 0.2;
+q.nufo = q.nufo ? ();
+q.nufo.timeSinceLast = 0.2;
 
 NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 
@@ -249,7 +249,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		};
 
 		if (showNufo) {
-			if (q.osc.timeSinceLast >= 1) {
+			if (q.nufo.timeSinceLast >= 1) {
 				NTMI.bat.calc.(0);
 				q.bat.resetVals;
 				q.frame.resetVals;
