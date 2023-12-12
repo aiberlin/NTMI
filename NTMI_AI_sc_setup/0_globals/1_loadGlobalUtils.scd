@@ -36,21 +36,17 @@ MFdef(\bufLoad).add(\loadFiles, { |folderPath, doneFunc, buflistname|
 		warn("cannot load buffers when server not running.");
 	} {
 		forkIfNeeded {
-			var buffers;
-			var paths = (folderPath +/+ "*.*").pathMatch.select { |path|
-				["WAV", "wav", "AIF", "aif", "AIFF", "aiff" ]
-				.includesEqual( path.split($.).last )
-			};
+			var buffers, soundfiles;
 
-			if (paths.isEmpty) {
+			soundfiles = SoundFile.collect(folderPath +/+ "*.*");
+			if (soundfiles.isEmpty) {
 				"*** MFdef('bufLoad') : no files found at path %\n".postf(folderPath);
-				"*** not loading any buffers! ***\n".postln;
+				"*** cannot load any buffers! ***\n".postln;
 			} {
-
-				"/// loading % files from Folder'%'\n ... ".postf(paths.size, folderPath.basename);
-				buffers = paths.collect { |path|
-					// check for valid soundfile !
-					Buffer.readChannel(s, path, channels: [0])
+				"/// loading % files from Folder'%'\n ... "
+				.postf(soundfiles.size, folderPath.basename);
+				buffers = soundfiles.collect { |soundfile|
+					Buffer.readChannel(s, soundfile.path, channels: [0])
 				};
 
 				s.sync;

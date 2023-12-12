@@ -20,16 +20,28 @@ if(NTMI.dev) {
 	NTMI.dir.user = Platform.userHomeDir +/+ "NTMI";
 	NTMI.dir.userPOOL = NTMI.dir.user +/+ "POOL";
 	NTMI.dir.userSoundfiles = NTMI.dir.user +/+ "soundfiles";
+	NTMI.dir.userSFExamples = NTMI.dir.user +/+ "soundfiles/examples";
 
 	// check for user dir and make it if needed
 	if (File.exists(NTMI.dir.user).not) {
 		"NTMI: making NTMI.dir.user".postln;
 		unixCmd("mkdir" + quote(NTMI.dir.user));
 	};
-	// check for user dir and make it if needed
+
+	// check for soundfiles dir and make it if needed
 	if (File.exists(NTMI.dir.userSoundfiles).not) {
 		"NTMI: making NTMI.dir.userSoundfiles".postln;
 		unixCmd("mkdir" + quote(NTMI.dir.userSoundfiles));
+	};
+	//// check if soundfiles/examples is already in user NTMI dir,
+	//// and if not, copy it there
+	if (File.exists(NTMI.dir.userSFExamples).not) {
+		"*** NTMI: copying NTMI.dir.userSFExamples folder to NTMI.dir.user".postln;
+		unixCmd("cp -nR"
+			+ quote(NTMI.dir.setup +/+ "soundfiles/examples")
+			+ quote(NTMI.dir.userSFExamples)
+		);
+		(NTMI.dir.userSFExamples).openOS;
 	};
 
 	//// check if POOL is already in user home dir,
