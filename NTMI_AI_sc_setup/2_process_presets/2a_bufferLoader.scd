@@ -20,7 +20,7 @@ MFdef('bufReload').add(bufsName, {
 			"*** % global buffers loaded from:\n%.\n"
 			.postf(q.bufs[bufsName].size, globalBufFolder);
 			"// assign with:\n"
-			"MFdef('bufSetRange').(Ndef('xyz'), NTMI.bufs[%], %);\n"
+			"MFdef('bufSetRange').(Ndef('xyz'), q.bufs[%], %);\n"
 			.postf(bufsName.cs, bufsName.cs);
 		},
 		'global'

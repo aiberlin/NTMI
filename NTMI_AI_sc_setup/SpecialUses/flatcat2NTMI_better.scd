@@ -260,6 +260,7 @@ MFdef(\flatcat).add(\setRel, {
 	// var debug = "MFdef('flatcat') - setRel".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var diffs = values - MKtl(\flatcat).elAt.prevValue;
+	diffs = diffs.drop(3);
 	///////// maybe make changevectors by hand later:
 	// var changeVector = NTMI.inphlux.changeVector(
 	// 	(0..diffs.size - 1),
@@ -275,7 +276,7 @@ MFdef(\flatcat).add(\setRel, {
 		if (NTMI.inph.decoupled.includes(ndef.key).not) {
 			var numParams = ndef.controlKeys.size;
 			NTMI.inphlux.setRel(ndef,
-				(0..numParams-1),
+				(0..diffs.size-1),
 				diffs,
 				NTMI.inphlux.inScaler
 				* NTMI.zooms.flatcat

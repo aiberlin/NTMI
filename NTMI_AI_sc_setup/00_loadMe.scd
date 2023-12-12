@@ -34,7 +34,7 @@ Task {
 	// internally useful:
 	NTMI.myname = Platform.userHomeDir.basename.asSymbol;
 	NTMI.isPi     = NTMI.isPi ?? { NTMI.myname == 'pi' };
-	NTMI.isPatch     = NTMI.isPi ?? { NTMI.myname == 'patch' };
+	NTMI.isPatch     = NTMI.isPatch ?? { NTMI.myname == 'patch' };
 
 	LoadMe("0_setDirs.scd");
 
