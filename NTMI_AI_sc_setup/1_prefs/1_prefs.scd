@@ -19,7 +19,7 @@ NTMI.prefs.userPrefPath = (NTMI.dir.user +/+  "ntmi_prefs.scd");
 
 NTMI.prefs.open = { NTMI.prefs.userPrefPath.openOS };
 
-[ "finalSetup.scd", "postBootSetup.scd", "preBootSetup.scd" ].do { |file|
+[ "setupExample1.scd" ].do { |file|
 	var pathInQuarkDir = NTMI.dir.setup +/+ "1_prefs" +/+ file;
 	var pathInUserDir = NTMI.dir.user +/+ file;
 	if (File.exists(pathInUserDir).not) {
