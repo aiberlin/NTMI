@@ -20,15 +20,21 @@ if (ProxyPreset.findMethod(\addsToTop).notNil) {
 (
 NTMI.pre.makePreset = { |preDict, proxy|
 
-	// all controlKeys except \amp:
-	var defaultNamesToStore = proxy.controlKeys.reject( _ == \amp);
+	var controlKeys = proxy.controlKeys;
+	// store all params except \amp:
+	var defaultNamesToStore = controlKeys.reject( _ == \amp);
 	var name = proxy.key;
 	var preset, presPath, namesToStore;
 
-	// set namesToStore if not already there:
+	// set namesToStore if not already defined:
 	if (proxy.getHalo(\namesToStore).isNil) {
 		proxy.addHalo(\namesToStore, defaultNamesToStore)
 	};
+	// use all params as namesToInflux unless already defined:
+	if (proxy.getHalo(\namesToInflux).isNil) {
+		proxy.addHalo(\namesToInflux, controlKeys)
+	};
+
 	// // uses getHalo(\namesToStore):
 	preset = NdefPreset(proxy);
 	presPath = (NTMI.pre.settingsDir +/+ name ++ ".pxpreset.scd");

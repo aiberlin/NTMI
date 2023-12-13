@@ -274,12 +274,15 @@ MFdef(\flatcat).add(\setRel, {
 	NTMI.slots.nowPlaying.do { |ndef|
 		// unless they are decoupled ?
 		if (NTMI.inph.decoupled.includes(ndef.key).not) {
-			var numParams = ndef.controlKeys.size;
+			var params = ndef.getHalo.namesToInflux ? { ndef.controlKeys };
+
+			// which influx inputs should flatcat influence?
 			NTMI.inphlux.setRel(ndef,
 				(0..diffs.size-1),
 				diffs,
 				NTMI.inphlux.inScaler
-				* NTMI.zooms.flatcat
+				* NTMI.zooms.flatcat,
+				params
 			);
 		};
 	};
