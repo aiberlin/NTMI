@@ -5,6 +5,30 @@ NTMI.pre.incrementSeed(Ndef(\allArm));
 */
 "\n... loading presets ...".postln;
 
+/*
+/// A function to shift an ndefs params
+// by a list of unpolar deltapairs, like this:
+var ndef = Ndef(\bleepo);
+var deltaPairs = ndef.controlKeys.collect { |key| [key, 0.1.rand2] };
+MFdef(\relSet).(ndef, deltaPairs);
+
+this is for using influx changevectors to nudge ndefs.
+*/
+
+MFdef(\relSet).add(\relSet, { |obj, deltaPairs|
+	var newvals = deltaPairs.collect {|pair, i|
+		var param, delta, spec, unival, newuni, newval;
+		#param, delta = pair;
+		spec = obj.getSpec(param);
+		unival = spec.unmap(obj.get(param));
+		newuni = unival + delta;
+		newval = spec.map(newuni);
+		[ param, newval ];
+	};
+	obj.set(*newvals.flat);
+});
+
+
 NTMI.pre = NTMI.pre ? ();
 NTMI.pre.settingsDir = NTMI.dir.userPOOL +/+ "2_process/presets/";
 NTMI.pre.settingsDir.pathMatch;

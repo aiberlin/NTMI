@@ -174,23 +174,26 @@ but all sliders overlap with nUFO ...
 */
 NTMI.inph.sliderOffset = NTMI.inph.sliderOffset ? 1;
 
+
+
 // offset influx inIndex by 1,
 			// so we get ampTweak channel 8 on last slider!
+
+NTMI.zooms = NTMI.zooms ? ();
+NTMI.zooms.uc4 = 1;
 
 "//// UC4 - sliders relative-set 8 influx inputs: ".postln;
 "//// from % to %.\n\n".postf(*NTMI.inph.sliderOffset + [0, 7]);
 
 MKtl(\uc4).elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
-		NTMI.slots.nowPlaying.do { |ndef|
-			NTMI.inphlux.setRel(ndef, i + NTMI.inph.sliderOffset, (sl.prevValue - sl.value),
-				NTMI.zoom,
-				ndef.controlKeys
-			);
-		}
+		MFdef(\setRelInf).(
+			i + NTMI.inph.sliderOffset,
+			(sl.prevValue - sl.value),
+			NTMI.zoom * NTMI.zooms.uc4
+		)
 	}
 };
-
 
 // Left 3 bottom buttons: inphPre rand, -1, +1
 MKtl(\uc4).elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };

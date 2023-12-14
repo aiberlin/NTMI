@@ -99,6 +99,41 @@ NTMI.inph.clutch = { |dict, obj|
 	};
 };
 
+
+/**
+inIndices is which influx inputs,
+diffs is the deltas to apply to each input for the changeVector,
+and zoom is  a scale factor.
+
+MFdef(\setRelInf).(
+	theInfluxIndices addressed by this group of elements,
+    the delta values for these influx inputs,
+	and the zoom factor, often NTMI.zoom * NTMI.zooms[thisInterface]
+);
+**/
+
+NTMI.zooms = NTMI.zooms ? ();
+
+NTMI.inph.toSetNow = {
+	NTMI.slots.nowPlaying.select { |ndef|
+		NTMI.inph.decoupled.includes(ndef.key).not
+	}
+};
+
+MFdef(\setRelInf).add(\set, { |inIndices, diffs, zoom = 0.5|
+	var vector;
+	var ndefsToSet = NTMI.inph.toSetNow;
+	if (ndefsToSet.notEmpty) {
+		vector = NTMI.inphlux.changeVector(inIndices, diffs, zoom);
+		ndefsToSet.do { |ndef|
+			var params = ndef.getHalo.namesToInflux ? { ndef.controlKeys };
+			var deltaPairs = [params, vector.keep(params.size)].flop;
+			MFdef(\relSet).(ndef, deltaPairs);
+		}
+	}
+});
+
+
 /* toggles on/off
 NTMI.inph.clutch(Ndef(\cat))
 NTMI.inph.clutch(Ndef(\formSing))

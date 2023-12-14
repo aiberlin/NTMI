@@ -72,7 +72,7 @@ hold down the option key to force-remake the window if needed.
 - ndefPresets opens a GUI for trying out and editing the sound presets
 - z_CLOSEALL closes all windows (except MakeGui)
 - z_setAll posts the current positions of all open windows as code,
-  so the positions can be stored and reset to these  positions.
+so the positions can be stored and reset to these  positions.
 
 
 
@@ -93,7 +93,7 @@ if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
 	MKtl('ferrari', "*run-n-drive");
 } {
 	if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size == 1) {
-	"*** wireless Ferrari  found!".postln;
+		"*** wireless Ferrari  found!".postln;
 		MKtl.all['ferrari'].free;
 		MKtl('ferrari', "*run-n-drive-wireless");
 	};
@@ -195,6 +195,8 @@ if (MKtl('ferrari').isNil) {
 	// 	el.action = { |el| NTMI.inphlux.set(inName, el.value.unibi) };
 	// };
 
+	NTMI.zooms.ferrari = 1;
+
 	////////// 4 joyaxes set relative influx inputs
 	MKtl('ferrari').elAt(\joyAxes).do { |el, i|
 		var inIndex = [9, 11, 12, 13][i];
@@ -202,12 +204,14 @@ if (MKtl('ferrari').isNil) {
 		el.elemDesc.label = "infl" + inIndex;
 		el.action = { |el|
 			// [el.name, el.value].postln;
-			NTMI.slots.nowPlaying.do {|ndef|
-				NTMI.inphlux.setRel(ndef, inIndex,
-					(el.value - el.prevValue), NTMI.zoom * sign)
-			}
+			MFdef(\setRelInf).(
+				inIndex,
+				(el.value - el.prevValue),
+				NTMI.zoom * NTMI.zooms.ferrari * sign
+			);
 		}
 	};
+
 
 	////////// 2 throttles set relative influx inputs
 	MKtl('ferrari').elAt(\throt).do { |el, i|
@@ -217,10 +221,12 @@ if (MKtl('ferrari').isNil) {
 		el.elemDesc.label = "infl" + inIndex;
 		el.action = { |el|
 			// [el.name, el.value].postln;
-			NTMI.slots.nowPlaying.do {|ndef|
-				NTMI.inphlux.setRel(ndef, inIndex,
-					(el.value - el.prevValue), NTMI.zoom)
-			}
+			// [el.name, el.value].postln;
+			MFdef(\setRelInf).(
+				inIndex,
+				(el.value - el.prevValue),
+				NTMI.zoom * NTMI.zooms.ferrari
+			);
 		};
 	};
 

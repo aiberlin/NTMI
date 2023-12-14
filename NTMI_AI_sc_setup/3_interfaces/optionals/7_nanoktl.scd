@@ -135,15 +135,17 @@ NTMI.nktl.elAt(\playBts).do { |el, i|
 "//// nanoKontrol - relative-set \n"
 "//// influx inputs %..% \n\n".postf(*NTMI.inph.sliderOffset + 1 + [0, NTMI.nktl.elAt(\inflSet).size]);
 
+NTMI.zooms.nktl = 1;
+
 NTMI.nktl.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		NTMI.slots.nowPlaying.do { |ndef|
 			// add sliderOffset + 1, so we get to channel 8 for amp tweak
-			NTMI.inphlux.setRel(ndef, i + NTMI.inph.sliderOffset ? 1 + 1,
+			MFdef(\setRelInf).(
+				NTMI.inph.sliderOffset + 1 + i,
 				(sl.prevValue - sl.value),
-				NTMI.zoom,
-				ndef.controlKeys
-			);
+				NTMI.zoom * NTMI.zooms.nktl
+			)
 		}
 	}
 };
