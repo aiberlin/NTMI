@@ -553,6 +553,7 @@ NTMI.nufo.skip = SkipJack({
 NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 
 MFdef(\capsToInph).add(\setAbs, {
+	// var debug = "capsToInph setAbs".postln;
 	var influx = NTMI.inphlux;
 	var pads = MKtl(\nUFO).elAt(\cap);
 	var padInNames = NTMI.inphlux.getHalo(\padNames);
@@ -611,7 +612,7 @@ NTMI.nufo.capsin.add(\set, { |coll|
 // individual pad action - useful for guis only
 /// do global set only once, from MFdef(\touchToInph)
 MKtl(\nUFO).elAt(\cap).do { |pad, i|
-	pad.action.add(\setInflux, {|ana|
+	pad.action.add(\setAbs, {|ana|
 		var name = 	NTMI.inphlux.getHalo(\padNames).clipAt(i);
 		NTMI.inphlux.set(name, ana.value.pow(3));
 		//.pow(6));
