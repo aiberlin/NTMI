@@ -58,92 +58,21 @@ velocity
 current
 ***/
 
-
 (
 // the OSC port number flatcat sends on
 thisProcess.openUDPPort(8999);
 
-// make an MKtl description dict for the flatcat:
-~flatcatdesc = (
-	descName: "flatcat",
-	deviceName: "flatcat",
-	protocol: \osc,
-	deviceType: \robotPet,
-	elementTypes: [\sensor],
-	status: (
-		linux: "unknown",
-		osx: "unknown",
-		win: "unknown"
-	),
-
-	idInfo: "flatcat",
-	// info for flatcat in accesspoint mode
-	netAddrInfo: (ipAddress: "192.168.4.1", srcPort: 46757, recvPort: 8999 ),
-
-	deviceInfo: (
-		vendorURI: "https://flatcat.berlin",
-		description: "robot pet",
-		features: [
-		],
-		longName: "jetpack lab flatcat",
-		notes: "",
-	),
-
-	specs: (
-
-		'voltage': [2.5, 6.5],
-
-		'temper': [10, 60],
-		'angle': [-0.5, 0.5],
-		'velo': \bipolar,
-		'curr': [-0.5, 0.5]
-	),
-
-	collectives: (
-		alldata: (
-			oscPath: '/flatcat',
-			elements: [
-				[\ubat], [\ubus], [\umot],
-
-				[\temper0], [\angle0], [\velo0],[\curr0],
-				[\temper1], [\angle1], [\velo1], [\curr1],
-				[\temper2],[\angle2], [\velo2], [\curr2],
-			],
-			ioType: \in
-		),
-	),
-
-	elementsDesc: (
-		// input elements:
-		shared: (elementType: 'slider', ioType: \collectiveIn),
-
-		elements: [
-
-			( key: \ubat, \spec: 'voltage' ),
-			( key: \ubus, \spec: 'voltage' ),
-			( key: \umot, \spec: 'voltage' ),
-
-			( key: \temper0, \spec: 'temper' ),
-			( key: \temper1, \spec: 'temper' ),
-			( key: \temper2, \spec: 'temper' ),
-
-			( key: \angle0, \spec: 'angle' ),
-			( key: \angle1, \spec: 'angle' ),
-			( key: \angle2, \spec: 'angle' ),
-
-			( key: \velo0, \spec: 'velo' ),
-			( key: \velo1, \spec: 'velo' ),
-			( key: \velo2, \spec: 'velo' ),
-
-			( key: \curr0, \spec: 'curr' ),
-			( key: \curr1, \spec: 'curr' ),
-			( key: \curr2, \spec: 'curr' )
-		]
-	)
-);
 MKtl.all[\flatcat].free;
-MKtl(\flatcat, ~flatcatdesc);
+MKtl(\flatcat, "flatcat.desc.scd".loadRelative.unbubble);
 
+MKtl(\flatcat).elAt.deviceValue = [
+	4.1, 5.8, 5.9,
+	// temp, angle, velo, current
+	rrand(25.0, 40), rrand(25.0, 40), rrand(25.0, 40),
+	0.5.rand2, 0.5.rand2, 0.5.rand2,
+	0.2.rand2, 0.2.rand2, 0.2.rand2,
+	0.2.rand2, 0.2.rand2, 0.2.rand2,
+];
 
 ///// GUI stuff:
 NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat2NTMI_better.scd");
@@ -181,6 +110,8 @@ OSCFunc.trace(true, true);
 // to switch back to real flatcat address, do:
 MKtl(\flatcat).device.updateSrcAddr("192.168.4.1", 46757);
 
+
+
 ***/
 ~sendFlatcatRand = {
 	NetAddr("127.0.0.1", 8999).sendMsg("/flatcat",
@@ -195,6 +126,8 @@ MKtl(\flatcat).device.updateSrcAddr("192.168.4.1", 46757);
 /*
 ~sendFlatcatRand.value;
 */
+
+
 
 
 // MFdef(\flatcat): the actions to do when data come in
@@ -261,31 +194,14 @@ MFdef(\flatcat).add(\setRel, {
 	var values = MKtl(\flatcat).elAt.value;
 	var diffs = values - MKtl(\flatcat).elAt.prevValue;
 	diffs = diffs.drop(3);
-	///////// maybe make changevectors by hand later:
-	// var changeVector = NTMI.inphlux.changeVector(
-	// 	(0..diffs.size - 1),
-	// 	diffs,
-	// 	0.3
-	// );
-	// diffs.postln;
-	// changeVector.postln;
 
-	// for now, influence the playing slots
-	NTMI.slots.nowPlaying.do { |ndef|
-		// unless they are decoupled ?
-		if (NTMI.inph.decoupled.includes(ndef.key).not) {
-			var params = ndef.getHalo.namesToInflux ? { ndef.controlKeys };
-
-			// which influx inputs should flatcat influence?
-			NTMI.inphlux.setRel(ndef,
-				(0..diffs.size-1),
-				diffs,
-				NTMI.inphlux.inScaler
-				* NTMI.zooms.flatcat,
-				params
-			);
-		};
-	};
+	// influence the playing slots
+	MFdef(\setRelInf).(
+		(0..diffs.size-1),
+		diffs,
+		NTMI.inphlux.inScaler
+		* NTMI.zooms.flatcat
+	);
 });
 MFdef(\flatcat).enable(\setRel);
 
