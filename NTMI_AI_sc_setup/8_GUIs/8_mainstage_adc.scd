@@ -46,6 +46,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	var nufoView, recBut;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
+
 	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
 	// quick fix so we can keep nufo graphics when no nUFO present
 	NTMI.nufo = NTMI.nufo ? ();
@@ -57,58 +58,44 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	g.main.w.background_(q.inph.currPresetCol);
 	g.main.w.alpha_(g.alpha ? 0.8);
 
+	//// CENTER ZONES:
+
 	g.main.bigUVBounds = Rect.aboutPoint( w.view.bounds.center, wheight * 0.5, wheight * 0.5);
 	LoadMe("subsParts/bigUV.scd", NTMI.g.dir);
 
 	g.main.imuUVBounds = Rect.aboutPoint( w.view.bounds.center, 240 * scrscale, 300 * scrscale);
 	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
+
+	//// TOP LINE ZONES:
+
 	LoadMe("subsParts/stetho.scd", NTMI.g.dir);
 
 	NTMI.g.main.meterCenterTop = NTMI.g.main.w.bounds.center.x @ 0;
 	LoadMe("subsParts/meter.scd", NTMI.g.dir);
 
-	// why not loading?
-	NTMI.g.main.nufoInfoZone = CompositeView(w,
-		Rect(rightCol, 20 * scrscale, 300 * scrscale, 150 * scrscale));
+	//// RIGHT COLUMN:
+
+	g.main.rightColumn = CompositeView(w,
+		Rect(rightCol, 0, 300 * scrscale, bounds.height)
+	);
+
+	NTMI.g.main.nufoZone = CompositeView(g.main.rightColumn,
+		Rect(0, 330 * scrscale, 300 * scrscale, 300 * scrscale));
 	LoadMe("subsParts/nufoInfo.scd", NTMI.g.dir);
 
-	recBut = Button(w, Rect(rightCol, 450 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["RECORD?", Color.white, butGrey],
-		["Recording!", Color.black, butGreen]
-	]).font_(font)
-	.action_({ |bt|
-		if (bt.value > 0) {
-			s.recChannels_(q.numChans ? 2);
-			s.record;
-		} {
-			s.stopRecording;
-		}
-	});
-
 	g.main.clockZone = CompositeView(w,
-		Rect(rightCol, 240 * scrscale, 300 * scrscale, 160 * scrscale)
+		Rect(rightCol, 635 * scrscale, 300 * scrscale, 160 * scrscale)
 	).background_(Color.grey(1.0, 0.1));
 
 	LoadMe("subsParts/clock.scd", NTMI.g.dir);
 
-	Button(w, Rect(rightCol, 580 * scrscale, 300 * scrscale, 60 * scrscale)).states_([
-		["show recordings", Color.white, butGrey]
-	]).font_(font.copy.size_(font.size * 0.8))
-	.action_({ |bt|
-		Platform.recordingsDir.openOS;
-	});
+	g.main.recZone = CompositeView(w,
+		Rect(rightCol, 800 * scrscale, 300 * scrscale, 160 * scrscale)
+	).background_(Color.grey(1.0, 0.1));
 
-	g.main.caliBut = Button(w, Rect(rightCol, 800 * scrscale, 300 * scrscale, 120 * scrscale)).states_([
-		["CALIBRATE\ntouch + move?", Color.white, butGrey],
-		["CALIBRATING\ntouch + move", Color.black, Color.yellow],
-		["touch + move\ncalibrated", Color.white, butGrey],
+	LoadMe("subsParts/recButs.scd", NTMI.g.dir);
 
-	]).font_(font)
-	.action_({ |but|
-		but.value_(1);
-		NTMI.nufo.calibrate(1, { |ok| but.value_(if (ok, 2, 0).postln) })
-	});
 
 	if (q.usesMainFX) {
 		g.main.fxZone = CompositeView(w,
@@ -120,7 +107,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	NTMI.g.main.mainVolZone = CompositeView(w,
 		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
 	);
+
 	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
+
 	NTMI.g.main.winUpdate = MFunc();
 
 	NTMI.g.main[\winUpdate].add(\main, NTMI.g.main[\updateMainVol]);
@@ -157,7 +146,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	g.main.rMViews = rMViews;
 
 	// snapshot button
-	NTMI.g.main.snapBounds = Rect(0,0, 200, 60)
+	NTMI.g.main.snapBounds = (220@80 * scrscale).asRect
 	.right_(NTMI.g.main.leftMVZone.bounds.right)
 	.bottom_(NTMI.g.main.leftMVZone.bounds.top);
 
