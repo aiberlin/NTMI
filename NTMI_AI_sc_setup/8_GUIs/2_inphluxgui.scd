@@ -36,7 +36,8 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 	q.inph.ioWin.alpha_(0.8);
 
 	infComp = CompositeView(w, (size2@size2) .asRect);
-	infComp.bounds.postln;
+	// infComp.bounds.postln;
+	infComp.resize_(4);
 	infComp.addFlowLayout;
 
 	q.inph.ioUV = UserView(q.inph.ioWin,
@@ -60,6 +61,8 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 	}, q.inphlux.inScaler, labelWidth: 60, numberWidth: 40).font_(font);
 
 	q.inph.ktlgui = InfluxKtlGui(q.inphlux, 5, infComp, Rect(0,0,300, 280));
+	// hide attachButtons:
+	q.inph.ktlgui.attachButtons[0].parent.children.drop(5).do(_.visible_(false));
 
 	q.inph.ktlgui.nameView.bounds_(Rect(2.0, 2.0, 160, 20.0));
 	q.inph.ktlgui.nameView.align_(\center);
@@ -180,7 +183,11 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 			Pen.color_(Color.green).width_(3).stroke;
 
 		};
-		SkipJack({ q.inph.ioUV.refresh }, 0.2, { q.inph.ioWin.isClosed }, "inphIOW");
+		SkipJack({
+			q.inph.ioUV.refresh;
+			presl.value = NTMI.inph.presIndex;
+			insc.value = NTMI.inphlux.inScaler;
+		}, 0.2, { q.inph.ioWin.isClosed }, "inphIOW");
 	);
 
 	(
