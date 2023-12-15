@@ -39,58 +39,68 @@ MFdef(\kr_pots).disable(\post);
 */
 
 (
-
 NTMI.octo = NTMI.octo ? ();
 
 // open Serial port:
 (
 SerialPort.closeAll;
 
-NTMI.octo.serial = SerialPort(
-	"/dev/tty.usbmodem*".pathMatch.first,    //edit to match your port. SerialPort.listDevices
-	baudrate: 115200,    //check that baudrate is the same as in arduino sketch
-	crtscts: true);
-);
+//edit to match your port. see SerialPort.listDevices
+NTMI.octo.devname = "/dev/tty.usbmodem*".pathMatch.first;
 
-// read serial data sent from Arduino's Serial.println> we get 3 strings:
-// b[0,0,1...] for 10 buttons,
-// p[123,1023,...] for 10 pots, 10bit, i.e. 0-1023, and
-// r[0,500,1023,0] for 4 ribbons, also 10bit.
+if (NTMI.octo.devname.isNil) {
+	"NTMI.octo: could not find device matching \"/dev/tty.usbmodem*\"".warn;
+	"continuing with virtual device.".postln
+} {
 
-(
-try{NTMI.octo.rout.stop};
-NTMI.octo.rout = Routine({
-	var byte, str, res;
-	var t0 = Main.elapsedTime;
-	var t = t0;
-	inf.do { |i|
-		if(NTMI.octo.serial.read==10, {
-			var key, array;
-			str = "";
-			while({byte = NTMI.octo.serial.read; byte !=13 }, {
-				str = str++byte.asAscii;
-			});
-			try {
-				// str.postln;
-				key = str.first;
-				// turn code string into number array
-				array = str.drop(1).interpret;
-				case(
-					{key == $p}, { MFdef(\kr_pots).value(array) },
-					{key == $b}, { MFdef(\kr_buts).value(array) },
-					{key == $r}, { MFdef(\kr_ribs).value(array) },
-				);
+	NTMI.octo.serial = SerialPort(
+		NTMI.octo.devname,
+		baudrate: 115200,    //check that baudrate is the same as in arduino sketch
+		crtscts: true
+	).postln;
+
+
+	// read serial data sent from Arduino's Serial.println> we get 3 strings:
+	// b[0,0,1...] for 10 buttons,
+	// p[123,1023,...] for 10 pots, 10bit, i.e. 0-1023, and
+	// r[0,500,1023,0] for 4 ribbons, also 10bit.
+
+	(
+		try{NTMI.octo.rout.stop};
+		NTMI.octo.rout = Routine({
+			var byte, str, res;
+			var t0 = Main.elapsedTime;
+			var t = t0;
+			inf.do { |i|
+				if(NTMI.octo.serial.read==10, {
+					var key, array;
+					str = "";
+					while({byte = NTMI.octo.serial.read; byte !=13 }, {
+						str = str++byte.asAscii;
+					});
+					try {
+						// str.postln;
+						key = str.first;
+						// turn code string into number array
+						array = str.drop(1).interpret;
+						case(
+							{key == $p}, { MFdef(\kr_pots).value(array) },
+							{key == $b}, { MFdef(\kr_buts).value(array) },
+							{key == $r}, { MFdef(\kr_ribs).value(array) },
+						);
+					};
+					// key.cs.post;
+				});
+				t = Main.elapsedTime;
+				// "%, ".postf((t - t0).round(0.0001));
+				t0 = t;
 			};
-			// key.cs.post;
-		});
-		t = Main.elapsedTime;
-		// "%, ".postf((t - t0).round(0.0001));
-		t0 = t;
-	};
-}).play;
+		}).play;
+	);
+};
 );
 
-//// Make an MKtl for the Kraken
+//// Make an MKtl description for the Kraken
 (
 ~krakDesc = (
 	idInfo: ( ipAddress: "127.0.0.1" ),
@@ -140,10 +150,12 @@ NTMI.octo.rout = Routine({
 );
 );
 
+(
 MKtl.all.kraken.free;
 m = MKtl( \kraken, ~krakDesc );
-m.trace.gui;
+m.gui;
 
+// pipe serial input data into MKtl -
 // do valueActions in MKtl only when changed:
 MFdef(\kr_buts).add(\store, { |rawvals|
 	var krakButs = MKtl(\kraken).elAt(\bt);
@@ -185,7 +197,8 @@ MKtl( \kraken).elAt(\kn).action = { |el| [el.name, el.deviceValue].postln };
 MKtl( \kraken).elAt(\ribbon).action = { |el| [el.name, el.deviceValue].postln };
 
 //////////////////// Now attach to NTMI - quick and dirty
-
+/****
+(
 // raw influx - ugly but would work
 // influx first:
 MFdef(\kr_pots).add(\influx, { |rawvals|
@@ -199,18 +212,23 @@ MFdef(\kr_ribs).add(\influx, { |rawvals|
 	var inNames = NTMI.inphlux.inNames.drop(10).keep(values.size);
 	NTMI.inphlux.set(*[inNames, values].flop.flat);
 });
+);
+
+// and turn them off again:
+(
 MFdef(\kr_ribs).disable(\influx);
 MFdef(\kr_pots).disable(\influx);
-
+);
+****/
 
 /*****
 
-simple Logic 1 :
+1 simple Logic :
 all knobs and ribbons go to influx directly
 first four buttons activate sound in slots 1-4;
 second four buttons switch preset or sound process in slots 1-4;
 ******/
-
+(
 MKtl( \kraken).elAt(\kn).action = { |el|
 	var inName = NTMI.inphlux.inNames[8 + el.indexInGroup];
 	NTMI.inphlux.set(inName, el.value * 2 - 1);
@@ -243,11 +261,35 @@ MKtl(\kraken).elAt(\bt, (4..7)).do(_.action = { |el|
 		}
 	};
 });
+);
 
+// 1a - make all knobs and sliders relative influx
 
+NTMI.zooms = NTMI.zooms ? ();
+NTMI.zooms.kraken = NTMI.zooms.kraken ? 1;
+
+MKtl( \kraken).elAt(\kn).action = { |el|
+	// use influx vectors 8..15
+	MFdef(\setRelInf).(
+		el.indexInGroup + 8,
+		(el.value - el.prevValue),
+		NTMI.zoom * NTMI.zooms.kraken
+	);
+};
+
+MKtl( \kraken).elAt(\ribbon).action = { |el|
+	// use influx vectors 5, 6, 7
+	MFdef(\setRelInf).(
+		el.indexInGroup + 5,
+		(el.value - el.prevValue),
+		NTMI.zoom * NTMI.zooms.kraken
+	);
+};
+
+);
 
 /*****
-deeper Logic 2 :
+2 more complex Logic idea:
 all knobs and ribbons go to influx, but relative;
 
 all eight buttons do the same:
@@ -259,7 +301,8 @@ press 3 times quickly -> new rand sound
 
 *****/
 
-
+///////// SKETCH ONLY, not working yet //////
+/****
 
 NTMI.octo.prevButs = 0!10;
 NTMI.octo.prevButs = 0!10;
@@ -327,3 +370,5 @@ MFdef(\kr_buts).add(\trig, { |vals|
 	};
 	NTMI.octo.prevButs = vals;
 });
+
+****/
