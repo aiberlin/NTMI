@@ -75,7 +75,10 @@ MKtl(\flatcat).elAt.deviceValue = [
 ];
 
 ///// GUI stuff:
+/* // put at the end of your startup:
 NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat2NTMI_better.scd");
+NTMI.addInterfaceFile(\flatcatViz, "SpecialUses/flatcat_viz.scd");
+*/
 
 // add number readouts to gui:
 WinBounds.addMake(\flatcat, {
