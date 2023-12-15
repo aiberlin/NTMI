@@ -157,7 +157,7 @@ OSCdef(\flatcat2mktl, { |msg, time, senderAddr, recvPort|
 
 // set absolute: post normalized data
 MFdef(\flatcat).add(\setAbs, {
-	var debug = "MFdef('flatcat') - setAbs".postln;
+	// var debug = "MFdef('flatcat') - setAbs".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var bipolars = values.drop(3).unibi;
 
@@ -177,7 +177,7 @@ NTMI.slots.playAt(0);
 */
 
 MKtl(\flatcat).elAt.action = { |el|
-	var debug = "flatcat global".postln;
+	// var debug = "flatcat global".postln;
 	// value change should set all other indiv. elements,
 	// so prevValues are correctly 0:
 	MKtl(\flatcat).elAt.do { |el2|
