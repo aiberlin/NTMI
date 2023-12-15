@@ -139,14 +139,12 @@ NTMI.zooms.nktl = 1;
 
 NTMI.nktl.elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
-		NTMI.slots.nowPlaying.do { |ndef|
-			// add sliderOffset + 1, so we get to channel 8 for amp tweak
-			MFdef(\setRelInf).(
-				NTMI.inph.sliderOffset + 1 + i,
-				(sl.prevValue - sl.value),
-				NTMI.zoom * NTMI.zooms.nktl
-			)
-		}
+		// add sliderOffset + 1, so we get to channel 8 for amp tweak
+		MFdef(\setRelInf).(
+			NTMI.inph.sliderOffset + 1 + i,
+			(sl.prevValue - sl.value),
+			NTMI.zoom * NTMI.zooms.nktl
+		)
 	}
 };
 
