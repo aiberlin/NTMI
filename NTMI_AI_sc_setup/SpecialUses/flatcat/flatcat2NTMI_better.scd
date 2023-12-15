@@ -145,6 +145,12 @@ MFdef(\flatcat).enable(\post);
 */
 MFdef(\flatcat).disable(\post);
 
+OSCdef(\flatcat2mktl, { |msg, time, senderAddr, recvPort|
+	"flatcat - updating senderAddr to %\n".postf(senderAddr);
+	MKtl(\flatcat).device.updateSrcAddr(senderAddr.hostname, senderAddr.port);
+	OSCdef(\flatcat2mktl).disable;
+	"updated.".postln;
+}, \flatcat).enable;
 
 // set absolute: post normalized data
 MFdef(\flatcat).add(\setAbs, {

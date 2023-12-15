@@ -22,6 +22,7 @@ q.flatcat.vals.keysValuesDo { |k, v|
 	q.flatcat.vals.put(k, (v + 0.05.rand2).clip2(0.5))
 };
 
+
 // -> let running flatcat set q.flatcat.vals!
 
 */
@@ -39,6 +40,13 @@ q.flatcat.vals = (
 	curr1: 0.3,
 	curr2: 0.1
 );
+
+MFdef(\flatcat).add(\vizdata, {
+	// get flatcat data from  for visualizer
+	q.flatcat.vals.keysValuesDo { |k, v|
+		q.flatcat.vals.put(k, MKtl(\flatcat).elAt(k).deviceValue);
+	};
+});
 
 // make a userview
 q.flatcat.u = {
