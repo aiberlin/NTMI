@@ -29,6 +29,16 @@ if (NTMI.g.main.leftMVZone.isNil or: {
 	}, \slotGuis);
 };
 
+NTMI.g.addMVmeter = { |g, gui, bounds|
+	if (ProxyMeter.proxyGuis.includes(gui).not) {
+		ProxyMeter.proxyGuis.add(gui);
+		ProxyMeter.prePostViews.put(gui,
+			PrePostView(gui.parent, bounds));
+	};
+	ProxyMeter.checkSkip;
+};
+
+
 // 4 popups to select sounds, 4 mviews for volume levels
 // add play buttons?
 popMVs = 4.collect { |i|
@@ -50,10 +60,17 @@ popMVs = 4.collect { |i|
 	.items_(ndefpre.getSetNames)
 	.value_(ndefpre.getSetNames.size.rand).font_(font);
 
+
 	var coupleBut = Button(NTMI.g.main.leftMVZone,
 		Rect(left + (width * 0.9), top, width * 0.1, height / 4))
 	.states_([["––"], ["- -"]])
 	.font_(font);
+
+	emmy.addUniqueMethod(\object, { emmy.dict.object });
+	emmy.dict.object = ndef;
+	NTMI.g.addMVmeter(emmy,
+		Rect(left, top + (height * 0.75), width, height * 0.25)
+	);
 
 	pop.background_(Color.grey(1.0, 0.4));
 
@@ -206,10 +223,12 @@ NTMI.g.main[\updateSlots] = {
 			newLabel = newLabel + presetName
 		};
 
+
 		if (ndef.key != pop.item or: { newLabel != mview.label }) {
 			pop.items = NTMI.slots.choices[i];
 			pop.value = pop.items.indexOf(ndef.key);
 
+			mview.dict.object = ndef;
 			prepop.items = NdefPreset(ndef).getSetNames;
 			prepop.value = NdefPreset(ndef).currIndex;
 
