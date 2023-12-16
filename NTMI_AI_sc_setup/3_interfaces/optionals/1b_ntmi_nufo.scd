@@ -38,17 +38,19 @@ NTMI.nufo = NTMI.nufo ? ();
 NTMI.nufo.nUFO = NTMI.nufo.nUFO ? ();
 
 
-///////// make a new
+///////// make a new nufo MKtl
 MKtl.all.at(\nUFO).free;
 MKtl(\nUFO, "ai-ntmi");
+
 // this is for logging into NTMI-xxx networks only:
+// should eventually be done from a listeing OSCdef
 MKtl(\nUFO).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
 MKtl(\nUFO).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
 
 MKtl(\nUFO).elAt(\enc).value_(0.5);
 
 
-/// init all xosc actions as MFuncs, provide posting
+/// init all nufo actions as MFuncs, provide posting
 MKtl(\nUFO).elementsDict.do(_.action_(MFunc()));
 MKtl(\nUFO).elementsDict.do { |el| el.action.add(\post, { |el|
 	[el.name, el.value.round(0.0001)].postln
@@ -112,7 +114,7 @@ NTMI.nufo.calibrate = { |dict, dt = 1, whenDone|
 		NTMI.capture.imu.add(NTMI.nufo.rawImuBiValues);
 	});
 
-	MFdef(\capsin).add(\capture, {
+	NTMI.nufo.capsin.add(\capture, {
 		NTMI.capture.pads.add(NTMI.nufo.rawPads);
 	});
 
@@ -123,7 +125,8 @@ NTMI.nufo.calibrate = { |dict, dt = 1, whenDone|
 		NTMI.nufo.capsin.remove(\capture);
 
 		"*** nUFO calibration: ***".postln;
-		captureOK = NTMI.capture.imu.size > 5;
+		captureOK = NTMI.capture.imu.size > 5
+		and: { NTMI.capture.pads.size > 5 };
 		if (captureOK.not) {
 			"no values captured - calibration impossible.".postln;
 		} {
@@ -145,6 +148,18 @@ NTMI.nufo.calibrate = { |dict, dt = 1, whenDone|
 		whenDone.value(captureOK);
 	}, dt);
 };
+
+/*
+// test calibrating with no device present
+fork {
+	NTMI.nufo.calibrate;
+	10.do {
+		MFdef(\nUFOImuFunc).value;
+		MFdef(\capsin).value;
+		0.1.wait;
+	};
+};
+*/
 
 /***************
 How the modal logic for the NTMI buttons + encoder works:
@@ -456,6 +471,8 @@ MKtl(\nUFO).collectivesDict[\imu].action = {
 // set the first 9 values of the inphlux from the imu params:
 NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 
+NTMI.nufo.imuPadFuncName = \setAbs;
+
 MFdef(\nUFOImuFunc).add(\setAbs, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
 	var calibImuValsBi = imuInvalsBi - NTMI.zero.imu;
@@ -469,7 +486,15 @@ MFdef(\nUFOImuFunc).add(\setAbs, {
 
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	NTMI.inphlux.set(*keysvals);
+}, false);
+
+MFdef(\nUFOImuFunc).disable(\setAbs);
+
+MFdef(\nUFOImuFunc).add(\set, {
+	// "nUFOImuFunc, set: %\n".postf(NTMI.nufo.imuPadFuncName);
+	MFdef(\nUFOImuFunc).at(NTMI.nufo.imuPadFuncName).value
 });
+
 
 
 NTMI.frame = NTMI.frame ? ();
@@ -587,7 +612,7 @@ NTMI.nufo.capsin.add(\set, { |coll|
 	// NTMI.zero.pads is the rest state of the pads
 	// use it to stretch to a range of 0-1
 	values.do { |rawval, i|
-		var zeroOffset = NTMI.zero.pads.asArray.wrapAt(i);
+		var zeroOffset = NTMI.zero.pads.asArray.wrapAt(i) ? 0;
 		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
 		values.put(i, stretched);
 	};
