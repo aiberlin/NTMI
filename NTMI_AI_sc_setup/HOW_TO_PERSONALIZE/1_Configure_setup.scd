@@ -1,9 +1,8 @@
 /***** Make_your_own_setup - OVERVIEW ******/
 
-// There are several ways to customize the NTMI setup
-// to your preferences.
+// OVERVIEW OF ways to customize NTMI to your preferences:
 
-// 1.  configure which elements NTMI setup loads
+// 1.  configuring which elements NTMI setup loads
 // 1a. add additional code at different stages in the load process
 // --- explained in this file!
 
@@ -16,15 +15,18 @@
 // 4. choose which supported physical interfaces to connect
 // and add your own interfaces e.g. with Modality-toolkit - see:
 
-////
+
+// 1.  configure which elements NTMI setup loads
 
 //// 1. The NTMI user dir, POOL and prefs files
 //// NTMI creates a user directory, usually at "~/NTMI",
 // which contains configurable files and directories:
 // an ntmi_prefs file,
-// a POOL directory which contains the soundprocesses to load,
-// and other general loadable resources,
-// and files for additional code to run at different boot stages.
+// a POOL directory which contains:
+// the soundprocesses to load,
+// a soundfiles directory,
+// and optionally other general loadable resources,
+// such as files for additional code to run at different boot stages.
 NTMI.dir.user;
 NTMI.dir.user.openOS;
 
@@ -48,7 +50,73 @@ NTMI.prefs.defaultPath;
 NTMI.prefs.default;
 
 
+// 1a. adding additional code at different stages in the loading process
 
-// 1a. adding additional code at different stages in the load process
+// - check and set the directories NTMI uses - this is required.
+// - check early which MIDI or HID interfaces are present -
+// ... this can be configured to skip MIDI and HID to speed up booting.
 
-// to be continued ...
+// - load various global functions ...
+
+// Now, the question arises how to handle the sound server:
+// is is booted already?
+// if yes, should we leave it as is, or reboot? can be set in prefs:
+NTMI.prefs.active.reboot;
+// if boot or reboot, we can configure the server by a script file:
+NTMI.prefs.active.serverSetup.postcs;
+
+// and just before booting, NTMI runs an optional preBoot function:
+NTMI.preBoot;
+// and then (if off or to be rebooted), the server boots ...
+
+// ... and when booted, NTMI first runs this:
+NTMI.postBoot;
+
+// - load some soundfile buffers,
+// - load all synthesis processes, and make NdefPresets for them
+// ... when presets are done, this runs:
+NTMI.postPresets;
+
+// - load all built-in interfaces, slots, randomOrbits etc
+// - Then, try to load all present MIDI or HID interfaces,
+// as well as the ones set in the prefs at:
+NTMI.prefs.active.interfacesToLoad.postcs;
+
+// - before loading the mainFX, this runs:
+NTMI.preMainFX;
+
+// - then load mainFX, unless flag says to skip:
+NTMI.usesMainFX;
+
+// - before loading all GUIs, run this:
+NTMI.preGui;
+
+// - then load all guis, unless flag says to skip:
+NTMI.hasGui;
+
+// after the GUIs are loaded, NTMI is ready, and runs this:
+NTMI.finalSetup;
+
+
+///// example for adding code at various setup stages:
+(
+NTMI.reboot = false;
+
+NTMI.preBoot = { "my preboot thingies".postln };
+NTMI.postBoot = { "booted, now e.g. load my soundfiles?".postln };
+
+NTMI.postPresets = {
+	"tweak my presets somehow".postln;
+	"read a codefile at given location:".postln;
+	LoadMe("~/NTMI/myPostPresetsCodeFile.scd");
+	"or prepare for my interfaces?".postln;
+};
+
+NTMI.preMainFX = { "my interfaces are in - anything to do about them?".postln };
+
+NTMI.preGui = { "after mainFX, before GUIs run ...".postln };
+
+NTMI.finalSetup = { "setup done - run my autoplay mode now?".postln };
+
+NTMI.run;
+);
