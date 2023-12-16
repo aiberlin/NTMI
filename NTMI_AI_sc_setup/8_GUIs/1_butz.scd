@@ -205,7 +205,7 @@ NTMI.addInterfaceFile(\uc4,
 	"3_interfaces/optionals/2_uc4.scd");
 
 NTMI.addInterfaceFile(\nanoKtl,
-	"3_interfaces/optionals/7_nanoktl.scd");
+	"3_interfaces/optionals/7_nanoKtl.scd");
 
 NTMI.addInterfaceFile(\nUFO,
 	"3_interfaces/optionals/1*nufo.scd");

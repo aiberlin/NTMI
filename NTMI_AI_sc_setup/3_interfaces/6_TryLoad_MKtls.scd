@@ -22,7 +22,7 @@ if (foundInfos.notEmpty) {
 	// foundInfos.printcsAll;
 	"---".postln;
 	foundInfos.do { |entry|
-		if (entry == "nanoKONTROL2") { filenames.add("7_nanoktl.scd") };
+		if (entry == "nanoKONTROL2") { filenames.add("7_nanoKtl.scd") };
 		if (entry == "Faderfox UC4") { filenames.add("2_uc4.scd") };
 		if (entry == "Run'N' Drive_Thrustmaster" ) {
 			filenames.add("3_ferrari.scd") };
@@ -32,7 +32,7 @@ if (foundInfos.notEmpty) {
 if (filenames.isEmpty) {
 	// use beatstep as default when nothing found:
 	"... no supported MKtl device found, default to nanoKtl2.".postln;
-	filenames.add("7_nanoktl.scd")
+	filenames.add("7_nanoKtl.scd")
 };
 
 filenames.do { |filename| try {
