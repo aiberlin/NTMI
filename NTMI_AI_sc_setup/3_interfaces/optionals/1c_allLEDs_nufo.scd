@@ -3,6 +3,11 @@
 /*
 NTMI.nufo.nUFO.mode = \full;
 Tdef(\allLEDs).play;
+
+// test wakeup ballet also from OSC:
+// if first time, or longer than 10 sec silence, do ballet
+NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
+
 */
 
 Tdef(\allLEDs).set(\dt, 0.1);
