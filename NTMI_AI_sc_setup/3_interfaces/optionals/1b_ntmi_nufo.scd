@@ -330,7 +330,7 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		}
 		// default: step inph preset
 		{
-			NTMI.nufo.nUFO.modeStep(1);
+			NTMI.nufo.modeStep(1);
 			NTMI.nufo.resetModePreLEDs.value(0.1);
 		}
 
