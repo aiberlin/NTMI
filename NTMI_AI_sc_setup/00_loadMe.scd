@@ -57,10 +57,10 @@ Task {
 	// can include custom ones in userPOOL
 	NTMI.interfacesToLoad  = NTMI.prefs.active.interfacesToLoad ? [ "uc4" ];
 	// reboot server when starting NTMI?
-	NTMI.reboot = NTMI.prefs.active.reboot ? NTMI.reboot ? false;
+	NTMI.reboot = NTMI.reboot ? NTMI.prefs.active.reboot ? false;
 
 	// turn off MainFX if desired (loses mainVol control)
-	NTMI.usesMainFX = NTMI.prefs.active.usesMainFX ? NTMI.usesMainFX ? true;
+	NTMI.usesMainFX = NTMI.usesMainFX ? NTMI.prefs.active.usesMainFX ? true;
 
 	if (NTMI.hasGui) {
 		"8_GUIs/warnWin.scd".loadRelative;
