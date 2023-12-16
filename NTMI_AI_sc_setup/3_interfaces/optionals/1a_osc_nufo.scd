@@ -1,11 +1,12 @@
-/////// all shared osc things between xosc and ntmi go here,
-/////// to avoid code duplication / overwriting
+/////// all basic nufo /ntmi things go here:
+///////
+
 /*
-OSCFunc.trace;
+OSCFunc.trace(true, true);
 OSCFunc.trace (false);
 */
 
-// use this dict for everything osc related
+// use this dict for everything nufo related
 NTMI.nufo = NTMI.nufo ? ();
 
 
@@ -48,7 +49,7 @@ NTMI.nufo.rawImuBiValues = (0!9);
 NTMI.zero.imu = NTMI.nufo.rawImuBiValues;
 NTMI.zero.pads = NTMI.nufo.rawPads;
 
-NTMI.zero.path = Platform.userAppSupportDir +/+ "zeroes.scd";
+NTMI.zero.path = NTMI.dir.user +/+ "zeroes.scd";
 
 NTMI.zero.write = {
 	File.use(NTMI.zero.path, "w", { |file|
