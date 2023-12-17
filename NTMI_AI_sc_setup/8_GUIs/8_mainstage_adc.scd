@@ -241,7 +241,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 		if (showNufo) {
 			if (q.nufo.timeSinceLast >= 1) {
-				NTMI.bat.calc.(0);
+				NTMI.nufo.bat.calc.(0);
 				q.bat.resetVals;
 				q.frame.resetVals;
 			};

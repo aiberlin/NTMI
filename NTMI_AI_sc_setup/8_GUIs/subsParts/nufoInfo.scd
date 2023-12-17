@@ -10,12 +10,12 @@ NTMI.g.main.nufoView = nufoView.postln;
 nufoView.drawFunc_({ |uv|
 	var bounds = uv.bounds.extent.asRect;
 	Pen.addRect(bounds).color_(Color.white).stroke;
-	Pen.addRect(bounds.copy.width_(bounds.width * (NTMI.bat.percent ? 0 * 0.01)));
+	Pen.addRect(bounds.copy.width_(bounds.width * (NTMI.nufo.bat.percent ? 0 * 0.01)));
 	Pen.color_(Color.green(0.75, 0.8)).fill;
 	Pen.stringCenteredIn(
 		(NTMI.wifiStr ? "wifi ?")
-		++ "\n" ++ (NTMI.frame.rateStr ? "nufo rate ?")
-		++ "\n" ++ (NTMI.bat.string ? "nufo bat ?"),
+		++ "\n" ++ (NTMI.nufo.frame.rateStr ? "nufo rate ?")
+		++ "\n" ++ (NTMI.nufo.bat.string ? "nufo bat ?"),
 		bounds,
 		font,
 		Color.white

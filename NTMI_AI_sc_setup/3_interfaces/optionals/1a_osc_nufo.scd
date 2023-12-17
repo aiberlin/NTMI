@@ -42,26 +42,34 @@ OSCdef(\nUFOAlive, { |msg, time|
 
 
 // init zero values
-NTMI.zero = NTMI.zero ? ();
+NTMI.nufo.zero = NTMI.nufo.zero ? ();
 NTMI.nufo.rawPads = (0!8);
 NTMI.nufo.rawImuBiValues = (0!9);
 
-NTMI.zero.imu = NTMI.nufo.rawImuBiValues;
-NTMI.zero.pads = NTMI.nufo.rawPads;
+NTMI.nufo.zero.imu = NTMI.nufo.rawImuBiValues;
+NTMI.nufo.zero.pads = NTMI.nufo.rawPads;
 
-NTMI.zero.path = NTMI.dir.user +/+ "zeroes.scd";
+NTMI.nufo.zero.path = NTMI.dir.user +/+ "zeroes.scd";
 
-NTMI.zero.write = {
-	File.use(NTMI.zero.path, "w", { |file|
-		file.write("NTMI.zero.imu =" +  NTMI.zero.imu ++";\n");
-		file.write("NTMI.zero.pads =" +  NTMI.zero.pads ++";\n");
-		(NTMI.zero.path + "written.").postln;
+NTMI.nufo.zero.write = {
+	File.use(NTMI.nufo.zero.path, "w", { |file|
+		file.write("NTMI.nufo.zero.imu =" +  NTMI.nufo.zero.imu ++";\n");
+		file.write("NTMI.nufo.zero.pads =" +  NTMI.nufo.zero.pads ++";\n");
+		(NTMI.nufo.zero.path + "written.").postln;
 	})
 };
-NTMI.zero.read = { "reading zeroes file.".postln; NTMI.zero.path.load };
+NTMI.nufo.zero.read = {
+	try {
+		NTMI.nufo.zero.path.load;
+		"NTMI.nufo.zero - file read OK.".postln;
+	} {
+		"*** NTMI.nufo.zero.read failed - please calibrate again."
+	};
+};
+
+NTMI.nufo.zero.read;
 
 // read old zero values if there
-NTMI.zero.read;
 
 // set the first 9 values of the inphlux from the imu params:
 NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
@@ -75,7 +83,7 @@ NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.drop(9));
 
 // this func is just for ntmi.
 
-NTMI.bat = (
+NTMI.nufo.bat = (
 	resetVals: { |bat|
 		bat.putAll((
 			string: "battery?",
@@ -89,28 +97,28 @@ NTMI.bat = (
 		))
 	}
 );
-NTMI.bat.resetVals;
+NTMI.nufo.bat.resetVals;
 
-NTMI.bat.calc = { |dict, intVal = 0|
+NTMI.nufo.bat.calc = { |dict, intVal = 0|
 	// keep startvals for estimate
-	if (NTMI.bat.time0.isNil) {
-		NTMI.bat.time0 = Main.elapsedTime;
-		NTMI.bat.intval0 = intVal;
+	if (NTMI.nufo.bat.time0.isNil) {
+		NTMI.nufo.bat.time0 = Main.elapsedTime;
+		NTMI.nufo.bat.intval0 = intVal;
 	};
 
-	NTMI.bat.intval = intVal;
-	NTMI.bat.lastTime = Main.elapsedTime;
-	NTMI.bat.percent = intVal.linlin(NTMI.bat.minval, NTMI.bat.maxval, 0, 100).round(1);
+	NTMI.nufo.bat.intval = intVal;
+	NTMI.nufo.bat.lastTime = Main.elapsedTime;
+	NTMI.nufo.bat.percent = intVal.linlin(NTMI.nufo.bat.minval, NTMI.nufo.bat.maxval, 0, 100).round(1);
 
 	// calculate likely remaintime
 	// conservative guess: known max time
-	NTMI.bat.remain = intVal.linlin(NTMI.bat.minval, NTMI.bat.maxval, 0, NTMI.bat.totaltime).round(1).asInteger;
+	NTMI.nufo.bat.remain = intVal.linlin(NTMI.nufo.bat.minval, NTMI.nufo.bat.maxval, 0, NTMI.nufo.bat.totaltime).round(1).asInteger;
 
 	// calculate average loss, use to predict remaining time. stabilizes after maybe 30 mins
-	NTMI.bat.avgLoss = NTMI.bat.intval0 - NTMI.bat.intval / (NTMI.bat.lastTime - NTMI.bat.time0).max(2);
-	// NTMI.bat.avgLoss;
-	NTMI.bat.predictedRemain = (NTMI.bat.intval - NTMI.bat.minval / NTMI.bat.avgLoss.clip(0.01, 0.1) / 60);
+	NTMI.nufo.bat.avgLoss = NTMI.nufo.bat.intval0 - NTMI.nufo.bat.intval / (NTMI.nufo.bat.lastTime - NTMI.nufo.bat.time0).max(2);
+	// NTMI.nufo.bat.avgLoss;
+	NTMI.nufo.bat.predictedRemain = (NTMI.nufo.bat.intval - NTMI.nufo.bat.minval / NTMI.nufo.bat.avgLoss.clip(0.01, 0.1) / 60);
 
-	NTMI.bat.string = "bat: %% %m".format(NTMI.bat.percent, "%", NTMI.bat.remain);
-	NTMI.bat.string
+	NTMI.nufo.bat.string = "bat: %% %m".format(NTMI.nufo.bat.percent, "%", NTMI.nufo.bat.remain);
+	NTMI.nufo.bat.string
 };

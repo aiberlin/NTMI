@@ -14,7 +14,7 @@ NTMI.nufo.imuPadFuncName = \setAbs;
 
 MFdef(\nUFOImuFunc).add(\setAbs, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
-	var calibImuValsBi = imuInvalsBi - NTMI.zero.imu;
+	var calibImuValsBi = imuInvalsBi - NTMI.nufo.zero.imu;
 	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
 		var value = calibImuValsBi[i];
 		[name, value]
@@ -81,10 +81,10 @@ NTMI.nufo.capsin.add(\set, { |coll|
 	values = values[[1, 4, 0, 3, 5, 6, 2, 7]];
 	NTMI.nufo.rawPads = values;
 
-	// NTMI.zero.pads is the rest state of the pads
+	// NTMI.nufo.zero.pads is the rest state of the pads
 	// use it to stretch to a range of 0-1
 	values.do { |rawval, i|
-		var zeroOffset = NTMI.zero.pads.asArray.wrapAt(i) ? 0;
+		var zeroOffset = NTMI.nufo.zero.pads.asArray.wrapAt(i) ? 0;
 		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
 		values.put(i, stretched);
 	};

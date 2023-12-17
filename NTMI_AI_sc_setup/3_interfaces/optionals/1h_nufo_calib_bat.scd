@@ -1,18 +1,18 @@
 
 // calc battery value when battery message comes in:
 MKtl(\nUFO).elAt(\battery).action = { |bat|
-	NTMI.bat.calc(bat.deviceValue);
+	NTMI.nufo.bat.calc(bat.deviceValue);
 };
 
 //// calculate frame rate by incoming imu messages
 MFdef(\nUFOImuFunc).add(\frame, {
-	NTMI.frame.ring.put(NTMI.frame.index, Main.elapsedTime);
-	NTMI.frame.index = NTMI.frame.index + 1 % NTMI.frame.ring.size;
+	NTMI.nufo.frame.ring.put(NTMI.nufo.frame.index, Main.elapsedTime);
+	NTMI.nufo.frame.index = NTMI.nufo.frame.index + 1 % NTMI.nufo.frame.ring.size;
 });
 
 /*
-NTMI.frame.rate
-NTMI.frame.rateStr
+NTMI.nufo.frame.rate
+NTMI.nufo.frame.rateStr
 */
 
 // for monitoring the incoming osc activity by timetag
@@ -24,24 +24,24 @@ OSCdef(\imuAlive, { |msg, time|
 }, "/imu").permanent_(true);
 
 
-NTMI.frame = NTMI.frame ? ();
-NTMI.frame.ring = Array.fill(100, 0);
-NTMI.frame.index = 0;
-NTMI.frame.rate = {
+NTMI.nufo.frame = NTMI.nufo.frame ? ();
+NTMI.nufo.frame.ring = Array.fill(100, 0);
+NTMI.nufo.frame.index = 0;
+NTMI.nufo.frame.rate = {
 	var now = Main.elapsedTime;
-	var newest = NTMI.frame.ring.wrapAt(NTMI.frame.index - 1);
-	var oldest = NTMI.frame.ring.at(NTMI.frame.index);
+	var newest = NTMI.nufo.frame.ring.wrapAt(NTMI.nufo.frame.index - 1);
+	var oldest = NTMI.nufo.frame.ring.at(NTMI.nufo.frame.index);
 	var frameRate =
 	if (now - newest < 0.5) {
-		NTMI.frame.ring.size - 1 / (newest - oldest);
+		NTMI.nufo.frame.ring.size - 1 / (newest - oldest);
 	} {
 		// "// oops, dropout?".postln;
-		NTMI.frame.ring.size - 1 / (now - oldest);
+		NTMI.nufo.frame.ring.size - 1 / (now - oldest);
 	};
 	// "old: % new: % avg: %\n".postf(*[oldest, newest, frameRate].round(0.001));
 	frameRate
 };
-NTMI.frame.rateStr = { "nUFO @ % fps".format(NTMI.frame.rate.round(0.1)) };
+NTMI.nufo.frame.rateStr = { "nUFO @ % fps".format(NTMI.nufo.frame.rate.round(0.1)) };
 
 
 //////// calibrate imu and pads:
@@ -95,19 +95,19 @@ NTMI.nufo.calibrate = { |dict, dt = 1, whenDone|
 		if (captureOK.not) {
 			"no values captured - calibration impossible.".postln;
 		} {
-			"NTMI.zero.imu = mean of % captured values:\n".postf( NTMI.capture.imu.size);
-			NTMI.zero.imu = NTMI.capture.imu.mean;
-			NTMI.zero.imu.round(0.001).postln;
+			"NTMI.nufo.zero.imu = mean of % captured values:\n".postf( NTMI.capture.imu.size);
+			NTMI.nufo.zero.imu = NTMI.capture.imu.mean;
+			NTMI.nufo.zero.imu.round(0.001).postln;
 
 			padsflopped = NTMI.capture.pads.flop;
 			padmaxes = padsflopped.collect(_.maxItem);
 			padmeans = padsflopped.collect(_.mean);
 			padjitters = padsflopped.collect { |vals, i| (vals - padmeans[i]).abs.maxItem };
 
-			"NTMI.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( NTMI.capture.pads.size);
-			NTMI.zero.pads = padmaxes + (padjitters * 0.5);
-			NTMI.zero.pads.round(0.001).postln;
-			NTMI.zero.write;
+			"NTMI.nufo.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( NTMI.capture.pads.size);
+			NTMI.nufo.zero.pads = padmaxes + (padjitters * 0.5);
+			NTMI.nufo.zero.pads.round(0.001).postln;
+			NTMI.nufo.zero.write;
 			"*** nUFO calibrated. ***".postln;
 		};
 		whenDone.value(captureOK);
