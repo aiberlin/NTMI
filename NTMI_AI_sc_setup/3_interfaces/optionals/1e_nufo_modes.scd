@@ -5,7 +5,9 @@
 /*
 NTMI.nufo.setModeIndex(100.rand)
 NTMI.nufo[\mode]
+
 */
+
 
 NTMI.nufo.modes = [\full, \touch, \binary]; //
 NTMI.nufo.modeIndex = 0;

@@ -77,16 +77,21 @@ NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.drop(9));
 
 
 NTMI.nufo.setAbs = {
-	NTMI.nufo.imuPadFuncName = \setAbs;
-	"*** nufo influx mode is now setAbs!".postln;
+	NTMI.nufo.influxMode = \setAbs;
+	"*** NTMI.nufo.influxMode is now setAbs!".postln;
 };
 
 NTMI.nufo.setRel = {
-	NTMI.nufo.imuPadFuncName = \setRel;
-	"*** nufo influx mode is now setRel!".postln;
+	NTMI.nufo.influxMode = \setRel;
+	"*** NTMI.nufo.influxMode is now setRel!".postln;
 };
 
-NTMI.nufo.setAbs;
+// initialize to abs if not set already before
+if (NTMI.nufo.influxMode == \setRel) {
+	NTMI.nufo.setRel
+} {
+	NTMI.nufo.setAbs;
+};
 
 
 // ntmi currently sends analog in values as int from 0-4095,

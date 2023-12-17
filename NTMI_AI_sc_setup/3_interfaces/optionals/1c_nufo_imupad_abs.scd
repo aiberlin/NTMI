@@ -1,6 +1,27 @@
+/***
+IMU AND PADS can do absolute and relative influx:
+
+// this switches them to absolute
+NTMI.nufo.setRel;
+NTMI.nufo.setAbs;
+
+NTMI.nufo.debugOn = false;
+NTMI.nufo.debugOn = true;
+
+
+The main funcs of imu and pads use that name to look up which
+function to run, see below.
+***/
+
+NTMI.nufo.debugOn = false;
+
+// keep if already set, else set to abs for now
+NTMI.nufo.influxMode = NTMI.nufo.influxMode ? \setAbs;
+
 // ///////////////////////////////////////////////////////////////
 // //// I M U
 // ///////////////////////////////////////////////////////////////
+
 
 MKtl(\nUFO).collectivesDict[\imu].action = {
 	// trigger the action only once (influx calc)
@@ -10,7 +31,6 @@ MKtl(\nUFO).collectivesDict[\imu].action = {
 // set the first 9 values of the inphlux from the imu params:
 NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 
-NTMI.nufo.imuPadFuncName = \setAbs;
 
 MFdef(\nUFOImuFunc).add(\setAbs, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
@@ -30,8 +50,10 @@ MFdef(\nUFOImuFunc).add(\setAbs, {
 MFdef(\nUFOImuFunc).disable(\setAbs);
 
 MFdef(\nUFOImuFunc).add(\set, {
-	// "nUFOImuFunc, set: %\n".postf(NTMI.nufo.imuPadFuncName);
-	MFdef(\nUFOImuFunc).at(NTMI.nufo.imuPadFuncName).value
+	if (NTMI.nufo.debugOn) {
+		"nUFOImuFunc - NTMI.nufo.influxMode: %\n".postf(NTMI.nufo.influxMode);
+	};
+	MFdef(\nUFOImuFunc).at(NTMI.nufo.influxMode).value
 });
 
 
@@ -47,6 +69,7 @@ MFdef(\nUFOImuFunc).enable( \setInflux );
 ///////////////////////////////////////////////////////////////
 
 (
+
 NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 
 MFdef(\capsToInph).add(\setAbs, {
@@ -59,6 +82,16 @@ MFdef(\capsToInph).add(\setAbs, {
 	}.flat;
 	NTMI.inphlux.set(*keysValues);
 });
+
+MFdef(\capsToInph).disable(\setAbs);
+
+MFdef(\capsToInph).add(\set, {
+	if (NTMI.nufo.debugOn) {
+		"capsToInph  - NTMI.nufo.influxMode: %\n".postf(NTMI.nufo.influxMode);
+	};
+	MFdef(\capsToInph).at(NTMI.nufo.influxMode).value
+});
+
 
 ////// this is the action that gets triggered
 ////// when values come in from the ntmi -
@@ -105,6 +138,7 @@ NTMI.nufo.capsin.add(\set, { |coll|
 		}
 	}
 });
+
 
 // individual pad action - useful for guis only
 /// do global set only once, from MFdef(\touchToInph)
