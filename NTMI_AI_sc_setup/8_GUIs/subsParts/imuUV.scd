@@ -65,7 +65,7 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 	if (NTMI.g.hasNufo) {
 		// only if values changed!
 		if (NTMI.nufo.rawImuBiValues != NTMI.nufo.rawImuBiValuesOLD
-			or: { NTMI.nufo.rawPads != NTMI.nufo.rawPadsOLD }) {
+			or: { NTMI.nufo.padVals != NTMI.nufo.padValsOLD }) {
 
 			g.main.movevals = NTMI.nufo.calibImuVals ? g.main.movevals;
 			if (NTMI.nufo.mode == \binary) {
@@ -73,7 +73,7 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 					Color.white.alpha_(val);
 				};
 			} {
-				g.main.padCols = NTMI.nufo.rawPads.collect { |val, i|
+				g.main.padCols = NTMI.nufo.padVals.collect { |val, i|
 					// now opposite Color.hsv
 					Color.fromArray(NTMI.inph.currCounterCol * val);
 					// was always yellow
@@ -83,7 +83,7 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 			g.main.imuUV.refresh;
 		};
 		NTMI.nufo.rawImuBiValuesOLD = NTMI.nufo.rawImuBiValues;
-		NTMI.nufo.rawPadsOLD = NTMI.nufo.rawPads;
+		NTMI.nufo.padValsOLD = NTMI.nufo.padVals;
 	};
 });
 

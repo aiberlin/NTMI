@@ -75,10 +75,10 @@ NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 MFdef(\capsToInph).add(\setAbs, {
 	// var debug = "capsToInph setAbs".postln;
 	var influx = NTMI.inphlux;
-	var pads = MKtl(\nUFO).elAt(\cap);
+	var padVals = NTMI.nufo.padVals;
 	var padInNames = NTMI.inphlux.getHalo(\padNames);
-	var keysValues = pads.collect { |pad, i|
-		[ padInNames[i], pad.value]
+	var keysValues = padVals.collect { |padval, i|
+		[ padInNames[i], padval]
 	}.flat;
 	NTMI.inphlux.set(*keysValues);
 });
@@ -108,29 +108,34 @@ MKtl(\nUFO).collAt('caps').groupAction = NTMI.nufo.capsin;
 
 NTMI.nufo.capsin.add(\set, { |coll|
 	var capLedThresh = MKtl(\nUFO).getHalo(\capLedThresh);
-	var values = coll.value;
+	var rawPads = coll.value;
+	var calibPadVals;
 
 	// reorder for proper order of pads and leds
-	values = values[[1, 4, 0, 3, 5, 6, 2, 7]];
-	NTMI.nufo.rawPads = values;
+	rawPads = rawPads[[1, 4, 0, 3, 5, 6, 2, 7]];
+
+	NTMI.nufo.rawPads = rawPads;
 
 	// NTMI.nufo.zero.pads is the rest state of the pads
 	// use it to stretch to a range of 0-1
-	values.do { |rawval, i|
+	calibPadVals = rawPads.collect { |rawval, i|
 		var zeroOffset = NTMI.nufo.zero.pads.asArray.wrapAt(i) ? 0;
 		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
-		values.put(i, stretched);
+		stretched;
 	};
+	// keep prev and new reordered and calibrated padVals here:
+	NTMI.nufo.prevPadVals = NTMI.nufo.padVals;
+	NTMI.nufo.padVals = calibPadVals;
 
-	// set element values back to the compensated values, no action
-	MKtl(\nUFO).elAt('cap').value_(values);
+	// // set element values back to the compensated values, no action
+	// MKtl(\nUFO).elAt('cap').value_(values);
 	// trigger touch to inphlux only once ...
 	MFdef(\capsToInph).value;
 
 	// light up leds when pads are touched above thresh:
 	fork {
 		MKtl(\nUFO).elAt(\led, \fr).do { |led, i|
-			var newval = (values[i] > capLedThresh).binaryValue;
+			var newval = (rawPads[i] > capLedThresh).binaryValue;
 			if (newval != led.value) {
 				led.value = newval;
 				0.003.wait;
@@ -139,17 +144,16 @@ NTMI.nufo.capsin.add(\set, { |coll|
 	}
 });
 
-
-// individual pad action - useful for guis only
-/// do global set only once, from MFdef(\touchToInph)
-MKtl(\nUFO).elAt(\cap).do { |pad, i|
-	pad.action.add(\setAbs, {|ana|
-		var name = 	NTMI.inphlux.getHalo(\padNames).clipAt(i);
-		NTMI.inphlux.set(name, ana.value.pow(3));
-		//.pow(6));
-		// the pow(6) helps toflatten the steep curve of the FSRs as they are now.
-		ana.value
-	})
-};
+// // individual pad action - useful for guis only
+// /// do global set only once, from MFdef(\touchToInph)
+// MKtl(\nUFO).elAt(\cap).do { |pad, i|
+// 	pad.action.add(\setAbs, {|ana|
+// 		var name = 	NTMI.inphlux.getHalo(\padNames).clipAt(i);
+// 		NTMI.inphlux.set(name, ana.value.pow(3));
+// 		//.pow(6));
+// 		// the pow(6) helps toflatten the steep curve of the FSRs as they are now.
+// 		ana.value
+// 	})
+// };
 );
 
