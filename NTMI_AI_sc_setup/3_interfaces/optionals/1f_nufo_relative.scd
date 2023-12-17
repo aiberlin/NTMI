@@ -1,3 +1,4 @@
+
 /****
 
 MKtl(\nUFO).elAt(\imu9, 0).valueAction = 0.6;
@@ -15,16 +16,19 @@ MFdef(\nUFOImuFunc).activeNames;
 MKtl(\nUFO).elAt(\imu9, 0).valueAction = 1.0.rand;
 
 Tdef(\testImuRel, {
-	loop {
-		MKtl(\nUFO).collAt(\imu).valueAction =
-		MKtl(\nUFO).elAt(\imu9).value.collect { |val|
-			(val + 0.02.rand2).clip(0, 1)
-		};
-		0.03.wait;
-	}
+loop {
+MKtl(\nUFO).collAt(\imu).valueAction =
+MKtl(\nUFO).elAt(\imu9).value.collect { |val|
+(val + 0.02.rand2).clip(0, 1)
+};
+0.03.wait;
+}
 }).play;
 
-Tdef(\testImuRel).stop;
+NTMI.nufo.debugOn = true;
+NTMI.nufo.debugOn = false;
+
+NTMI.nufo.setRel;
 
 ***/
 
@@ -32,41 +36,39 @@ Tdef(\testImuRel).stop;
 NTMI.zooms = NTMI.zooms ? ();
 NTMI.zooms.nufo = NTMI.zooms.nufo ? 1;
 
-MFdef(\nUFOImuFunc).disable(\setAbs);
-
 MFdef(\nUFOImuFunc).add(\setRel, {
-	// var debug = "nUFOImuFunc setRel".postln;
 	var imu = MKtl(\nUFO).elAt(\imu9);
 	var diffs = imu.value - imu.prevValue;
 
-	// "diffs: ".postln; diffs.round(0.01).postln;
+	if (NTMI.nufo.debugOn) {
+		// "nUFOImuFunc setRel- ".post;
+		// "diff sum: ".post; diffs.sum.round(0.01).postln;
+		// "abs sum: ".post; diffs.abs.sum.round(0.01).postln;
+	};
 	// set imu to current values so prevVals are now currvals,
 	// and we dont get the same diffs multiple times.
-	imu.value = imu.value;
+	// imu.value = imu.value;
 
 	MFdef(\setRelInf).(
 		(0..diffs.size-1) + 8,
 		diffs,
 		NTMI.inphlux.inScaler * NTMI.zooms.nufo
 	);
-});
-
-MFdef(\nUFOImuFunc).enable(\setRel);
+}, false);
+MFdef(\nUFOImuFunc).disable(\setRel);
 );
 
 (
-
 /////
 MFdef(\capsToInph).disable(\setRel);
-MFdef(\capsToInph).activeNames;
 MFdef(\capsToInph).disable(\setAbs);
 MKtl(\nUFO).elAt(\cap).do { |pad| pad.action.disable(\setAbs) };
 
-
 MKtl(\nUFO).elAt(\cap).action = { |el|
-	"pad global action".postln;
+	if (NTMI.nufo.debugOn) { "pad global action".postln };
 	// value change should set all other indiv. elements,
 	// so prevValues are correctly 0:
+
 	MKtl(\nUFO).elAt(\cap).do { |el2|
 		if (el2 != el) { el2.value = el2.value };
 	};
@@ -75,9 +77,12 @@ MKtl(\nUFO).elAt(\cap).action = { |el|
 };
 
 MFdef(\capsToInph).add(\setRel, {
-	var debug = "capsToInph setRel".postln;
-	var pads = MKtl(\nUFO).elAt(\cap);
-	var diffs = pads.value - pads.prevValue;
+	var diffs = NTMI.nufo.padVals - NTMI.nufo.prevPadVals;
+
+	if (NTMI.nufo.debugOn) {
+		"capsToInph setRel - ".post;
+		"diffs sum: ".post; diffs.sum.round(0.01).postln;
+	};
 
 	// influence the playing slots
 	MFdef(\setRelInf).(
@@ -86,6 +91,6 @@ MFdef(\capsToInph).add(\setRel, {
 		NTMI.inphlux.inScaler * NTMI.zooms.nufo
 	);
 
-});
-MFdef(\capsToInph).enable(\setRel);
+}, false);
+
 );
