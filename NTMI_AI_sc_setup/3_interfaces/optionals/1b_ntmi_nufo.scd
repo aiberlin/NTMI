@@ -24,10 +24,14 @@ OK --- hat + preUP -> mainFX UP
 OK --- hat + preDown -> mainFX down
 OK --- hat + preUP + Down -> mainFX rand
 
-?? --- encHat - add snapshot? later.
+OK --- encHat - add snapshot
 
-OSCFunc.trace;
+OSCFunc.trace(true, true);
 OSCFunc.trace (false);
+
+/*
+MKtl(\nUFO).elementsDict.do { |el| el.action.enable(\post) };
+*/
 
 */
 
@@ -38,24 +42,29 @@ NTMI.nufo = NTMI.nufo ? ();
 NTMI.nufo.nUFO = NTMI.nufo.nUFO ? ();
 
 
-///////// make a new nufo MKtl
+///////// make a new nufo MKtl from desc in
+// ".../0_globals/3_ai-ntmi.desc.scd"
 MKtl.all.at(\nUFO).free;
 MKtl(\nUFO, "ai-ntmi");
 
+
 // this is for logging into NTMI-xxx networks only:
-// should eventually be done from a listeing OSCdef
+// should eventually be done automatically from a listening OSCdef
 MKtl(\nUFO).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
 MKtl(\nUFO).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
 
-MKtl(\nUFO).elAt(\enc).value_(0.5);
 
+// **** initialize
+MKtl(\nUFO).elAt(\enc).value_(0.5);
 
 /// init all nufo actions as MFuncs, provide posting
 MKtl(\nUFO).elementsDict.do(_.action_(MFunc()));
-MKtl(\nUFO).elementsDict.do { |el| el.action.add(\post, { |el|
-	[el.name, el.value.round(0.0001)].postln
-}) };
-MKtl(\nUFO).elementsDict.do { |el| el.action.enable(\post) };
+MKtl(\nUFO).elementsDict.do { |el|
+	el.action.add(\post, { |el|
+		[el.name, el.value.round(0.0001)].postln
+	})
+};
+
 MKtl(\nUFO).elementsDict.do { |el| el.action.disable(\post) };
 
 
@@ -76,7 +85,8 @@ MKtl(\nUFO).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup 
 MKtl(\nUFO).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
 MKtl(\nUFO).elAt(\modSw).elemDesc.label_('move Mode');
 
-////////////// get battery value:
+
+// calc battery value when battery message comes in:
 MKtl(\nUFO).elAt(\battery).action = { |bat|
 	NTMI.bat.calc(bat.deviceValue);
 };
