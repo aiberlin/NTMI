@@ -48,6 +48,12 @@ MKtl.all.at(\nUFO).free;
 MKtl(\nUFO, "ai-ntmi");
 
 
+// send login message to nufo, so it knows where to send
+NTMI.nufo.skipLogin.stop.free;
+NTMI.nufo.skipLogin = SkipJack({
+	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login") }
+}, 0.5);
+
 // this is for logging into NTMI-xxx networks only:
 // should eventually be done automatically from a listening OSCdef
 MKtl(\nUFO).device.updateDstAddr("169.254.1.1", NetAddr.langPort);
@@ -402,61 +408,6 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 	enc.deviceValue = 0;
 });
 
-
-// ///////////////////////////////////////////////////////////////
-// //// I M U
-// ///////////////////////////////////////////////////////////////
-
-MKtl(\nUFO).collectivesDict[\imu].action = {
-	// trigger the action only once (influx calc)
-	MFdef(\nUFOImuFunc).value;
-};
-
-// set the first 9 values of the inphlux from the imu params:
-NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
-
-NTMI.nufo.imuPadFuncName = \setAbs;
-
-MFdef(\nUFOImuFunc).add(\setAbs, {
-	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
-	var calibImuValsBi = imuInvalsBi - NTMI.zero.imu;
-	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
-		var value = calibImuValsBi[i];
-		[name, value]
-	}.flat;
-	NTMI.nufo.rawImuBiValues = imuInvalsBi;
-	NTMI.nufo.calibImuValsBi = calibImuValsBi;
-	NTMI.nufo.calibImuVals = calibImuValsBi.biuni;
-
-	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
-	NTMI.inphlux.set(*keysvals);
-}, false);
-
-MFdef(\nUFOImuFunc).disable(\setAbs);
-
-MFdef(\nUFOImuFunc).add(\set, {
-	// "nUFOImuFunc, set: %\n".postf(NTMI.nufo.imuPadFuncName);
-	MFdef(\nUFOImuFunc).at(NTMI.nufo.imuPadFuncName).value
-});
-
-
-/*
-MFdef(\nUFOImuFunc).disable( \setInflux );
-MFdef(\nUFOImuFunc).enable( \setInflux );
-*/
-
-NTMI.nufo.skipLogin.stop.free;
-NTMI.nufo.skipLogin = SkipJack({
-	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login") }
-}, 0.5);
-
-// for monitoring the incoming osc activity by timetag
-NTMI.nufo.lastInTime = 0;
-NTMI.nufo.timeSinceLast = { Main.elapsedTime - NTMI.nufo.lastInTime };
-
-OSCdef(\imuAlive, { |msg, time|
-	NTMI.nufo.lastInTime = time;
-}, "/imu").permanent_(true);
 
 ///////// update slot LEDs
 NTMI.nufo.skip.stop.free;
