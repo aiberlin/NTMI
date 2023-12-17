@@ -76,6 +76,19 @@ NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.drop(9));
 
 
+NTMI.nufo.setAbs = {
+	NTMI.nufo.imuPadFuncName = \setAbs;
+	"*** nufo influx mode is now setAbs!".postln;
+};
+
+NTMI.nufo.setRel = {
+	NTMI.nufo.imuPadFuncName = \setRel;
+	"*** nufo influx mode is now setRel!".postln;
+};
+
+NTMI.nufo.setAbs;
+
+
 // ntmi currently sends analog in values as int from 0-4095,
 // above 4000 means charger is connected,
 // usable range from maxval 3800 = quite full
