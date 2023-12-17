@@ -4,7 +4,9 @@
 // NTMI.nufo.modes = [\full, \move, \touch, \binary, \off];
 /*
 NTMI.nufo.setModeIndex(100.rand)
+NTMI.nufo[\mode]
 */
+
 NTMI.nufo.modes = [\full, \touch, \binary]; //
 NTMI.nufo.modeIndex = 0;
 NTMI.nufo.mode = { NTMI.nufo.modes.wrapAt(NTMI.nufo.modeIndex) };
@@ -71,7 +73,7 @@ NTMI.nufo.touchOFF =  {
 
 NTMI.nufo.moveON =  {
 	"nUFO - moveON".postln;
-	MFdef(\nUFOImuFunc).enable(\setInflux);
+	MFdef(\nUFOImuFunc).enable(\set);
 	NTMI.slots.nowPlaying.do { |obj|
 		if (NTMI.inph.decoupled.includes(obj.key).not) {
 			NTMI.inph.couple(obj);
@@ -81,9 +83,9 @@ NTMI.nufo.moveON =  {
 
 NTMI.nufo.moveOFF =  {
 	"nUFO - moveOFF".postln;
-	MFdef(\nUFOImuFunc).disable(\setInflux);
+	MFdef(\nUFOImuFunc).disable(\set);
 	/////// pads set inphlux in unipolar, 0-1 range!
-	NTMI.inphlux.set(*NTMI.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
+	// NTMI.inphlux.set(*NTMI.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 };
 
 NTMI.nufo.binON =  {
@@ -98,4 +100,3 @@ NTMI.nufo.binOFF =  {
 	"nUFO - binOFF".postln;
 	MFdef(\capsToInph).disable(\binKey);
 };
-
