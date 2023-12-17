@@ -50,7 +50,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
 	// quick fix so we can keep nufo graphics when no nUFO present
 	NTMI.nufo = NTMI.nufo ? ();
-	NTMI.nufo.mode = NTMI.nufo.mode ? \full;
+	NTMI.nufo.modes = NTMI.nufo.modes ? [\full, \touch, \binary]; //
+	NTMI.nufo.modeIndex = NTMI.nufo.modeIndex ? 0;
+	NTMI.nufo.mode = NTMI.nufo[\mode] ? { NTMI.nufo.modes.wrapAt(NTMI.nufo.modeIndex) };
 
 	try { g.main.w.close };
 	w = Window(name, bounds).front;
