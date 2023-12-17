@@ -36,14 +36,17 @@ q.flatcat.vals.put(k, (v + 0.05.rand2).clip2(0.5))
 
 // -> let running flatcat set q.flatcat.vals!
 
+// unsafe - this crashes GT gui in main thread on macOS
+
+NTMI.g.main.imuUV.drawFunc = { MFdef(\drawFlatcat).value };
+// NTMI.g.main.imuUV.animate_(true);
+
 */
 
 (
 q = q ? ();
 q.flatcat = q.flatcat ? ();
 
-NTMI.g.main.imuUV.drawFunc = MFdef(\drawFlatcat);
-NTMI.g.main.imuUV.animate_(true);
 
 // put values to show here:
 q.flatcat.vals = (
