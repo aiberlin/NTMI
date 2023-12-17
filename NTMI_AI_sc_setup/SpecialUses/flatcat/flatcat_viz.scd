@@ -4,8 +4,12 @@
 
 
 //// show flatcat viz on main GUI!
-NTMI.g.main.imuUV.drawFunc = MFdef(\drawFlatcat)
+NTMI.g.main.imuUV.drawFunc = MFdef(\drawFlatcat);
 NTMI.g.main.imuUV.animate_(true);
+
+// or in its own window:
+WinBounds.showOrMake(\flatcatViz);
+
 
 //////////////
 from tail to head,
@@ -37,6 +41,9 @@ q.flatcat.vals.put(k, (v + 0.05.rand2).clip2(0.5))
 (
 q = q ? ();
 q.flatcat = q.flatcat ? ();
+
+NTMI.g.main.imuUV.drawFunc = MFdef(\drawFlatcat);
+NTMI.g.main.imuUV.animate_(true);
 
 // put values to show here:
 q.flatcat.vals = (
@@ -156,6 +163,4 @@ WinBounds.addMake(\flatcatViz, {
 	u.drawFunc = MFdef(\drawFlatcat);
 	w
 });
-
-WinBounds.showOrMake(\flatcatViz);
 )
