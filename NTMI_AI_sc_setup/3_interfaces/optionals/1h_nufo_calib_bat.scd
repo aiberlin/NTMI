@@ -4,6 +4,37 @@ MKtl(\nUFO).elAt(\battery).action = { |bat|
 	NTMI.bat.calc(bat.deviceValue);
 };
 
+//// calculate frame rate by incoming imu messages
+MFdef(\nUFOImuFunc).add(\frame, {
+	NTMI.frame.ring.put(NTMI.frame.index, Main.elapsedTime);
+	NTMI.frame.index = NTMI.frame.index + 1 % NTMI.frame.ring.size;
+});
+
+/*
+NTMI.frame.rate
+NTMI.frame.rateStr
+*/
+
+NTMI.frame = NTMI.frame ? ();
+NTMI.frame.ring = Array.fill(100, 0);
+NTMI.frame.index = 0;
+NTMI.frame.rate = {
+	var now = Main.elapsedTime;
+	var newest = NTMI.frame.ring.wrapAt(NTMI.frame.index - 1);
+	var oldest = NTMI.frame.ring.at(NTMI.frame.index);
+	var frameRate =
+	if (now - newest < 0.5) {
+		NTMI.frame.ring.size - 1 / (newest - oldest);
+	} {
+		// "// oops, dropout?".postln;
+		NTMI.frame.ring.size - 1 / (now - oldest);
+	};
+	// "old: % new: % avg: %\n".postf(*[oldest, newest, frameRate].round(0.001));
+	frameRate
+};
+NTMI.frame.rateStr = { "nUFO @ % fps".format(NTMI.frame.rate.round(0.1)) };
+
+
 //////// calibrate imu and pads:
 /*
 // when nufo is connected:

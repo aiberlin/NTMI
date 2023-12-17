@@ -129,7 +129,7 @@ How the modal logic for the NTMI buttons + encoder works:
 
 ****************/
 
-// the slot switches:
+// left side, the slot switches:
 MKtl(\nUFO).elAt(\slots).do { |but, i|
 
 	but.action.add(\shift, { |but|
@@ -165,6 +165,7 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 				}
 			} {
 				// "... (right mode for slot buttons) ...".postln;
+				// if encoder was held, de/couple this slot from influx
 				if (MKtl(\nUFO).elAt(\encHat).isOn) {
 					NTMI.inph.clutch(slotObj);
 				};
@@ -175,7 +176,7 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 };
 
 MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
-	// hope the button order is correct?
+	// button order of names
 	var btname = [\encHat, \preUp, \preDown, \touchMove][i];
 
 	but.action.add(\shift, { |but|
@@ -226,10 +227,9 @@ NTMI.inph.sendInphPre = {
 	}
 };
 
-//// should be :
 // if hat clicked and nothing else is done,
 /// -> release stores snapshot
-// otherwise, hat was shift but for other buttons.
+// otherwise, hat was shift-key but for other buttons.
 
 NTMI.nufo.encHatUsed = MFunc().add(\used, {
 	if (MKtl(\nUFO).elAt(\encHat).isOn) {
@@ -247,12 +247,14 @@ MKtl(\nUFO).elAt(\encHat).action.add(\snap, { |bt|
 	}
 });
 
-//////
-MKtl(\nUFO).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el| el.action.add(\enchat, NTMI.nufo.encHatUsed) };
+////// add encHatUsed func to all buttons
+MKtl(\nUFO).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el|
+	el.action.add(\enchat, NTMI.nufo.encHatUsed)
+};
 MKtl(\nUFO).elAt(\enc).action.add(\enchat, NTMI.nufo.encHatUsed);
 
 
-// reset right back leds to their proper values
+// reset right-side back leds to their proper values
 // e.g. after modal action of buttons for MainFX
 NTMI.nufo.resetModePreLEDs = MFunc().add(\reset, { |delay=0.1|
 	defer ({
@@ -437,35 +439,6 @@ MFdef(\nUFOImuFunc).add(\set, {
 	MFdef(\nUFOImuFunc).at(NTMI.nufo.imuPadFuncName).value
 });
 
-
-
-NTMI.frame = NTMI.frame ? ();
-NTMI.frame.ring = Array.fill(100, 0);
-NTMI.frame.index = 0;
-NTMI.frame.rate = {
-	var now = Main.elapsedTime;
-	var newest = NTMI.frame.ring.wrapAt(NTMI.frame.index - 1);
-	var oldest = NTMI.frame.ring.at(NTMI.frame.index);
-	var frameRate =
-	if (now - newest < 0.5) {
-		NTMI.frame.ring.size - 1 / (newest - oldest);
-	} {
-		// "// oops, dropout?".postln;
-		NTMI.frame.ring.size - 1 / (now - oldest);
-	};
-	// "old: % new: % avg: %\n".postf(*[oldest, newest, frameRate].round(0.001));
-	frameRate
-};
-NTMI.frame.rateStr = { "nUFO @ % fps".format(NTMI.frame.rate.round(0.1)) };
-/*
-NTMI.frame.rate
-NTMI.frame.rateStr
-*/
-
-MFdef(\nUFOImuFunc).add(\frame, {
-	NTMI.frame.ring.put(NTMI.frame.index, Main.elapsedTime);
-	NTMI.frame.index = NTMI.frame.index + 1 % NTMI.frame.ring.size;
-});
 
 /*
 MFdef(\nUFOImuFunc).disable( \setInflux );
