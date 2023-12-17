@@ -1,6 +1,13 @@
 
 
 /* flatcat visualization:
+
+
+//// show flatcat viz on main GUI!
+NTMI.g.main.imuUV.drawFunc = q.flatcat.u.drawFunc;
+NTMI.g.main.imuUV.animate_(true);
+
+//////////////
 from tail to head,
 motors are     2,  1,  0
 segments are 3,  2,  1,  0
