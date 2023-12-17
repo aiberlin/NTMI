@@ -104,7 +104,8 @@ NTMI.nufo.calibrate = { |dict, dt = 1, whenDone|
 			padmeans = padsflopped.collect(_.mean);
 			padjitters = padsflopped.collect { |vals, i| (vals - padmeans[i]).abs.maxItem };
 
-			"NTMI.nufo.zero.pads = maxes + 0.5 jitter of % captured values\n".postf( NTMI.capture.pads.size);
+			"NTMI.nufo.zero.pads = maxes + 0.5 jitter of % captured values\n"
+			.postf( NTMI.capture.pads.size);
 			NTMI.nufo.zero.pads = padmaxes + (padjitters * 0.5);
 			NTMI.nufo.zero.pads.round(0.001).postln;
 			NTMI.nufo.zero.write;
