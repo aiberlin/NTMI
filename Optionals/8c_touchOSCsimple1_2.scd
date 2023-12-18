@@ -2,7 +2,6 @@
 // layout simple is only used as a starter example;
 // one can and should make a better fitting layout with the TouchOSCEditor.app!
 
-
 /****** SETUP INSTRUCTIONS: ******
 
 0. make sure the smartphone with touchosc
@@ -42,31 +41,30 @@ OSCFunc.trace(false);
 */
 
 *********/
-// set earlier in setup file, or save here:
-~myPhoneIP = ~myPhoneIP ? "192.168.178.104"; // adc home
-// ~myPhoneIP = "192.168.8.232";  // adc studio
 
-// update Modality if needed:
-/*
-Quark("Modality-toolkit").update; // to get current
-*/
-
-// clear old versions, and reload new ones
-// ~to12desc = MKtlDesc.loadDescs("touchosc-simple1_2")[0];
-// // FIX DESC TO USE NetAddr.langPort as address touch sends to:
-// ~to12desc.fullDesc.netAddrInfo.recvPort = NetAddr.langPort;
-
+// Make an MKtl for touchOSC simple screen.
 ~tos2.free; ~tos2 = MKtl(\tosc12, "touchosc-simple1_2");
 
-
-// set the address to the one you see in the trace:
-~tos2.device.updateSrcDstAddr(~myPhoneIP);
+// turn on acceleration sending to update the senderAddress to the one from touchOSC:
+OSCdef(\touchOSC2mtkl, { |msg, time, senderAddr, recvPort|
+	"touchOSC-simple - updating senderAddr to %\n".postf(senderAddr);
+	MKtl(\tosc12).device.updateSrcDstAddr(senderAddr.addr.asIPString, senderAddr.port);
+	OSCdef(\touchOSC2mtkl).disable;
+	"updated to: ".postln;
+	MKtl(\tosc12).device.source.postln;
+}, \accxyz).enable;
 
 /*****
 //// TEST: make gui for ~tos2
 ~tos2.gui;
 ~tos2.device.dump;
 ~tos2.trace
+
+~tos2.desc.openFile
+
+OSCFunc.trace(true, true);
+OSCFunc.trace(false);
+
 
 // -> WHEN YOU MOVE THE PHONE, the accel faders on the Gui (bottom)
 // -> WHEN YOU MOVE A SLIDER, the matching slider on the Gui should move
@@ -79,7 +77,7 @@ Quark("Modality-toolkit").update; // to get current
 // set top xfader to control master volume
 ~tos2.elAt(\xfader).elemDesc.put(\label, \mainVol);
 ~tos2.elAt(\xfader).action = { |sl|
-	MFdef(\mainVol).value(sl.value);
+	MFdef(\mainVol).value((sl.value * 2).squared);
 };
 
 // set 4 faders on page 1 to control slot volumes
@@ -88,7 +86,7 @@ Quark("Modality-toolkit").update; // to get current
 };
 ~tos2.elAt(\sl).do { |el, i|
 	el.action = { |el|
-		q.slots.actives[i].vol = el.value.squared;
+		NTMI.slots.actives[i].vol = el.value.squared;
 	};
 };
 
@@ -101,10 +99,10 @@ Quark("Modality-toolkit").update; // to get current
 	el.action = { |el|
 		~tos2.elAt(\bt2, i).value = el.value;
 		if (el.value > 0) {
-			q.slots.playAt(i);
+			NTMI.slots.playAt(i);
 
 		} {
-			q.slots.stopAt(i);
+			NTMI.slots.stopAt(i);
 		}
 	};
 };
@@ -122,11 +120,10 @@ Quark("Modality-toolkit").update; // to get current
 
 ///////////// ACCELEROMETERS for influx:
 /// calibration:
-q = q ? ();
-q.zero = q.zero ? ();
-q.zero.tos2 = [ 0.5, 0.335, 0.5 ].unibi;   // phone head up vertical
-q.zero.tos2 = [ 0.5, 0.382, 0.382 ].unibi; // phone head 45 deg up
-q.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
+NTMI.zero = NTMI.zero ? ();
+NTMI.zero.tos2 = [ 0.5, 0.335, 0.5 ].unibi;   // phone head up vertical
+NTMI.zero.tos2 = [ 0.5, 0.382, 0.382 ].unibi; // phone head 45 deg up
+NTMI.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
 
 ///// name accel xyz as influx x-y-z
 ~tos2.elAt(\accel).do { |el, i|
@@ -135,17 +132,32 @@ q.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
 
 // when setting inputs by hand, use coll
 ~tos2.elAt(\accel).action = { |el|
-	var vals = ~tos2.collAt(\accel).value.unibi - q.zero.tos2 * 2;
+	var vals = ~tos2.collAt(\accel).value.unibi - NTMI.zero.tos2 * 2;
 	vals.round(0.01).postln;
-	q.inphlux.set(\x, vals[0], \y, vals[1], \z, vals[2]);
+	NTMI.inphlux.set(\x, vals[0], \y, vals[1], \z, vals[2]);
 };
 
 // use triple input from coll
-// to set influx x y z values in one go:
+// to set absolute influx x y z values in one go:
 ~tos2.collAt(\accel).action = { |el|
-	var vals = el.value.unibi - q.zero.tos2 * 2;
-	q.inphlux.set(\x, vals[0], \y, vals[1], \z, vals[2]);
+	var vals = el.value.unibi - NTMI.zero.tos2 * 2;
+	NTMI.inphlux.set(\x, vals[0], \y, vals[1], \z, vals[2]);
 };
+
+NTMI.zooms.tos2 = NTMI.zooms.tos2 ? 1;
+
+// use triple input from coll
+// to set relative influx x y z values in one go:
+~tos2.collAt(\accel).action = { |el|
+	var diffs = el.value - el.prevValue;
+	MFdef(\setRelInf).(
+		(0..diffs.size-1) + 6, // 6, 7, 8 so we get ampTweak chan 8.
+		diffs,
+		NTMI.inphlux.inScaler
+		* NTMI.zooms.tos2
+	);
+};
+
 
 
 // pushbuttons on page 2
@@ -155,7 +167,7 @@ q.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
 ~tos2.elAt(\pb)[0..3].do { |el, i|
 	el.elemDesc.put(\label, ("pre+" ++ (i+1)).asSymbol);
 	el.action = { if (el.isOn) {
-		q.pre.stepNdefInf(q.slots.actives[i], 1)
+		NTMI.pre.stepNdefInf(NTMI.slots.actives[i], 1)
 	} }
 };
 
@@ -163,7 +175,7 @@ q.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
 ~tos2.elAt(\pb)[4..7].do { |el, i|
 	el.elemDesc.put(\label, ("pre-" ++ (i+1)).asSymbol);
 	el.action = { if (el.isOn) {
-		q.pre.stepNdefInf(q.slots.actives[i], -1)
+		NTMI.pre.stepNdefInf(NTMI.slots.actives[i], -1)
 	} }
 };
 
@@ -172,7 +184,7 @@ q.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
 ~tos2.elAt(\pb)[8..11].do { |el, i|
 	el.elemDesc.put(\label, ("snd+" ++ (i+1)).asSymbol);
 	el.action = { if (el.isOn) {
-		q.slots.stepNext(i, 1)
+		NTMI.slots.stepNext(i, 1)
 	} }
 };
 
@@ -180,7 +192,7 @@ q.zero.tos2 = [ 0.5, 0.5, 0.335 ].unibi;   // phone flat on table
 ~tos2.elAt(\pb)[12..15].do { |el, i|
 	el.elemDesc.put(\label, ("snd-" ++ (i+1)).asSymbol);
 	el.action = { if (el.isOn) {
-		q.slots.stepNext(i, -1)
+		NTMI.slots.stepNext(i, -1)
 	} }
 };
 
