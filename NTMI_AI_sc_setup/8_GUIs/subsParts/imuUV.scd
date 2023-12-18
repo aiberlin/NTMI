@@ -1,3 +1,5 @@
+var g = NTMI.g;
+
 var imuUV = v = UserView(NTMI.g.main.w, NTMI.g.main.imuUVBounds);
 imuUV.background_(Color.grey(0.5, 0));
 NTMI.g.main.imuUV = imuUV;
@@ -80,7 +82,7 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 					// Color.yellow(val).alpha_(val);
 				};
 			};
-			g.main.imuUV.refresh;
+			NTMI.g.main.imuUV.refresh;
 		};
 		NTMI.nufo.rawImuBiValuesOLD = NTMI.nufo.rawImuBiValues;
 		NTMI.nufo.padValsOLD = NTMI.nufo.padVals;
