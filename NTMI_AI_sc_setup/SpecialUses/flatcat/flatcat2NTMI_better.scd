@@ -149,13 +149,14 @@ MFdef(\flatcat).enable(\post);
 MFdef(\flatcat).disable(\post);
 
 OSCdef(\flatcat2mktl, { |msg, time, senderAddr, recvPort|
-	"flatcat - updating senderAddr to %\n".postf(senderAddr);
-	MKtl(\flatcat).device.updateSrcAddr(senderAddr.hostname, senderAddr.port);
+	"*** flatcat - updating source to: %\n".postf(senderAddr);
+	MKtl(\flatcat).device.updateSrcAddr(senderAddr.addr.asIPString, senderAddr.port);
 	OSCdef(\flatcat2mktl).disable;
-	"updated.".postln;
+	"*** updated to:".post;
+	MKtl(\flatcat).device.source.postln;
 }, \flatcat).enable;
 
-// set absolute: post normalized data
+// set absolute:
 MFdef(\flatcat).add(\setAbs, {
 	// var debug = "MFdef('flatcat') - setAbs".postln;
 	var values = MKtl(\flatcat).elAt.value;
