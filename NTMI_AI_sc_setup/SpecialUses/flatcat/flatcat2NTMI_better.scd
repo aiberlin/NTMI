@@ -62,6 +62,8 @@ current
 // the OSC port number flatcat sends on
 thisProcess.openUDPPort(8999);
 
+NTMI.flatcat = NTMI.flatcat ? ();
+
 MKtl.all[\flatcat].free;
 MKtl(\flatcat, "flatcat.desc.scd".loadRelative.unbubble);
 
@@ -116,18 +118,30 @@ MKtl(\flatcat).device.updateSrcAddr("192.168.4.1", 46757);
 
 
 ***/
-~sendFlatcatRand = {
+
+NTMI.flatcat.sendRand = {
 	NetAddr("127.0.0.1", 8999).sendMsg("/flatcat",
 		// voltages:
-		4.1, 5.8, 5.9,
+		rrand(4.0, 4.5), rrand(5.5, 6.0), rrand(5.5, 6.0),
 		// temp, angle, velo, current
 		rrand(25.0, 40), 0.5.rand2, 0.2.rand2, 0.2.rand2,
 		rrand(25.0, 40), 0.5.rand2, 0.2.rand2, 0.2.rand2,
 		rrand(25.0, 40), 0.5.rand2, 0.2.rand2, 0.2.rand2,
 	);
 };
+
+NTMI.flatcat.sendDrift = { |drift = 0.05|
+	var vals = MKtl(\flatcat).elAt.collect { |el|
+		el.deviceSpec.map((el.value + drift.bilinrand))
+	};
+	// reorder
+	vals = vals.keep(3) ++ vals.drop(3).clump(3).flop.flat;
+	NetAddr("127.0.0.1", 8999).sendMsg("/flatcat", *vals);
+};
+
 /*
-~sendFlatcatRand.value;
+NTMI.flatcat.sendRand.value;
+NTMI.flatcat.sendDrift.value;
 */
 
 
