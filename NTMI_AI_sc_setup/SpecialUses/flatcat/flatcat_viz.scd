@@ -4,7 +4,7 @@
 
 
 //// show flatcat viz on main GUI!
-NTMI.g.main.imuUV.drawFunc = MFdef(\drawFlatcat);
+NTMI.g.main.imuUV.drawFunc = NTMI.flatcat.drawFunc.value;
 NTMI.g.main.imuUV.animate_(true);
 
 // or in its own window:
@@ -38,7 +38,7 @@ q.flatcat.vals.put(k, (v + 0.05.rand2).clip2(0.5))
 
 // unsafe - this crashes GT gui in main thread on macOS
 
-NTMI.g.main.imuUV.drawFunc = { MFdef(\drawFlatcat).value };
+NTMI.g.main.imuUV.drawFunc = { NTMI.flatcat.drawFunc.value };
 // NTMI.g.main.imuUV.animate_(true);
 
 */
@@ -59,14 +59,14 @@ q.flatcat.vals = (
 );
 
 // assume flatcat is already running:
-MFdef(\flatcat).add(\vizdata, {
+NTMI.flatcat.onData.add(\vizdata, {
 	// get flatcat data from  for visualizer
 	q.flatcat.vals.keysValuesDo { |k, v|
 		q.flatcat.vals.put(k, MKtl(\flatcat).elAt(k).deviceValue);
 	};
 });
 
-MFdef(\drawFlatcat).add(\draw,  {
+NTMI.flatcat.drawFunc = MFunc().add(\draw,  {
 	var colorLine = Color.black,
 	colorBody = Color.grey(1.0, 0.5),
 	colorUp = Color.red,
@@ -163,7 +163,7 @@ WinBounds.addMake(\flatcatViz, {
 	q.flatcat.w = w;
 	q.flatcat.u = u;
 
-	u.drawFunc = MFdef(\drawFlatcat);
+	u.drawFunc = NTMI.flatcat.drawFunc;
 	w
 });
 )

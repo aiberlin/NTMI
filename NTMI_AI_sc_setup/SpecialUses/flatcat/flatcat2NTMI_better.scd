@@ -105,8 +105,8 @@ WinBounds.showOrMake(\flatcat);
 );
 
 /***
-// to send a test message without flatcat,
-// you need to adjust the source Address in the MKtl OSC device:
+// to send a test message without a flatcat,
+// you need to adjust the source Address in the MKtl OSC device.
 MKtl(\flatcat).device.updateSrcAddr("127.0.0.1", NetAddr.langPort);
 OSCFunc.trace(true, true);
 // then this line should change the flatcat values:
@@ -130,7 +130,7 @@ NTMI.flatcat.sendRand = {
 	);
 };
 
-NTMI.flatcat.sendDrift = { |drift = 0.05|
+NTMI.flatcat.sendDrift = { |fc, drift = 0.05|
 	var vals = MKtl(\flatcat).elAt.collect { |el|
 		el.deviceSpec.map((el.value + drift.bilinrand))
 	};
@@ -138,29 +138,42 @@ NTMI.flatcat.sendDrift = { |drift = 0.05|
 	vals = vals.keep(3) ++ vals.drop(3).clump(3).flop.flat;
 	NetAddr("127.0.0.1", 8999).sendMsg("/flatcat", *vals);
 };
-
 /*
 NTMI.flatcat.sendRand.value;
 NTMI.flatcat.sendDrift.value;
 */
 
+Tdef(\flatcatSim).addSpec(\drift, [0, 0.1]);
+Tdef(\flatcatSim).set(\drift, 0.03);
+
+Tdef(\flatcatSim, { |env|
+	loop {
+		0.05.wait;
+		NTMI.flatcat.sendDrift(env.drift);
+	}
+});
+/*
+Tdef(\flatcatSim).play;
+Tdef(\flatcatSim).stop;
+*/
 
 
+// NTMI.flatcat.onData: the actions to do when data come in
+NTMI.flatcat.onData = MFunc();
 
-// MFdef(\flatcat): the actions to do when data come in
 (
-MKtl(\flatcat).collAt(\alldata).action = MFdef(\flatcat);
+MKtl(\flatcat).collAt(\alldata).action = NTMI.flatcat.onData;
 
 // simplest: post normalized data
-MFdef(\flatcat).add(\post, { |el|
+NTMI.flatcat.onData.add(\post, { |el|
 	"*** flatcat alldata: ".postln;
 	el.value.round(0.001).postln;
 });
+NTMI.flatcat.onData.disable(\post);
 /*
-MFdef(\flatcat).disable(\post);
-MFdef(\flatcat).enable(\post);
+NTMI.flatcat.onData.disable(\post);
+NTMI.flatcat.onData.enable(\post);
 */
-MFdef(\flatcat).disable(\post);
 
 OSCdef(\flatcat2mktl, { |msg, time, senderAddr, recvPort|
 	"*** flatcat - updating source to: %\n".postf(senderAddr);
@@ -171,7 +184,7 @@ OSCdef(\flatcat2mktl, { |msg, time, senderAddr, recvPort|
 }, \flatcat).enable;
 
 // set absolute:
-MFdef(\flatcat).add(\setAbs, {
+NTMI.flatcat.onData.add(\setAbs, {
 	// var debug = "MFdef('flatcat') - setAbs".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var bipolars = values.drop(3).unibi;
@@ -182,8 +195,8 @@ MFdef(\flatcat).add(\setAbs, {
 	);
 });
 /*
-MFdef(\flatcat).disable(\setAbs);
-MFdef(\flatcat).enable(\\setAbs);
+NTMI.flatcat.onData.disable(\setAbs);
+NTMI.flatcat.onData.enable(\\setAbs);
 */
 );
 
@@ -201,19 +214,16 @@ MKtl(\flatcat).elAt.action = { |el|
 	// then trigger global set had come in:
 	MKtl(\flatcat).collAt(\alldata).doAction;
 };
-/*
-~sendFlatcatRand.value;
-*/
 
 // SET-RELATIVE => Polyphonic INFLUENCE MODE !
-MFdef(\flatcat).disable(\setAbs);
+NTMI.flatcat.onData.disable(\setAbs);
 
 // use NTMI.zooms.flatcat to tune its degree of influence
 NTMI.zooms = NTMI.zooms ? ();
 NTMI.zooms.flatcat = 1;
 
 
-MFdef(\flatcat).add(\setRel, {
+NTMI.flatcat.onData.add(\setRel, {
 	// var debug = "MFdef('flatcat') - setRel".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var diffs = values - MKtl(\flatcat).elAt.prevValue;
@@ -227,6 +237,6 @@ MFdef(\flatcat).add(\setRel, {
 		* NTMI.zooms.flatcat
 	);
 });
-MFdef(\flatcat).enable(\setRel);
+NTMI.flatcat.onData.enable(\setRel);
 
 MKtl(\flatcat);
