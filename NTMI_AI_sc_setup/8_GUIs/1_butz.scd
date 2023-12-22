@@ -79,6 +79,10 @@ Butz.add('CLOSEALL', { Window.allWindows.do { |w| if (w != Butz.w) { w.close } }
 
 //////// ndefmixer - add to WinBounds call to Butz, make func later
 Butz.add(\ndefMixer, {  WinBounds.showOrMake(\ndefMixer); });
+//////// TdefAllGui - add to WinBounds call to Butz, make func later
+Butz.add('Tdef.all', {  WinBounds.showOrMake('Tdef.all'); });
+//////// TdefAllGui - add to WinBounds call to Butz, make func later
+Butz.add('Pdef.all', {  WinBounds.showOrMake('Pdef.all'); });
 
 // add a gui makeFunc for MainFX:
 Butz.add('mainFX', { WinBounds.showOrMake('mainFX') });
@@ -90,6 +94,7 @@ Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
 Butz.add('setAll', { WinBounds.restoreAll });
 Butz.add('plotTree', { s.plotTree });
 Butz.add('chanTest', { WinBounds.showOrMake(\chanTest) });
+
 
 
 
@@ -146,6 +151,8 @@ Butz(\NTMI).add('presets', { WinBounds.showOrMake('presets') });
 
 Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 
+WinBounds.addMake('Tdef.all', { TdefAllGui(16).parent });
+WinBounds.addMake('Pdef.all', { PdefAllGui(16).parent });
 
 ///// add \ndefMixer makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
