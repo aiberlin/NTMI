@@ -22,6 +22,7 @@ g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
 
 // quick and dirty removal of nufo from gui:
 g.hasNufo = { MKtl.all[\nUFO].notNil };
+NTMI.nufo = NTMI.nufo ? ();
 NTMI.nufo.bat = NTMI.nufo.bat ? ();
 NTMI.nufo.frame = NTMI.nufo.frame ? ();
 q.nufo = q.nufo ? ();
