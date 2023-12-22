@@ -208,7 +208,7 @@ NTMI.addInterfaceFile(\nanoKtl,
 	"3_interfaces/optionals/7_nanoKtl.scd");
 
 NTMI.addInterfaceFile(\nUFO,
-	"3_interfaces/optionals/1*nufo.scd");
+	"3_interfaces/nufo/1*nufo.scd");
 
 (
 Butz(\NTMI_Config).clear;
