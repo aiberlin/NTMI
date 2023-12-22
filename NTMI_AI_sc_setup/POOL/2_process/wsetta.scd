@@ -15,6 +15,9 @@ Ndef(\wsetta).gui;
 
 // NTMI.wse.sfdir.openOS;
 
+NTMI.wse.sfdir = NTMI.dir.user +/+ "soundfiles/examples";
+SoundFile.collect(NTMI.wse.sfdir +/+ "*");
+
 // todo:
 - if keep = true, keep earlier wavesets around
 - simple GUI  to load more samples from
@@ -22,6 +25,8 @@ Butz.add(\wsetta, {
 
 
 });
+
+SoundFile.collect(NTMI.wse.sfdir +/+ "*");
 */
 
 // init
@@ -32,7 +37,7 @@ WavesetsEvent.prepareSynthDefs;
 NTMI.wse = NTMI.wse ? ();
 
 /////// default soundfiles dir / unless overwritten
-NTMI.wse.sfdir = NTMI.wse.sfdir ?? { NTMI.dir.setup +/+ "soundfiles" };
+NTMI.wse.sfdir = NTMI.wse.sfdir ?? { NTMI.dir.user +/+ "soundfiles/examples" };
 
 // tweak for your machine, so very fast overlapped
 // wavesets dont bring it down:
