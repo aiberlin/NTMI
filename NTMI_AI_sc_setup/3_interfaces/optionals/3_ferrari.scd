@@ -82,10 +82,6 @@ MKtl('ferrari').gui;
 MKtl('ferrari').elAt(\bt, 0).dump
 */
 
-// HID.closeAll;
-
-NTMI.ferr = NTMI.ferr ? (); // sub-Dict for all things gamePad
-
 ///// look for wired and wireless
 if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
 	"*** wired Ferrari  found!".postln;

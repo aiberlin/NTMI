@@ -22,8 +22,8 @@ g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
 
 // quick and dirty removal of nufo from gui:
 g.hasNufo = { MKtl.all[\nUFO].notNil };
-q.bat = q.bat ? ();
-q.frame = q.frame ? ();
+NTMI.nufo.bat = NTMI.nufo.bat ? ();
+NTMI.nufo.frame = NTMI.nufo.frame ? ();
 q.nufo = q.nufo ? ();
 q.nufo.timeSinceLast = 0.2;
 
@@ -242,20 +242,20 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 		if (showNufo) {
 			if (q.nufo.timeSinceLast >= 1) {
 				NTMI.nufo.bat.calc.(0);
-				q.bat.resetVals;
-				q.frame.resetVals;
+				NTMI.nufo.bat.resetVals;
+				NTMI.nufo.frame.resetVals;
 			};
 
 
 			// update battery status if new
-			if (q.bat.percent != q.bat.percentOld
+			if (NTMI.nufo.bat.percent != NTMI.nufo.bat.percentOld
 				or: { q.wifiOld != q.wifiStr
-					or: { (q.frame.rateStr == q.frame.rateStrOld).not }
+					or: { (NTMI.nufo.frame.rateStr == NTMI.nufo.frame.rateStrOld).not }
 			})
 			{
 				g.main.nufoView.refresh;
-				q.bat.percentOld = q.bat.percent;
-				q.frame.rateStrOld = q.frame.rateStr;
+				NTMI.nufo.bat.percentOld = NTMI.nufo.bat.percent;
+				NTMI.nufo.frame.rateStrOld = NTMI.nufo.frame.rateStr;
 				q.wifiOld = q.wifiStr;
 			};
 		};

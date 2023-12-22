@@ -29,13 +29,9 @@ nk2: stop, play, rec:  rand, prev, next MainFX preset
 
 ***********/
 
-
-q = q ? ();
-NTMI.nk = ();
-
 if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 	NTMI.nktl.free;
-	NTMI.nktl = MKtl('nk1', "korg-nanokontrol");
+	NTMI.nktl = MKtl('nanoKtl', "korg-nanokontrol");
 
 	// make all named elements first
 	NTMI.nktl.addNamed(\main, NTMI.nktl.elAt(\sl, 0, 8));
