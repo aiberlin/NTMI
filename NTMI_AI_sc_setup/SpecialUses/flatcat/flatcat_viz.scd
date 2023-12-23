@@ -21,20 +21,20 @@ center of weight is in segment2, so keep segment2 flat
 all segments are 2cm thick
 
 // test different values
-q.flatcat.vals.keysValuesDo { |k, v| q.flatcat.vals.put(k, 0) };  // flat stretch
-q.flatcat.vals.keysValuesDo { |k, v| q.flatcat.vals.put(k, 0.33) };
-q.flatcat.vals.keysValuesDo { |k, v| q.flatcat.vals.put(k, -0.25) };
-q.flatcat.vals.keysValuesDo { |k, v| q.flatcat.vals.put(k, -0.5) }; // ouch
+NTMI.flatcat.vals.keysValuesDo { |k, v| NTMI.flatcat.vals.put(k, 0) };  // flat stretch
+NTMI.flatcat.vals.keysValuesDo { |k, v| NTMI.flatcat.vals.put(k, 0.33) };
+NTMI.flatcat.vals.keysValuesDo { |k, v| NTMI.flatcat.vals.put(k, -0.25) };
+NTMI.flatcat.vals.keysValuesDo { |k, v| NTMI.flatcat.vals.put(k, -0.5) }; // ouch
 
-q.flatcat.vals.keysValuesDo { |k, v| q.flatcat.vals.put(k, 0.5.rand2) };
+NTMI.flatcat.vals.keysValuesDo { |k, v| NTMI.flatcat.vals.put(k, 0.5.rand2) };
 
 // slight variation:
-q.flatcat.vals.keysValuesDo { |k, v|
-q.flatcat.vals.put(k, (v + 0.05.rand2).clip2(0.5))
+NTMI.flatcat.vals.keysValuesDo { |k, v|
+NTMI.flatcat.vals.put(k, (v + 0.05.rand2).clip2(0.5))
 };
 
 
-// -> let running flatcat set q.flatcat.vals!
+// -> let running flatcat set NTMI.flatcat.vals!
 
 // unsafe - this crashes GT gui in main thread on macOS
 
@@ -44,12 +44,13 @@ NTMI.g.main.imuUV.drawFunc = { NTMI.flatcat.drawFunc.value };
 */
 
 (
-q = q ? ();
-q.flatcat = q.flatcat ? ();
+NTMI.addInterfaceFile(\flatcatViz, "SpecialUses/flatcat/flatcat_viz.scd");
+
+NTMI.flatcat = NTMI.flatcat ? ();
 
 
 // put values to show here:
-q.flatcat.vals = (
+NTMI.flatcat.vals = (
 	angle0: -0.3,
 	angle1: 0.1,
 	angle2: -0.2,
@@ -61,8 +62,8 @@ q.flatcat.vals = (
 // assume flatcat is already running:
 NTMI.flatcat.onData.add(\vizdata, {
 	// get flatcat data from  for visualizer
-	q.flatcat.vals.keysValuesDo { |k, v|
-		q.flatcat.vals.put(k, MKtl(\flatcat).elAt(k).deviceValue);
+	NTMI.flatcat.vals.keysValuesDo { |k, v|
+		NTMI.flatcat.vals.put(k, MKtl(\flatcat).elAt(k).deviceValue);
 	};
 });
 
@@ -76,13 +77,13 @@ NTMI.flatcat.drawFunc = MFunc().add(\draw,  {
 	var joint2 = -60@0; // stays fixed, because seg2 stays horizontal
 	var joint0 = -60@0; // moves
 
-	var angle0 = q.flatcat.vals.angle0;
-	var angle1 = q.flatcat.vals.angle1;
-	var angle2 = q.flatcat.vals.angle2;
+	var angle0 = NTMI.flatcat.vals.angle0;
+	var angle1 = NTMI.flatcat.vals.angle1;
+	var angle2 = NTMI.flatcat.vals.angle2;
 
-	var curr0 = q.flatcat.vals.curr0;
-	var curr1 = q.flatcat.vals.curr1;
-	var curr2 = q.flatcat.vals.curr2;
+	var curr0 = NTMI.flatcat.vals.curr0;
+	var curr1 = NTMI.flatcat.vals.curr1;
+	var curr2 = NTMI.flatcat.vals.curr2;
 
 	// draw current force as ring segment + arrow
 	var drawCurrent = { |curr=0|
@@ -160,8 +161,8 @@ WinBounds.addMake(\flatcatViz, {
 	var u = UserView(w, 400@400);
 	u.animate_(true);
 
-	q.flatcat.w = w;
-	q.flatcat.u = u;
+	NTMI.flatcat.w = w;
+	NTMI.flatcat.u = u;
 
 	u.drawFunc = NTMI.flatcat.drawFunc;
 	w

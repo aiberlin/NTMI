@@ -76,34 +76,6 @@ MKtl(\flatcat).elAt.deviceValue = [
 	0.2.rand2, 0.2.rand2, 0.2.rand2,
 ];
 
-///// GUI stuff:
-/* // put at the end of your startup:
-NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat2NTMI_better.scd");
-NTMI.addInterfaceFile(\flatcatViz, "SpecialUses/flatcat_viz.scd");
-*/
-
-// add number readouts to gui:
-WinBounds.addMake(\flatcat, {
-	var mg = MKtl(\flatcat).gui.showLabels;
-	var win = mg.parent;
-	var uv = UserView(win, win.view.bounds.top_(200).height_(30))
-	.background_(Color.grey);
-	win.bounds = win.bounds.height_(win.bounds.height + 30);
-	uv.drawFunc = { |uv|
-		var string = MKtl(\flatcat).elAt.deviceValue.collect { |val|
-			(val.round(0.001).asString ++ " ").clipExtend(5)
-		};
-		Pen.stringCenteredIn(string.join(" "),
-			uv.bounds.extent.asRect,
-			Font(Font.defaultMonoFace, 16.5),
-			Color.green);
-	};
-	uv.frameRate_(10).animate_(true);
-	win;
-});
-WinBounds.showOrMake(\flatcat);
-);
-
 /***
 // to send a test message without a flatcat,
 // you need to adjust the source Address in the MKtl OSC device.
@@ -114,9 +86,6 @@ OSCFunc.trace(true, true);
 
 // to switch back to real flatcat address, do:
 MKtl(\flatcat).device.updateSrcAddr("192.168.4.1", 46757);
-
-
-
 ***/
 
 NTMI.flatcat.sendRand = {
@@ -130,6 +99,7 @@ NTMI.flatcat.sendRand = {
 	);
 };
 
+// change current values by a little drift
 NTMI.flatcat.sendDrift = { |fc, drift = 0.05|
 	var vals = MKtl(\flatcat).elAt.collect { |el|
 		el.deviceSpec.map((el.value + drift.bilinrand))
@@ -143,6 +113,7 @@ NTMI.flatcat.sendRand.value;
 NTMI.flatcat.sendDrift.value;
 */
 
+// simulate slowly drifting flatcat moves
 Tdef(\flatcatSim).addSpec(\drift, [0, 0.1]);
 Tdef(\flatcatSim).set(\drift, 0.03);
 
@@ -237,6 +208,8 @@ NTMI.flatcat.onData.add(\setRel, {
 		* NTMI.zooms.flatcat
 	);
 });
+
 NTMI.flatcat.onData.enable(\setRel);
 
 MKtl(\flatcat);
+)
