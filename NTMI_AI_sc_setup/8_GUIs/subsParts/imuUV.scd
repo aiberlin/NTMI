@@ -5,8 +5,11 @@ imuUV.background_(Color.grey(0.5, 0));
 NTMI.g.main.imuUV = imuUV;
 imuUV.canFocus_(false);
 
+NTMI.g.main.imuUV.drawFunc = MFunc();
+
 NTMI.g.main.padCols = Color.grey(0.62, 0.38) !8;
 NTMI.g.main.movevals = 0.5!9;
+
 
 // possible fixes here:
 // do basic geometry of locations only once rel to center,
@@ -14,16 +17,18 @@ NTMI.g.main.movevals = 0.5!9;
 // and only paint the ones that are needed.
 
 // small UV in the middle for cheaper pads/axes drawing
-imuUV.drawFunc = { |uv|
+NTMI.g.main.imuDrawFunc = { |uv|
 	var myscale = Window.screenBounds.width / 1680;
 	var bounds = uv.bounds.moveTo(0, 0);
 	var center = bounds.center / myscale; // reverse scale
 	var centPadsL, padsLPos, centPadsR, padsRPos;
 	var star;
 
+	// "NTMI.g.main.imuDrawFunc".postln;
 	Pen.scale(myscale, myscale);
 
 	if ([\full, \touch, \binary].includes(NTMI.nufo.mode)) {
+
 		centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 		centPadsR = center.copy.x_(center.x + (center.y * 1.8));
 		padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
@@ -63,6 +68,8 @@ imuUV.drawFunc = { |uv|
 	};
 };
 
+NTMI.g.main.imuUV.drawFunc.add(\imu, NTMI.g.main[\imuDrawFunc]);
+
 NTMI.g.main[\winUpdate].add(\imuPad, {
 	if (NTMI.g.hasNufo) {
 		// only if values changed!
@@ -88,4 +95,3 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 		NTMI.nufo.padValsOLD = NTMI.nufo.padVals;
 	};
 });
-

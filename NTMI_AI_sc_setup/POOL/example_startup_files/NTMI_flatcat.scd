@@ -12,11 +12,11 @@ StartupFile.dialog;
 // after the full NTMI setup finishes:
 NTMI.finalSetup = {
 	// load flatcat setup/connection file
-	LoadMe("SpecialUses/flatcat/flatcat2NTMI_better.scd", NTMI.dir.setup);
-	// load flatcat visualisation file
-	LoadMe("SpecialUses/flatcat/flatcat_viz.scd", NTMI.dir.setup);
-	// and show the flatcat visualisation on the main window
-	defer { NTMI.g.main.imuUV.animate_(true).drawFunc = MFdef(\drawFlatcat).postln };
+	LoadMe("SpecialUses/flatcat/flatcat*.scd", NTMI.dir.setup);
+	// show the flatcat visualisation on the main window
+	NTMI.g.main.imuUV.drawFunc.add(\flatcat, NTMI.flatcat.drawFunc);
+	// and turn off showing the imu and pads
+	NTMI.g.main.imuUV.drawFunc.disable(\imu);
 };
 // now run NTMI setup, then flatcat
 NTMI.run;

@@ -67,7 +67,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	LoadMe("subsParts/bigUV.scd", NTMI.g.dir);
 
 	g.main.imuUVBounds = Rect.aboutPoint( w.view.bounds.center, 240 * scrscale, 300 * scrscale);
-	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
+	defer ({ LoadMe("subsParts/imuUV.scd", NTMI.g.dir) }, 0.2);
 
 
 	//// TOP LINE ZONES:
