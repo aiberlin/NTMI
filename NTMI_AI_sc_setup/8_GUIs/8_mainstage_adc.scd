@@ -10,6 +10,8 @@ butz slot4  nufo  nufo   nufmod
             MAINFX RAND
             MAIN VOLUME
 
+make userViews here, make their drawFunc MFunc
+extra files only add to these MFuncs then
 */
 
 var g = NTMI.g;
@@ -30,6 +32,8 @@ q.nufo.timeSinceLast = 0.2;
 
 NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 
+NTMI.g.main.winUpdate = MFunc();
+NTMI.g.main.imuFunc = MFunc();
 
 WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
@@ -55,7 +59,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	NTMI.nufo.modeIndex = NTMI.nufo.modeIndex ? 0;
 	NTMI.nufo.mode = NTMI.nufo[\mode] ? { NTMI.nufo.modes.wrapAt(NTMI.nufo.modeIndex) };
 
-	try { g.main.w.close };
 	w = Window(name, bounds).front;
 	g.main.w = w;
 	g.main.w.background_(q.inph.currPresetCol);
@@ -63,11 +66,19 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	//// CENTER ZONES:
 
-	g.main.bigUVBounds = Rect.aboutPoint( w.view.bounds.center, wheight * 0.5, wheight * 0.5);
+	NTMI.g.main.bigUVBounds = Rect.aboutPoint( w.view.bounds.center, wheight * 0.5, wheight * 0.5);
+	NTMI.g.main.bigUV = UserView(w, g.main.bigUVBounds).background_(Color.clear).canFocus_(false);
+	NTMI.g.main.bigUVMFunc = MFunc();
+	NTMI.g.main.bigUV.drawFunc = NTMI.g.main.bigUVMFunc;
+
 	LoadMe("subsParts/bigUV.scd", NTMI.g.dir);
 
-	g.main.imuUVBounds = Rect.aboutPoint( w.view.bounds.center, 240 * scrscale, 300 * scrscale);
-	defer ({ LoadMe("subsParts/imuUV.scd", NTMI.g.dir) }, 0.2);
+	NTMI.g.main.imuUVBounds = Rect.aboutPoint( w.view.bounds.center, 240 * scrscale, 300 * scrscale);
+	NTMI.g.main.imuUV = UserView(w, g.main.imuUVBounds).background_(Color.clear).canFocus_(false);
+	NTMI.g.main.imuUVMFunc = MFunc();
+	NTMI.g.main.imuUV.drawFunc = NTMI.g.main.imuUVMFunc;
+	NTMI.g.main.imuUV.background_(Color.rand.alpha_(0.4));
+	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
 
 	//// TOP LINE ZONES:
@@ -112,8 +123,6 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	);
 
 	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
-
-	NTMI.g.main.winUpdate = MFunc();
 
 	NTMI.g.main[\winUpdate].add(\main, NTMI.g.main[\updateMainVol]);
 
