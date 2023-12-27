@@ -1,8 +1,4 @@
-var bigUV = UserView(NTMI.g.main.w, NTMI.g.main.bigUVBounds);
-bigUV.background_(Color.clear).canFocus_(false);
-NTMI.g.main.bigUV = bigUV;
-
-bigUV.drawFunc = { |uv|
+NTMI.g.main.bigUV.drawFunc.add(\circleFXName, { |uv|
 	var center = uv.bounds.extent * 0.5;
 	Pen.translate(center.x, center.y);
 	Pen.addArc(0@0, center.y * 0.98, 0, 2pi);
@@ -24,7 +20,8 @@ bigUV.drawFunc = { |uv|
 			Color.grey(1.0, 0.3)
 		);
 	};
-};
+});
+
 // only update if using mainFX
 if (NTMI.usesMainFX) {
 	MFdef('mainPreStep').add(\updateMain, {
