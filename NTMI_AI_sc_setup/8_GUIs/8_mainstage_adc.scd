@@ -77,7 +77,7 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	NTMI.g.main.imuUV = UserView(w, g.main.imuUVBounds).background_(Color.clear).canFocus_(false);
 	NTMI.g.main.imuUVMFunc = MFunc();
 	NTMI.g.main.imuUV.drawFunc = NTMI.g.main.imuUVMFunc;
-	NTMI.g.main.imuUV.background_(Color.rand.alpha_(0.4));
+
 	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
 
