@@ -1,11 +1,23 @@
-var g = NTMI.g;
+/*
+// tests for display when changing imu/pad values:
+NTMI.nufo.padVals = { 1.0.rand } ! 8;
+NTMI.nufo.padVals = 1.0.rand ! 8;
+NTMI.nufo.padVals = 0 ! 8;
 
-var imuUV = v = UserView(NTMI.g.main.w, NTMI.g.main.imuUVBounds);
-imuUV.background_(Color.grey(0.5, 0));
-NTMI.g.main.imuUV = imuUV;
-imuUV.canFocus_(false);
+NTMI.nufo.rawImuBiValues = { 1.0.rand } ! 9;
+NTMI.nufo.calibImuVals = NTMI.nufo.rawImuBiValues;
 
-NTMI.g.main.imuUV.drawFunc = MFunc();
+NTMI.nufo.rawImuBiValues = 0.5 ! 9;
+NTMI.nufo.calibImuVals = NTMI.nufo.rawImuBiValues;
+
+NTMI.nufo.rawImuBiValues = 1 ! 9;
+NTMI.nufo.calibImuVals = NTMI.nufo.rawImuBiValues;
+
+NTMI.g.main.movevals = 0.25!9;
+*/
+
+NTMI.nufo.rawImuBiValues = 0.5 ! 9;
+NTMI.nufo.padVals = NTMI.nufo.padVals ? 0!8;
 
 NTMI.g.main.padCols = Color.grey(0.62, 0.38) !8;
 NTMI.g.main.movevals = 0.5!9;
@@ -17,18 +29,18 @@ NTMI.g.main.movevals = 0.5!9;
 // and only paint the ones that are needed.
 
 // small UV in the middle for cheaper pads/axes drawing
-NTMI.g.main.imuDrawFunc = { |uv|
+NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
+	var main = NTMI.g.main;
 	var myscale = Window.screenBounds.width / 1680;
 	var bounds = uv.bounds.moveTo(0, 0);
 	var center = bounds.center / myscale; // reverse scale
 	var centPadsL, padsLPos, centPadsR, padsRPos;
 	var star;
 
-	// "NTMI.g.main.imuDrawFunc".postln;
 	Pen.scale(myscale, myscale);
 
 	if ([\full, \touch, \binary].includes(NTMI.nufo.mode)) {
-
+		// draw pad circles
 		centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 		centPadsR = center.copy.x_(center.x + (center.y * 1.8));
 		padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
@@ -44,7 +56,7 @@ NTMI.g.main.imuDrawFunc = { |uv|
 		(padsLPos ++ padsRPos).collect { |pt, i|
 			Pen.addArc(pt, 60, 0, 2pi);
 
-			Pen.color_(NTMI.g.main.padCols[i]);
+			Pen.color_(main.padCols[i]);
 			Pen.fill;
 			// rings white
 			Pen.addOval(Rect.aboutPoint(pt, 60, 60));
@@ -55,7 +67,7 @@ NTMI.g.main.imuDrawFunc = { |uv|
 	// visualize move mode as star of 9;
 	if ([\full, \move].includes(NTMI.nufo.mode)) {
 		// "move mode vis".postln;
-		star = NTMI.g.main.movevals.collect { |val, i|
+		star = main.movevals.collect { |val, i|
 			// offset -1.25 means noseDown is lowest star axis
 			Polar(val.linlin( 0, 1, 40, 240), i -1.25 / -9 * 2pi).asPoint + center;
 		};			// star.postln;
@@ -66,30 +78,31 @@ NTMI.g.main.imuDrawFunc = { |uv|
 		Pen.color = Color.white; Pen.width = 1.5;
 		Pen.stroke;
 	};
-};
+});
 
-NTMI.g.main.imuUV.drawFunc.add(\imu, NTMI.g.main[\imuDrawFunc]);
 
 NTMI.g.main[\winUpdate].add(\imuPad, {
+	var main = NTMI.g.main;
+
 	if (NTMI.g.hasNufo) {
 		// only if values changed!
 		if (NTMI.nufo.rawImuBiValues != NTMI.nufo.rawImuBiValuesOLD
 			or: { NTMI.nufo.padVals != NTMI.nufo.padValsOLD }) {
 
-			g.main.movevals = NTMI.nufo.calibImuVals ? g.main.movevals;
+			main.movevals = NTMI.nufo.calibImuVals ? main.movevals;
 			if (NTMI.nufo.mode == \binary) {
-				g.main.padCols = NTMI.bin.bins.collect { |val, i|
+				main.padCols = NTMI.bin.bins.collect { |val, i|
 					Color.white.alpha_(val);
 				};
 			} {
-				g.main.padCols = NTMI.nufo.padVals.collect { |val, i|
+				main.padCols = NTMI.nufo.padVals.collect { |val, i|
 					// now opposite Color.hsv
 					Color.fromArray(NTMI.inph.currCounterCol * val);
 					// was always yellow
 					// Color.yellow(val).alpha_(val);
 				};
 			};
-			NTMI.g.main.imuUV.refresh;
+			main.imuUV.refresh;
 		};
 		NTMI.nufo.rawImuBiValuesOLD = NTMI.nufo.rawImuBiValues;
 		NTMI.nufo.padValsOLD = NTMI.nufo.padVals;
