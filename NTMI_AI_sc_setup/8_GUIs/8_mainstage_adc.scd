@@ -80,6 +80,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 
 	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
+		defer { NTMI.g.main.frontText.string = text.asString };
+	};
+
 
 	//// TOP LINE ZONES:
 
