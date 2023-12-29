@@ -32,14 +32,15 @@ Tdef(\wiggleInflux, {
 
 /*
 MFdef(\showItems).value(
-NdefPreset(\bleepo).getSetNames,
-NTMI.g.main.prePops[0]
+	NdefPreset(\bleepo).getSetNames,
+	NTMI.g.main.prePops[0]
 );
 */
 
 (
 Tdef(\ntmi_demo, {
 
+	"\n\n*** Tdef('ntmi_demo') starts!\n\n".postln;
 	NTMI.g.setFrontText("***NTMI*** ***DEMO***");
 	4.do { |i| 0.1.wait; NTMI.slots.endAt(i) };
 	1.wait;
@@ -58,7 +59,11 @@ Tdef(\ntmi_demo, {
 	MFdef(\mainVol).(1);
 
 	(1..3).do { |i| NTMI.slots.endAt(i) };
+	4.do { |i| NTMI.ndefs.wrapAt(i).vol_(0.25) };
 	NTMI.slots.playAt(0);
+
+	Butz.curr = \NTMI;
+
 
 	NTMI.g.setFrontText("Each sound has presets - e.g. slot 1:");
 	MFdef(\showItems).value(
@@ -77,11 +82,13 @@ Tdef(\ntmi_demo, {
 	};
 	6.do { 1.wait; NTMI.pre.stepNdefInf(NTMI.ndefs[0], 1) };
 
+
 	NTMI.g.setFrontText("Select the sound processes themselves:");
 	6.do {
 		1.wait;
 		NTMI.slots.stepNext(0);
 		NTMI.slots.playAt(0);
+		NTMI.pre.stepNextInf(NTMI.ndefs[0]);
 		NTMI.pre.butAction(0);
 	};
 
@@ -94,10 +101,12 @@ Tdef(\ntmi_demo, {
 		1.wait;
 		NTMI.slots.stepNext(0);
 		NTMI.slots.playAt(0);
+		NTMI.pre.stepNextInf(NTMI.ndefs[0]);
 		NTMI.pre.butAction(0);
 	};
 
-	NTMI.g.setFrontText("For intuitive playing, NTMI uses a metacontrol concept named influx:");
+
+	NTMI.g.setFrontText("Influx - the NTMI concept for intuitive playing:");
 	2.wait;
 	defer {
 		Butz(\NTMI).run(\inphlux);
@@ -111,34 +120,43 @@ Tdef(\ntmi_demo, {
 	NTMI.g.setFrontText("... also works while presets change");
 	6.do { 1.wait; NTMI.pre.stepNdefInf(NTMI.ndefs[0], 1) };
 
-	NTMI.g.setFrontText("... also with multiple sounds");
+	NTMI.g.setFrontText("... also with multiple sounds\n\n\n");
 	try { Window.find(\presets).close };
 	Butz(\NTMI).run(\slotSounds);
 	4.do { |i| 1.wait; NTMI.slots.playAt(i) };
 
 	NTMI.g.setFrontText("and while sounds change\n\n\n\n");
 	10.do {
-		4.do { |i| 1.wait; NTMI.slots.stepNext(i); NTMI.slots.playAt(i) }
+		4.do { |i|
+			1.wait;
+			NTMI.slots.stepNext(i);
+			NTMI.slots.playAt(i);
+			NTMI.pre.stepNextInf(NTMI.ndefs[i]);
+		}
 	};
 	try { Window.find(\slotSounds).close };
 
-
+	3.wait;
 	NTMI.g.setFrontText("Change influx weight presets while playing");
 	8.do {
 		1.wait;
 		NTMI.inph.stepWPre;
 	};
+	1.wait;
+	NTMI.inph.setWPreIndex(0);
 
-	NTMI.g.setFrontText("Choose different main effects: ");
+	3.wait;
+	NTMI.g.setFrontText("Choose from various main effects: ");
 	Butz(\NTMI).run(\mainFX);
 	8.do {
 		1.wait;
 		MFdef.all.mainPreStep.value;
 	};
 
-	NTMI.g.setFrontText("Play all of this can from diverse interfaces - see the Butz demo page!");
+	NTMI.g.setFrontText("Play all these from diverse interfaces - see the Butz demo page!");
 	2.wait;
 	Butz.curr_(\DEMO);
+
 
 	3.wait;
 	Tdef(\wiggleInflux).stop;

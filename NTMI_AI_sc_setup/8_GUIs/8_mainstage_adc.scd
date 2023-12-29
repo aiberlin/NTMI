@@ -83,7 +83,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
 	NTMI.g.main.frontText = StaticText(NTMI.g.main.w, NTMI.g.main.imuUV.bounds);
 	NTMI.g.main.frontText.align_(\center).font_(NTMI.g.fatfont);
 	NTMI.g.setFrontText = { |q, text=""|
-		defer { NTMI.g.main.frontText.string = text.asString };
+		defer {
+			"*** frontText:  ".post;
+			NTMI.g.main.frontText.string = text.asString.postln; };
 	};
 
 
