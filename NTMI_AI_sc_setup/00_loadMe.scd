@@ -182,6 +182,9 @@ Task {
 			};
 		};
 
+		LoadMe("9_demos/*scd");
+
+
 		"*** NTMI.finalSetup runs.".postln;
 		NTMI.finalSetup;
 
