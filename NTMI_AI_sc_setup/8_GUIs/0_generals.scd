@@ -5,6 +5,9 @@ NTMI.g = NTMI.g ? (); // dict for gui stuff
 q = NTMI.q;
 g = NTMI.g;
 
+
+NTMI.close = { |dict, name|	try { Window.find(name).close } };
+
 // use NTMI.g.bounds to test for different screen sizes,
 // e.g. NTMI.g.bounds = Rect(0,0,1024, 768);
 g.bounds = g.bounds ? Window.availableBounds;
