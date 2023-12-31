@@ -35,7 +35,7 @@ NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 NTMI.g.main.winUpdate = MFunc();
 NTMI.g.main.imuFunc = MFunc();
 
-WinBounds.addMake('Main_NTMI', { |dict, name = 'ntmi_MainStage'|
+WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 
 	var w, butGrey = g.butGrey, butGreen = g.butGreen;
 	var bounds = g.bounds;
