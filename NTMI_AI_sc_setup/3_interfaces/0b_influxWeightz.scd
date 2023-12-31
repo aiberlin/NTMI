@@ -189,4 +189,15 @@ NTMI.inph.stepWPre = { |dict, inc|
 /// INIT!
 NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 
+// simple influx simulator for absolute mode
+NTMI.inph.wiggle = TaskProxy({
+	var inphl = NTMI.inphlux;
+	var inNames = inphl.inNames;
+	inphl.resetInvals;
+	loop {
+		var name = inNames.choose;
+		inphl.set(name, inphl.get(name) + 0.1.rand2);
+		0.1.wait
+	}
+});
 );
