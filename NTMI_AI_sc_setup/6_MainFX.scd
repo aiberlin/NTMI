@@ -1,11 +1,13 @@
-// add all global filter functions to use - these are then available by name.
+// a dict for mainFX data and functions
 NTMI.mfx = NTMI.mfx ? ();
 NTMI.numChans = NTMI.numChans ? 2;
 
+// add all global filter functions to use - these are then available by name.
 (NTMI.prefs.active.effects ? ["*.scd" ]).do { |filename|
 	LoadMe(filename, NTMI.dir.userPOOL +/+ "4_effects");
 };
 
+Spec.add(\mainVol, [0, 4, \amp]);
 //////// check integrity of all param specs - complains when specs are missing.
 ProxyChain.checkDicts;
 
@@ -182,6 +184,14 @@ MFdef(\mainVolGet).add(\get, {
 MFdef(\mainVol).add(\main, { |vol = 1|
 	NTMI.mFX.pxChain.proxy.set(\mainVol, vol);
 });
+MFdef(\mainVolGetUni).add(\get, {
+	NTMI.mFX.proxyChain.proxy.getUni(\mainVol);
+});
+
+MFdef(\mainVolSetUni).add(\main, { |vol = 1|
+	NTMI.mFX.pxChain.proxy.setUni(\mainVol, vol);
+});
+
 
 MFdef(\mainPre).value(NTMI.prefs.active.mfxPreset ? NTMI.mfx.preNames.choose);
 
