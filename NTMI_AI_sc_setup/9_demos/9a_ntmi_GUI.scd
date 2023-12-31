@@ -201,6 +201,6 @@ Tdef(\NTDemo_GUI, {
 	1.wait;
 	NTMI.g.setFrontText("");
 
-}).clock_(AppClock).play;
+}).clock_(AppClock);
 )
 
