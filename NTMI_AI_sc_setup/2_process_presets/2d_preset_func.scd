@@ -79,7 +79,7 @@ NTMI.pre.makePreset = { |preDict, proxy|
 };
 
 // making all the presets here
-NTMI.pre.presets = NTMI.ndef.groups[\NTMI].collect { |proxy, i|
+NTMI.pre.presets = NTMI.processes.collect { |proxy, i|
 	NTMI.pre.makePreset(proxy)
 };
 );

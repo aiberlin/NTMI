@@ -51,11 +51,11 @@ forkIfNeeded {
 		found
 	};
 
-	NTMI.ndef.groups.put(\NTMI,
-		NTMI.process.allNames.collect(Ndef(_));
-	);
+	NTMI.processes = NTMI.process.allNames.collect(Ndef(_));
+	NTMI.ndef.groups.put(\NTMI, NTMI.processes);
+
 	// kill them all again for startup
-	defer ({ NTMI.ndef.groups.at(\NTMI).do(_.end) }, 0.1);
+	defer ({ NTMI.processes.do(_.end) }, 0.1);
 
 	{
 		var allNdefChoices = NTMI.process.allNames.copy;
