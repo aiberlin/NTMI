@@ -1,4 +1,4 @@
-Butz(\DEMO).add(\ntmi_demo, { Tdef(\ntmi_demo).play });
+Butz(\DEMO).add(\NTMI_GUI, { Tdef(\NTMI_GUI).play });
 // Butz(\DEMO).add(\nUFO_demo, { Tdef(\nUFO_demo).play });
 // Butz(\DEMO).add(\nanoKtl_demo, { Tdef(\nanoKtl_demo).play });
 // Butz(\DEMO).add(\flatcat_demo, { Tdef(\nanoKtl_demo).play });
@@ -38,7 +38,7 @@ MFdef(\showItems).value(
 */
 
 (
-Tdef(\ntmi_demo, {
+Tdef(\NTMI_GUI, {
 
 	"\n\n*** Tdef('ntmi_demo') starts!\n\n".postln;
 	NTMI.g.setFrontText("***NTMI*** ***DEMO***");
@@ -77,7 +77,7 @@ Tdef(\ntmi_demo, {
 	1.wait;
 	defer {
 		Butz(\NTMI).run(\presets);
-		Window.find(\presets).moveTo(968.0, 190.0);
+		Window.find(\presets).moveTo(968.0, 100.0);
 		NTMI.pre.butAction(0);
 	};
 	6.do { 1.wait; NTMI.pre.stepNdefInf(NTMI.ndefs[0], 1) };
