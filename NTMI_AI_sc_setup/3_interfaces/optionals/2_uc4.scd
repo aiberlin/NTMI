@@ -113,7 +113,7 @@ MKtl(\uc4).elAt(\playBts).do { |el, i|
 // xfader is main volume before limiter
 MKtl(\uc4).elAt('main').action = { |xf|
 	// 	s.volume.volume_(\svol.asSpec.map(xf.value))
-	MFdef(\mainVol).value(xf.value);
+	MFdef(\mainVolSetUni).value(xf.value);
 };
 
 // normal: select next setting

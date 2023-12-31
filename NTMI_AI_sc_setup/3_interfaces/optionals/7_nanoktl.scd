@@ -145,7 +145,8 @@ NTMI.nktl.elAt(\inflSet).do { |sl, i|
 };
 
 // rightmost slider is main volume (into limiter)
-NTMI.nktl.elAt(\main).action = { |sl| MFdef(\mainVol).value(sl.value) };
+NTMI.nktl.elAt(\main).action = { |sl|
+	MFdef(\mainVolSetUni).value(sl.value) };
 NTMI.nktl.elAt(\main).value = 0.5;
 
 // rightmost slider is main volume (into limiter)

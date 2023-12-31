@@ -82,6 +82,7 @@ MKtl('ferrari').gui;
 MKtl('ferrari').elAt(\bt, 0).dump
 */
 
+NTMI.ferr = NTMI.ferr ? ();
 ///// look for wired and wireless
 if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
 	"*** wired Ferrari  found!".postln;
@@ -316,10 +317,10 @@ if (MKtl('ferrari').isNil) {
 			if (MKtl('ferrari').elAt(\bt, \10).isOn) {
 				"set mainVolume center:".post;
 				NTMI.ferr.uniMainVolOffset = (wheel.value - 0.5).postln;
-				MFdef(\mainVol).value( wheel.value);
+				MFdef(\mainVolSetUni).value( wheel.value);
 			} {
 				// "mainVol: ".postln;
-				MFdef(\mainVol).value(NTMI.ferr.uniMainVolOffset + wheel.value);s
+				MFdef(\mainVolSetUni).value(NTMI.ferr.uniMainVolOffset + wheel.value);
 			};
 		};
 	});
