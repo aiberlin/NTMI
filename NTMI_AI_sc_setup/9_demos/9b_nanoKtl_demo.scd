@@ -1,7 +1,5 @@
 Butz(\NTMI_DEMO).add(\Demo_nanoKtl, { Tdef(\Demo_nanoKtl).play });
 
-Tdef(\Demo_nanoKtl).stop.play;
-
 /*
 Tdef(\Demo_nanoKtl).stop.play;
 Tdef(\Demo_nanoKtl).stop;
@@ -10,14 +8,14 @@ Tdef(\Demo_nanoKtl).stop;
 Tdef(\Demo_nanoKtl, {
 	var myname = \Demo_nanoKtl;
 
+	"\n\n*** Tdef('%') starts!\n\n".postf(myname);
 	Butz(\NTMI).run(\Main_NTMI);
 	m = MKtl(\nanoKtl);
 	m.elAt(\vols).value = NTMI.ndefs.collect(_.vol);
 	m.elAt(\inflSet).value = 0.5;
 
-
 	4.do { |i| 0.1.wait; NTMI.slots.endAt(i) };
-	"\n\n*** Tdef('%') starts!\n\n".postf(myname);
+
 	NTMI.g.setFrontText("***NTMI*** ***Demo*** **nanoKtl**");
 	3.wait;
 
