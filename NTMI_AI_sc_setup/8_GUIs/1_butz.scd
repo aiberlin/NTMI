@@ -89,14 +89,15 @@ Butz('NTMI').add('-Tutorial-', { Butz.curr_('NTMI_Tutorial') });
 /// add detailed funcs later
 Butz('interfaces').addMiniMax;
 
-[ 	'nUFO',
+[
+	'findAndLoad',
+	'nUFO',
 	'nanoKtl',
 	'ferrari',
 	'uc4'
 ].do { |ifName|
 	Butz(\interfaces).add(ifName, { ifName.postln });
 };
-
 
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 
@@ -119,6 +120,11 @@ Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 
 
 /////// the INTERFACES Butz: /////////////
+Butz(\interfaces).add(\findAndLoad, {
+	LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup)
+});
+
+
 // function to load an interface file or gui:
 NTMI.loadInterfaceFile = { |dict, name, filepath|
 	if (PathName(filepath).isRelativePath) {
