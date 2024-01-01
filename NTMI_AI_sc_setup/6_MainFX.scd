@@ -135,7 +135,7 @@ NTMI.mfx.preMap = (
 );
 
 (
-MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
+MFdef(\mainPre).add(\voiceFXSwitch, { |domainName, step|
 	var chain = NTMI.mfx.chain;
 	var dict = NTMI.mfx.preMap[domainName];
 	var randSettings;
@@ -147,7 +147,7 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName|
 		NTMI.mfx.currDomain =  domainName;
 		NTMI.mfx.domainIndex = NTMI.mfx.preNames.indexOf(domainName);
 
-		"\n*** MainPre: switching to %. ***\n".postf(domainName.cs);
+		"\n*** MainPre: switching to % - step: % ***\n".postf(domainName.cs, step);
 
 		// remove all but...
 		NTMI.mfx.srcKeys
@@ -200,7 +200,7 @@ MFdef(\mainPreStep).add(\inc, { |inc|
 	inc = inc ?? { rrand(1, NTMI.mfx.preNames.lastIndex) };
 	nextIndex = NTMI.mfx.domainIndex + inc % NTMI.mfx.preNames.size;
 	nextName = NTMI.mfx.preNames[nextIndex];
-	MFdef(\mainPre).(nextName);
+	MFdef(\mainPre).(nextName, inc);
 });
 );
 

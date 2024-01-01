@@ -42,16 +42,16 @@ MKtl(\uc4).addNamed(\select, MKtl(\uc4).elAt(\pgKn1, \kn, (0..3)));
 // if but up, select preset, if down, sound
 MKtl(\uc4).addNamed(\selMode, MKtl(\uc4).elAt(\pgKn1, \pbt, (0..3)));
 
-MKtl(\uc4).addNamed(\rand_inph, MKtl(\uc4).elAt(\pgSl1, \bt, 0, 0));
-MKtl(\uc4).addNamed(\prev_inph, MKtl(\uc4).elAt(\pgSl1, \bt, 1, 0));
+MKtl(\uc4).addNamed(\prev_inph, MKtl(\uc4).elAt(\pgSl1, \bt, 0, 0));
+MKtl(\uc4).addNamed(\rand_inph, MKtl(\uc4).elAt(\pgSl1, \bt, 1, 0));
 MKtl(\uc4).addNamed(\next_inph, MKtl(\uc4).elAt(\pgSl1, \bt, 2, 0));
 MKtl(\uc4).addNamed(\zero_inph, MKtl(\uc4).elAt(\pgSl1, \bt, 3, 0));
 
 // use record button for snapshots
 MKtl(\uc4).addNamed(\snap, MKtl(\uc4).elAt(\pgSl1, \bt, 4, 0));
 
-MKtl(\uc4).addNamed(\rand_pre, MKtl(\uc4).elAt(\pgSl1, \bt, 5, 0));
-MKtl(\uc4).addNamed(\prev_pre, MKtl(\uc4).elAt(\pgSl1, \bt, 6, 0));
+MKtl(\uc4).addNamed(\prev_pre, MKtl(\uc4).elAt(\pgSl1, \bt, 5, 0));
+MKtl(\uc4).addNamed(\rand_pre, MKtl(\uc4).elAt(\pgSl1, \bt, 6, 0));
 MKtl(\uc4).addNamed(\next_pre, MKtl(\uc4).elAt(\pgSl1, \bt, 7, 0));
 
 

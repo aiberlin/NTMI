@@ -75,8 +75,8 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 	NTMI.nktl.addNamed(\prev_inph, NTMI.nktl.elAt(\tr, \rew));
 	NTMI.nktl.addNamed(\next_inph, NTMI.nktl.elAt(\tr, \fwd));
 
-	NTMI.nktl.addNamed(\rand_pre, NTMI.nktl.elAt(\tr, \stop));
-	NTMI.nktl.addNamed(\prev_pre, NTMI.nktl.elAt(\tr, \play));
+	NTMI.nktl.addNamed(\prev_pre, NTMI.nktl.elAt(\tr, \stop));
+	NTMI.nktl.addNamed(\rand_pre, NTMI.nktl.elAt(\tr, \play));
 	NTMI.nktl.addNamed(\next_pre, NTMI.nktl.elAt(\tr, \rec));
 
 	// };
