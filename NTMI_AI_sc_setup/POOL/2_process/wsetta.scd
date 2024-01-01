@@ -57,7 +57,7 @@ NTMI.wse.loadWSEs = { |dict, dir, add = false|
 			wse;
 		};
 		"... ALL % WavesetsEvents loaded in % secs.\n\n".postf(
-			NTMI.wse.soundfiles.size, Main.elapsedTime - t0);
+			NTMI.wse.soundfiles.size, (Main.elapsedTime - t0).round(0.001));
 	};
 };
 
