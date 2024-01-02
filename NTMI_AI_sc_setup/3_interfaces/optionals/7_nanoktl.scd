@@ -27,135 +27,159 @@ nk2: stop, play, rec:  rand, prev, next MainFX preset
 
 - top row(s) of buttons still unused.
 
+NTMI.nanoKtl[\setAbs].cs
+MKtl.all
+NTMI.nanoKtl = nil;
+NTMI.nanoKtl.setAbs
+NTMI.nanoKtl.setRel
+NTMI.zooms.nanoKtl = 0.5
+
 ***********/
 
+NTMI.nanoKtl = NTMI.nanoKtl ? ();
+NTMI.nanoKtl.influxMode = NTMI.nanoKtl.influxMode ? \setRel;
+NTMI.zooms.nanoKtl = NTMI.zooms.nanoKtl ? 1;
+"*** NTMI.nanoKtl.influxMode: %, zoom: %.\n".postf(NTMI.nanoKtl.influxMode, NTMI.zooms.nanoKtl);
+
+// switch influxMode:
+NTMI.nanoKtl.setAbs = {
+	NTMI.nanoKtl.influxMode = \setAbs;
+	"*** NTMI.nanoKtl.influxMode is now setAbs:".postln;
+	"//// influx inputs are % to %. \n\n".postf(
+		*NTMI.inph.sliderOffset + 1 + [0, NTMI.nanoKtl.elAt(\inflSet).size]);
+};
+NTMI.nanoKtl.setRel = {
+	NTMI.nanoKtl.influxMode = \setRel;
+	"*** NTMI.nanoKtl.influxMode is now setRel:".postln;
+	"//// influx inputs are % to %. \n\n".postf(
+		*NTMI.inph.sliderOffset + 1 + [0, NTMI.nanoKtl.elAt(\inflSet).size]);
+};
+
+
 if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
-	NTMI.nktl.free;
-	NTMI.nktl = MKtl('nanoKtl', "korg-nanokontrol");
+	MKtl.all.nanoKtl.free;
+	MKtl('nanoKtl', "korg-nanokontrol");
 
 	// make all named elements first
-	NTMI.nktl.addNamed(\main, NTMI.nktl.elAt(\sl, 0, 8));
-	NTMI.nktl.addNamed(\inflx, NTMI.nktl.elAt(\sl, 0, (0..7)));
+	MKtl(\nanoKtl).addNamed(\main, MKtl(\nanoKtl).elAt(\sl, 0, 8));
+	MKtl(\nanoKtl).addNamed(\inflx, MKtl(\nanoKtl).elAt(\sl, 0, (0..7)));
 
-	NTMI.nktl.addNamed(\vols, NTMI.nktl.elAt(\kn, 0, (0..3)));
-	NTMI.nktl.addNamed(\playBts, NTMI.nktl.elAt(\bt, 0, 1, (0..3)));
+	MKtl(\nanoKtl).addNamed(\vols, MKtl(\nanoKtl).elAt(\kn, 0, (0..3)));
+	MKtl(\nanoKtl).addNamed(\playBts, MKtl(\nanoKtl).elAt(\bt, 0, 1, (0..3)));
 
 	// select preset or sounds
-	NTMI.nktl.addNamed(\select, NTMI.nktl.elAt(\kn, 0, (4..7)));
+	MKtl(\nanoKtl).addNamed(\select, MKtl(\nanoKtl).elAt(\kn, 0, (4..7)));
 	// if but up, select preset, if down, sound
-	NTMI.nktl.addNamed(\selMode, NTMI.nktl.elAt(\bt, 0, 1, (4..7)));
+	MKtl(\nanoKtl).addNamed(\selMode, MKtl(\nanoKtl).elAt(\bt, 0, 1, (4..7)));
 
-	NTMI.nktl.addNamed(\rand_inph, NTMI.nktl.elAt(\tr, \rew));
-	NTMI.nktl.addNamed(\prev_inph, NTMI.nktl.elAt(\tr, \play));
-	NTMI.nktl.addNamed(\next_inph, NTMI.nktl.elAt(\tr, \fwd));
+	MKtl(\nanoKtl).addNamed(\rand_inph, MKtl(\nanoKtl).elAt(\tr, \rew));
+	MKtl(\nanoKtl).addNamed(\prev_inph, MKtl(\nanoKtl).elAt(\tr, \play));
+	MKtl(\nanoKtl).addNamed(\next_inph, MKtl(\nanoKtl).elAt(\tr, \fwd));
 
-	NTMI.nktl.addNamed(\rand_pre, NTMI.nktl.elAt(\tr, \loop));
-	NTMI.nktl.addNamed(\prev_pre, NTMI.nktl.elAt(\tr, \stop));
-	NTMI.nktl.addNamed(\next_pre, NTMI.nktl.elAt(\tr, \rec));
+	MKtl(\nanoKtl).addNamed(\rand_pre, MKtl(\nanoKtl).elAt(\tr, \loop));
+	MKtl(\nanoKtl).addNamed(\prev_pre, MKtl(\nanoKtl).elAt(\tr, \stop));
+	MKtl(\nanoKtl).addNamed(\next_pre, MKtl(\nanoKtl).elAt(\tr, \rec));
 
 
 } {
-	// if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size > 0) {
-	NTMI.nktl.free;
-	NTMI.nktl = MKtl('nanoKtl', "korg-nanokontrol2");
+	// assume nanoKONTROL2:
+	// MKtl(\nanoKtl).desc.fullDesc.idInfo.cs
+	// if (MKtlLookup.findByIDInfo("nanoKONTROL2").size > 0) {
+	MKtl.all.nanoKtl.free;
+	MKtl('nanoKtl', "korg-nanokontrol2");
 
 	// make all named elements first
-	NTMI.nktl.addNamed(\main, NTMI.nktl.elAt(\sl, 7));
-	NTMI.nktl.addNamed(\inflSet, NTMI.nktl.elAt(\sl, (0..6)));
+	MKtl(\nanoKtl).addNamed(\main, MKtl(\nanoKtl).elAt(\sl, 7));
+	MKtl(\nanoKtl).addNamed(\inflSet, MKtl(\nanoKtl).elAt(\sl, (0..6)));
 
-	NTMI.nktl.addNamed(\vols, NTMI.nktl.elAt(\kn, (0..3)));
-	NTMI.nktl.addNamed(\playBts, NTMI.nktl.elAt(\bt, 2, (0..3)));
+	MKtl(\nanoKtl).addNamed(\vols, MKtl(\nanoKtl).elAt(\kn, (0..3)));
+	MKtl(\nanoKtl).addNamed(\playBts, MKtl(\nanoKtl).elAt(\bt, 2, (0..3)));
 
 	// select preset or sounds
-	NTMI.nktl.addNamed(\select, NTMI.nktl.elAt(\kn, (4..7)));
+	MKtl(\nanoKtl).addNamed(\select, MKtl(\nanoKtl).elAt(\kn, (4..7)));
 	// if but up, select preset, if down, sound
-	NTMI.nktl.addNamed(\selMode, NTMI.nktl.elAt(\bt, 2, (4..7)));
+	MKtl(\nanoKtl).addNamed(\selMode, MKtl(\nanoKtl).elAt(\bt, 2, (4..7)));
 
-	NTMI.nktl.addNamed(\rand_inph, NTMI.nktl.elAt(\tr, \cycle));
-	NTMI.nktl.addNamed(\prev_inph, NTMI.nktl.elAt(\tr, \rew));
-	NTMI.nktl.addNamed(\next_inph, NTMI.nktl.elAt(\tr, \fwd));
+	MKtl(\nanoKtl).addNamed(\rand_inph, MKtl(\nanoKtl).elAt(\tr, \cycle));
+	MKtl(\nanoKtl).addNamed(\prev_inph, MKtl(\nanoKtl).elAt(\tr, \rew));
+	MKtl(\nanoKtl).addNamed(\next_inph, MKtl(\nanoKtl).elAt(\tr, \fwd));
 
-	NTMI.nktl.addNamed(\prev_pre, NTMI.nktl.elAt(\tr, \stop));
-	NTMI.nktl.addNamed(\rand_pre, NTMI.nktl.elAt(\tr, \play));
-	NTMI.nktl.addNamed(\next_pre, NTMI.nktl.elAt(\tr, \rec));
+	MKtl(\nanoKtl).addNamed(\prev_pre, MKtl(\nanoKtl).elAt(\tr, \stop));
+	MKtl(\nanoKtl).addNamed(\rand_pre, MKtl(\nanoKtl).elAt(\tr, \play));
+	MKtl(\nanoKtl).addNamed(\next_pre, MKtl(\nanoKtl).elAt(\tr, \rec));
 
 	// };
 };
 
-NTMI.nktl.elAt(\inflSet).do(_.value = 0.5);
+MKtl(\nanoKtl).elAt(\inflSet).do(_.value = 0.5);
 
 
-NTMI.nktl.elAt(\main).elemDesc.label = "Main Vol";
+MKtl(\nanoKtl).elAt(\main).elemDesc.label = "Main Vol";
 
-NTMI.nktl.elAt(\rand_inph).elemDesc.label = "rand inph";
-NTMI.nktl.elAt(\prev_inph).elemDesc.label = "prev inph";
-NTMI.nktl.elAt(\next_inph).elemDesc.label = "next inph";
+MKtl(\nanoKtl).elAt(\rand_inph).elemDesc.label = "rand inph";
+MKtl(\nanoKtl).elAt(\prev_inph).elemDesc.label = "prev inph";
+MKtl(\nanoKtl).elAt(\next_inph).elemDesc.label = "next inph";
 
-NTMI.nktl.elAt(\rand_pre).elemDesc.label = "rand MFX";
-NTMI.nktl.elAt(\prev_pre).elemDesc.label = "prev MFX";
-NTMI.nktl.elAt(\next_pre).elemDesc.label = "next MFX";
+MKtl(\nanoKtl).elAt(\rand_pre).elemDesc.label = "rand MFX";
+MKtl(\nanoKtl).elAt(\prev_pre).elemDesc.label = "prev MFX";
+MKtl(\nanoKtl).elAt(\next_pre).elemDesc.label = "next MFX";
 
 // modify labels:
-NTMI.nktl.elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
-NTMI.nktl.elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
+MKtl(\nanoKtl).elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
+MKtl(\nanoKtl).elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
 
-NTMI.nktl.elAt(\selMode).do { |el, i| el.elemDesc.label = "mod sl%".format(i+1) };
-NTMI.nktl.elAt(\select).do { |el, i| el.elemDesc.label = "slc % snd".format(i+1) };
+MKtl(\nanoKtl).elAt(\selMode).do { |el, i| el.elemDesc.label = "mod sl%".format(i+1) };
+MKtl(\nanoKtl).elAt(\select).do { |el, i| el.elemDesc.label = "slc % snd".format(i+1) };
 
-NTMI.nktl.elAt(\inflSet).do { |sl, i| sl.elemDesc.label = "inf" + NTMI.inphlux.inNames[i].cs };
+MKtl(\nanoKtl).elAt(\inflSet).do { |sl, i| sl.elemDesc.label = "inf" + NTMI.inphlux.inNames[i].cs };
 
 
 /// left top 4 knobs change slots volume
-NTMI.nktl.elAt(\vols).do { |el, i|
+MKtl(\nanoKtl).elAt(\vols).do { |el, i|
 	el.action = { |el|
 		NTMI.ndefs[i].softVol_(el.value, lastVal: el.prevValue);
 	};
 };
 
 // left bottom 4 buttons toggle sound slots on/off
-NTMI.nktl.elAt(\playBts).do { |el, i|
+MKtl(\nanoKtl).elAt(\playBts).do { |el, i|
 	el.action = { |el|
 		if (el.isOn) { NTMI.slots.toggleAt(i) }
 	};
 };
 
-// // sliders set influx inputs - absolute:
-// NTMI.nktl.elAt(\inflSet).do { |sl, i|
-// 	sl.action = { |sl|
-// 		var name = NTMI.inphlux.inNames[i];
-// 		NTMI.inphlux.set(name, sl.value.unibi);
-// 	}
-// };
-
-// new relative set for 7 sliders
-"//// nanoKontrol - relative-set \n"
-"//// influx inputs %..% \n\n".postf(*NTMI.inph.sliderOffset + 1 + [0, NTMI.nktl.elAt(\inflSet).size]);
-
-NTMI.zooms.nktl = 1;
-
-NTMI.nktl.elAt(\inflSet).do { |sl, i|
+MKtl(\nanoKtl).elAt(\inflSet).do { |sl, i|
 	sl.action = { |sl|
 		// add sliderOffset + 1, so we get to channel 8 for amp tweak
-		MFdef(\setRelInf).(
-			NTMI.inph.sliderOffset + 1 + i,
-			(sl.prevValue - sl.value),
-			NTMI.zoom * NTMI.zooms.nktl
-		)
+		var inphInIndex = NTMI.inph.sliderOffset + 1 + i;
+
+		if (NTMI.nanoKtl.influxMode == \setAbs) {
+			var name = NTMI.inphlux.inNames[i];
+			\setAbs.postln;
+			NTMI.inphlux.set(name, sl.value.unibi * NTMI.zooms.nanoKtl);
+		} {
+			// setRel, also default
+			\setRel.postln;
+			MFdef(\setRelInf).(inphInIndex,
+				(sl.prevValue - sl.value).clip2(0.0315),
+				NTMI.zoom * NTMI.zooms.nanoKtl
+			)
+		}
 	}
 };
 
 // rightmost slider is main volume (into limiter)
-NTMI.nktl.elAt(\main).action = { |sl|
+MKtl(\nanoKtl).elAt(\main).action = { |sl|
 	MFdef(\mainVolSetUni).value(sl.value) };
-NTMI.nktl.elAt(\main).value = 0.5;
+MKtl(\nanoKtl).elAt(\main).value = 0.5;
 
 // normal: select next setting
 // hat down: select next sound
-NTMI.nktl.elAt(\select).do { |el, i|
+MKtl(\nanoKtl).elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
 		var relStep = (el.deviceValue - el.prevValue).sign;
-		if (NTMI.nktl.elAt(\selMode)[i].isOn) {
+		if (MKtl(\nanoKtl).elAt(\selMode)[i].isOn) {
 			// next sound
 			NTMI.slots.stepNext(i, relStep);
 		} {
@@ -165,16 +189,16 @@ NTMI.nktl.elAt(\select).do { |el, i|
 	};
 };
 
-NTMI.nktl.elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };
-NTMI.nktl.elAt(\prev_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(-1 ) } };
-NTMI.nktl.elAt(\next_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre( 1 ) } };
+MKtl(\nanoKtl).elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };
+MKtl(\nanoKtl).elAt(\prev_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(-1 ) } };
+MKtl(\nanoKtl).elAt(\next_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre( 1 ) } };
 
-NTMI.nktl.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
-NTMI.nktl.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
-NTMI.nktl.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
+MKtl(\nanoKtl).elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
+MKtl(\nanoKtl).elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
+MKtl(\nanoKtl).elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
 
 // snapshot
-NTMI.nktl.elAt(\tr, 'mset').elemDesc.label = "snap pre!";
-NTMI.nktl.elAt(\tr, 'mset').action = { |el| if (el.isOn, MFdef(\snapshot)) };
+MKtl(\nanoKtl).elAt(\tr, 'mset').elemDesc.label = "snap pre!";
+MKtl(\nanoKtl).elAt(\tr, 'mset').action = { |el| if (el.isOn, MFdef(\snapshot)) };
 
-NTMI.nktl;
+MKtl(\nanoKtl);
