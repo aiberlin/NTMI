@@ -84,7 +84,34 @@ MKtl(\uc4).elAt('pgSl1', \sl).value = 0.5;
 MKtl(\uc4).elAt('main').value = 0.5;
 
 
-// g.makeGui.uc4 = { MKtl(\uc4).gui };
+
+// *** add local settings and functions to uc4 ***
+// local zoom value:
+MKtl(\uc4).addSpec(\zoom, [0, 4, \amp]);
+MKtl(\uc4).addHalo(\zoom, 1);
+
+// allow direct access of halo via NTMI:
+NTMI.uc4 = MKtl(\uc4).getHalo;
+// and access like this
+NTMI.uc4.zoom.postln;
+
+// flag whether to use influx in relative or absolute mode:
+// (there could be more modes, e.g. softAbs ...)
+NTMI.uc4.influxMode = \setRel;
+
+// set functions for the two supported modes:
+NTMI.uc4.setRel = {
+	MKtl(\uc4).getHalo.influxMode = \setRel;
+	"uc4 influxMode is now: %\n.".postf(\setRel);
+};
+NTMI.uc4.setAbs = {
+	MKtl(\uc4).getHalo.influxMode = \setAbs;
+	"uc4 influxMode is now: %\n.".postf(\setAbs);
+};
+// read and set:
+NTMI.uc4.influxMode;
+NTMI.uc4.setRel;
+
 
 // add a spec to uc4, for relative use:
 // ccr2 is from 58 ... 63 down / 65 .. 70 up,
@@ -141,28 +168,6 @@ MKtl(\uc4).elAt(\snap).action = { |el|
 	}
 };
 
-// ////////// sliders (hard-)set or SoftSet inphlux:
-// if (NTMI.inphlux.respondsTo(\get).not) {
-// 	"////  UC4 - sliders hard-set influx directly ".postln;
-// 	MKtl(\uc4).elAt(\inflx).do { |sl, i|
-// 		sl.action = { |sl|
-// 			// make sure we get to amp control (inphlux.inNames[8])
-// 			var name = NTMI.inphlux.inNames[i + 1];
-// 			NTMI.inphlux.set(name, sl.value.unibi)
-// 		};
-// 	}
-// } {
-// 	///////// BETTER: SoftSet, works with current Influx update
-// 	"//// UC4 - sliders SoftSet influx ".postln;
-// 	MKtl(\uc4).elAt(\inflx).do { |sl, i|
-// 		sl.action = { |sl|
-// 			// make sure we get to amp control (inphlux.inNames[8])
-// 			var name = NTMI.inphlux.inNames[i + 1];
-// 			SoftSet(NTMI.inphlux, name, sl.value.unibi, lastVal: sl.prevValue.unibi);
-// 		};
-// 	}
-// };
-
 /*
 which influx input offsets to use?
 amptweaked ins are are 8 (nUFO nose up/down),
@@ -172,26 +177,20 @@ so with offset 1, last slider becomes amp control,
 but all sliders overlap with nUFO ...
 -> for nufo setups, use offset 9, for non-nufo, use offset 1
 */
-NTMI.inph.sliderOffset = NTMI.inph.sliderOffset ? 1;
-
-
-
-// offset influx inIndex by 1,
-			// so we get ampTweak channel 8 on last slider!
-
-NTMI.zooms = NTMI.zooms ? ();
-NTMI.zooms.uc4 = 1;
-
-"//// UC4 - sliders relative-set 8 influx inputs: ".postln;
-"//// from % to %.\n\n".postf(*NTMI.inph.sliderOffset + [0, 7]);
+NTMI.uc4.sliderOffset = NTMI.uc4.sliderOffset ? 1;
 
 MKtl(\uc4).elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
-		MFdef(\setRelInf).(
-			i + NTMI.inph.sliderOffset,
-			(sl.prevValue - sl.value),
-			NTMI.zoom * NTMI.zooms.uc4
-		)
+		if (NTMI.uc4.influxMode == \setAbs) {
+			var name = NTMI.inphlux.inNames[i + NTMI.uc4.sliderOffset];
+			NTMI.inphlux.set(name, sl.value.unibi);
+		} {
+			MFdef(\setRelInf).(
+				i + NTMI.inph.sliderOffset,
+				(sl.prevValue - sl.value),
+				NTMI.zoom * NTMI.uc4.zoom
+			)
+		}
 	}
 };
 
