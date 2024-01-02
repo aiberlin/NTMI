@@ -1,40 +1,56 @@
 /*   // load all interfaces:
 (thisProcess.nowExecutingPath.dirname +/+ "interfaces/" ++ "*.scd").loadPaths;
+
+
+MFdef(\findConnect).();
+
 */
 
 (
-var here = thisProcess.nowExecutingPath.dirname;
-var foundInfos, fullpath;
-var filenames = List[];
+MFdef(\findConnect).add(\findConnect, {
+	var foundInfos, newInfos, filenames = List[];
 
-// MKtl.find(\midi);
-foundInfos = MKtlLookup.all.asArray.collect(_.idInfo)
-.select(_.isString)
-.reject(_.contains("_Apple"))
-.reject(_ == "")
-.asArray.sort;
+	"MFdef('findConnect'):\n"
+	"- find present supported MKtl devices \n"
+	"- and connect them.".postln;
 
-"look for presence of supported MKtl interfaces;
-load them if found, or else load beatstep by default.".postln;
+	MKtl.find;
+	foundInfos = MKtlLookup.all.asArray.collect(_.idInfo)
+	.select(_.isString)
+	.reject(_.contains("_Apple"))
+	.reject(_ == "")
+	.asArray.sort;
 
-if (foundInfos.notEmpty) {
-	"---\n*** Found % MKtl devices: %".postf(foundInfos.size);
-	// foundInfos.printcsAll;
-	"---".postln;
-	foundInfos.do { |entry|
-		if (entry == "nanoKONTROL2") { filenames.add("7_nanoKtl.scd") };
-		if (entry == "Faderfox UC4") { filenames.add("2_uc4.scd") };
-		if (entry == "Run'N' Drive_Thrustmaster" ) { filenames.add("3_ferrari.scd") };
+	("Found: " + foundInfos.cs).postln;
+
+	if (NTMI.prevFoundInfos == foundInfos) {
+		"no new infos - done.".postln;
+	} {
+		"*** MFdef('findAndLoad') - new infos found:".postln;
+		newInfos = foundInfos.select { |info|
+			(NTMI.prevFoundInfos ? []).includesEqual(info).not
+		};
+		newInfos.postcs;
+
+		newInfos.do { |entry|
+			if (entry == "nanoKONTROL2") { filenames.add("7_nanoKtl.scd") };
+			if (entry == "Faderfox UC4") { filenames.add("2_uc4.scd") };
+			if (entry == "Run'N' Drive_Thrustmaster" ) { filenames.add("3_ferrari.scd") };
+		};
+
+		if (filenames.isEmpty and: MKtl.all.nanoKtl.isNil) {
+			"loading as default: ".post;
+			filenames.add("7_nanoKtl.scd".postcs);
+		};
+
+		filenames.do { |filename| try {
+			LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals")
+		} };
 	};
-};
 
-if (filenames.isEmpty) {
-	// use beatstep as default when nothing found:
-	"... no supported MKtl device found, default to nanoKtl2.".postln;
-	filenames.add("7_nanoKtl.scd")
-};
+	NTMI.prevFoundInfos = foundInfos;
+	newInfos
 
-filenames.do { |filename| try {
-	LoadMe(filename, here +/+ "optionals")
-} };
+});
+MFdef(\findConnect).();
 )
