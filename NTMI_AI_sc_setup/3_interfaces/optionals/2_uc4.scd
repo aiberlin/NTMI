@@ -183,11 +183,11 @@ MKtl(\uc4).elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
 		if (NTMI.uc4.influxMode == \setAbs) {
 			var name = NTMI.inphlux.inNames[i + NTMI.uc4.sliderOffset];
-			NTMI.inphlux.set(name, sl.value.unibi);
+			NTMI.inphlux.set(name, sl.value.unibi * NTMI.uc4.zoom);
 		} {
 			MFdef(\setRelInf).(
 				i + NTMI.inph.sliderOffset,
-				(sl.prevValue - sl.value),
+				(sl.prevValue - sl.value).clip2(0.05),
 				NTMI.zoom * NTMI.uc4.zoom
 			)
 		}
