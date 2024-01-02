@@ -87,10 +87,11 @@ Butz('NTMI').add('-Tutorial-', { Butz.curr_('NTMI_Tutorial') });
 
 /// put the interfaces in a separate Butz list,
 /// add detailed funcs later
+Butz('interfaces').clear;
 Butz('interfaces').addMiniMax;
 
 [
-	'findAndLoad',
+	'findConnect',
 	'nUFO',
 	'nanoKtl',
 	'ferrari',
@@ -119,9 +120,19 @@ Butz(\NTMI).add('presets', { WinBounds.showOrMake('presets') });
 Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 
 
-/////// the INTERFACES Butz: /////////////
-Butz(\interfaces).add(\findAndLoad, {
-	LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup)
+// /////// the INTERFACES Butz: /////////////
+Butz(\interfaces).add(\findConnect, {
+	Task {
+		MFdef(\findConnect).value;
+		LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
+		0.5.wait;
+		MKtl.all.do { |mk|
+			mk.name.postln;
+			if (mk.hasDevice.postln) {
+				WinBounds.showOrMake(mk.name.postln)
+			}
+		}
+	}.play(AppClock);
 });
 
 
