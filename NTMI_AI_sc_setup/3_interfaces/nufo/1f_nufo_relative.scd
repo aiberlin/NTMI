@@ -25,22 +25,22 @@ MKtl(\nUFO).elAt(\imu9).value.collect { |val|
 }
 }).play;
 
-NTMI.nufo.debugOn = true;
-NTMI.nufo.debugOn = false;
+NTMI.nUFO.debugOn = true;
+NTMI.nUFO.debugOn = false;
 
-NTMI.nufo.setRel;
+NTMI.nUFO.setRel;
 
 ***/
 
 (
 NTMI.zooms = NTMI.zooms ? ();
-NTMI.zooms.nufo = NTMI.zooms.nufo ? 1;
+NTMI.zooms.nUFO = NTMI.zooms.nUFO ? 1;
 
 MFdef(\nUFOImuFunc).add(\setRel, {
 	var imu = MKtl(\nUFO).elAt(\imu9);
 	var diffs = imu.value - imu.prevValue;
 
-	if (NTMI.nufo.debugOn) {
+	if (NTMI.nUFO.debugOn) {
 		// "nUFOImuFunc setRel- ".post;
 		// "diff sum: ".post; diffs.sum.round(0.01).postln;
 		// "abs sum: ".post; diffs.abs.sum.round(0.01).postln;
@@ -52,7 +52,7 @@ MFdef(\nUFOImuFunc).add(\setRel, {
 	MFdef(\setRelInf).(
 		(0..diffs.size-1) + 8,
 		diffs,
-		NTMI.inphlux.inScaler * NTMI.zooms.nufo
+		NTMI.inphlux.inScaler * NTMI.zooms.nUFO
 	);
 }, false);
 MFdef(\nUFOImuFunc).disable(\setRel);
@@ -65,7 +65,7 @@ MFdef(\capsToInph).disable(\setAbs);
 MKtl(\nUFO).elAt(\cap).do { |pad| pad.action.disable(\setAbs) };
 
 MKtl(\nUFO).elAt(\cap).action = { |el|
-	if (NTMI.nufo.debugOn) { "pad global action".postln };
+	if (NTMI.nUFO.debugOn) { "pad global action".postln };
 	// value change should set all other indiv. elements,
 	// so prevValues are correctly 0:
 
@@ -77,9 +77,9 @@ MKtl(\nUFO).elAt(\cap).action = { |el|
 };
 
 MFdef(\capsToInph).add(\setRel, {
-	var diffs = NTMI.nufo.padVals - NTMI.nufo.prevPadVals;
+	var diffs = NTMI.nUFO.padVals - NTMI.nUFO.prevPadVals;
 
-	if (NTMI.nufo.debugOn) {
+	if (NTMI.nUFO.debugOn) {
 		"capsToInph setRel - ".post;
 		"diffs sum: ".post; diffs.sum.round(0.01).postln;
 	};
@@ -88,7 +88,7 @@ MFdef(\capsToInph).add(\setRel, {
 	MFdef(\setRelInf).(
 		(0..diffs.size-1), // no offset for pads
 		diffs,
-		NTMI.inphlux.inScaler * NTMI.zooms.nufo
+		NTMI.inphlux.inScaler * NTMI.zooms.nUFO
 	);
 
 }, false);

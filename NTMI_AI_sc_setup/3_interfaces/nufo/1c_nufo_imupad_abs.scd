@@ -2,21 +2,21 @@
 IMU AND PADS can do absolute and relative influx:
 
 // this switches them to absolute
-NTMI.nufo.setRel;
-NTMI.nufo.setAbs;
+NTMI.nUFO.setRel;
+NTMI.nUFO.setAbs;
 
-NTMI.nufo.debugOn = false;
-NTMI.nufo.debugOn = true;
+NTMI.nUFO.debugOn = false;
+NTMI.nUFO.debugOn = true;
 
 
 The main funcs of imu and pads use that name to look up which
 function to run, see below.
 ***/
 
-NTMI.nufo.debugOn = false;
+NTMI.nUFO.debugOn = false;
 
 // keep if already set, else set to abs for now
-NTMI.nufo.influxMode = NTMI.nufo.influxMode ? \setAbs;
+NTMI.nUFO.influxMode = NTMI.nUFO.influxMode ? \setAbs;
 
 // ///////////////////////////////////////////////////////////////
 // //// I M U
@@ -34,14 +34,14 @@ NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 
 MFdef(\nUFOImuFunc).add(\setAbs, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
-	var calibImuValsBi = imuInvalsBi - NTMI.nufo.zero.imu;
+	var calibImuValsBi = imuInvalsBi - NTMI.nUFO.zero.imu;
 	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
 		var value = calibImuValsBi[i];
 		[name, value]
 	}.flat;
-	NTMI.nufo.rawImuBiValues = imuInvalsBi;
-	NTMI.nufo.calibImuValsBi = calibImuValsBi;
-	NTMI.nufo.calibImuVals = calibImuValsBi.biuni;
+	NTMI.nUFO.rawImuBiValues = imuInvalsBi;
+	NTMI.nUFO.calibImuValsBi = calibImuValsBi;
+	NTMI.nUFO.calibImuVals = calibImuValsBi.biuni;
 
 	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
 	NTMI.inphlux.set(*keysvals);
@@ -50,10 +50,10 @@ MFdef(\nUFOImuFunc).add(\setAbs, {
 MFdef(\nUFOImuFunc).disable(\setAbs);
 
 MFdef(\nUFOImuFunc).add(\set, {
-	if (NTMI.nufo.debugOn) {
-		"nUFOImuFunc - NTMI.nufo.influxMode: %\n".postf(NTMI.nufo.influxMode);
+	if (NTMI.nUFO.debugOn) {
+		"nUFOImuFunc - NTMI.nUFO.influxMode: %\n".postf(NTMI.nUFO.influxMode);
 	};
-	MFdef(\nUFOImuFunc).at(NTMI.nufo.influxMode).value
+	MFdef(\nUFOImuFunc).at(NTMI.nUFO.influxMode).value
 });
 
 
@@ -75,7 +75,7 @@ NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 MFdef(\capsToInph).add(\setAbs, {
 	// var debug = "capsToInph setAbs".postln;
 	var influx = NTMI.inphlux;
-	var padVals = NTMI.nufo.padVals;
+	var padVals = NTMI.nUFO.padVals;
 	var padInNames = NTMI.inphlux.getHalo(\padNames);
 	var keysValues = padVals.collect { |padval, i|
 		[ padInNames[i], padval]
@@ -86,10 +86,10 @@ MFdef(\capsToInph).add(\setAbs, {
 MFdef(\capsToInph).disable(\setAbs);
 
 MFdef(\capsToInph).add(\set, {
-	if (NTMI.nufo.debugOn) {
-		"capsToInph  - NTMI.nufo.influxMode: %\n".postf(NTMI.nufo.influxMode);
+	if (NTMI.nUFO.debugOn) {
+		"capsToInph  - NTMI.nUFO.influxMode: %\n".postf(NTMI.nUFO.influxMode);
 	};
-	MFdef(\capsToInph).at(NTMI.nufo.influxMode).value
+	MFdef(\capsToInph).at(NTMI.nUFO.influxMode).value
 });
 
 
@@ -102,11 +102,11 @@ MKtl(\nUFO).collAt('caps').groupAction = nil;
 
 MKtl(\nUFO).addHalo(\capLedThresh, 0.3);
 
-NTMI.nufo.capsin = MFunc();
-MKtl(\nUFO).collAt('caps').groupAction = NTMI.nufo.capsin;
+NTMI.nUFO.capsin = MFunc();
+MKtl(\nUFO).collAt('caps').groupAction = NTMI.nUFO.capsin;
 
 
-NTMI.nufo.capsin.add(\set, { |coll|
+NTMI.nUFO.capsin.add(\set, { |coll|
 	var capLedThresh = MKtl(\nUFO).getHalo(\capLedThresh);
 	var rawPads = coll.value;
 	var calibPadVals;
@@ -114,18 +114,18 @@ NTMI.nufo.capsin.add(\set, { |coll|
 	// reorder for proper order of pads and leds
 	rawPads = rawPads[[1, 4, 0, 3, 5, 6, 2, 7]];
 
-	NTMI.nufo.rawPads = rawPads;
+	NTMI.nUFO.rawPads = rawPads;
 
-	// NTMI.nufo.zero.pads is the rest state of the pads
+	// NTMI.nUFO.zero.pads is the rest state of the pads
 	// use it to stretch to a range of 0-1
 	calibPadVals = rawPads.collect { |rawval, i|
-		var zeroOffset = NTMI.nufo.zero.pads.asArray.wrapAt(i) ? 0;
+		var zeroOffset = NTMI.nUFO.zero.pads.asArray.wrapAt(i) ? 0;
 		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
 		stretched;
 	};
 	// keep prev and new reordered and calibrated padVals here:
-	NTMI.nufo.prevPadVals = NTMI.nufo.padVals;
-	NTMI.nufo.padVals = calibPadVals;
+	NTMI.nUFO.prevPadVals = NTMI.nUFO.padVals;
+	NTMI.nUFO.padVals = calibPadVals;
 
 	// // set element values back to the compensated values, no action
 	// MKtl(\nUFO).elAt('cap').value_(values);

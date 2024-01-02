@@ -38,7 +38,7 @@ MKtl('testa').elAt(\sl, 7).action = { |sl|
 
 // attach the first seven sliders the influx:
 /// this is how movement and touch influence the running sounds
-// switch nUFO off, or leave the nufo network!
+// switch nUFO off, or leave the nUFO network!
 // show the influx GUI
 Butz.run(\inphlux);
 

@@ -5,7 +5,7 @@ binClav,
 liveInput,
 
 in separate testdefs:
-nufo, nanoKtl, uc4, ferrari
+nUFO, nanoKtl, uc4, ferrari
 */
 
 

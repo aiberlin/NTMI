@@ -7,7 +7,7 @@ NTMI.g.main.prePops[0]
 );
 
 NTMI.g.main.skeys.cs
-[ 'backCol', 'bigUV', 'bigUVBounds', 'bigUVMFunc', 'caliBut', 'clockZone', 'coupleButs', 'frontText', 'fxZone', 'imuFunc', 'imuUV', 'imuUVBounds', 'imuUVMFunc', 'leftMVZone', 'mainSl', 'mainVolZone', 'meter', 'meterCenterTop', 'meterLeft', 'meterWidth', 'mfxBut', 'movevals', 'ndefMViews', 'nufoView', 'nufoViews', 'nufoZone', 'padCols', 'popups', 'prePops', 'rMViews', 'recBut', 'recZone', 'rightColumn', 'skipper', 'sliderCols', 'snapBounds', 'snapBut', 'stetho', 'updateMainVol', 'updateSlots', 'w', 'winUpdate' ]
+[ 'backCol', 'bigUV', 'bigUVBounds', 'bigUVMFunc', 'caliBut', 'clockZone', 'coupleButs', 'frontText', 'fxZone', 'imuFunc', 'imuUV', 'imuUVBounds', 'imuUVMFunc', 'leftMVZone', 'mainSl', 'mainVolZone', 'meter', 'meterCenterTop', 'meterLeft', 'meterWidth', 'mfxBut', 'movevals', 'ndefMViews', 'nUFOView', 'nUFOViews', 'nUFOZone', 'padCols', 'popups', 'prePops', 'rMViews', 'recBut', 'recZone', 'rightColumn', 'skipper', 'sliderCols', 'snapBounds', 'snapBut', 'stetho', 'updateMainVol', 'updateSlots', 'w', 'winUpdate' ]
 
 */
 

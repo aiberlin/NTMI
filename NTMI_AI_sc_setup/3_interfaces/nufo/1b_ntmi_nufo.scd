@@ -38,19 +38,19 @@ MKtl(\nUFO).elementsDict.do { |el| el.action.enable(\post) };
 
 (
 // use this dict for everything osc related
-NTMI.nufo = NTMI.nufo ? ();
-NTMI.nufo.nUFO = NTMI.nufo.nUFO ? ();
+NTMI.nUFO = NTMI.nUFO ? ();
+NTMI.nUFO.nUFO = NTMI.nUFO.nUFO ? ();
 
 
-///////// make a new nufo MKtl from desc in
+///////// make a new nUFO MKtl from desc in
 // ".../0_globals/3_ai-ntmi.desc.scd"
 MKtl.all.at(\nUFO).free;
 MKtl(\nUFO, "ai-ntmi");
 
 
-// send login message to nufo, so it knows where to send
-NTMI.nufo.skipLogin.stop.free;
-NTMI.nufo.skipLogin = SkipJack({
+// send login message to nUFO, so it knows where to send
+NTMI.nUFO.skipLogin.stop.free;
+NTMI.nUFO.skipLogin = SkipJack({
 	try { MKtl(\nUFO).device.source.sendMsg("/ntmi/login") }
 }, 0.5);
 
@@ -63,7 +63,7 @@ MKtl(\nUFO).device.updateSrcAddr("169.254.1.1", NetAddr.langPort);
 // **** initialize
 MKtl(\nUFO).elAt(\enc).value_(0.5);
 
-/// init all nufo actions as MFuncs, provide posting
+/// init all nUFO actions as MFuncs, provide posting
 MKtl(\nUFO).elementsDict.do(_.action_(MFunc()));
 MKtl(\nUFO).elementsDict.do { |el|
 	el.action.add(\post, { |el|
@@ -94,18 +94,18 @@ MKtl(\nUFO).elAt(\modSw).elemDesc.label_('move Mode');
 
 // prepare for modalization:
 // left buttons set up modes for right side and <>
-NTMI.nufo.leftDown = List[];
-NTMI.nufo.rightDown = List[];
-NTMI.nufo.shiftWasUsed = false;
-NTMI.nufo.leftWasUsed = false;
-NTMI.nufo.rightWasUsed = false;
+NTMI.nUFO.leftDown = List[];
+NTMI.nUFO.rightDown = List[];
+NTMI.nUFO.shiftWasUsed = false;
+NTMI.nUFO.leftWasUsed = false;
+NTMI.nUFO.rightWasUsed = false;
 
 /*
 //////// to test left side actions:
-NTMI.nufo.rightDown.clear.add(\preUp);
-NTMI.nufo.rightDown.clear.add(\preDown);
-NTMI.nufo.rightDown.clear.add(\touchMove);
-NTMI.nufo.rightDown.clear;
+NTMI.nUFO.rightDown.clear.add(\preUp);
+NTMI.nUFO.rightDown.clear.add(\preDown);
+NTMI.nUFO.rightDown.clear.add(\touchMove);
+NTMI.nUFO.rightDown.clear;
 */
 
 
@@ -142,10 +142,10 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 		var butIndex = but.indexInGroup;
 		// when is button pressed: set up for mode
 		if (but.isOn) {
-			NTMI.nufo.leftDown.add(butIndex);
+			NTMI.nUFO.leftDown.add(butIndex);
 		} {
 			// when button was released: remove shifter
-			NTMI.nufo.leftDown.removeAllSuchThat(_ == butIndex);
+			NTMI.nUFO.leftDown.removeAllSuchThat(_ == butIndex);
 		}
 	});
 
@@ -158,10 +158,10 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 
 		if (but.isOn.not) {
 			// determine whether we are in a mode
-			if (NTMI.nufo.rightDown.size == 0) {
+			if (NTMI.nUFO.rightDown.size == 0) {
 				// reset if we just left a mode
-				if (NTMI.nufo.leftWasUsed) {
-					NTMI.nufo.leftWasUsed = false;
+				if (NTMI.nUFO.leftWasUsed) {
+					NTMI.nUFO.leftWasUsed = false;
 				} {
 					// if there was no mode, do the default action
 					// " % default action: toggle\n".postf(but.name);
@@ -175,7 +175,7 @@ MKtl(\nUFO).elAt(\slots).do { |but, i|
 				if (MKtl(\nUFO).elAt(\encHat).isOn) {
 					NTMI.inph.clutch(slotObj);
 				};
-				NTMI.nufo.rightWasUsed = true;
+				NTMI.nUFO.rightWasUsed = true;
 			}
 		}
 	});
@@ -189,12 +189,12 @@ MKtl(\nUFO).elAt(\bt, [\5, \6, \7, \8]).do { |but, i|
 		// 0 is button pressed:
 		MKtl(\nUFO).elAt(\led, \bk, i + 4).value = but.value;
 		if (but.value == 1) {
-			NTMI.nufo.rightDown.add(btname);
-			// "rightdown: %\n".postf(NTMI.nufo.rightDown);
+			NTMI.nUFO.rightDown.add(btname);
+			// "rightdown: %\n".postf(NTMI.nUFO.rightDown);
 		} {
 			// button was released: remove shifter
-			NTMI.nufo.rightDown.removeAllSuchThat(_ == btname);
-			// "rightdown: %\n".postf(NTMI.nufo.rightDown);
+			NTMI.nUFO.rightDown.removeAllSuchThat(_ == btname);
+			// "rightdown: %\n".postf(NTMI.nUFO.rightDown);
 		}
 	});
 };
@@ -210,9 +210,9 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		{ MFdef(\mainPreStep).value(nil) }
 
 		// slot mode: rand preset
-		{ NTMI.nufo.leftDown.size > 0 }
+		{ NTMI.nUFO.leftDown.size > 0 }
 		{
-			NTMI.nufo.leftDown.do { |slotIndex|
+			NTMI.nUFO.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(NTMI.ndefs[slotIndex]);
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], nil )
 			}
@@ -237,17 +237,17 @@ NTMI.inph.sendInphPre = {
 /// -> release stores snapshot
 // otherwise, hat was shift-key but for other buttons.
 
-NTMI.nufo.encHatUsed = MFunc().add(\used, {
+NTMI.nUFO.encHatUsed = MFunc().add(\used, {
 	if (MKtl(\nUFO).elAt(\encHat).isOn) {
-		NTMI.nufo.encHatUsed = true;
+		NTMI.nUFO.encHatUsed = true;
 	}
 });
 
 MKtl(\nUFO).elAt(\encHat).action.add(\snap, { |bt|
 	if (bt.isOn) {
-		NTMI.nufo.encHatUsed = false;
+		NTMI.nUFO.encHatUsed = false;
 	} {
-		if (NTMI.nufo.encHatUsed.not) {
+		if (NTMI.nUFO.encHatUsed.not) {
 			MFdef('snapshot').value;
 		}
 	}
@@ -255,17 +255,17 @@ MKtl(\nUFO).elAt(\encHat).action.add(\snap, { |bt|
 
 ////// add encHatUsed func to all buttons
 MKtl(\nUFO).elAt(\bt, [0,1,2,3,    5,6,7]).do { |el|
-	el.action.add(\enchat, NTMI.nufo.encHatUsed)
+	el.action.add(\enchat, NTMI.nUFO.encHatUsed)
 };
-MKtl(\nUFO).elAt(\enc).action.add(\enchat, NTMI.nufo.encHatUsed);
+MKtl(\nUFO).elAt(\enc).action.add(\enchat, NTMI.nUFO.encHatUsed);
 
 
 // reset right-side back leds to their proper values
 // e.g. after modal action of buttons for MainFX
-NTMI.nufo.resetModePreLEDs = MFunc().add(\reset, { |delay=0.1|
+NTMI.nUFO.resetModePreLEDs = MFunc().add(\reset, { |delay=0.1|
 	defer ({
-		"NTMI.nufo.resetModePreLEDs".postln;
-		NTMI.nufo.nUFO.setModeIndex(NTMI.nufo.nUFO.modeIndex);
+		"NTMI.nUFO.resetModePreLEDs".postln;
+		NTMI.nUFO.nUFO.setModeIndex(NTMI.nUFO.nUFO.modeIndex);
 		NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 	}, delay);
 });
@@ -280,23 +280,23 @@ MKtl(\nUFO).elAt(\modSw).action.add(\modal, {|bt|
 		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(nil);
-			NTMI.nufo.resetModePreLEDs.value(0.1);
-			NTMI.nufo.encHatUsed.value;
+			NTMI.nUFO.resetModePreLEDs.value(0.1);
+			NTMI.nUFO.encHatUsed.value;
 		}
 
 		// slot mode: rand preset
-		{ NTMI.nufo.leftDown.size > 0 }
+		{ NTMI.nUFO.leftDown.size > 0 }
 		{
-			NTMI.nufo.leftDown.do { |slotIndex|
+			NTMI.nUFO.leftDown.do { |slotIndex|
 				// "% - choose rand ndef preset.\n".postf(NTMI.ndefs[slotIndex]);
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], nil )
 			};
-			NTMI.nufo.leftWasUsed = true;
+			NTMI.nUFO.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{
-			NTMI.nufo.modeStep(1);
-			NTMI.nufo.resetModePreLEDs.value(0.1);
+			NTMI.nUFO.modeStep(1);
+			NTMI.nUFO.resetModePreLEDs.value(0.1);
 		}
 
 	}
@@ -312,21 +312,21 @@ MKtl(\nUFO).elAt(\steps)[0].action.add(\modal, {|bt|
 		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(1);
-			NTMI.nufo.resetModePreLEDs.value(0.1);
-			NTMI.nufo.encHatUsed.value;
+			NTMI.nUFO.resetModePreLEDs.value(0.1);
+			NTMI.nUFO.encHatUsed.value;
 		}
 
 		// slot mode: ndef preset up by one
-		{ NTMI.nufo.leftDown.size > 0 }
+		{ NTMI.nUFO.leftDown.size > 0 }
 		{
-			NTMI.nufo.leftDown.do { |slotIndex|
+			NTMI.nUFO.leftDown.do { |slotIndex|
 				"%  ndef preset up 1.\n".postf(NTMI.ndefs[slotIndex]);
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], 1 );
 				// reset button color
-				NTMI.nufo.nUFO.setModeIndex(NTMI.nufo.nUFO.modeIndex);
+				NTMI.nUFO.nUFO.setModeIndex(NTMI.nUFO.nUFO.modeIndex);
 				NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 			};
-			NTMI.nufo.leftWasUsed = true;
+			NTMI.nUFO.leftWasUsed = true;
 		}
 		// default: step inph preset
 		{ NTMI.inph.stepWPre(1) }
@@ -344,21 +344,21 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 		{ MKtl(\nUFO).elAt(\encHat).isOn }
 		{
 			MFdef(\mainPreStep).value(-1);
-			NTMI.nufo.resetModePreLEDs.value(0.1);
-			NTMI.nufo.encHatUsed.value;
+			NTMI.nUFO.resetModePreLEDs.value(0.1);
+			NTMI.nUFO.encHatUsed.value;
 		}
 
 		// slot mode: ndef preset down by one
-		{ NTMI.nufo.leftDown.size > 0 }
+		{ NTMI.nUFO.leftDown.size > 0 }
 		{
-			NTMI.nufo.leftDown.do { |slotIndex|
+			NTMI.nUFO.leftDown.do { |slotIndex|
 				"%  ndef preset down 1.\n".postf(NTMI.ndefs[slotIndex]);
 				NTMI.pre.stepNdefInf( NTMI.ndefs[slotIndex], -1 );
 				// reset button color
-				NTMI.nufo.nUFO.setModeIndex(NTMI.nufo.nUFO.modeIndex);
+				NTMI.nUFO.nUFO.setModeIndex(NTMI.nUFO.nUFO.modeIndex);
 				NTMI.inph.setWPreIndex(NTMI.inph.at(\presIndex));
 			};
-			NTMI.nufo.leftWasUsed = true;
+			NTMI.nUFO.leftWasUsed = true;
 		}
 		// default: step inph preset down
 		{ NTMI.inph.stepWPre(-1) }
@@ -372,7 +372,7 @@ MKtl(\nUFO).elAt(\steps)[1].action.add(\modal, {|bt|
 // -- sl+hat mode -> inc/dec sounds
 
 MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
-	var slotDown = (NTMI.nufo.leftDown.size > 0).binaryValue;
+	var slotDown = (NTMI.nUFO.leftDown.size > 0).binaryValue;
 	var hatDown = MKtl(\nUFO).elAt(\encHat).isOn.binaryValue;
 	var modeNum = slotDown * 2 + hatDown;
 
@@ -387,18 +387,18 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 		},
 		2, {
 
-			NTMI.nufo.leftWasUsed = true;
-			// "NTMI.nufo.leftWasUsed: %\n".postf(NTMI.nufo.leftWasUsed);
-			NTMI.nufo.leftDown.do { |slotIndex|
+			NTMI.nUFO.leftWasUsed = true;
+			// "NTMI.nUFO.leftWasUsed: %\n".postf(NTMI.nUFO.leftWasUsed);
+			NTMI.nUFO.leftDown.do { |slotIndex|
 				"SLOT %: ".postf(slotIndex);
 				MFdef(\ndefVolStep).(NTMI.slots.actives[slotIndex], enc.deviceValue);
 			};
 		},
 		3, {
 			// "slotHat - select sound: ".post;
-			NTMI.nufo.leftWasUsed = true;
-			// "NTMI.nufo.leftWasUsed: %\n".postf(NTMI.nufo.leftWasUsed);
-			NTMI.nufo.leftDown.do { |slotIndex|
+			NTMI.nUFO.leftWasUsed = true;
+			// "NTMI.nUFO.leftWasUsed: %\n".postf(NTMI.nUFO.leftWasUsed);
+			NTMI.nUFO.leftDown.do { |slotIndex|
 				NTMI.slots.stepNext(slotIndex, enc.deviceValue);
 				"   % : %\n".postf(slotIndex, NTMI.slots[slotIndex]);
 			};
@@ -409,27 +409,39 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 });
 
 
-///////// update slot LEDs
-NTMI.nufo.skip.stop.free;
-NTMI.nufo.skip = SkipJack({
-	var cols = [[0,0,0], [0,1,0]], col;
-	fork {
-		MKtl(\nUFO).elAt(\led, \bk, (0..3)).do { |led, ledi|
-			var isPlaying = NTMI.ndefs[ledi].monitor.isPlaying;
-			var newval = isPlaying.binaryValue;
-			if (newval != led.prevValue) {
-				led.value = newval;
-				col = cols[newval];
-				// "nUFO: sending changed color to led_bk %: %\n".postf(ledi, col);
-				2.do {
-					rrand(0.03, 0.07).wait;
-					try {
-						MKtl(\nUFO).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
-					}
-				};
-			};
+NTMI.nUFO.skipMFunc = NTMI.nUFO.skipMFunc ?? { MFunc() };
 
-		};
-	}
-}, 0.05);
+NTMI.nUFO.skipMFunc.add(\timeOut, {
+	if (NTMI.nUFO.alive.not) {
+		NTMI.nUFO.timeOut.value;
+	};
+});
+
+///////// update slot LEDs
+NTMI.nUFO.skip.stop.free;
+NTMI.nUFO.skip = SkipJack(NTMI.nUFO.skipMFunc, 0.05, false, \nUFOSkip);
+
+NTMI.nUFO.skipMFunc.add(\updateSlotLEDs, {
+	var cols = [[0,0,0], [0,1,0]], col;
+	if (MKtl(\nUFO).hasDevice) {
+		fork {
+			MKtl(\nUFO).elAt(\led, \bk, (0..3)).do { |led, ledi|
+				var isPlaying = NTMI.ndefs[ledi].monitor.isPlaying;
+				var newval = isPlaying.binaryValue;
+				if (newval != led.prevValue) {
+					led.value = newval;
+					col = cols[newval];
+					// "nUFO: sending changed color to led_bk %: %\n".postf(ledi, col);
+					2.do {
+						rrand(0.03, 0.07).wait;
+						try {
+							MKtl(\nUFO).device.source.sendMsg("/ntmi/ledCtl/back", ledi, *col);
+						}
+					};
+				};
+
+			};
+		}
+	};
+});
 );

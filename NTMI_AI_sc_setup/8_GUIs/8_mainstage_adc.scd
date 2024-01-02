@@ -1,12 +1,12 @@
 /**** New mainstage window: *****
 reconsider layout so it scales better!
-butz scope - meters - nufo status -
-butz scope - meters - nufo calibrate
+butz scope - meters - nUFO status -
+butz scope - meters - nUFO calibrate
 -------------- snap
-butz slot1  nufo  nufo   zoom
+butz slot1  nUFO  nUFO   zoom
 butz slot2    CENTER     preUp
 butz slot3    CENTER     preDn
-butz slot4  nufo  nufo   nufmod
+butz slot4  nUFO  nUFO   nufmod
             MAINFX RAND
             MAIN VOLUME
 
@@ -22,13 +22,13 @@ g.main = g.main ? ();
 g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
 
 
-// quick and dirty removal of nufo from gui:
-g.hasNufo = { MKtl.all[\nUFO].notNil };
-NTMI.nufo = NTMI.nufo ? ();
-NTMI.nufo.bat = NTMI.nufo.bat ? ();
-NTMI.nufo.frame = NTMI.nufo.frame ? ();
-q.nufo = q.nufo ? ();
-q.nufo.timeSinceLast = 0.2;
+// quick and dirty removal of nUFO from gui:
+g.hasnUFO = { MKtl.all[\nUFO].notNil };
+NTMI.nUFO = NTMI.nUFO ? ();
+NTMI.nUFO.bat = NTMI.nUFO.bat ? ();
+NTMI.nUFO.frame = NTMI.nUFO.frame ? ();
+q.nUFO = q.nUFO ? ();
+q.nUFO.timeSinceLast = 0.2;
 
 NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
 
@@ -48,16 +48,16 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 
 	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
 
-	var nufoView, recBut;
+	var nUFOView, recBut;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
 
 	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
-	// quick fix so we can keep nufo graphics when no nUFO present
-	NTMI.nufo = NTMI.nufo ? ();
-	NTMI.nufo.modes = NTMI.nufo.modes ? [\full, \touch, \binary]; //
-	NTMI.nufo.modeIndex = NTMI.nufo.modeIndex ? 0;
-	NTMI.nufo.mode = NTMI.nufo[\mode] ? { NTMI.nufo.modes.wrapAt(NTMI.nufo.modeIndex) };
+	// quick fix so we can keep nUFO graphics when no nUFO present
+	NTMI.nUFO = NTMI.nUFO ? ();
+	NTMI.nUFO.modes = NTMI.nUFO.modes ? [\full, \touch, \binary]; //
+	NTMI.nUFO.modeIndex = NTMI.nUFO.modeIndex ? 0;
+	NTMI.nUFO.mode = NTMI.nUFO[\mode] ? { NTMI.nUFO.modes.wrapAt(NTMI.nUFO.modeIndex) };
 
 	w = Window(name, bounds).front;
 	g.main.w = w;
@@ -102,9 +102,9 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 		Rect(rightCol, 0, 300 * scrscale, bounds.height)
 	);
 
-	NTMI.g.main.nufoZone = CompositeView(g.main.rightColumn,
+	NTMI.g.main.nUFOZone = CompositeView(g.main.rightColumn,
 		Rect(0, 330 * scrscale, 300 * scrscale, 300 * scrscale));
-	LoadMe("subsParts/nufoInfo.scd", NTMI.g.dir);
+	LoadMe("subsParts/nUFOInfo.scd", NTMI.g.dir);
 
 	g.main.clockZone = CompositeView(w,
 		Rect(rightCol, 635 * scrscale, 300 * scrscale, 160 * scrscale)
@@ -231,16 +231,16 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 	rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
 	rMViews[2].uv.mouseDownAction = { NTMI.inph.stepWPre(-1) };
 
-	rMViews[3].label_('nUFO mode').value_(q.nufo.mode).mode_(\code);
+	rMViews[3].label_('nUFO mode').value_(q.nUFO.mode).mode_(\code);
 	rMViews[3].uv.mouseDownAction.add(\cycle, { |x|
-		NTMI.nufo.modeStep(1);
-		rMViews[3].valueAction_(q.nufo.mode);
+		NTMI.nUFO.modeStep(1);
+		rMViews[3].valueAction_(q.nUFO.mode);
 	});
 
 
-	g.main.nufoViews = [
+	g.main.nUFOViews = [
 		// g.main.imuUV,
-		g.main.nufoView,
+		g.main.nUFOView,
 		g.main.rMViews.last.uv, // mode view
 		g.main.caliBut,
 	];
@@ -249,31 +249,31 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 	g.main.skipper = SkipJack(NTMI.g.main[\winUpdate],  0.1, { w.isClosed }, name: \mainUV);
 
 	// update OSC and battery status
-	NTMI.g.main[\winUpdate].add(\nufoView, {
-		var showNufo = g.hasNufo;
-		g.main.nufoViews.do { |view|
-			if (view.visible != showNufo) {
-				view.visible = showNufo;
+	NTMI.g.main[\winUpdate].add(\nUFOView, {
+		var shownUFO = g.hasnUFO;
+		g.main.nUFOViews.do { |view|
+			if (view.visible != shownUFO) {
+				view.visible = shownUFO;
 			};
 		};
 
-		if (showNufo) {
-			if (q.nufo.timeSinceLast >= 1) {
-				NTMI.nufo.bat.calc.(0);
-				NTMI.nufo.bat.resetVals;
-				NTMI.nufo.frame.resetVals;
+		if (shownUFO) {
+			if (q.nUFO.timeSinceLast >= 1) {
+				NTMI.nUFO.bat.calc.(0);
+				NTMI.nUFO.bat.resetVals;
+				NTMI.nUFO.frame.resetVals;
 			};
 
 
 			// update battery status if new
-			if (NTMI.nufo.bat.percent != NTMI.nufo.bat.percentOld
+			if (NTMI.nUFO.bat.percent != NTMI.nUFO.bat.percentOld
 				or: { q.wifiOld != q.wifiStr
-					or: { (NTMI.nufo.frame.rateStr == NTMI.nufo.frame.rateStrOld).not }
+					or: { (NTMI.nUFO.frame.rateStr == NTMI.nUFO.frame.rateStrOld).not }
 			})
 			{
-				g.main.nufoView.refresh;
-				NTMI.nufo.bat.percentOld = NTMI.nufo.bat.percent;
-				NTMI.nufo.frame.rateStrOld = NTMI.nufo.frame.rateStr;
+				g.main.nUFOView.refresh;
+				NTMI.nUFO.bat.percentOld = NTMI.nUFO.bat.percent;
+				NTMI.nUFO.frame.rateStrOld = NTMI.nUFO.frame.rateStr;
 				q.wifiOld = q.wifiStr;
 			};
 		};
@@ -287,8 +287,8 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 			g.main.backCol = q.inph.currPresetCol;
 			g.main.w.background_(q.inph.currPresetCol);
 		};
-		if (g.hasNufo) {
-			if (q.nufo.mode != rMViews[3].label) { rMViews[3].label_(q.nufo.mode) };
+		if (g.hasnUFO) {
+			if (q.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.nUFO.mode) };
 		};
 
 		// zoom

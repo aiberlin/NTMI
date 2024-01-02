@@ -1,23 +1,23 @@
 /*
 // tests for display when changing imu/pad values:
-NTMI.nufo.padVals = { 1.0.rand } ! 8;
-NTMI.nufo.padVals = 1.0.rand ! 8;
-NTMI.nufo.padVals = 0 ! 8;
+NTMI.nUFO.padVals = { 1.0.rand } ! 8;
+NTMI.nUFO.padVals = 1.0.rand ! 8;
+NTMI.nUFO.padVals = 0 ! 8;
 
-NTMI.nufo.rawImuBiValues = { 1.0.rand } ! 9;
-NTMI.nufo.calibImuVals = NTMI.nufo.rawImuBiValues;
+NTMI.nUFO.rawImuBiValues = { 1.0.rand } ! 9;
+NTMI.nUFO.calibImuVals = NTMI.nUFO.rawImuBiValues;
 
-NTMI.nufo.rawImuBiValues = 0.5 ! 9;
-NTMI.nufo.calibImuVals = NTMI.nufo.rawImuBiValues;
+NTMI.nUFO.rawImuBiValues = 0.5 ! 9;
+NTMI.nUFO.calibImuVals = NTMI.nUFO.rawImuBiValues;
 
-NTMI.nufo.rawImuBiValues = 1 ! 9;
-NTMI.nufo.calibImuVals = NTMI.nufo.rawImuBiValues;
+NTMI.nUFO.rawImuBiValues = 1 ! 9;
+NTMI.nUFO.calibImuVals = NTMI.nUFO.rawImuBiValues;
 
 NTMI.g.main.movevals = 0.25!9;
 */
 
-NTMI.nufo.rawImuBiValues = 0.5 ! 9;
-NTMI.nufo.padVals = NTMI.nufo.padVals ? 0!8;
+NTMI.nUFO.rawImuBiValues = 0.5 ! 9;
+NTMI.nUFO.padVals = NTMI.nUFO.padVals ? 0!8;
 
 NTMI.g.main.padCols = Color.grey(0.62, 0.38) !8;
 NTMI.g.main.movevals = 0.5!9;
@@ -39,7 +39,7 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 
 	Pen.scale(myscale, myscale);
 
-	if ([\full, \touch, \binary].includes(NTMI.nufo.mode)) {
+	if ([\full, \touch, \binary].includes(NTMI.nUFO.mode)) {
 		// draw pad circles
 		centPadsL = center.copy.x_(center.x - (center.y * 1.8));
 		centPadsR = center.copy.x_(center.x + (center.y * 1.8));
@@ -65,7 +65,7 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 	};
 
 	// visualize move mode as star of 9;
-	if ([\full, \move].includes(NTMI.nufo.mode)) {
+	if ([\full, \move].includes(NTMI.nUFO.mode)) {
 		// "move mode vis".postln;
 		star = main.movevals.collect { |val, i|
 			// offset -1.25 means noseDown is lowest star axis
@@ -84,18 +84,18 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 NTMI.g.main[\winUpdate].add(\imuPad, {
 	var main = NTMI.g.main;
 
-	if (NTMI.g.hasNufo) {
+	if (NTMI.g.hasnUFO) {
 		// only if values changed!
-		if (NTMI.nufo.rawImuBiValues != NTMI.nufo.rawImuBiValuesOLD
-			or: { NTMI.nufo.padVals != NTMI.nufo.padValsOLD }) {
+		if (NTMI.nUFO.rawImuBiValues != NTMI.nUFO.rawImuBiValuesOLD
+			or: { NTMI.nUFO.padVals != NTMI.nUFO.padValsOLD }) {
 
-			main.movevals = NTMI.nufo.calibImuVals ? main.movevals;
-			if (NTMI.nufo.mode == \binary) {
+			main.movevals = NTMI.nUFO.calibImuVals ? main.movevals;
+			if (NTMI.nUFO.mode == \binary) {
 				main.padCols = NTMI.bin.bins.collect { |val, i|
 					Color.white.alpha_(val);
 				};
 			} {
-				main.padCols = NTMI.nufo.padVals.collect { |val, i|
+				main.padCols = NTMI.nUFO.padVals.collect { |val, i|
 					// now opposite Color.hsv
 					Color.fromArray(NTMI.inph.currCounterCol * val);
 					// was always yellow
@@ -104,7 +104,7 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 			};
 			main.imuUV.refresh;
 		};
-		NTMI.nufo.rawImuBiValuesOLD = NTMI.nufo.rawImuBiValues;
-		NTMI.nufo.padValsOLD = NTMI.nufo.padVals;
+		NTMI.nUFO.rawImuBiValuesOLD = NTMI.nUFO.rawImuBiValues;
+		NTMI.nUFO.padValsOLD = NTMI.nUFO.padVals;
 	};
 });
