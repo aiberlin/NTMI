@@ -27,33 +27,7 @@ nk2: stop, play, rec:  rand, prev, next MainFX preset
 
 - top row(s) of buttons still unused.
 
-NTMI.nanoKtl[\setAbs].cs
-MKtl.all
-NTMI.nanoKtl = nil;
-NTMI.nanoKtl.setAbs
-NTMI.nanoKtl.setRel
-NTMI.zooms.nanoKtl = 0.5
-
 ***********/
-
-NTMI.nanoKtl = NTMI.nanoKtl ? ();
-NTMI.nanoKtl.influxMode = NTMI.nanoKtl.influxMode ? \setRel;
-NTMI.zooms.nanoKtl = NTMI.zooms.nanoKtl ? 1;
-"*** NTMI.nanoKtl.influxMode: %, zoom: %.\n".postf(NTMI.nanoKtl.influxMode, NTMI.zooms.nanoKtl);
-
-// switch influxMode:
-NTMI.nanoKtl.setAbs = {
-	NTMI.nanoKtl.influxMode = \setAbs;
-	"*** NTMI.nanoKtl.influxMode is now setAbs:".postln;
-	"//// influx inputs are % to %. \n\n".postf(
-		*NTMI.inph.sliderOffset + 1 + [0, NTMI.nanoKtl.elAt(\inflSet).size]);
-};
-NTMI.nanoKtl.setRel = {
-	NTMI.nanoKtl.influxMode = \setRel;
-	"*** NTMI.nanoKtl.influxMode is now setRel:".postln;
-	"//// influx inputs are % to %. \n\n".postf(
-		*NTMI.inph.sliderOffset + 1 + [0, NTMI.nanoKtl.elAt(\inflSet).size]);
-};
 
 
 if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
@@ -108,8 +82,35 @@ if (MKtlLookup.findByIDInfo("nanoKONTROL").size > 0) {
 	MKtl(\nanoKtl).addNamed(\rand_pre, MKtl(\nanoKtl).elAt(\tr, \play));
 	MKtl(\nanoKtl).addNamed(\next_pre, MKtl(\nanoKtl).elAt(\tr, \rec));
 
-	// };
 };
+
+// *** add local settings and functions to nanoKtl ***
+// local zoom value:
+MKtl(\nanoKtl).addSpec(\zoom, [0, 4, \amp]);
+MKtl(\nanoKtl).addHalo(\zoom, 1);
+
+// allow direct access of halo via NTMI:
+NTMI.nanoKtl = MKtl(\nanoKtl).getHalo;
+// and access like this
+NTMI.nanoKtl.zoom.postln;
+
+// flag whether to use influx in relative or absolute mode:
+// (there could be more modes, e.g. softAbs ...)
+NTMI.nanoKtl.influxMode = \setRel;
+
+// set functions for the two supported modes:
+NTMI.nanoKtl.setRel = {
+	MKtl(\nanoKtl).getHalo.influxMode = \setRel;
+	"nanoKtl influxMode is now: %\n.".postf(\setRel);
+};
+NTMI.nanoKtl.setAbs = {
+	MKtl(\nanoKtl).getHalo.influxMode = \setAbs;
+	"nanoKtl influxMode is now: %\n.".postf(\setAbs);
+};
+// read and set:
+NTMI.nanoKtl.influxMode;
+NTMI.nanoKtl.setRel;
+
 
 MKtl(\nanoKtl).elAt(\inflSet).do(_.value = 0.5);
 
@@ -156,13 +157,12 @@ MKtl(\nanoKtl).elAt(\inflSet).do { |sl, i|
 		if (NTMI.nanoKtl.influxMode == \setAbs) {
 			var name = NTMI.inphlux.inNames[i];
 			\setAbs.postln;
-			NTMI.inphlux.set(name, sl.value.unibi * NTMI.zooms.nanoKtl);
+			NTMI.inphlux.set(name, sl.value.unibi * NTMI.nanoKtl.zoom);
 		} {
 			// setRel, also default
-			\setRel.postln;
 			MFdef(\setRelInf).(inphInIndex,
-				(sl.prevValue - sl.value).clip2(0.0315),
-				NTMI.zoom * NTMI.zooms.nanoKtl
+				(sl.prevValue - sl.value).clip2(0.05),
+				NTMI.zoom * NTMI.nanoKtl.zoom
 			)
 		}
 	}
