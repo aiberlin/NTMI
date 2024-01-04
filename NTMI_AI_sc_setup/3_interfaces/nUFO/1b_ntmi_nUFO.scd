@@ -39,13 +39,17 @@ MKtl(\nUFO).elementsDict.do { |el| el.action.enable(\post) };
 (
 // use this dict for everything osc related
 NTMI.nUFO = NTMI.nUFO ? ();
-NTMI.nUFO.nUFO = NTMI.nUFO.nUFO ? ();
-
 
 ///////// make a new nUFO MKtl from desc in
 // ".../0_globals/3_ai-ntmi.desc.scd"
 MKtl.all.at(\nUFO).free;
 MKtl(\nUFO, "ai-ntmi");
+// should be nil
+MKtl(\nUFO).getHalo;
+// then use existing NTMI.nUFO as Halo dict:
+Halo.lib.put(MKtl(\nUFO), NTMI.nUFO);
+// chanck it is there:
+MKtl(\nUFO).getHalo;
 
 
 // send login message to nUFO, so it knows where to send
