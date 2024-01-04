@@ -36,7 +36,7 @@ MFdef(\nUFOImuFunc).add(\setAbs, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
 	var calibImuValsBi = imuInvalsBi - NTMI.nUFO.zero.imu;
 	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
-		var value = calibImuValsBi[i] * NTMI.nUFO.zoom;
+		var value = calibImuValsBi[i];
 		[name, value]
 	}.flat;
 	NTMI.nUFO.rawImuBiValues = imuInvalsBi;
@@ -78,7 +78,7 @@ MFdef(\capsToInph).add(\setAbs, {
 	var padVals = NTMI.nUFO.padVals;
 	var padInNames = NTMI.inphlux.getHalo(\padNames);
 	var keysValues = padVals.collect { |padval, i|
-		[ padInNames[i], padval * NTMI.nUFO.zoom]
+		[ padInNames[i], padval]
 	}.flat;
 	NTMI.inphlux.set(*keysValues);
 });
@@ -144,12 +144,16 @@ NTMI.nUFO.capsin.add(\set, { |coll|
 	}
 });
 
-NTMI.nUFO.setInfFromPad
-
-// individual pad action - useful for guis only
-/// do global set only once, from MFdef(\touchToInph)
-MKtl(\nUFO).elAt(\cap).action = {
-	// just trigger main nufo2influx func
-};
+// // individual pad action - useful for guis only
+// /// do global set only once, from MFdef(\touchToInph)
+// MKtl(\nUFO).elAt(\cap).do { |pad, i|
+// 	pad.action.add(\setAbs, {|ana|
+// 		var name = 	NTMI.inphlux.getHalo(\padNames).clipAt(i);
+// 		NTMI.inphlux.set(name, ana.value.pow(3));
+// 		//.pow(6));
+// 		// the pow(6) helps toflatten the steep curve of the FSRs as they are now.
+// 		ana.value
+// 	})
+// };
 );
 

@@ -33,7 +33,8 @@ NTMI.nUFO.setRel;
 ***/
 
 (
-NTMI.nUFO.zoom = NTMI.nUFO.zoom ? 1;
+NTMI.zooms = NTMI.zooms ? ();
+NTMI.zooms.nUFO = NTMI.zooms.nUFO ? 1;
 
 MFdef(\nUFOImuFunc).add(\setRel, {
 	var imu = MKtl(\nUFO).elAt(\imu9);
@@ -51,7 +52,7 @@ MFdef(\nUFOImuFunc).add(\setRel, {
 	MFdef(\setRelInf).(
 		(0..diffs.size-1) + 8,
 		diffs,
-		NTMI.inphlux.inScaler * NTMI.nUFO.zoom
+		NTMI.inphlux.inScaler * NTMI.zooms.nUFO
 	);
 }, false);
 MFdef(\nUFOImuFunc).disable(\setRel);
@@ -87,7 +88,7 @@ MFdef(\capsToInph).add(\setRel, {
 	MFdef(\setRelInf).(
 		(0..diffs.size-1), // no offset for pads
 		diffs,
-		NTMI.inphlux.inScaler * NTMI.nUFO.zoom
+		NTMI.inphlux.inScaler * NTMI.zooms.nUFO
 	);
 
 }, false);
