@@ -13,17 +13,29 @@ MAIN VOLUME
 make userViews here, make their drawFuncs MFuncs
 extra files only add to these MFuncs.
 
-	NTMI.g.main.w.close; WinBounds.showOrMake('Main_NTMI');
-};
-
 
 NTMI.g.main.test(Rect(0,0, 1800, 1169));
+// bottom row could be higher, align with frontUV?
+// mid zone could be less wide
+
+
 NTMI.g.main.test(Rect(0,0, 1512, 944));
+// default mz laptop size, looks good,
+// SNAP needs fix,
+// fonts are somewhat too big, dont scale when nams change
+
+NTMI.g.main.test(Rect(0,0, 1200, 900));
+// default mz laptop size, looks good,
+// SNAP needs fix,
+// fonts are somewhat too big, dont scale when nams change
+
 NTMI.g.main.test(Rect(0,0,1024, 768));
+
 // look wrong:
 NTMI.g.main.test(Rect(0,0,1024, 600));
 // horizontal div is bad, bottom line can go to bottom
 // text sizes in MViews and pad sizes dont scale well
+
 NTMI.g.main.test(Rect(0,0,800, 480));
 // very bad, meter should move right
 
@@ -34,6 +46,20 @@ NTMI.g.dir = thisProcess.nowExecutingPath.dirname; // ++ "xxx";
 
 // subdict for all Main_NTMI window items
 NTMI.g.main = NTMI.g.main ? ();
+
+// test different screen resolutions:
+NTMI.g.main.test = { |main, rect|
+	WinBounds.stored.removeAt('Main_NTMI');
+	NTMI.g.bounds = rect;
+	Window.closeAll;
+	NTMI.g.main.w.close;
+	WinBounds.showOrMake('Main_NTMI');
+
+	Butz.style.font.size = (18 * (NTMI.g.screenScale ** 0.5)).round;
+	"Butz font: %\n\n".postf(Butz.style.font.postcs);
+	Butz.show.w.moveTo(2, NTMI.g.bounds.height - Butz.w.bounds.height);
+};
+
 
 // style, look, feel variables
 NTMI.g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
@@ -66,13 +92,15 @@ WinBounds.addMake('Main_NTMI', {
 
 	var bounds = NTMI.g.bounds;
 	var wheight = bounds.height, wwidth = bounds.width;
-	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
+	// macbook pro default
+	var scrscale = min(bounds.width / 1512, bounds.height / 944);
 
 	// define geometric constraints for good scaling of window -
 	// absolute numbers, dont scale:
-	var leftMinWidth = 130 + 10;
-	var topMinHeight = ServerMeterView.height; // 230;
-	var botMinHeight = 120; // 230;
+	// shrink butz width for small screens
+	var leftMinWidth = NTMI.g.bounds.width.linlin(480, 1200, 80, 130).postln;
+	var topMinHeight = NTMI.g.bounds.height.linlin(480, 1200, 150, 230);
+	var botMinHeight = NTMI.g.bounds.height.linlin(480, 1200, 0, 230);
 	var meterWidth = ServerMeterView.getWidth(NTMI.numIns, NTMI.numChans, s);
 	var scopeWidth = 264;
 	var frontUVSize = bounds.height / 2 - topMinHeight;
@@ -95,7 +123,7 @@ WinBounds.addMake('Main_NTMI', {
 	var nUFOView, recBut;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
-
+	"leftMinWidth: %, botMinHeight: %\n".postf(leftMinWidth, botMinHeight);
 
 	///// then make the window:
 	w = Window(name, bounds).front.alpha_(NTMI.g.alpha ? 0.8);
@@ -228,7 +256,7 @@ WinBounds.addMake('Main_NTMI', {
 		["¡SNAP!", Color.white, Color.red]
 	])
 	.action_(MFdef(\snapshot))
-	.font_(fatfont);
+	.font_(fatfont.copy);
 
 	MFdef(\snapshot).add(\show, {
 		if (main.w.isClosed.not) {

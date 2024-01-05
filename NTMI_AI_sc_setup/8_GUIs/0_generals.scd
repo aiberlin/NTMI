@@ -12,8 +12,8 @@ NTMI.close = { |dict, name|	try { Window.find(name).close } };
 // e.g. NTMI.g.bounds = Rect(0,0,1024, 768);
 g.bounds = g.bounds ? Window.availableBounds;
 
-g.screenScale = min(g.bounds.width / 1920,
-	Window.availableBounds.height / 1177);
+NTMI.g.screenScale = { min(g.bounds.width / 1920,
+	Window.availableBounds.height / 1177 ) };
 
 // make MKtlGUIs fit on raspi screen,
 // needed for nanoKtl:
