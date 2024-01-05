@@ -13,6 +13,24 @@ MAIN VOLUME
 make userViews here, make their drawFuncs MFuncs
 extra files only add to these MFuncs.
 
+// test different screen resolutions:
+WinBounds.stored.removeAt('Main_NTMI');
+NTMI.g.main.test = { |main, rect|
+	NTMI.g.bounds = rect;
+	NTMI.g.main.w.close; WinBounds.showOrMake('Main_NTMI');
+};
+
+
+NTMI.g.main.test(Rect(0,0, 1800, 1169));
+NTMI.g.main.test(Rect(0,0, 1512, 944));
+NTMI.g.main.test(Rect(0,0,1024, 768));
+// look wrong:
+NTMI.g.main.test(Rect(0,0,1024, 600));
+// horizontal div is bad, bottom line can go to bottom
+// text sizes in MViews and pad sizes dont scale well
+NTMI.g.main.test(Rect(0,0,800, 480));
+// very bad, meter should move right
+
 */
 
 // gui code directory
