@@ -180,9 +180,9 @@ Task {
 			} {
 				WinBounds.showOrMake(\miniNTMI);
 			};
-		};
 
-		LoadMe("9_demos/*scd");
+			LoadMe("9_demos/*scd");
+		};
 
 
 		"*** NTMI.finalSetup runs.".postln;

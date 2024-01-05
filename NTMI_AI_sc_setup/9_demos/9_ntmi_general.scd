@@ -12,6 +12,7 @@ nUFO, nanoKtl, uc4, ferrari
 Butz(\NTMI_DEMO).clear;
 Butz(\NTMI_DEMO).add(\showAll, { Butz.run('Tdef.all') });
 Butz(\NTMI_DEMO).add(\Demo_GUI, { Tdef(\NTDemo_GUI).play });
+Butz(\NTMI_DEMO).add(\Demo_nanoKtl, { Butz.run('\NTDemo_nanoKtl.all') });
 Butz(\NTMI_DEMO).add(\Demo_Presets, { Tdef(\NTDemo_Presets).play });
 Butz(\NTMI_DEMO).add(\Demo_Influx, { Tdef(\NTDemo_Influx).play });
 Butz(\NTMI_DEMO).add(\Demo_MainFX, { Tdef(\NTDemo_MainFX).play });
