@@ -7,149 +7,188 @@ butz slot1  nUFO  nUFO   zoom
 butz slot2    CENTER     preUp
 butz slot3    CENTER     preDn
 butz slot4  nUFO  nUFO   nufmod
-            MAINFX RAND
-            MAIN VOLUME
+MAINFX RAND
+MAIN VOLUME
 
-make userViews here, make their drawFunc MFunc
-extra files only add to these MFuncs then
+make userViews here, make their drawFuncs MFuncs
+extra files only add to these MFuncs.
+
 */
 
-var g = NTMI.g;
-var q = NTMI.q;
+// gui code directory
+NTMI.g.dir = thisProcess.nowExecutingPath.dirname; // ++ "xxx";
 
+// subdict for all Main_NTMI window items
+NTMI.g.main = NTMI.g.main ? ();
 
-g.main = g.main ? ();
-g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
-
-
-// quick and dirty removal of nUFO from gui:
-g.hasnUFO = { MKtl.all[\nUFO].notNil };
-NTMI.nUFO = NTMI.nUFO ? ();
-NTMI.nUFO.bat = NTMI.nUFO.bat ? ();
-NTMI.nUFO.frame = NTMI.nUFO.frame ? ();
-q.nUFO = q.nUFO ? ();
-q.nUFO.timeSinceLast = 0.2;
-
-NTMI.g.dir = thisProcess.nowExecutingPath.dirname;
+// style, look, feel variables
+NTMI.g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
+NTMI.g.alpha = NTMI.g.alpha ? 0.8;
 
 NTMI.g.main.winUpdate = MFunc();
 NTMI.g.main.imuFunc = MFunc();
 
-WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 
-	var w, butGrey = g.butGrey, butGreen = g.butGreen;
-	var bounds = g.bounds;
-	var wheight = g.bounds.height, wwidth = g.bounds.width;
+// nUFO - allow for removal of nUFO views from gui:
+NTMI.g.hasnUFO = { MKtl.all[\nUFO].notNil };
+NTMI.nUFO = NTMI.nUFO ? ();
+
+NTMI.nUFO.bat = NTMI.nUFO.bat ? ();
+NTMI.nUFO.frame = NTMI.nUFO.frame ? ();
+NTMI.nUFO.timeSinceLast = NTMI.nUFO.timeSinceLast ? 0.2;
+
+NTMI.nUFO.modes = NTMI.nUFO.modes ? [\full, \touch, \binary]; //
+NTMI.nUFO.modeIndex = NTMI.nUFO.modeIndex ? 0;
+NTMI.nUFO.mode = NTMI.nUFO[\mode] ? { NTMI.nUFO.modes.wrapAt(NTMI.nUFO.modeIndex) };
+
+
+WinBounds.addMake('Main_NTMI', {
+
+	var main = NTMI.g.main;
+	var name = 'Main_NTMI';
+	// style vars
+	var butGrey = NTMI.g.butGrey, butGreen = NTMI.g.butGreen;
+	var font = NTMI.g.font, fatfont = NTMI.g.fatfont;
+
+	var bounds = NTMI.g.bounds;
+	var wheight = bounds.height, wwidth = bounds.width;
 	var scrscale = min(bounds.width / 1920, bounds.height / 1177);
 
-	var font = Font(g.fontName, (36 * scrscale).round);
-	var fatfont = Font(g.fontName, (72 * scrscale).round);
+	// define geometric constraints for good scaling of window -
+	// absolute numbers, dont scale:
+	var leftMinWidth = 130 + 10;
+	var topMinHeight = ServerMeterView.height; // 230;
+	var botMinHeight = 120; // 230;
+	var meterWidth = ServerMeterView.getWidth(NTMI.numIns, NTMI.numChans, s);
+	var scopeWidth = 264;
+	var frontUVSize = bounds.height / 2 - topMinHeight;
+	var marg = 6;
+
+	var colHeight = wheight - topMinHeight - botMinHeight;
+
+	var leftColWidth = bounds.width / 2 - frontUVSize - marg - leftMinWidth;
+	var leftColRect = Rect(leftMinWidth, topMinHeight, leftColWidth, colHeight);
+
+	var midRightColLeft = bounds.width / 2 + frontUVSize + marg;
+	var rightColWidth = bounds.width  - midRightColLeft / 2 - marg;
+	var midRightColRect = Rect(midRightColLeft, topMinHeight, rightColWidth, colHeight);
+
+	var rightColRect = midRightColRect.copy.left_(midRightColRect.right + marg);
+
+	// define all window and view variables
+	var w, leftCol, midRightCol, rightCol;
 	var center, centPadsL, padsLPos, centPadsR, padsRPos;
-
-	var rightCol = bounds.width - ( bounds.width - bounds.height / 2) + (30 * scrscale);
-
 	var nUFOView, recBut;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
 
-	NTMI.g.font = font; NTMI.g.fatfont = fatfont;
-	// quick fix so we can keep nUFO graphics when no nUFO present
-	NTMI.nUFO = NTMI.nUFO ? ();
-	NTMI.nUFO.modes = NTMI.nUFO.modes ? [\full, \touch, \binary]; //
-	NTMI.nUFO.modeIndex = NTMI.nUFO.modeIndex ? 0;
-	NTMI.nUFO.mode = NTMI.nUFO[\mode] ? { NTMI.nUFO.modes.wrapAt(NTMI.nUFO.modeIndex) };
 
-	w = Window(name, bounds).front;
-	g.main.w = w;
-	g.main.w.background_(q.inph.currPresetCol);
-	g.main.w.alpha_(g.alpha ? 0.8);
+	///// then make the window:
+	w = Window(name, bounds).front.alpha_(NTMI.g.alpha ? 0.8);
+	w.background_(NTMI.inph.currPresetCol);
+	NTMI.g.main.w = w;
 
+	NTMI.g.main.marg = marg;
+
+	////////////
+	// 	// then negotiate and make all zones ...
+
+
+	// then make the zones
 	//// CENTER ZONES:
-
-	NTMI.g.main.bigUVBounds = Rect.aboutPoint( w.view.bounds.center, wheight * 0.5, wheight * 0.5);
-	NTMI.g.main.bigUV = UserView(w, g.main.bigUVBounds).background_(Color.clear).canFocus_(false);
-	NTMI.g.main.bigUVMFunc = MFunc();
-	NTMI.g.main.bigUV.drawFunc = NTMI.g.main.bigUVMFunc;
-
+	// bigUV - the background center square for the circle and mainFX name:
+	main.bigUVBounds = Rect.aboutPoint( bounds.center, wheight * 0.5, wheight * 0.5);
+	main.bigUV = UserView(w, main.bigUVBounds)
+	.canFocus_(false);
+	main.bigUVMFunc = MFunc();
+	main.bigUV.drawFunc = main.bigUVMFunc;
 	LoadMe("subsParts/bigUV.scd", NTMI.g.dir);
 
-	NTMI.g.main.imuUVBounds = Rect.aboutPoint( w.view.bounds.center, 240 * scrscale, 300 * scrscale);
-	NTMI.g.main.imuUV = UserView(w, g.main.imuUVBounds).background_(Color.clear).canFocus_(false);
-	NTMI.g.main.imuUVMFunc = MFunc();
-	NTMI.g.main.imuUV.drawFunc = NTMI.g.main.imuUVMFunc;
+	main.frontUVBounds =
+	Rect.aboutPoint( bounds.center, frontUVSize, frontUVSize);
+
+	main.imuUV = UserView(w, main.frontUVBounds)
+	.canFocus_(false);
+	main.imuUVMFunc = MFunc();
+	main.imuUV.drawFunc = main.imuUVMFunc;
 
 	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
-	NTMI.g.main.frontText = StaticText(NTMI.g.main.w, NTMI.g.main.imuUV.bounds);
-	NTMI.g.main.frontText.align_(\center).font_(NTMI.g.fatfont);
+	// for the demo:
+	main.frontText = StaticText(main.w, main.imuUV.bounds);
+	main.frontText.align_(\center).font_(fatfont);
 	NTMI.g.setFrontText = { |q, text=""|
 		defer {
 			"*** frontText:  ".post;
-			NTMI.g.main.frontText.string = text.asString.postln; };
+			main.frontText.string = text.asString.postln; };
 	};
 
+	// 	//// TOP LINE ZONES:
 
-	//// TOP LINE ZONES:
-
+	main.stethoBounds = Rect(leftMinWidth, 0, scopeWidth, topMinHeight);
 	LoadMe("subsParts/stetho.scd", NTMI.g.dir);
 
-	NTMI.g.main.meterCenterTop = NTMI.g.main.w.bounds.center.x @ 0;
+	main.meterCenterTop = main.w.bounds.center.x @ 0;
 	LoadMe("subsParts/meter.scd", NTMI.g.dir);
 
-	//// RIGHT COLUMN:
 
-	g.main.rightColumn = CompositeView(w,
-		Rect(rightCol, 0, 300 * scrscale, bounds.height)
-	);
+	leftCol = CompositeView(w, leftColRect);
+	midRightCol  = CompositeView(w, midRightColRect);
 
-	NTMI.g.main.nUFOZone = CompositeView(g.main.rightColumn,
-		Rect(0, 330 * scrscale, 300 * scrscale, 300 * scrscale));
+
+	main.rightCol = rightCol = CompositeView(w, rightColRect);
+	rightCol;
+
+	main.nUFOZone = CompositeView(main.rightCol,
+		Rect(0, 0, rightColWidth, rightCol.bounds.height / 3));
 	LoadMe("subsParts/nUFOInfo.scd", NTMI.g.dir);
 
-	g.main.clockZone = CompositeView(w,
-		Rect(rightCol, 635 * scrscale, 300 * scrscale, 160 * scrscale)
-	).background_(Color.grey(1.0, 0.1));
+	main.clockZone = CompositeView(main.rightCol,
+		Rect(0, main.nUFOZone.bounds.height,
+			rightColWidth, rightCol.bounds.height / 3)
+	)
+	.background_(Color.grey(1.0, 0.1)
+	);
 
 	LoadMe("subsParts/clock.scd", NTMI.g.dir);
 
-	g.main.recZone = CompositeView(w,
-		Rect(rightCol, 800 * scrscale, 300 * scrscale, 160 * scrscale)
+	main.recZone = CompositeView(main.rightCol,
+		Rect(0, rightCol.bounds.height * 2 / 3,
+			rightColWidth, rightCol.bounds.height / 3)
 	).background_(Color.grey(1.0, 0.1));
 
 	LoadMe("subsParts/recButs.scd", NTMI.g.dir);
 
+	main.mainHeight = bounds.height - main.frontUVBounds.bottom - 40 / 2;
+	main.mainHeight.postln;
+	main.mainRect = Rect(
+		main.frontUVBounds.left,
+		main.frontUVBounds.bottom + (marg * 0.5),
+		main.frontUVBounds.width,
+		main.mainHeight
+	).postln;
 
-	if (q.usesMainFX) {
-		g.main.fxZone = CompositeView(w,
-			Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.85),
-				250 * scrscale, 50 * scrscale));
+
+	if (NTMI.usesMainFX) {
+		main.fxZone = CompositeView(w, main.mainRect);
 		LoadMe("subsParts/mainFXBut.scd", NTMI.g.dir);
+		main.mainRect = main.mainRect.moveBy(0, main.mainRect.height + 2);
 	};
-
-	NTMI.g.main.mainVolZone = CompositeView(w,
-		Rect.aboutPoint( (wwidth * 0.5) @( wheight * 0.94), 250 * scrscale, 50 * scrscale)
-	);
-
+	main.mainVolZone = CompositeView(w, main.mainRect);
 	LoadMe("subsParts/mainVol.scd", NTMI.g.dir);
 
-	NTMI.g.main[\winUpdate].add(\main, NTMI.g.main[\updateMainVol]);
 
-	g.main.leftMVZone = CompositeView(w,
-		Rect(200 * scrscale,
-			w.bounds.center.y + (3 + 1 * -80 * scrscale),
-			500 * scrscale,
-			160 * 4 * scrscale
-		)
-	);
+	main[\winUpdate].add(\main, main[\updateMainVol]);
 
+	NTMI.g.main.leftMVZone = leftCol;
 	LoadMe("subsParts/slotGuis.scd", NTMI.g.dir);
 
 	////// the 4 mviews on the right -  remove n eventually
-	rMViews = [ 3, 1, -1, -3].collect { |offset, i|
-		var top = bounds.center.y + (offset + 1 * -80 * scrscale);
-		var left = bounds.width * 0.64 + (offset.abs * 0 * scrscale);
+	rMViews = 4.collect { |i|
 		var initval = [1.0, \pre_1, '¿-?', \move][i];
-		var emmy = MView(nil, w, Rect(left, top, 320 * scrscale, 150 * scrscale));
+		var height = rightColRect.height / 4;
+		var rect = Rect(0, height * i, rightColRect.width, height - marg);
+		var emmy = MView(nil, midRightCol, rect);
 		emmy.dict[\knobCol] = Color.grey(0, 0.6);
 		emmy.uv.alpha = 0.8;
 		emmy.uv.resize_(1);
@@ -163,14 +202,14 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 		});
 		emmy;
 	};
-	g.main.rMViews = rMViews;
+	main.rMViews = rMViews;
 
 	// snapshot button
-	NTMI.g.main.snapBounds = (220@80 * scrscale).asRect
-	.right_(NTMI.g.main.leftMVZone.bounds.right)
-	.bottom_(NTMI.g.main.leftMVZone.bounds.top);
+	main.snapBounds = (220@80 * scrscale).asRect
+	.right_(main.leftMVZone.bounds.right)
+	.bottom_(main.leftMVZone.bounds.top);
 
-	g.main.snapBut = Button(g.main.w, g.main.snapBounds)
+	main.snapBut = Button(main.w, main.snapBounds)
 	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
 		["¡SNAP!", Color.white, Color.red]
 	])
@@ -178,17 +217,17 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 	.font_(fatfont);
 
 	MFdef(\snapshot).add(\show, {
-		if (g.main.w.isClosed.not) {
-			defer { try { g.main.snapBut.value_(1);
+		if (main.w.isClosed.not) {
+			defer { try { main.snapBut.value_(1);
 				MFdef(\guiSlots).value;
 			} };
-			defer ({ try { g.main.snapBut.value_(0) } }, 1);
+			defer ({ try { main.snapBut.value_(0) } }, 1);
 		};
 	});
 
 	///// unify all mview behaviours :
 
-	[g.main.ndefMViews, rMViews].flat.do { |mv|
+	[main.ndefMViews, rMViews].flat.do { |mv|
 
 		mv.dict.font.size = 48 * scrscale;
 
@@ -213,52 +252,53 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 		mv.uv.focus(false).refresh;
 	};
 
-	NTMI.g.main[\winUpdate].add(\inphPre, {
-		if (q.inph.presIndex != rMViews[1].value) {
+	main[\winUpdate].add(\inphPre, {
+		if (NTMI.inph.presIndex != rMViews[1].value) {
 			protect {
-				rMViews[1].value_(q.inph.presIndex);
-				rMViews[2].value_("seed" + q.inph.randSeeds[q.inph.presIndex]);
+				rMViews[1].value_(NTMI.inph.presIndex);
+				rMViews[2].value_("seed" + NTMI.inph.randSeeds[NTMI.inph.presIndex]);
+				NTMI.g.main.bigUVUpdate;
 			}
 		}
 	});
 
-	rMViews[0].action.add(\setzoom, { |mv| q.setZoom(mv.value) });
-	rMViews[0].label_(\zoom).value_(q.zoom).putDict(\myspec, \zoom.asSpec);
+	rMViews[0].action.add(\setzoom, { |mv| NTMI.setZoom(mv.value) });
+	rMViews[0].label_(\zoom).value_(NTMI.zoom).putDict(\myspec, \zoom.asSpec);
 
-	rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(q.inph.presIndex);
+	rMViews[1].label_(\preUp).putDict(\myspec, [0, 7, \lin, 1]).value_(NTMI.inph.presIndex);
 	rMViews[1].uv.mouseDownAction = { NTMI.inph.stepWPre(1) };
 
-	rMViews[2].label_(\preDown).mode_(\code).value_(q.inph.randSeeds[q.inph.presIndex]);
+	rMViews[2].label_(\preDown).mode_(\code).value_(NTMI.inph.randSeeds[NTMI.inph.presIndex]);
 	rMViews[2].uv.mouseDownAction = { NTMI.inph.stepWPre(-1) };
 
-	rMViews[3].label_('nUFO mode').value_(q.nUFO.mode).mode_(\code);
+	rMViews[3].label_('nUFO mode').value_(NTMI.nUFO.mode).mode_(\code);
 	rMViews[3].uv.mouseDownAction.add(\cycle, { |x|
 		NTMI.nUFO.modeStep(1);
-		rMViews[3].valueAction_(q.nUFO.mode);
+		rMViews[3].valueAction_(NTMI.nUFO.mode);
 	});
 
 
-	g.main.nUFOViews = [
-		// g.main.imuUV,
-		g.main.nUFOView,
-		g.main.rMViews.last.uv, // mode view
-		g.main.caliBut,
+	main.nUFOViews = [
+		// main.imuUV,
+		main.nUFOView,
+		main.rMViews.last.uv, // mode view
+		main.caliBut,
 	];
 
-	g.main.skipper.stop;
-	g.main.skipper = SkipJack(NTMI.g.main[\winUpdate],  0.1, { w.isClosed }, name: \mainUV);
+	main.skipper.stop;
+	main.skipper = SkipJack(main[\winUpdate],  0.1, { w.isClosed }, name: \mainUV);
 
 	// update OSC and battery status
-	NTMI.g.main[\winUpdate].add(\nUFOView, {
-		var shownUFO = g.hasnUFO;
-		g.main.nUFOViews.do { |view|
+	main[\winUpdate].add(\nUFOView, {
+		var shownUFO = NTMI.g.hasnUFO;
+		main.nUFOViews.do { |view|
 			if (view.visible != shownUFO) {
 				view.visible = shownUFO;
 			};
 		};
 
 		if (shownUFO) {
-			if (q.nUFO.timeSinceLast >= 1) {
+			if (NTMI.nUFO.timeSinceLast >= 1) {
 				NTMI.nUFO.bat.calc.(0);
 				NTMI.nUFO.bat.resetVals;
 				NTMI.nUFO.frame.resetVals;
@@ -267,36 +307,37 @@ WinBounds.addMake('Main_NTMI', { |dict, name = 'Main_NTMI'|
 
 			// update battery status if new
 			if (NTMI.nUFO.bat.percent != NTMI.nUFO.bat.percentOld
-				or: { q.wifiOld != q.wifiStr
+				or: { NTMI.wifiOld != NTMI.wifiStr
 					or: { (NTMI.nUFO.frame.rateStr == NTMI.nUFO.frame.rateStrOld).not }
 			})
 			{
-				g.main.nUFOView.refresh;
+				main.nUFOView.refresh;
 				NTMI.nUFO.bat.percentOld = NTMI.nUFO.bat.percent;
 				NTMI.nUFO.frame.rateStrOld = NTMI.nUFO.frame.rateStr;
-				q.wifiOld = q.wifiStr;
+				NTMI.wifiOld = NTMI.wifiStr;
 			};
 		};
 	});
 
 
-	NTMI.g.main[\winUpdate].add(\modeZoom, {
+	main[\winUpdate].add(\modeZoom, {
 		// inphlux mode to color and mview labels and values
-		if (g.main.backCol != q.inph.currPresetCol) {
+		if (main.backCol != NTMI.inph.currPresetCol) {
 			// "refresh win color.".postln;
-			g.main.backCol = q.inph.currPresetCol;
-			g.main.w.background_(q.inph.currPresetCol);
+			main.backCol = NTMI.inph.currPresetCol;
+			main.w.background_(NTMI.inph.currPresetCol);
+			/// main.g.bigUV.refresh;
 		};
-		if (g.hasnUFO) {
-			if (q.nUFO.mode != rMViews[3].label) { rMViews[3].label_(q.nUFO.mode) };
+		if (NTMI.g.hasnUFO) {
+			if (NTMI.nUFO.mode != rMViews[3].label) { rMViews[3].label_(NTMI.nUFO.mode) };
 		};
 
 		// zoom
-		if ( q.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = q.zoom };
+		if ( NTMI.zoom.absdif( rMViews[0].value) > 0.001 ) { rMViews[0].valueAction = NTMI.zoom };
 
 	});
 
-	NTMI.g.main[\winUpdate].add(\slots, NTMI.g.main[\updateSlots]);
+	main[\winUpdate].add(\slots, main[\updateSlots]);
 
-	NTMI.g.main.w
+	w
 });

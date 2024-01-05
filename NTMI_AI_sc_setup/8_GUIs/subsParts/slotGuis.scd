@@ -48,7 +48,7 @@ popMVs = 4.collect { |i|
 	var left = 0;
 	var top = zonebounds.height / 4 * i;
 	var width = zonebounds.width;
-	var height = zonebounds.height / 4;
+	var height = zonebounds.height / 4 - NTMI.g.main.marg;
 
 	var emmy = MView(0.25, NTMI.g.main.leftMVZone, Rect(left, top, width, height));
 	var pop = PopUpMenu(NTMI.g.main.leftMVZone,

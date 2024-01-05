@@ -1,5 +1,6 @@
 // rescale stethoscope height
 
+var stethoBounds = NTMI.g.main.stethoBounds;
 NTMI.g.scaleStetho = { |g, stetho, height = 200|
 	var scopeV = stetho.scopeView;
 	var cycleSl = stetho.view.children[5];
@@ -13,7 +14,7 @@ NTMI.g.scaleStetho = { |g, stetho, height = 200|
 NTMI.g.main.stetho = Stethoscope(s, NTMI.numChans, view: NTMI.g.main.w.view);
 // resize quick and dirty
 defer ({
-	NTMI.g.main.stetho.view.bounds_(Rect(130, 0.0, 250.0, 250.0));
-	NTMI.g.scaleStetho(NTMI.g.main.stetho, 230 * NTMI.g.screenScale);
+	NTMI.g.main.stetho.view.bounds_(stethoBounds);
+	NTMI.g.scaleStetho(NTMI.g.main.stetho, stethoBounds.height * NTMI.g.screenScale);
 
 }, 0.1);
