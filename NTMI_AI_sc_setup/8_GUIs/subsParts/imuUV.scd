@@ -14,6 +14,22 @@ NTMI.nUFO.rawImuBiValues = 1 ! 9;
 NTMI.nUFO.calibImuVals = NTMI.nUFO.rawImuBiValues;
 
 NTMI.g.main.movevals = 0.25!9;
+
+
+NTMI.g.main.imuUV = UserView(nil, 666@666).front;
+NTMI.g.main.imuUV.drawFunc = NTMI.g.main.imuUVMFunc;
+
+
+nUFO pad dimensions:
+area outerpads: w: 12.5, h: 9.5
+area innerpads: w: 9.3, h: 4.9
+pad diameter: 2.2
+(12.5 - 1.1) / 12.5; // 0.91 padLeft, R
+9.3 - 1.1 / 12.5; // 0.66, padML, R
+9.5 - 1.1 / 9.5; // padTop Bot
+4.9 1.1 / 9.5; // padMTop Bot
+2.2 / 12.5
+2.2 / 9.5
 */
 
 NTMI.nUFO.rawImuBiValues = 0.5 ! 9;
@@ -23,43 +39,51 @@ NTMI.g.main.padCols = Color.grey(0.62, 0.38) !8;
 NTMI.g.main.movevals = 0.5!9;
 
 
-// possible fixes here:
-// do basic geometry of locations only once rel to center,
-// move to center, then scale,
-// and only paint the ones that are needed.
+// geometry is for fixed size of 666,
+// whole drawFunc scales once.
 
+(
 // small UV in the middle for cheaper pads/axes drawing
 NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 	var main = NTMI.g.main;
-	var myscale = Window.screenBounds.width / 1680;
-	var bounds = uv.bounds.moveTo(0, 0);
-	var center = bounds.center / myscale; // reverse scale
-	var centPadsL, padsLPos, centPadsR, padsRPos;
+	var width = 666, height = 666;
+	var bounds = Rect(0,0,width, height);
+	var center = bounds.center;
+
+	var myscaleW = uv.bounds.width / 666;
+	var myscaleH = uv.bounds.height / 666;
+
+	var padCenters, toCenter = 0.05;
+	var padLeft = width * (0.095 + toCenter), padRight = width * (0.895 - toCenter);
+	var padMLeft = width * (0.2 + toCenter), padMRight = width * (0.8 - toCenter);
+	var padTop = height * 0.15, padBot = height * 0.85;
+	var padMTop = height * 0.37, padMBot = height * 0.63;
+	var padSize = min(width * 0.088, height * 0.115) * 1.2;
+
 	var star;
 
-	Pen.scale(myscale, myscale);
+	"uvbounds: % center: %, scaleW: %, myscaleH: % \n"
+	.postf(bounds, center, myscaleW.round(0.001), myscaleH.round(0.001));
+
+	Pen.scale(myscaleW, myscaleH);
 
 	if ([\full, \touch, \binary].includes(NTMI.nUFO.mode)) {
-		// draw pad circles
-		centPadsL = center.copy.x_(center.x - (center.y * 1.8));
-		centPadsR = center.copy.x_(center.x + (center.y * 1.8));
-		padsLPos = [ -0.6, -0.2, 0.2, 0.6].collect { |angle|
-			Polar(center.y * 1.5, angle * 0.8).asPoint + centPadsL;
-		};
-
-		padsRPos = [ 0.6, 0.2, -0.2, -0.6].collect { |angle|
-			Polar(center.y * -1.5 + pi, angle * 0.8).asPoint + centPadsR;
-		};
+		padCenters = [
+			padLeft@padTop,             padRight@padTop,
+			    padMLeft@padMTop, padMRight@padMTop,
+			    padMLeft@padMBot, padMRight@padMBot,
+			padLeft@padBot,             padRight@padBot
+		];
 
 		Pen.width_(2);
 		// 4 left, 4 right touchpads
-		(padsLPos ++ padsRPos).collect { |pt, i|
-			Pen.addArc(pt, 60, 0, 2pi);
-
+		padCenters.collect { |pt, i|
+			Pen.addArc(pt, padSize, 0, 2pi);
 			Pen.color_(main.padCols[i]);
 			Pen.fill;
+
 			// rings white
-			Pen.addOval(Rect.aboutPoint(pt, 60, 60));
+			Pen.addOval(Rect.aboutPoint(pt, padSize, padSize));
 			Pen.color_(Color.white).stroke;
 		};
 	};
@@ -80,6 +104,8 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 	};
 });
 
+// NTMI.g.main.imuUV.refresh;
+);
 
 NTMI.g.main[\winUpdate].add(\imuPad, {
 	var main = NTMI.g.main;
