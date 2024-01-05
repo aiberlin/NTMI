@@ -7,13 +7,15 @@ NTMI.g.main.bigUV.drawFunc.add(\circleFXName, { |uv|
 	Pen.width = 3;
 	Pen.stroke;
 
+
 	if (NTMI.usesMainFX) {
+		var fontScaler = uv.bounds.height / 900 * 1.618;
 		var mainIndex = NTMI.mfx.domainIndex;
 		var domainName = NTMI.mfx.preNames[mainIndex];
 		"bigUV updating.".postln;
 
 		Pen.rotate(mainIndex.linlin(-1, NTMI.mfx.preNames.size, 0.5pi, -0.5pi));
-		Pen.scale(1.618, 1.618);
+		Pen.scale(fontScaler, fontScaler);
 		Pen.stringCenteredIn(domainName,
 			Rect.aboutPoint(0@0, center.x, 40),
 			NTMI.g.fatfont,
