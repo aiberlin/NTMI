@@ -17,18 +17,20 @@ NTMI.g.main.bigUV.drawFunc.add(\circleFXName, { |uv|
 		Pen.stringCenteredIn(domainName,
 			Rect.aboutPoint(0@0, center.x, 40),
 			NTMI.g.fatfont,
-			Color.grey(1.0, 0.3)
+			Color.fromArray(NTMI.inph.currCounterCol).alpha_(0.4)
 		);
 	};
 });
 
+NTMI.g.main.bigUVUpdate = {
+	defer {
+		if (NTMI.usesMainFX) {
+			NTMI.g.main.bigUV.refresh;
+		};
+	}
+};
+
 // only update if using mainFX
 if (NTMI.usesMainFX) {
-	MFdef('mainPreStep').add(\updateMain, {
-		defer {
-			if (NTMI.usesMainFX) {
-				NTMI.g.main.bigUV.refresh;
-			};
-		}
-	});
+	MFdef('mainPreStep').add(\updateMain, { NTMI.g.main.bigUVUpdate });
 }
