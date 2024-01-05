@@ -33,10 +33,9 @@ Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(60@16);
 Butz.style.font.name = Font.defaultMonoFace;
 Butz.style.font.size = (18 * (NTMI.g.screenScale ** 0.5)).round;
-Butz.style.font.postcs;
+"Butz font: %\n\n".postf(Butz.style.font.postcs);
 
 Butz.show;
-Butz.w.bounds;
 
 // add some top-level one-liners:
 Butz.addMiniMax;
@@ -80,9 +79,9 @@ if (WinBounds.makeFuncs[\wsetta].notNil) {
 };
 
 // shortcuts to switch Butz pages from Main NTMI window
-Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
-Butz('NTMI').add('-Config-', { Butz.curr_('NTMI_Config') });
-Butz('NTMI').add('-Tutorial-', { Butz.curr_('NTMI_Tutorial') });
+// Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
+// Butz('NTMI').add('-Config-', { Butz.curr_('NTMI_Config') });
+// Butz('NTMI').add('-Tutorial-', { Butz.curr_('NTMI_Tutorial') });
 
 
 /// put the interfaces in a separate Butz list,
@@ -176,33 +175,33 @@ NTMI.addInterfaceFile(\nUFO,
 Butz(\NTMI_Config).clear;
 Butz(\NTMI_Config).addMiniMax;
 Butz(\NTMI_Config).add('Prefs_doc', {
-	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/1_Configure_setup.scd").openOS
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/1_Configure_setup.scd")
 });
-Butz(\NTMI_Config).add(\Prefs_file, { NTMI.prefs.userPrefPath.openOS });
+Butz(\NTMI_Config).add(\Prefs_file, { Document.open(NTMI.prefs.userPrefPath) });
 
 Butz(\NTMI_Config).add('Presets_doc', {
-	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/2_adding_presets.scd").openOS
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/2_adding_presets.scd")
 });
 Butz(\NTMI_Config).add('Presets_dir', {
 	(NTMI.dir.userPOOL +/+ "/2_process/presets/").openOS
 });
 
 Butz(\NTMI_Config).add(\userDir_POOL, {
-	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3a_userDir_POOL.scd").openOS
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3a_userDir_POOL.scd")
 });
 Butz(\NTMI_Config).add(\POOL_open, { NTMI.dir.userPOOL.openOS });
 
 Butz(\NTMI_Config).add('Process_doc', {
-	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3b_adding_sound_processes.scd").openOS
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3b_adding_sound_processes.scd")
 });
 Butz(\NTMI_Config).add(\Process_open, { (NTMI.dir.userPOOL +/+"2_process").openOS });
 
 Butz(\NTMI_Config).add('Interface_doc', {
-	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/4a_Connecting_new_interfaces.scd").openOS
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/4a_Connecting_new_interfaces.scd")
 });
 
 Butz(\NTMI_Config).add(\SoundF_doc, {
-	(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/5_Adding_soundfiles.scd").openOS
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/5_Adding_soundfiles.scd")
 });
 
 Butz(\NTMI_Config).add(\SoundF_open, { NTMI.dir.userPOOL.openOS });

@@ -6,7 +6,7 @@ For longer examples to follow, see the nanoKtl and uc4 files.
 
 */
 /// this file discusses all basic functions:
-(q.dir.ntmi +/+ "HOW_TO_PERSONALIZE/All_Interface_Functions.scd").openOS;
+Document.open(NTMI.dir.setup +/+ "HOW_TO_PERSONALIZE/All_Interface_Functions.scd");
 
 // using Modality-toolkit, make an MKtl for a korg nanokontrol:
 MKtl('testa', "*kontrol2");
@@ -15,16 +15,16 @@ MKtl('testa').gui;
 
 // use the first four R buttons to play the four sound slots
 MKtl('testa').elAt(\bt, \R, (0..3)).do { |but, index|
-	but.action = { q.slots.playAt(index) };
+	but.action = { NTMI.slots.playAt(index) };
 };
 // first four S buttons to stop the sounds
 MKtl('testa').elAt(\bt, \S, (0..3)).do { |but, index|
-	but.action = { q.slots.stopAt(index) };
+	but.action = { NTMI.slots.stopAt(index) };
 };
 // first four knobs to set volume of the four sounds
 MKtl('testa').elAt(\kn, (0..3)).do { |knob, index|
 	knob.action = {
-		q.slots.actives[index].postln.vol_(knob.value.squared.postln)
+		NTMI.slots.actives[index].postln.vol_(knob.value.squared.postln)
 	};
 };
 
@@ -42,13 +42,13 @@ MKtl('testa').elAt(\sl, 7).action = { |sl|
 // show the influx GUI
 Butz.run(\inphlux);
 
-// connect sliders 0-6 to q.inphlux inputs 9-15:
+// connect sliders 0-6 to NTMI.inphlux inputs 9-15:
 // now every slider introduces a complex change in the sound
 // by influencing every parameter to some degree
 MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
 	knob.action = {
-		q.inphlux.set(
-			q.inphlux.inNames[index + 9],
+		NTMI.inphlux.set(
+			NTMI.inphlux.inNames[index + 9],
 			knob.value.unibi
 		);
 	};

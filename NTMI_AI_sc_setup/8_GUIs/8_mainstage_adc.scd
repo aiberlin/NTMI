@@ -13,10 +13,6 @@ MAIN VOLUME
 make userViews here, make their drawFuncs MFuncs
 extra files only add to these MFuncs.
 
-// test different screen resolutions:
-WinBounds.stored.removeAt('Main_NTMI');
-NTMI.g.main.test = { |main, rect|
-	NTMI.g.bounds = rect;
 	NTMI.g.main.w.close; WinBounds.showOrMake('Main_NTMI');
 };
 

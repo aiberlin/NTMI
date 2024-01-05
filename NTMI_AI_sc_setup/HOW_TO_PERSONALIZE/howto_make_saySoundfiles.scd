@@ -1,5 +1,5 @@
 // How the soundfiles for granbuf were made:
-/* needs the Quark say
+/* needs the Quark say, which is macOS only
 if (Quarks.installed.any { |qk| qk.name == "say" }.not) {
 	Quarks.install("say");
 };

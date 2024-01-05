@@ -7,7 +7,7 @@
 // --- explained in this file!
 
 // 2. add, rename, and edit presets for all sound processes - see:
-"2_adding_presets.scd".resolveRelative.openOS;
+Document.open("2_adding_presets.scd".resolveRelative);
 
 // 3. choose which sound processes to use,
 // and add your own sound processes - see:
