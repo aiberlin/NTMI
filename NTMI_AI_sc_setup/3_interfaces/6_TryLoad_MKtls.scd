@@ -11,8 +11,7 @@ MFdef(\findConnect).add(\findConnect, {
 	var foundInfos, newInfos, filenames = List[];
 
 	"MFdef('findConnect'):\n"
-	"- find present supported MKtl devices \n"
-	"- and connect them.".postln;
+	"- find supported MKtl devices and connect them.".postln;
 
 	MKtl.find;
 	foundInfos = MKtlLookup.all.asArray.collect(_.idInfo)

@@ -33,7 +33,7 @@ Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(60@16);
 Butz.style.font.name = Font.defaultMonoFace;
 Butz.style.font.size = (18 * (NTMI.g.screenScale ** 0.5)).round;
-"Butz font: %\n\n".postf(Butz.style.font.postcs);
+"// Butz font: %\n\n".postf(Butz.style.font);
 
 Butz.show;
 
@@ -103,12 +103,12 @@ Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 
 Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
 WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
-	var ndefGui = Ndef(\liveInput).gui.postln;
+	var ndefGui = Ndef(\liveInput).gui;
 	var win = ndefGui.parent;
 	NTMI.g.tuneNameView(ndefGui);
 	ProxyMeter.addNdefGui(ndefGui);
 	win.alpha_(NTMI.g.alpha);
-	defer({ win.name = name.postln }, 0.2);
+	defer({ win.name = name }, 0.2);
 	win;
 });
 
@@ -126,9 +126,9 @@ Butz(\interfaces).add(\findConnect, {
 		LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
 		0.5.wait;
 		MKtl.all.do { |mk|
-			mk.name.postln;
-			if (mk.hasDevice.postln) {
-				WinBounds.showOrMake(mk.name.postln)
+			mk.name;
+			if (mk.hasDevice) {
+				WinBounds.showOrMake(mk.name)
 			}
 		}
 	}.play(AppClock);
@@ -141,7 +141,7 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 		filepath = (NTMI.dir.setup +/+ filepath);
 	};
 	if (MKtl.all[name].isNil) {
-		filepath.postcs.loadPaths;
+		filepath.loadPaths;
 	};
 	if (WinBounds.makeFuncs[name].isNil) {
 		WinBounds.addMake(name, {
