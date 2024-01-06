@@ -113,15 +113,6 @@ WinBounds.addMake('Main_NTMI', {
 
 	LoadMe("subsParts/imuUV.scd", NTMI.g.dir);
 
-	// for the demo:
-	main.frontText = StaticText(main.w, main.imuUV.bounds);
-	main.frontText.align_(\center).font_(fontFat);
-	NTMI.g.setFrontText = { |q, text=""|
-		defer {
-			"*** frontText:  ".post;
-			main.frontText.string = text.asString.postln; };
-	};
-
 	// 	//// TOP LINE ZONES:
 
 	main.meterCenterTop = main.w.bounds.center.x @ 0;
@@ -139,7 +130,35 @@ WinBounds.addMake('Main_NTMI', {
 
 	LoadMe("subsParts/stetho.scd", NTMI.g.dir);
 
+	// snapshot button
+	main.snapBounds = (190@60 * scrscale).asRect
+	.left_(main.meterCenterTop.x - (95 * scrscale))
+	.top_(main.meterHeight);
 
+	main.snapBut = Button(main.w, main.snapBounds)
+	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
+		["¡SNAP!", Color.white, Color.red]
+	])
+	.action_(MFdef(\snapshot))
+	.font_(fontFat);
+
+	MFdef(\snapshot).add(\show, {
+		if (main.w.isClosed.not) {
+			defer { try { main.snapBut.value_(1);
+				MFdef(\guiSlots).value;
+			} };
+			defer ({ try { main.snapBut.value_(0) } }, 1);
+		};
+	});
+
+	// for the demo:
+	main.frontText = StaticText(main.w, main.imuUV.bounds);
+	main.frontText.align_(\center).font_(fontFat);
+	NTMI.g.setFrontText = { |q, text=""|
+		defer {
+			"*** frontText:  ".post;
+			main.frontText.string = text.asString.postln; };
+	};
 
 	main.leftCol = leftCol = CompositeView(w, leftColRect);
 	main.midRightCol = midRightCol  = CompositeView(w, midRightColRect);
@@ -209,27 +228,6 @@ WinBounds.addMake('Main_NTMI', {
 		emmy;
 	};
 	main.rMViews = rMViews;
-
-	// snapshot button
-	main.snapBounds = (190@60 * scrscale).asRect
-	.left_(main.meterCenterTop.x - (95 * scrscale))
-	.top_(main.meterHeight);
-
-	main.snapBut = Button(main.w, main.snapBounds)
-	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
-		["¡SNAP!", Color.white, Color.red]
-	])
-	.action_(MFdef(\snapshot))
-	.font_(fontFat);
-
-	MFdef(\snapshot).add(\show, {
-		if (main.w.isClosed.not) {
-			defer { try { main.snapBut.value_(1);
-				MFdef(\guiSlots).value;
-			} };
-			defer ({ try { main.snapBut.value_(0) } }, 1);
-		};
-	});
 
 	///// unify all mview behaviours :
 
