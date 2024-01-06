@@ -1,6 +1,7 @@
 // ** mainVol view
 
 var g = NTMI.g;
+
 if (g.main.mainVolZone.isNil or: {
 	g.main.mainVolZone.isClosed }) {
 	// make a test window
@@ -21,7 +22,7 @@ g.main.mainSl.label_(\mainVol);
 g.main.mainSl.putDict(\myspec, [0, 4, \amp]);
 g.main.mainSl.dict[\knobCol] = Color.grey(0, 0.7);
 g.main.mainSl.dict.round_(1/100);
-g.main.mainSl.dict.font_(Font(g.fontName, 30 * g.screenScale));
+g.main.mainSl.dict.font_(g.font);
 g.main.mainSl.action.add(\setMain, { |mv|
 	MFdef(\mainVol).(mv.value);
 });
@@ -29,7 +30,7 @@ g.main.mainSl.drawFunc.add(\label, {
 	Pen.stringCenteredIn(
 		g.main.mainSl.label,
 		g.main.mainSl.bounds.moveTo(0,0),
-		Font(g.fontName, 50 * g.screenScale),
+		NTMI.g.fontFat,
 		Color.blue
 	)
 });

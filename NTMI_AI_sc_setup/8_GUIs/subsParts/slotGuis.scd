@@ -15,7 +15,7 @@ NTMI.g.main.leftMVZone.bounds;
 */
 
 var scrscale = NTMI.g.screenScale;
-var font = NTMI.g.font, fatfont = NTMI.g.fatfont;
+var font = NTMI.g.font;
 var popMVs;
 
 
@@ -109,14 +109,14 @@ popMVs = 4.collect { |i|
 	emmy.dict.keyNumFuncs
 	.put($ , { NTMI.slots.toggleAt(i) });
 
-	emmy.drawFunc.add(\label, {
+	emmy.drawFunc.add(\label, { |uv|
 		var labelStr = emmy.label.asString;
-		var labelStrSize = labelStr.size;
-		var fontSize = fatfont.size * (11 / labelStrSize.max(12));
+		var labelWidth = labelStr.bounds(font).width;
+		var fontScale = (uv.bounds.width * 0.95 / labelWidth).clip(1, 10);
 		Pen.stringCenteredIn(
 			emmy.label.asString,
 			emmy.bounds.moveTo(0,0),
-			fatfont.copy.size_(fontSize),
+			Font(font.name, (font.size * fontScale).min(uv.bounds.height * 0.6)),
 			Color.blue
 		)
 	});

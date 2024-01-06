@@ -41,7 +41,7 @@ NTMI.g.clok.uv = UserView(
 //.background_(Color.rand)
 NTMI.g.clok.uv.drawFunc_({ |uv|
 	var timeStr = Tdef(\clocK).get(\timeStr);
-	var font = NTMI.g.font.copy;
+	var font = Font(Font.defaultMonoFace, 12);
 	var strBounds = timeStr.bounds(font);
 	font.size_((font.size * (uv.bounds.width * 0.9 / strBounds.width)).round);
 	Pen.stringCenteredIn(timeStr, uv.bounds, font, Color.white)
@@ -54,7 +54,7 @@ NTMI.g.clok.but = Button(
 //.background_(Color.rand)
 .states_([
 	["Reset Clock", Color.white, Color.grey(0.3, 0.3)],
-]).font_(NTMI.g.font)
+]).font_(NTMI.g.fontMid)
 .action_({
 	Tdef(\clocK).set(\runtime, 0, \isRunning, true).stop.play
 });

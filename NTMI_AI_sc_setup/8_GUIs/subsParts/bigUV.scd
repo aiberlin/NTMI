@@ -18,7 +18,7 @@ NTMI.g.main.bigUV.drawFunc.add(\circleFXName, { |uv|
 		Pen.scale(fontScaler, fontScaler);
 		Pen.stringCenteredIn(domainName,
 			Rect.aboutPoint(0@0, center.x, 40),
-			NTMI.g.fatfont,
+			NTMI.g.fontFat,
 			Color.fromArray(NTMI.inph.currCounterCol).alpha_(0.4)
 		);
 	};

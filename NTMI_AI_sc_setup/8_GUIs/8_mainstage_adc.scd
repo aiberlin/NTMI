@@ -1,46 +1,14 @@
 /**** New mainstage window: *****
-reconsider layout so it scales better!
-butz scope - meters - nUFO status -
-butz scope - meters - nUFO calibrate
--------------- snap
-butz slot1  nUFO  nUFO   zoom
-butz slot2    CENTER     preUp
-butz slot3    CENTER     preDn
-butz slot4  nUFO  nUFO   nufmod
-MAINFX RAND
-MAIN VOLUME
+new layout so it scales better:
 
-make userViews here, make their drawFuncs MFuncs
-extra files only add to these MFuncs.
-
-NTMI.g.main.meterCenterTop
-skeys
-NTMI.g.main.snapBut.bounds_(Rect(NTMI.g.main.meterCenterTop.x - 90, 230, 180.0, 60.0));
-
-NTMI.g.main.test(Rect(0,0, 1800, 1169));
-// bottom row could be higher, align with frontUV?
-// mid zone could be less wide
-
-
-NTMI.g.main.test(Rect(0,0, 1512, 944));
-// default mz laptop size, looks good,
-// SNAP needs fix,
-// fonts are somewhat too big, dont scale when nams change
-
-NTMI.g.main.test(Rect(0,0, 1200, 900));
-// default mz laptop size, looks good,
-// SNAP needs fix,
-// fonts are somewhat too big, dont scale when nams change
-
-NTMI.g.main.test(Rect(0,0,1024, 768));
-
-// look wrong:
-NTMI.g.main.test(Rect(0,0,1024, 600));
-// horizontal div is bad, bottom line can go to bottom
-// text sizes in MViews and pad sizes dont scale well
-
-NTMI.g.main.test(Rect(0,0,800, 480));
-// very bad, meter should move right
+butz scope - meters -  [       ] <- free for influx
+------------- snap
+butz slot1  nUFO  nUFO   zoom     nufoInfo
+butz slot2    Info       preUp    clock
+butz slot3    Info       preDn    recButs
+butz slot4  nUFO  nUFO   nufmod   recButs
+.           MAINFX RAND
+.           MAIN VOLUME
 
 */
 
@@ -49,20 +17,6 @@ NTMI.g.dir = thisProcess.nowExecutingPath.dirname; // ++ "xxx";
 
 // subdict for all Main_NTMI window items
 NTMI.g.main = NTMI.g.main ? ();
-
-// test different screen resolutions:
-NTMI.g.main.test = { |main, rect|
-	WinBounds.stored.removeAt('Main_NTMI');
-	NTMI.g.bounds = rect;
-	Window.closeAll;
-	NTMI.g.main.w.close;
-	WinBounds.showOrMake('Main_NTMI');
-
-	Butz.style.font.size = (18 * (NTMI.g.screenScale ** 0.5)).round;
-	"Butz font: %\n\n".postf(Butz.style.font.postcs);
-	Butz.show.w.moveTo(2, NTMI.g.bounds.height - Butz.w.bounds.height);
-};
-
 
 // style, look, feel variables
 NTMI.g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
@@ -91,7 +45,7 @@ WinBounds.addMake('Main_NTMI', {
 	var name = 'Main_NTMI';
 	// style vars
 	var butGrey = NTMI.g.butGrey, butGreen = NTMI.g.butGreen;
-	var font = NTMI.g.font, fatfont = NTMI.g.fatfont;
+	var font = NTMI.g.font, fontFat = NTMI.g.fontFat;
 
 	var bounds = NTMI.g.bounds;
 	var wheight = bounds.height, wwidth = bounds.width;
@@ -161,7 +115,7 @@ WinBounds.addMake('Main_NTMI', {
 
 	// for the demo:
 	main.frontText = StaticText(main.w, main.imuUV.bounds);
-	main.frontText.align_(\center).font_(fatfont);
+	main.frontText.align_(\center).font_(fontFat);
 	NTMI.g.setFrontText = { |q, text=""|
 		defer {
 			"*** frontText:  ".post;
@@ -248,7 +202,7 @@ WinBounds.addMake('Main_NTMI', {
 			Pen.stringCenteredIn(
 				emmy.label ? emmy.value,
 				emmy.bounds.moveTo(0,0),
-				fatfont,
+				fontFat,
 				Color.blue
 			)
 		});
@@ -266,7 +220,7 @@ WinBounds.addMake('Main_NTMI', {
 		["¡SNAP!", Color.white, Color.red]
 	])
 	.action_(MFdef(\snapshot))
-	.font_(fatfont);
+	.font_(fontFat);
 
 	MFdef(\snapshot).add(\show, {
 		if (main.w.isClosed.not) {
@@ -308,7 +262,8 @@ WinBounds.addMake('Main_NTMI', {
 		if (NTMI.inph.presIndex != rMViews[1].value) {
 			protect {
 				rMViews[1].value_(NTMI.inph.presIndex);
-				rMViews[2].value_("seed" + NTMI.inph.randSeeds[NTMI.inph.presIndex]);
+				rMViews[2].value_("seed"
+					+ NTMI.inph.randSeeds[NTMI.inph.presIndex]);
 				NTMI.g.main.bigUVUpdate;
 			}
 		}

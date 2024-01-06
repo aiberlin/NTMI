@@ -26,7 +26,9 @@ if (NTMI.hasSmallScreen) {
 g.alpha = g.alpha ? 0.8;
 g.fontName = g.fontName ? Font.defaultSansFace;
 g.font = Font(g.fontName, (36 * g.screenScale).round);
-g.fatfont = Font(g.fontName, (72 * g.screenScale).round);
+g.fontFat = Font(g.fontName, (72 * g.screenScale).round);
+g.fontMid = Font(g.fontName, (51 * g.screenScale).round);
+
 
 g.butGrey = Color.grey(0.3, 0.3);
 g.butGreen = Color.green(1, 0.7);
@@ -35,6 +37,7 @@ g.butGreen = Color.green(1, 0.7);
 // make nameViews bigger and better
 g.tuneNameView = { |q, obj|
 	if (obj.respondsTo(\nameView)) {
+		// fixed font size
 		obj.nameView.font_(Font(g.fontName, 16))
 		.stringColor_(Color.white)
 		.background_(Color.blue)

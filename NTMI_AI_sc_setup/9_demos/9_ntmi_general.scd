@@ -26,7 +26,7 @@ MFdef(\showPopItems).add(\show, { |names, view, dur = 3|
 		var length = preBnds.height;
 		var listBnds = preBnds.moveBy(0, -70).height_(500);
 		var listv = ListView(view.parent, listBnds).front
-		.font_(NTMI.g.font.copy.size_(18));
+		.font_(NTMI.g.font);
 
 		listv.items_(names).value_(view.value);
 		defer ({ listv.close }, dur);
