@@ -2,79 +2,85 @@
 // designed for small fixed size, 3.5 inch, 480x320 pixels.
 //// still very incomplete!
 
-// Butz.numButz = 24;
-// Butz.w.close;
-// Butz.show.updateButtons;
+/*
+NTMI.skeys
+NTMI.g.mini.skeys
+WinBounds.showOrMake('miniNTMI');
+NTMI.g.mini.guiUpdate.value;
 
-// Butz.add('miniNTMI', { WinBounds.showOrMake('miniNTMI')});
-// WinBounds.addMake('miniNTMI', {
-// 	g.makeGui['miniNTMI'].value;
-// });
+*/
 
+/* mini butz sketch:
+Butz(\NTMI).remove('-Config-');
+Butz(\NTMI).remove('-Tutorial-');
+Butz(\NTMI).remove('-interfaces-');
+Butz.style.font = Butz.style.font.size_(12);
+Butz.numButz = 12;
 
-var g = NTMI.g;
-var q = NTMI.q;
+Window.closeAll;
+Butz.show;
+*/
 
-g.mini = g.mini ? ();
+Butz(\NTMI).add('miniNTMI', { WinBounds.showOrMake('miniNTMI')});
 
-g.mini.guiUpdate = MFunc([\slots, {
+NTMI.g.mini = NTMI.g.mini ? ();
+
+NTMI.g.mini.guiUpdate = MFunc([\slots, {
 	// "slots...".postln;
 }]);
 
 
-g.mini.guiUpdate.add(\devices, {
+NTMI.g.mini.guiUpdate.add(\devices, {
 	// show which MKtls are physically connected:
 	// nufo, nanoK2, uc4, gamepad
 	// devices found?".postln;
 });
 
-g.mini.drawNufo = MFunc([\draw, {
+NTMI.g.mini.drawNufo = MFunc([\draw, {
 	// draw pad values,
 	// orientation star,
 	// and network name on little uv in center
 }]);
 
-/*
-NTMI.keys
-NTMI.g.mini.guiUpdate.value;
-*/
 
-g.mini.guiUpdate.add(\modeZoom, {
+NTMI.g.mini.guiUpdate.add(\modeZoom, {
 
+	var mini = NTMI.g.mini;
 	var mainvol = MFdef(\mainVolGet).value.unbubble;
 
-	if (g.mini.mainVol.value != mainvol) {
-		g.mini.mainVol.value = mainvol
+	if (mini.mainVol.value != mainvol) {
+		mini.mainVol.value = mainvol
 	};
 
-	if (g.mini.mainPop.value != q.mfx.domainIndex) {
-		g.mini.mainPop.value = q.mfx.domainIndex
+	if (mini.mainPop.value != NTMI.mfx.domainIndex) {
+		mini.mainPop.value = NTMI.mfx.domainIndex
 	};
 
 	// inphlux mode to color and mview labels and values
 
-	if (g.mini.backCol != q.inph.currPresetCol) {
+	if (mini.backCol != NTMI.inph.currPresetCol) {
 		// "refresh win color.".postln;
-		g.mini.backCol = q.inph.currPresetCol;
-		g.mini.w.background_(q.inph.currPresetCol);
+		mini.backCol = NTMI.inph.currPresetCol;
+		mini.w.background_(NTMI.inph.currPresetCol);
 	};
 
-	if (q.inph.presIndex != g.mini.infpre.value) {
-		g.mini.infpre.value = q.inph.presIndex
+	if (NTMI.inph.presIndex != mini.infpre.value) {
+		mini.infpre.value = NTMI.inph.presIndex
 	};
 	// zoom
-	if ( q.zoom.absdif( g.mini.zoom.value) > 0.001 ) {
-		g.mini.zoom.value = q.zoom
+	if ( NTMI.zoom.absdif( mini.zoom.value) > 0.001 ) {
+		mini.zoom.value = NTMI.zoom
 	};
 	// mode
 
-	if (q.inph.mode != g.mini.modePop.item) {
-		g.mini.modePop.value = q.inph.modes.indexOf(q.inph.mode).postln;
+	if (NTMI.inph.mode != mini.modePop.item) {
+		mini.modePop.value = NTMI.inph.modes.indexOf(NTMI.inph.mode).postln;
 	};
 });
 
 WinBounds.addMake(\miniNTMI, {
 
+	var g = NTMI.g, mini = g.mini;
 	var w = Window("miniNTMI", Rect(300, 300, 480, 320)).front;
 	var f = Font(g.fontName, 18);
 
@@ -88,17 +94,17 @@ WinBounds.addMake(\miniNTMI, {
 	w.background_(Color.red(0.8, 0.8));
 	g.mini.w = w;
 
-	popPreVols = q.slots.actives.collect { |ndef, i|
+	popPreVols = NTMI.slots.actives.collect { |ndef, i|
 		var pop, prePop, mvol;
-		var mychoices = q.slots.choices[i];
-		var myndef = q.slots.actives[i];
+		var mychoices = NTMI.slots.choices[i];
+		var myndef = NTMI.slots.actives[i];
 		var ndefpre = NdefPreset(myndef);
 
 		pop = PopUpMenu(w, Rect(5, 60 + 2 * i + 5, 100, 30)).items_(mychoices)
 		.value_(mychoices.indexOf(myndef.key))
 		.font_(f)
 		.action_({ |pop|
-			q.slots.addActive(i, Ndef(pop.item));
+			NTMI.slots.addActive(i, Ndef(pop.item));
 		});
 
 		prePop = PopUpMenu(w, Rect(5 + 100, 60 + 2 * i + 5, 100, 30))
@@ -106,7 +112,7 @@ WinBounds.addMake(\miniNTMI, {
 		.action_({ |ppop|
 			ndefpre.setCurr(ppop.item).setProxy(ppop.item);
 			// dont step, just add influx offset
-			q.pre.stepNdefInf(myndef, 0);
+			NTMI.pre.stepNdefInf(myndef, 0);
 
 		})
 		.font_(f);
@@ -118,7 +124,7 @@ WinBounds.addMake(\miniNTMI, {
 
 		mvol.value = myndef.vol;
 		mvol.action.add(\set, { |mv|
-			q.slots.actives[i].vol = mv.value.postln;
+			NTMI.slots.actives[i].vol = mv.value.postln;
 		});
 
 		[pop, prePop, mvol]
@@ -155,7 +161,7 @@ WinBounds.addMake(\miniNTMI, {
 	});
 
 	g.mini.modePop = EZPopUpMenu(w, Rect(210, 230, 120, 30), "mod",
-		q.inph.modes, labelWidth: 36).font_(f);
+		NTMI.inph.modes, labelWidth: 36).font_(f);
 
 	g.mini.mainVol = MView(1, w, Rect(210, 280, 120, 30)).label_(\mainvol);
 	g.mini.mainVol.uv.resize_(1);

@@ -13,6 +13,9 @@ MAIN VOLUME
 make userViews here, make their drawFuncs MFuncs
 extra files only add to these MFuncs.
 
+NTMI.g.main.meterCenterTop
+skeys
+NTMI.g.main.snapBut.bounds_(Rect(NTMI.g.main.meterCenterTop.x - 90, 230, 180.0, 60.0));
 
 NTMI.g.main.test(Rect(0,0, 1800, 1169));
 // bottom row could be higher, align with frontUV?
@@ -99,8 +102,8 @@ WinBounds.addMake('Main_NTMI', {
 	// absolute numbers, dont scale:
 	// shrink butz width for small screens
 	var leftMinWidth = NTMI.g.bounds.width.linlin(480, 1200, 80, 130).postln;
-	var topMinHeight = NTMI.g.bounds.height.linlin(480, 1200, 150, 230);
-	var botMinHeight = NTMI.g.bounds.height.linlin(480, 1200, 0, 230);
+	var topMinHeight = NTMI.g.bounds.height.linlin(320, 1200, 100, 230);
+	var botMinHeight = NTMI.g.bounds.height.linlin(320, 1200, 0, 230);
 	var meterWidth = ServerMeterView.getWidth(NTMI.numIns, NTMI.numChans, s);
 	var scopeWidth = 264;
 	var frontUVSize = bounds.height / 2 - topMinHeight;
@@ -167,19 +170,26 @@ WinBounds.addMake('Main_NTMI', {
 
 	// 	//// TOP LINE ZONES:
 
-	main.stethoBounds = Rect(leftMinWidth, 0, scopeWidth, topMinHeight);
-	LoadMe("subsParts/stetho.scd", NTMI.g.dir);
-
 	main.meterCenterTop = main.w.bounds.center.x @ 0;
+	main.meterHeight = 230;
+	main.scopeLeft = leftMinWidth;
+	main.meterLeft = main.meterCenterTop.x - (meterWidth / 2);
+	if (main.scopeLeft + scopeWidth > main.meterLeft) {
+		"move scope to the left".postln;
+		main.scopeLeft = (main.meterLeft - scopeWidth).max(0).postln;
+	};
+
+	main.stethoBounds = Rect(main.scopeLeft, 0, scopeWidth, topMinHeight);
 	LoadMe("subsParts/meter.scd", NTMI.g.dir);
 
 
-	leftCol = CompositeView(w, leftColRect);
-	midRightCol  = CompositeView(w, midRightColRect);
+	LoadMe("subsParts/stetho.scd", NTMI.g.dir);
 
 
+
+	main.leftCol = leftCol = CompositeView(w, leftColRect);
+	main.midRightCol = midRightCol  = CompositeView(w, midRightColRect);
 	main.rightCol = rightCol = CompositeView(w, rightColRect);
-	rightCol;
 
 	main.nUFOZone = CompositeView(main.rightCol,
 		Rect(0, 0, rightColWidth, rightCol.bounds.height / 3));
@@ -247,16 +257,16 @@ WinBounds.addMake('Main_NTMI', {
 	main.rMViews = rMViews;
 
 	// snapshot button
-	main.snapBounds = (220@80 * scrscale).asRect
-	.right_(main.leftMVZone.bounds.right)
-	.bottom_(main.leftMVZone.bounds.top);
+	main.snapBounds = (190@60 * scrscale).asRect
+	.left_(main.meterCenterTop.x - (95 * scrscale))
+	.top_(main.meterHeight);
 
 	main.snapBut = Button(main.w, main.snapBounds)
 	.states_([["SNAP!", Color.blue, Color.grey(0.8, 0.8)],
 		["¡SNAP!", Color.white, Color.red]
 	])
 	.action_(MFdef(\snapshot))
-	.font_(fatfont.copy);
+	.font_(fatfont);
 
 	MFdef(\snapshot).add(\show, {
 		if (main.w.isClosed.not) {
