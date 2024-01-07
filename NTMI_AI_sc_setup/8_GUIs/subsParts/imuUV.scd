@@ -62,8 +62,8 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 
 	var star;
 
-	"uvbounds: % center: %, scaleW: %, myscaleH: % \n"
-	.postf(bounds, center, myscaleW.round(0.001), myscaleH.round(0.001));
+	// "uvbounds: % center: %, scaleW: %, myscaleH: % \n"
+	// .postf(bounds, center, myscaleW.round(0.001), myscaleH.round(0.001));
 
 	Pen.scale(myscaleW, myscaleH);
 
