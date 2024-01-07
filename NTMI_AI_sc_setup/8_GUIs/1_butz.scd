@@ -19,9 +19,6 @@ g.butzNames = [
 	'randomOrbitz',
 	'ndefMixer',
 	'mainFX',
-	'-interfaces-',
-	'-Config-',
-	'-Tutorial-'
 ];
 
 // Butz.clear;
@@ -77,11 +74,6 @@ Butz(\NTMI).add('Main_NTMI', { WinBounds.showOrMake('Main_NTMI')});
 if (WinBounds.makeFuncs[\wsetta].notNil) {
 	Butz(\NTMI).add(\wsetta, { WinBounds.showOrMake(\wsetta) });
 };
-
-// shortcuts to switch Butz pages from Main NTMI window
-// Butz('NTMI').add('-interfaces-', { Butz.curr_('interfaces') });
-// Butz('NTMI').add('-Config-', { Butz.curr_('NTMI_Config') });
-// Butz('NTMI').add('-Tutorial-', { Butz.curr_('NTMI_Tutorial') });
 
 
 /// put the interfaces in a separate Butz list,
@@ -204,7 +196,7 @@ Butz(\NTMI_Config).add(\SoundF_doc, {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/5_Adding_soundfiles.scd")
 });
 
-Butz(\NTMI_Config).add(\SoundF_open, { NTMI.dir.userPOOL.openOS });
+Butz(\NTMI_Config).add(\SoundF_open, { (NTMI.dir.user +/+ "soundfiles").openOS });
 Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
 );
 
