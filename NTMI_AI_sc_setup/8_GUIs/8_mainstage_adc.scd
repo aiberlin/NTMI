@@ -287,8 +287,9 @@ WinBounds.addMake('Main_NTMI', {
 	main.nUFOViews = [
 		// main.imuUV,
 		main.nUFOView,
-		main.rMViews.last.uv, // mode view
+		main.rMViews.last.uv,
 		main.caliBut,
+		main.nUFO2InfBut
 	];
 
 	main.skipper.stop;
@@ -298,7 +299,8 @@ WinBounds.addMake('Main_NTMI', {
 	main[\winUpdate].add(\nUFOView, {
 		var shownUFO = NTMI.g.hasnUFO;
 		main.nUFOViews.do { |view|
-			if (view.visible != shownUFO) {
+
+			if (view.notNil and: { view.visible != shownUFO }) {
 				view.visible = shownUFO;
 			};
 		};

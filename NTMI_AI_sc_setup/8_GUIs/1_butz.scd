@@ -22,7 +22,7 @@ g.butzNames = [
 ];
 
 // Butz.clear;
-Butz.numButz = g.butzNames.size + 3;
+Butz.numButz = g.butzNames.size + 4;
 
 // set Butz window style params:
 Butz.style;
