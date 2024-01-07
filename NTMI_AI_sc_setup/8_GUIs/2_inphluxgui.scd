@@ -50,7 +50,7 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 
 	StaticText(infComp, 330@20).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(font);
 	presl = EZSlider(infComp, 330@20, \preset, [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
-		q.inphlux.setwPre(q.inph.randSeeds[ez.value.asInteger]);
+		NTMI.inph.setWPreIndex(ez.value.asInteger);
 		q.inphlux.calcOutVals;
 	}, q.inph.presIndex, labelWidth: 60, numberWidth: 30);
 	presl.font_(font);

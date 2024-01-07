@@ -138,6 +138,7 @@ NTMI.inph.put(\presIndex,
 );
 
 NTMI.inph.alpha = 0.7;
+
 // colors attributed to the 6 presets,
 // so we can set the colors on the nufo LEDs
 NTMI.inph.presetCols = 6.collect {|i|
@@ -147,9 +148,20 @@ NTMI.inph.presetCols = 6.collect {|i|
 	Color.fromArray(col.asArray.keep(3) * (sum ** -0.38) ++ [NTMI.inph.alpha])
 }.add(Color.black.alpha_(NTMI.inph.alpha));
 
+// hand-tuned for better balance:
+NTMI.inph.presetCols = [
+	Color(1.0, 0.0, 0.0, 0.7),
+	Color(0.77, 0.77, 0.0, 0.7),
+	Color(0.0, 0.9, 0.0, 0.7),
+	Color(0.0, 0.6, 0.6, 0.7),
+	Color(0.0, 0.0, 1.0, 0.7),
+	Color(0.77, 0.0, 0.77, 0.7),
+	Color(0, 0.0, 0, 0.7),
+];
+
 NTMI.inph.counterCols = 6.collect {|i|
 	Color.hsv( (i/6.0 + 0.5).wrap(0,1), 1, 1, 1);
-}.add(Color.white).collect(_.asArray);
+}.add(Color.grey(1)).collect(_.asArray);
 
 
 
