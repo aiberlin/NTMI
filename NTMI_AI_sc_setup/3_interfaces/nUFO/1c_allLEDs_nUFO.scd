@@ -1,7 +1,7 @@
 
 // test all led elements once:
 /*
-NTMI.nufo.nUFO.mode = \full;
+NTMI.nUFO.nUFO.mode = \full;
 Tdef(\allLEDs).play;
 
 // test wakeup ballet also from OSC:
@@ -12,7 +12,7 @@ NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
 
 Tdef(\allLEDs).set(\dt, 0.1);
 Tdef(\allLEDs, { |ev|
-	try { NTMI.nufo.skip.stop };
+	try { NTMI.nUFO.skip.stop };
 	2.do {
 		"leds back ON".postln;
 		MKtl(\nUFO).elAt(\led, \bk).do { |led|
@@ -40,7 +40,7 @@ Tdef(\allLEDs, { |ev|
 	};
 
 	// set to correct state now:
-	try { NTMI.nufo.skip.stop.play };
+	try { NTMI.nUFO.skip.stop.play };
 
 	// sync back LEDs state
 	0.1.wait;
@@ -49,7 +49,7 @@ Tdef(\allLEDs, { |ev|
 		MKtl(\nUFO).elAt(\led, \bk, i).value = playVal;
 		0.05.wait;
 	};
-	NTMI.nufo.setModeIndex(NTMI.nufo.modeIndex);
+	NTMI.nUFO.setModeIndex(NTMI.nUFO.modeIndex);
 	0.1.wait;
 	NTMI.inph.setWPreIndex(NTMI.inph.presIndex);
 	0.1.wait;

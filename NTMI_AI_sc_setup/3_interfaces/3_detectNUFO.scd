@@ -4,15 +4,15 @@ OSCdef.trace(false);
 MKtl.all.nUFO; // exists?
 */
 
-NTMI.nufo = NTMI.nufo ? ();
-NTMI.nufo.waitForNufo = true;
+NTMI.nUFO = NTMI.nUFO ? ();
+NTMI.nUFO.waitFornUFO = true;
 
-NTMI.nufo.loadNufo = { |dict, force = false|
-	var senderAddr = NTMI.nufo.senderAddr;
-	if (force or: NTMI.nufo.waitForNufo) {
+NTMI.nUFO.loadnUFO = { |dict, force = false|
+	var senderAddr = NTMI.nUFO.senderAddr;
+	if (force or: NTMI.nUFO.waitFornUFO) {
 		defer {
 			"*** loading nUFO interface:".postln;
-			LoadMe(NTMI.dir.setup +/+ "3_interfaces/nufo/*nufo*.scd");
+			LoadMe(NTMI.dir.setup +/+ "3_interfaces/nUFO/*nUFO*.scd");
 			if (senderAddr.notNil) {
 
 				MKtl.all.nUFO.device.updateSrcAddr(senderAddr.ip, senderAddr.port)
@@ -22,10 +22,10 @@ NTMI.nufo.loadNufo = { |dict, force = false|
 	}
 };
 
-// detect nUFO presence, assuming nufo always sends imu:
+// detect nUFO presence, assuming nUFO always sends imu:
 OSCdef(\nUFOdetectIMU, { |msg, time, senderAddr|
-	NTMI.nufo.senderAddr = senderAddr;
-	NTMI.nufo.loadNufo(true);
+	NTMI.nUFO.senderAddr = senderAddr;
+	NTMI.nUFO.loadnUFO(true);
 	// disable detector when loaded.
 	// reopen with OSCdef(\nUFOdetectIMU).enable;
 	OSCdef(\nUFOdetectIMU).disable;
@@ -33,16 +33,16 @@ OSCdef(\nUFOdetectIMU, { |msg, time, senderAddr|
 
 // still hypothetical, use when multiple nUFOs in the same network.
 /*
-NTMI.nufo.knownNUFOs = [];
+NTMI.nUFO.knownnUFOs = [];
 // wait for nUFO ID, decide whether to connect:
 OSCdef(\nUFOdetectID, { |msg|
 var newID = msg[1];
-if (NTMI.nufo.knownNUFOs.includes(newID).not) {
-NTMI.nufo.knownNUFOs = NTMI.nufo.knownNUFOs.add(newID);
-"*** NTMI.knownNUFOs : %\n\n".postf(NTMI.nufo.knownNUFOs.cs);
-if (NTMI.nufo.myExpectedID != newID) {
+if (NTMI.nUFO.knownnUFOs.includes(newID).not) {
+NTMI.nUFO.knownnUFOs = NTMI.nUFO.knownnUFOs.add(newID);
+"*** NTMI.knownnUFOs : %\n\n".postf(NTMI.nUFO.knownnUFOs.cs);
+if (NTMI.nUFO.myExpectedID != newID) {
 if (MKtl.all.nUFO.isNil) {
-NTMI.nufo.loadNufo
+NTMI.nUFO.loadnUFO
 };
 };
 msg.postln;
