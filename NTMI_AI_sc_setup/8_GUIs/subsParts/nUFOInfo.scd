@@ -1,9 +1,12 @@
 var font = NTMI.g.font;
 var nUFOZone = NTMI.g.main.nUFOZone;
-var halfHeight = nUFOZone.bounds.height * 0.5;
-var butRect = nUFOZone.bounds.extent.asRect.height_(halfHeight);
+var bounds = nUFOZone.bounds;
+var hi = bounds.height;
+var uvRect = bounds.extent.asRect.height_(hi * 0.5);
+var caliRect = bounds.extent.asRect.top_(hi * 0.5).height_(hi * 0.3);
+var n2iRect = bounds.extent.asRect.top_(hi * 0.8).height_(hi * 0.2);
 
-var nUFOView = UserView(nUFOZone, butRect)
+var nUFOView = UserView(nUFOZone, uvRect)
 .background_(NTMI.g.butGrey);
 NTMI.g.main.nUFOView = nUFOView.postln;
 
@@ -23,10 +26,10 @@ nUFOView.drawFunc_({ |uv|
 	// "nUFOView.drawFunc".postln;
 });
 
-NTMI.g.main.caliBut = Button(nUFOZone, butRect.top_(halfHeight))
+NTMI.g.main.caliBut = Button(nUFOZone, caliRect)
 .states_([
 	["CALIBRATE\ntouch + move?", Color.white, NTMI.g.butGrey],
-	["CALIBRATING\ntouch + move", Color.black, Color.yellow],
+	["CALIBRATING\ntouch + move", Color.black, Color.yellow(1.0, 0.8)],
 	["touch + move\ncalibrated", Color.white, NTMI.g.butGrey],
 
 ]).font_(font)
@@ -34,3 +37,18 @@ NTMI.g.main.caliBut = Button(nUFOZone, butRect.top_(halfHeight))
 	but.value_(1);
 	NTMI.nUFO.calibrate(1, { |ok| but.value_(if (ok, 2, 0).postln) })
 });
+
+(
+NTMI.g.main.nUFO2InfBut = Button(nUFOZone, n2iRect)
+.states_([
+	["nUFO->influx is OFF", Color.black, NTMI.g.butGrey],
+	["nUFO->influx is ON", Color.black, Color.green(0.7, 0.7)]
+]).front.font_(Font(NTMI.g.fontName, NTMI.g.font.size * 0.7))
+.action_({ |bt|
+	var funcs = [\imu, \caps].collect { |key|
+		MKtl(\nUFO).device.oscFuncDictionary[key]
+	};
+	if (bt.value == 0) { funcs.do(_.disable) } { funcs.do(_.enable) };
+	NTMI.g.main.nUFO2InfBut.value;
+});
+)
