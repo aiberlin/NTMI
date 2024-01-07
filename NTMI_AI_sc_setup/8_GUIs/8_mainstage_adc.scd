@@ -153,7 +153,8 @@ WinBounds.addMake('Main_NTMI', {
 
 	// for the demo:
 	main.frontText = StaticText(main.w, main.imuUV.bounds);
-	main.frontText.align_(\center).font_(fontFat);
+	main.frontText.align_(\center).font_(fontFat).acceptsMouse_(false);
+
 	NTMI.g.setFrontText = { |q, text=""|
 		defer {
 			"*** frontText:  ".post;
