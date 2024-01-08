@@ -69,10 +69,10 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 
 	if ([\full, \touch, \binary].includes(NTMI.nUFO.mode)) {
 		padCenters = [
-			padLeft@padTop,             padRight@padTop,
-			    padMLeft@padMTop, padMRight@padMTop,
-			    padMLeft@padMBot, padMRight@padMBot,
-			padLeft@padBot,             padRight@padBot
+			// left side - top, midtop,  midbottom, bottom
+			padLeft@padTop, padMLeft@padMTop, padMLeft@padMBot, padLeft@padBot,
+			// right side, same
+			padRight@padTop, padMRight@padMTop, padMRight@padMBot, padRight@padBot
 		];
 
 		Pen.width_(2);
