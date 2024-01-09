@@ -83,6 +83,7 @@ Butz('interfaces').addMiniMax;
 
 [
 	'findConnect',
+	'MKtlInflMix',
 	'nUFO',
 	'nanoKtl',
 	'ferrari',
@@ -90,6 +91,9 @@ Butz('interfaces').addMiniMax;
 ].do { |ifName|
 	Butz(\interfaces).add(ifName, { ifName.postln });
 };
+
+
+Butz(\interfaces).add( \All_MKtls, { WinBounds.showOrMake(\All_MKtls) });
 
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 
