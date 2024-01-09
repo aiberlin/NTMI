@@ -86,16 +86,11 @@ NTMI.nUFO.moveON =  {
 NTMI.nUFO.moveOFF =  {
 	"nUFO - moveOFF".postln;
 	MFdef(\nUFOImuFunc).disable(\set);
-	/////// pads set inphlux in unipolar, 0-1 range!
-	// NTMI.inphlux.set(*NTMI.inphlux.getHalo(\imuNames).collect([_, 0]).flat);
 };
 
 NTMI.nUFO.binON =  {
 	"nUFO - binON".postln;
 	MFdef(\capsToInph).enable(\binKey);
-	// NTMI.slots.nowPlaying.do { |obj|
-	// 	NTMI.inph.decouple(obj)
-	// };
 };
 
 NTMI.nUFO.binOFF =  {

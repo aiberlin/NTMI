@@ -108,5 +108,3 @@ WinBounds.addMake(\MKtlInflMix, {
 	}, 0.5, { w.isClosed }, \mkmix);
 	w
 });
-Butz.closeAll;
-WinBounds.showOrMake(\MKtlInflMix);
