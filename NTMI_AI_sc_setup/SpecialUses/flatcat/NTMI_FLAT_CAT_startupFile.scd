@@ -15,6 +15,7 @@ NTMI.finalSetup = {
 	LoadMe("SpecialUses/flatcat/flatcat*.scd", NTMI.dir.setup);
 	NTMI.g.main.imuUV.drawFunc.add(\flatcat, NTMI.flatcat.drawFunc);
 	NTMI.g.main.imuUV.drawFunc.disable(\imuPad);
+	NTMI.g.main.imuUV.animate_(true);
 };
 // now run NTMI setup, then flatcat
 NTMI.run("/Users/adc/src/aiberlin/NTMI");

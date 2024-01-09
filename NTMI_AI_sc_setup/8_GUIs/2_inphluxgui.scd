@@ -1,11 +1,14 @@
 /*
 ToDo :
 - InfluxKtlGui could also show:
+- zoom and influx mode for GUI
+
 // config
 --- outProcs? which ones?
 --- outOffsets (per out)? name?
 
-g.makeGui.inphlux;
+MKtl(\inph).gui;
+WinBounds.showOrMake(\inphlux);
 
 include preset number and and inScaler in  SkipJack !
 
@@ -16,12 +19,58 @@ NTMI.g = NTMI.g ? (); // global dict
 q = NTMI.q;
 g = NTMI.g;
 
+NTMI.inph.desc = (
+	deviceName: "inphlux",
+	idInfo: "inphlux",
+	protocol: \GUI,
+	elementTypes: [\fader],
+
+	elementsDesc: (
+		key: \sl,
+		shared: (elementType: \slider, midiMsgType: \control,
+			midiChan: 0, spec: \bipolar, \ioType: \inout),
+		elements: (
+			NTMI.inphlux.inNames.collect { |inName, i|
+				(key: inName)
+			}
+		)
+	)
+);
+MKtlDesc.isValidDescDict(NTMI.inph.desc);
+MKtl.all.inphlux.free;
+MKtl(\inph, NTMI.inph.desc);
+
+NTMI.inph.zoom = 0.5;
+NTMI.inph.influxMode = \setAbs;
+NTMI.inph.influxMode = \setRel;
+
+MKtl(\inph).elAt.action = { |sl|
+	var index = sl.indexInGroup, delta;
+	// [sl.name, index, sl.deviceValue.round(0.001)].postln;
+
+	if (NTMI.inph.influxMode == \setRel) {
+		delta = (sl.deviceValue - sl.prevDeviceValue);
+		// ("delta:" + delta.round(0.001)).postln;
+		MFdef.all.setRelInf.value(index,
+			delta, NTMI.inph.zoom;
+		);
+		// just put it, no action:
+		NTMI.inphlux.inValDict.put(
+			NTMI.inphlux.inNames[index], sl.deviceValue);
+
+	} {
+		// absolute: set and do action
+		NTMI.inphlux.set(index, sl.deviceValue);
+	};
+};
+
+
 WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 	var bnds = g.bounds;
 	var size = 170;
 	var size2 = size * 2;
 
-	var w, presl, insc, font, fontbig, infComp;
+	var w, presl, insc, infModePop, infZoomSl, font, fontbig, infComp;
 
 	font = Font(g.fontName, 13);
 	fontbig = Font(g.fontName, 16);
@@ -38,27 +87,37 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 	infComp = CompositeView(w, (size2@size2) .asRect);
 	// infComp.bounds.postln;
 	infComp.resize_(4);
-	infComp.addFlowLayout;
+	infComp.addFlowLayout(2@2, 2@2);
 
 	q.inph.ioUV = UserView(q.inph.ioWin,
 		Rect(size2, 0, size2, size2)
 	).resize_(5);
 	q.inph.ioUV.background_(Color.grey(0.5));
 
+	NTMI.inph.modes = [\setRel, \setAbs];
 
+	// StaticText(infComp, 330@20).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(font);
 
-
-	StaticText(infComp, 330@20).string_("seeds:" + q.inph.randSeeds).align_(\center).font_(font);
-	presl = EZSlider(infComp, 330@20, \preset, [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
+	presl = EZSlider(infComp, 330@20, "WeightsPreset", [0, q.inph.randSeeds.lastIndex, \lin, 1], { |ez|
 		NTMI.inph.setWPreIndex(ez.value.asInteger);
 		q.inphlux.calcOutVals;
-	}, q.inph.presIndex, labelWidth: 60, numberWidth: 30);
+	}, q.inph.presIndex, labelWidth: 90, numberWidth: 30);
 	presl.font_(font);
 
-	insc = EZSlider(infComp, 330@20, \inScaler, \zoom.asSpec, { |ez|
+	insc = EZSlider(infComp, 330@20, "GlobalZoom", \zoom.asSpec, { |ez|
 		q.setZoom(ez.value);
 		ez.value_(q.zoom);
-	}, q.inphlux.inScaler, labelWidth: 60, numberWidth: 40).font_(font);
+	}, q.inphlux.inScaler, labelWidth: 90, numberWidth: 30).font_(font);
+
+	infModePop = EZPopUpMenu(infComp, 140@20, \guiInfMode, NTMI.inph.modes, { |pop|
+		"NTMI.inph.influxMode: ".post;
+		NTMI.inph.influxMode = pop.item.postln;
+	}, labelWidth: 70);
+
+	infZoomSl = EZSlider(infComp, 190@20, \guiZoom, [0, 4, \amp].asSpec, { |sl|
+		NTMI.inph.zoom = sl.value
+	}, NTMI.inph.zoom, labelWidth: 55, numberWidth: 30);
+
 
 	q.inph.ktlgui = InfluxKtlGui(q.inphlux, 5, infComp, Rect(0,0,300, 280));
 	// hide attachButtons:
@@ -184,7 +243,7 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 
 		};
 		SkipJack({
-			q.inph.ioUV.refresh;
+			NTMI.inph.ioUV.refresh;
 			presl.value = NTMI.inph.presIndex;
 			insc.value = NTMI.inphlux.inScaler;
 		}, 0.2, { q.inph.ioWin.isClosed }, "inphIOW");
@@ -212,7 +271,9 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 					if (NTMI.inph.canSet) {
 						newval = (x / (uvW * 0.38)).unibi;
 						"influx in '%' -> %\n".postf(inName, newval.round(0.0001));
-						q.inphlux.set(inName, newval);
+
+						// was: q.inphlux.set(inName, newval);
+						MKtl(\inph).elAt(indexY).deviceValueAction_(newval);
 					} {
 						"influx in % '%' : %\n".postf(indexY, inName,
 							q.inphlux.inValDict[inName].round(0.0001));
