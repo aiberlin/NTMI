@@ -25,10 +25,8 @@ NTMI.bin.randOrb(64.rand);
 // sneak binkey function into func that triggers when pads array is received:
 MFdef(\capsToInph).add(\binKey, {
 	// var binMap = [ 128, 64, 32, 16, 8, 4, 2,   1];
-	var binMap = [ 2,    8, 32, 128, 1, 4, 16, 64];
-	var caps = MKtl('nUFO').collAt(\caps);
-	var vals = caps.value;
-	var bins = vals.collect { |val| (val > NTMI.bin.thresh).binaryValue };
+	var binMap = [ 2, 8, 32, 128, 1, 4, 16, 64];
+	var bins = NTMI.nUFO.padVals.collect { |val| (val > NTMI.bin.thresh).binaryValue };
 	var newNum = (bins * binMap).sum;
 
 	NTMI.bin.randOrb(newNum);

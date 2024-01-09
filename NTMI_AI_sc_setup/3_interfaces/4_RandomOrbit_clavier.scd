@@ -13,11 +13,10 @@ NTMI.bin.randOrb = { |dict, newNum|
 		NTMI.bin.binkey = newNum;
 
 		if(newNum > 0) {
-			// "randOrb newNum: %\n".postf(newNum);
-			// was:
-			// NTMI.slots.nowPlaying.do { |px| };
-			// don't set decoupled proxies:
-			NTMI.slots.nowPlaying.reject { |px| NTMI.inph.decoupled.includes(px.key) }.do { |px|
+			"randOrb newNum: %\n".postf(newNum);
+
+			// ndefs now playing and not decoupled:
+			NTMI.inph.toSetNow.do { |px|
 				var pre = NdefPreset(px);
 
 				// if outside presets, use newNum as random seed
