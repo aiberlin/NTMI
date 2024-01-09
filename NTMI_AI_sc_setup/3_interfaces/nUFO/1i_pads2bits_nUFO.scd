@@ -30,10 +30,12 @@ MFdef(\capsToInph).add(\binKey, {
 	var newNum = (bins * binMap).sum;
 
 	NTMI.bin.randOrb(newNum);
-	caps.do { |cap, i|
+
+	///// not sure indiv. cap actions are needed?
+	MKtl(\nUFO).elAt(\cap).do { |cap, i|
 		if (bins[i] != NTMI.bin.bins[i]) {
-			// cap.post; [bins[i], ~bins[i]].postln;
-			///// cap.action.value;
+			"nUFO % : % -> %\n".postf(cap.name, NTMI.bin.bins[i], bins[i]);
+			cap.action.value;
 		}
 	};
 	NTMI.bin.bins = bins
