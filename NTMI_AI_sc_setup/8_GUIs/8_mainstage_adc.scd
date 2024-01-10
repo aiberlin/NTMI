@@ -211,7 +211,7 @@ WinBounds.addMake('Main_NTMI', {
 
 	////// the 4 mviews on the right -  remove n eventually
 	rMViews = 4.collect { |i|
-		var initval = [1.0, \pre_1, '¿-?', \move][i];
+		var initval = [1.0, \pre_1, '¿-?', \full][i];
 		var height = rightColRect.height / 4;
 		var rect = Rect(0, height * i, rightColRect.width, height - marg);
 		var emmy = MView(nil, midRightCol, rect);

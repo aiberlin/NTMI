@@ -137,7 +137,7 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 		filepath = (NTMI.dir.setup +/+ filepath);
 	};
 	if (MKtl.all[name].isNil) {
-		filepath.loadPaths;
+		LoadMe(filepath);
 	};
 	if (WinBounds.makeFuncs[name].isNil) {
 		WinBounds.addMake(name, {
@@ -165,7 +165,7 @@ NTMI.addInterfaceFile(\nanoKtl,
 	"3_interfaces/optionals/7_nanoKtl.scd");
 
 NTMI.addInterfaceFile(\nUFO,
-	"3_interfaces/nUFO/1*nUFO.scd");
+	"3_interfaces/nUFO/1*nUFO*.scd");
 
 (
 Butz(\NTMI_Config).clear;
