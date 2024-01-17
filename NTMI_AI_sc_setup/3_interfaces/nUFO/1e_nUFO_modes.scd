@@ -1,15 +1,40 @@
 
 
-// switch modes - analog in vs. IMU /// touch vs move mode
-// NTMI.nUFO.modes = [\full, \move, \touch, \binary, \off];
 /*
+// switch nUFO modes - touch pads, IMU, touch pads as binary
+
 NTMI.nUFO.setModeIndex(100.rand)
-NTMI.nUFO[\mode]
+NTMI.nUFO[\mode];
+
+// the full choice of modes is:
+NTMI.nUFO.modes = [
+	\full,    // move/imu, touch/pads
+	\move,    // only move/imu
+	\touch,   // only touch/pads
+	\binary,  // pads as binary preset-switching clavier
+	\binMove, // pads as binary, plus move/imu best in setRel mode
+	\off      // all
+];
+
+// choice of modes can be customized:
+NTMI.nUFO.modes = [\full, \move, \touch, \binary, \off];
 
 */
 
+// default choice of modes: [\full, \touch, \binary]
 
-NTMI.nUFO.modes = [\full, \touch, \binary]; //
+NTMI.nUFO.modes = NTMI.nUFO.modes ? [\full, \touch, \binary];
+
+// switch colors to this dict later
+NTMI.nUFO.modeColDict = (
+	touch:   [ 1, 0, 0 ], // red is touch
+	full:    [ 0, 1, 0 ], // green is full
+//	move:    [ 0, 0, 1 ], // [ blue is move ]
+	binary:  [ 0, 0, 1 ], // [ blue is binary ]
+	binMove: [ 0, 1, 1 ], // [ cyan is binary+move ]
+	off:	 [ 0, 0, 0 ]  // [ black is off ]
+].clipAt(NTMI.nUFO.modeIndex);
+
 NTMI.nUFO.modeIndex = 0;
 NTMI.nUFO.mode = { NTMI.nUFO.modes.wrapAt(NTMI.nUFO.modeIndex) };
 
@@ -23,6 +48,7 @@ NTMI.nUFO.setModeIndex = { |dict, modeIndex = 0|
 			touch: { NTMI.nUFO.moveOFF; NTMI.nUFO.touchON; NTMI.nUFO.binOFF; },
 			full:  { NTMI.nUFO.moveON;  NTMI.nUFO.touchON; NTMI.nUFO.binOFF; },
 			binary: { NTMI.nUFO.moveOFF;  NTMI.nUFO.touchOFF; NTMI.nUFO.binON; },
+			binMove: { NTMI.nUFO.moveON;  NTMI.nUFO.touchOFF; NTMI.nUFO.binON; },
 			off: { NTMI.nUFO.moveOFF;  NTMI.nUFO.touchOFF; NTMI.nUFO.binOFF; },
 		)[NTMI.nUFO.mode].value;
 
@@ -37,7 +63,6 @@ NTMI.nUFO.modeStep = { |dict, inc = 1|
 
 // show modes as colors:
 // green = both, red = move, blue = touch, black = off
-
 NTMI.nUFO.sendNufoMode = {
 	var msg = [
 		[ 0, 1, 0 ], // green is full
