@@ -20,7 +20,7 @@ Tdef(\NTDemo_GUI, {
 	"\n\n*** Tdef('%') starts!\n\n".postf(myName);
 	NTMI.ndefs.do(_.end);
 	NTMI.ndefs.do(_.vol_(0.25));
-	Window.closeAll;
+	Butz.closeAll;
 	Butz(\NTMI).run(\Main_NTMI);
 	0.2.wait;
 	NTMI.g.setFrontText("***NTMI*** ***Demo*** ***GUI***");
