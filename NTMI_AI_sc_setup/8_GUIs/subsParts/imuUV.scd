@@ -67,7 +67,7 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 
 	Pen.scale(myscaleW, myscaleH);
 
-	if ([\full, \touch, \binary].includes(NTMI.nUFO.mode)) {
+	if ([\full, \touch, \binary, \binMove, \off].includes(NTMI.nUFO.mode)) {
 		padCenters = [
 			// left side - top, midtop,  midbottom, bottom
 			padLeft@padTop, padMLeft@padMTop, padMLeft@padMBot, padLeft@padBot,
@@ -89,7 +89,7 @@ NTMI.g.main.imuUVMFunc.add(\imuPad, { |uv|
 	};
 
 	// visualize move mode as star of 9;
-	if ([\full, \move].includes(NTMI.nUFO.mode)) {
+	if ([\full, \move, \binMove].includes(NTMI.nUFO.mode)) {
 		// "move mode vis".postln;
 		star = main.movevals.collect { |val, i|
 			// offset -1.25 means noseDown is lowest star axis
@@ -116,7 +116,7 @@ NTMI.g.main[\winUpdate].add(\imuPad, {
 			or: { NTMI.nUFO.padVals != NTMI.nUFO.padValsOLD }) {
 
 			main.movevals = NTMI.nUFO.calibImuVals ? main.movevals;
-			if (NTMI.nUFO.mode == \binary) {
+			if ([\binary, \binMove].includes(NTMI.nUFO.mode)) {
 				main.padCols = NTMI.bin.bins.collect { |val, i|
 					Color.white.alpha_(val);
 				};
