@@ -21,13 +21,14 @@ forkIfNeeded {
 		NTMI.process.foundPaths.size, NTMI.process.procPath.cs);
 	"// post them with: \nNTMI.process.foundNames.cs".postln;
 
-	if (NTMI.prefs.active.processNames.isNil) {
+	if (NTMI.process.namesToLoad.isNil) {
 		"loading all % found paths:\n".postf(NTMI.process.foundNames.size);
 		NTMI.process.namesToLoad = NTMI.process.foundNames;
 	} {
-		"loading predefined paths in NTMI.prefs.active.processNames:\n";
+		"loading predefined paths in NTMI.process.namesToLoad:\n %\n"
+		.postf(NTMI.processNames.cs);
 		NTMI.process.namesToLoad =
-		NTMI.prefs.active.processNames.sect(NTMI.process.foundNames);
+		NTMI.process.namesToLoad.sect(NTMI.process.foundNames);
 	};
 
 	NTMI.process.allNames = NTMI.process.namesToLoad;
@@ -59,7 +60,7 @@ forkIfNeeded {
 
 	{
 		var allNdefChoices = NTMI.process.allNames.copy;
-		var activesToUse = (NTMI.prefs.active.defaultActives ? []).select { |name, i|
+		var activesToUse = (NTMI.defaultActives ? []).select { |name, i|
 			var found = allNdefChoices.includes(name);
 			if (found.not) {
 				"*** no Ndef for %! please check its code file.\n".postf(name);
@@ -68,6 +69,9 @@ forkIfNeeded {
 		};
 		if (activesToUse.size > 4) {
 			"too many defaultActives: \n%\nkeeping 4.\n".postf(activesToUse);
+			if (NTMI.usesRandomInit) {
+				activesToUse = activesToUse.scramble;
+			};
 			activesToUse = activesToUse.keep(4);
 		};
 		if (activesToUse.size < 4) {
@@ -80,6 +84,8 @@ forkIfNeeded {
 		"actives to use: \n%\n".postf(activesToUse);
 		// activate the ndefs given in prefs:
 		NTMI.ndefs = activesToUse.collect(Ndef(_));
+		"*** NTMI.ndefs: ".postln;
+		NTMI.ndefs.postln;
 		"\n\n".postln;
 	}.value;
 };
