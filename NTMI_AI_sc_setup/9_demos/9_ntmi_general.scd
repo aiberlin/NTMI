@@ -8,15 +8,32 @@ in separate testdefs:
 nUFO, nanoKtl, uc4, ferrari
 */
 
+NTMI.demos = NTMI.demos ? ();
+NTMI.demos.notDoneYet = { {
+	[
+		"... ... not done yet",
+		"... not done yet ...",
+		"not done yet ... ...",
+		"done yet ... ...",
+		"yet ... ...",
+		"... ...",
+		"...", ""
+	].do { |str|
+		NTMI.g.setFrontText(str);
+		1.wait;
+	}
+} };
 
 Butz(\NTMI_DEMO).clear;
 Butz(\NTMI_DEMO).add(\showAll, { Butz.run('Tdef.all') });
 Butz(\NTMI_DEMO).add(\Demo_GUI, { Tdef(\NTDemo_GUI).play });
 Butz(\NTMI_DEMO).add(\Demo_nanoKtl, { Butz.run('\NTDemo_nanoKtl.all') });
-Butz(\NTMI_DEMO).add(\Demo_Presets, { Tdef(\NTDemo_Presets).play });
-Butz(\NTMI_DEMO).add(\Demo_Influx, { Tdef(\NTDemo_Influx).play });
-Butz(\NTMI_DEMO).add(\Demo_MainFX, { Tdef(\NTDemo_MainFX).play });
-Butz(\NTMI_DEMO).add(\Demo_flatcat, { Tdef(\NTDemo_flatcat).play });
+Butz(\NTMI_DEMO).add(\Demo_Presets, { Tdef(\NTDemo_Presets, NTMI.demos.notDoneYet).play });
+
+Butz(\NTMI_DEMO).add(\Demo_Influx, { Tdef(\NTDemo_Influx, NTMI.demos.notDoneYet).play });
+Butz(\NTMI_DEMO).add(\Demo_MainFX, { Tdef(\NTDemo_MainFX, NTMI.demos.notDoneYet).play });
+Butz(\NTMI_DEMO).add(\Demo_flatcat, { Tdef(\NTDemo_flatcat, NTMI.demos.notDoneYet).play });
+
 Butz(\NTMI_DEMO).add(\NT_codeTest, { Tdef(\NT_codeTest).play });
 
 
