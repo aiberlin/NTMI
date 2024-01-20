@@ -1,6 +1,7 @@
 NTMI.mkmix = NTMI.mkmix ? ();
 
 Butz('interfaces').add(\MKtlInflMix, { WinBounds.showOrMake(\MKtlInflMix) });
+Butz('NTMI').add(\MKtlInflMix, { WinBounds.showOrMake(\MKtlInflMix) });
 
 WinBounds.addMake(\MKtlInflMix, {
 	var w = Window(\MKtlInflMix, Rect.aboutPoint(NTMI.g.bounds.center, 250, 100)).front;

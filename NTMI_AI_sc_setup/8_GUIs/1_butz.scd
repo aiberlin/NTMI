@@ -13,9 +13,10 @@ g.butzNames = [
 	'miniMax',
 	'Main_NTMI',
 	'inphlux',
+	'MKtlInflMix',
 	'liveInput',
-	'slotSounds',
 	'presets',
+	'slotSounds',
 	'randomOrbitz',
 	'ndefMixer',
 	'mainFX',
@@ -93,8 +94,6 @@ Butz('interfaces').addMiniMax;
 };
 
 
-Butz(\interfaces).add( \All_MKtls, { WinBounds.showOrMake(\All_MKtls) });
-
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 
 Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
@@ -133,10 +132,12 @@ Butz(\interfaces).add(\findConnect, {
 
 // function to load an interface file or gui:
 NTMI.loadInterfaceFile = { |dict, name, filepath|
+	"NTMI.loadInterfaceFile: name: %, path: %\n".postf(name, filepath);
 	if (PathName(filepath).isRelativePath) {
 		filepath = (NTMI.dir.setup +/+ filepath);
 	};
 	if (MKtl.all[name].isNil) {
+		"LoadMe(filepath);".postln;
 		LoadMe(filepath);
 	};
 	if (WinBounds.makeFuncs[name].isNil) {
