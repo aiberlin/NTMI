@@ -2,14 +2,20 @@
 
 var globalBufFolder = NTMI.globalBufFolder ? NTMI.dir.userSFExamples;
 var bufsName = \global;
+var hasNoSFs = { |path|
+	SoundFile.collect(globalBufFolder +/+ "*").isEmpty
+};
+
 
 // buffers should be in global dict q, not in NTMI.bufs
 q = q ? ();
 q.bufs = q.bufs ? ();
 
-if (globalBufFolder.isNil
-	or: { SoundFile.collect(globalBufFolder +/+ "*").isEmpty }) {
-	globalBufFolder = NTMI.dir.scSoundfiles;
+if (globalBufFolder.isNil or: { hasNoSFs.(globalBufFolder) }) {
+	globalBufFolder = NTMI.dir.userSFExamples;
+	if (hasNoSFs.(globalBufFolder)) {
+		globalBufFolder = NTMI.dir.scSoundfiles;
+	};
 };
 
 // if present, load global bufferfolder into q.bufs.global when booting
