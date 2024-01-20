@@ -2,17 +2,23 @@
 * this loadme file resides in the project folder,
 * and is not intended for user-introduced changes.
 
-It is configurable with variables and flags within NTMI.q.
+It is configurable with variables and flags within NTMI.q,
+which you can set before running this file with NTMI.run.
 
-NTMI.hasGui = false; // headless
-NTMI.usesMIDI = false; // will not use MIDI interfaces
-NTMI.usesHID = false; // will not use MIDI interfaces
+// these can be useful for testing that code works
+// on various conditions, e.g. specific platforms:
+
+NTMI.hasGui   = false; // headless mode, e.g. for raspi or bela
+NTMI.isPi     = true // simulate default raspi OS account
+NTMI.isPatch  = false; // detect raspi patchbox OS
+NTMI.myname = \KoolKat; // use as flag to make adjustments based on user name
+
+// speedup booting
+NTMI.usesMidi = false; // will not look for MIDI interfaces
+NTMI.usesHID = false; // will not look for HID interfaces
 
 NTMI.reboot = false; // keep server running, dont set its options
 NTMI.usesMainFX = false; // dont load MainFX
-NTMI.usesHID = false; // will not use MIDI interfaces
-
-
 
 */
 
@@ -25,14 +31,10 @@ Task {
 	"\n\n*** loadMe file for NTMI_AI_sc_setup loading...\n\n".postln;
 	LoadMe.start;
 
-
-	// q = q ? ();  // <- dict for most everything
-	// g = g ? ();  // <- gui stuff goes here!
-
 	//// Set generally useful globals:
 
 	// internally useful:
-	NTMI.myname = Platform.userHomeDir.basename.asSymbol;
+	NTMI.myname = NTMI.myname ?? { Platform.userHomeDir.basename.asSymbol };
 	NTMI.isPi     = NTMI.isPi ?? { NTMI.myname == 'pi' };
 	NTMI.isPatch     = NTMI.isPatch ?? { NTMI.myname == 'patch' };
 
@@ -41,35 +43,38 @@ Task {
 	0.1.wait;
 
 	//******* PREFERENCES
-	///// read user prefs (if there) or copy default prefs there:
-	LoadMe("1_prefs/1_prefs.scd");
+	// ///// read user prefs (if there) or copy default prefs there:
+	// LoadMe("1_prefs/1_prefs.scd");
 
 	// Set flags for which parts to load:
 	// on headless systems, dont use guis
-	NTMI.hasGui = NTMI.prefs.active.hasGui ? NTMI.hasGui ?? { \View.asClass.notNil };
-	NTMI.hasSmallScreen = NTMI.prefs.active.hasSmallScreen ? NTMI.hasSmallScreen ?? false;
+	NTMI.hasGui = NTMI.hasGui ?? { \View.asClass.notNil };
+	NTMI.hasSmallScreen = NTMI.hasSmallScreen ?? false;
+	NTMI.usesRandomInit = NTMI.usesRandomInit ? true;
 
 	// which types of controllers will be used?
 	// these may have been set in startup file already:
-	NTMI.usesMidi = NTMI.prefs.active.usesMidi ? NTMI.usesMidi ? true;
-	NTMI.usesHid  = NTMI.prefs.active.usesHid  ? NTMI.usesHid ? true;
+	NTMI.usesMidi = NTMI.usesMidi ? true;
+	NTMI.usesHid  = NTMI.usesHid ? true;
+
 	// which of the supported interfaces should be loaded?
 	// can include custom ones in userPOOL
-	NTMI.interfacesToLoad  = NTMI.prefs.active.interfacesToLoad ? [ "uc4" ];
+	NTMI.interfacesToLoad  = NTMI.interfacesToLoad ? [ "nanoKtl" ];
 	// reboot server when starting NTMI?
-	NTMI.reboot = NTMI.reboot ? NTMI.prefs.active.reboot ? false;
+	NTMI.reboot = NTMI.reboot ? false;
 
-	// turn off MainFX if desired (loses mainVol control)
-	NTMI.usesMainFX = NTMI.usesMainFX ? NTMI.prefs.active.usesMainFX ? true;
+	// turn off MainFX if desired (will use s.volume for mainVol control)
+	NTMI.usesMainFX = NTMI.usesMainFX ? true;
 
+	// replace warning window with post if no GUI
 	if (NTMI.hasGui) {
 		"8_GUIs/warnWin.scd".loadRelative;
 	} {
 		NTMI.warnWin = { |q, string="?!?", title="?!?"| warn(title + string) }
 	};
 
-	"*** Modality: find MIDI and HID devices if enabled ***".postln;
 	if (NTMI.usesMidi) {
+		"*** Modality: find MIDI devices ***".postln;
 		MKtl.find(\midi); 0.1.wait;
 	};
 
@@ -77,6 +82,7 @@ Task {
 		Platform.case(\windows) {
 			"HID on windows is not working in SC3.13.0.".warn
 		} {
+			"*** Modality: find HID devices ***".postln;
 			MKtl.find(\hid); 0.1.wait;
 		};
 	};
@@ -92,19 +98,32 @@ Task {
 	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
 	LoadMe("0_globals/*.scd");
 
-	// set NTMI.numChans from prefs
-	NTMI.numChans = NTMI.prefs.active.numChans ? 2;
-	NTMI.numIns = NTMI.prefs.active.numIns ? NTMI.numChans;
+	// set NTMI.numChans if not present
+	NTMI.numChans = NTMI.numChans ? NTMI.defaults.numChans ? 2;
+	NTMI.numIns = NTMI.numIns ?  NTMI.defaults.numIns ? 2;
 
 	if (s.serverRunning) {
+		var serverNumOuts = s.options.numOutputBusChannels;
+		var serverNumIns = s.options.numOutputBusChannels;
 		"*** server running already, cannot adjust settings!".postln;
-		"may not be able to do everything in preBootSetup ...".postln;
-		NTMI.numChans = min(NTMI.numChans, s.options.numOutputBusChannels);
-		NTMI.numIns =   min(NTMI.numIns,   s.options.numInputBusChannels);
+		"may not be possible to do everything in preBootSetup ...".postln;
+		if (NTMI.numChans > serverNumOuts) {
+			"reducing NTMI.numChans to %\n".postf(serverNumOuts);
+			NTMI.numChans = serverNumOuts;
+		};
+		if (NTMI.numIns > serverNumIns) {
+			"reducing NTMI.numIns to %\n".postf();
+			NTMI.numIns = serverNumIns;
+		};
 
 	} {
-		"setting up server ... ".postln;
-		LoadMe(NTMI.prefs.active.serverSetup, NTMI.dir.user +/+ "POOL/1_*");
+		"NTMI setting up server ... ".postln;
+		// load a setup file with memory etc settings
+		if (NTMI.serverSetupFile.isNil) {
+			"no NTMI.serverSetupFile".postln;
+		} {
+			LoadMe(NTMI.serverSetupFile, NTMI.dir.user +/+ "POOL/1_*")
+		};
 
 		s.options.numInputBusChannels = NTMI.numIns;
 		s.options.numOutputBusChannels = NTMI.numChans;
@@ -127,15 +146,13 @@ Task {
 
 		"\n".postln;
 
-		NTMI.helloSound ?? { LoadMe("0_helloSound.scd") };
+		NTMI.helloSound ?? { NTMI.defaults.helloSound };
+		"NTMI.helloSound plays".postln;
 
 		"*** NTMI.postBoot runs.".postln;
 		NTMI.postBoot;
 
-		LoadMe("2_process_presets/2a_bufferLoader.scd");
-		LoadMe("2_process_presets/2b_liveInput.scd");
-		LoadMe("2_process_presets/2c_loadProcesses.scd");
-		LoadMe("2_process_presets/2d_preset*.scd");
+		LoadMe("2_process_presets/*.scd");
 
 		"*** NTMI.postPresets runs.".postln;
 		NTMI.postPresets;
@@ -149,8 +166,8 @@ Task {
 			LoadMe("3_interfaces/*/*%*scd".format(name));
 		};
 
-		"*** NTMI.preMainFX runs.".postln;
-		NTMI.preMainFX;
+		"*** NTMI.postInterfaces runs.".postln;
+		NTMI.postInterfaces;
 
 		if (NTMI.usesMainFX) {
 			LoadMe("6_MainFX.scd");
@@ -181,14 +198,15 @@ Task {
 				WinBounds.showOrMake(\miniNTMI);
 			};
 
-			LoadMe("9_demos/*scd");
+			if (NTMI.loadDemos ? NTMI.defaults.loadDemos) {
+				LoadMe("9_demos/*scd")
+			};
 		};
-
 
 		"*** NTMI.finalSetup runs.".postln;
 		NTMI.finalSetup;
 
-		// reinstate prev. latency
+		// reinstate orig. latency
 		if (s.latency.isNil) {
 			s.latency = prevLatency;
 			"// server latency back to % after loading.\n\n".postf(s.latency);

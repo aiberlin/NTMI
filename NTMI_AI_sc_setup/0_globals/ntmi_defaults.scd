@@ -18,7 +18,7 @@ NTMI.defaults.myname = Platform.userHomeDir.basename.asSymbol;
 // set number of audio input and output channels,
 // for sound processes in the slots and for MainFX
 NTMI.defaults.numIns = 2;
-NTMI.defaults.numChans = 4;
+NTMI.defaults.numChans = 2;
 
 NTMI.defaults.serverSetupFile = "serverBasic2.scd";
 
@@ -34,9 +34,7 @@ NTMI.defaults.preBoot = nil;
 
 // write a custom sound function to play when starting NTMI:
 
-NTMI.defaults.helloSound = {
-	{ Impulse.ar(XLine.kr([1, 100], [100, 1], 1, doneAction: 2), 0, 0.5) }.play
-};
+NTMI.defaults.helloSound = { LoadMe("0_helloSound.scd") };
 
 NTMI.defaults.postBoot = nil;
 
@@ -114,3 +112,4 @@ NTMI.defaults.preGui = nil;
 
 NTMI.defaults.finalSetup = nil;
 
+NTMI.defaults.loadDemos = true;
