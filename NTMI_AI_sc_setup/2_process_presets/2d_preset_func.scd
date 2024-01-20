@@ -85,22 +85,31 @@ NTMI.pre.presets = NTMI.processes.collect { |proxy, i|
 );
 
 // init to first preset if there are any saved ones
-NTMI.pre.ntmi.do { |pre|
-	var secondSet;
+NTMI.pre.presets.do { |pre|
+	var setIndex = 1, setName;
+
 	if (pre.settings.size > 1) {
-		secondSet = pre.settings[1].key;
-		pre.setCurr(secondSet).setProxy(secondSet);
+		if (NTMI.usesRandomInit == true) {
+			setIndex = rrand(1, pre.settings.lastIndex);
+		};
+		setName = pre.settings[setIndex].key;
+		pre.setCurr(setName).setProxy(setName);
 	};
 };
 
-"set preferred preset names:".postln;
-NTMI.prefs.active.presetNames.printAll;
-NTMI.prefs.active.presetNames.do { |assoc, i|
-	var key = assoc.key, val = assoc.value.value;
-	var preset = NdefPreset.all[key];
-	var prekey = if (val.isKindOf(Symbol)) { val } { preset.settings.wrapAt(val).key };
-	"% : % -> % \n".postf(preset, val.cs, prekey.cs);
-	try { preset.setCurr(prekey).setProxy(prekey) };
+// for the known ones, set these
+if (NTMI.initialPresetNames.isNil) {
+	"no preferred initialPresetNames".postln;
+} {
+	"\n --- Setting preferred initialPresetNames:".postln;
+	NTMI.initialPresetNames.printAll;
+	NTMI.initialPresetNames.do { |assoc, i|
+		var key = assoc.key, val = assoc.value.value;
+		var preset = NdefPreset.all[key];
+		var prekey = if (val.isKindOf(Symbol)) { val } { preset.settings.wrapAt(val).key };
+		"% : % -> % \n".postf(preset, val.cs, prekey.cs);
+		try { preset.setCurr(prekey).setProxy(prekey) };
+	};
 };
 
 
