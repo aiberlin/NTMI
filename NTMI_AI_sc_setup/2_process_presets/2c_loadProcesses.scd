@@ -53,6 +53,8 @@ forkIfNeeded {
 	};
 
 	NTMI.processes = NTMI.process.allNames.collect(Ndef(_));
+	NTMI.processes.do(_.vol_(0.25));
+
 	NTMI.ndef.groups.put(\NTMI, NTMI.processes);
 
 	// kill them all again for startup
