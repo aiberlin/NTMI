@@ -102,7 +102,7 @@ NTMI.defaults.interfacesToLoad = [ "nanoKtl" ];
 
 NTMI.defaults.inph_randSeeds = [ 7, 13, 23, 42, 86, rrand(0, 1000), \diagL ];
 // // the preset key/name to set on startup
-NTMI.defaults.inph_presIndex = 2;
+NTMI.defaults.inph_presIndex = 0;
 
 NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to do after interfaces?".postln };
 

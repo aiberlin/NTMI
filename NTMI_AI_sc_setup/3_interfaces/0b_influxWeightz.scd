@@ -14,20 +14,6 @@ NTMI.inph.setWPreIndex(5);   // jump to specific
 NTMI.inphlux.weights.round(0.0001); // get current ones
 NTMI.inphlux.outOffsets;
 
-
-************ ToDo / Ideas ***********
-- outOffsets,
-- offsetsFromProxy
-- inScaler for controller zooming effect
-
-- maybe a mix of inScaler, weights and outOffsets, all in one saveable preset?
-- a fine, simple way to generate new ones and store beloved ones?
-e.g. 4 buttons:
-- propose new
-- store (auto-generated name (date))
-- recall previous preset
-- recall next preset
-
 */
 
 // setup
@@ -38,10 +24,10 @@ NTMI.inph = NTMI.inph ? ();
 // //// e.g. these
 // [ 3, 12, 45, 42, 37, 86, { rrand(0, 1000) }, \diagL ];
 
-// NTMI.prefs.active.influxPresets = [1, 2, 3, 4, 5, 6, 7, 8];
+// NTMI.influxPresets = [1, 2, 3, 4, 5, 6, 7, 8];
 
-NTMI.inph.randSeeds =
-NTMI.prefs.active.influxPresets ? NTMI.prefs.default.influxPresets;
+// diagL is a default set of weights in influx
+NTMI.inph.randSeeds = NTMI.inph.randSeeds ? NTMI.defaults.inph_randSeeds;
 
 // clip to max 7 presets, so we can use the 6 back LED colors.
 if (NTMI.inph.randSeeds.size > 7) {
@@ -51,8 +37,8 @@ if (NTMI.inph.randSeeds.size > 7) {
 	"keeping %.\n".postf(NTMI.inph.randSeeds);
 };
 
-// create a number of seeded random weights and store them in presets
-// keys are integers 0..n-1
+// use randSeeds to create repeatable random weights and store them in presets
+// use randSeed integers as keys in weights dict
 (
 NTMI.inph.randSeeds.do { |seed|
 	seed = seed.value;
@@ -67,7 +53,7 @@ NTMI.inph.randSeeds.do { |seed|
 NTMI.inph.backupWeights = NTMI.inphlux.presets.deepCopy;
 
 /*
-which influx input offsets to use?
+which influx input offsets to use on sliders?
 amptweaked ins are are 8 (nUFO nose up/down),
 and 10 (nUFO left mid finger power)
 and 14 (nUFO right mid finger, break).
@@ -128,15 +114,13 @@ NTMI.inph.inphTanhOff;
 
 ///////// BIG AMP TWEAK ends.
 
-
-
 // store num pres and current
 NTMI.inph.put(\numPres, NTMI.inph.randSeeds.size);
-NTMI.inph.put(\presIndex,
-	NTMI.inph.randSeeds.indexOf(NTMI.prefs.active.influxPreset) ?
-	NTMI.inph.randSeeds.size.rand
+NTMI.inph.presIndex = NTMI.inph.presIndex ??
+{ if (NTMI.usesRandomInit, { 6.rand }, NTMI.defaults.inph_presIndex) }
 );
 
+(
 NTMI.inph.alpha = 0.7;
 
 // colors attributed to the 6 presets,
