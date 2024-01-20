@@ -4,10 +4,16 @@
 ~dict.skeys.cs;
 ~dict.printSKeys;
 
-~dict.printInterface("~dict.");
+~dict.printInterface("~dict.", 0);
+~dict.printInterface("~dict.", 1);
 
-NTMI.printInterface("NTMI.");
+NTMI.printInterface("NTMI.", 0);
 
+ToDo:
+support keys that do begin with a lowercase letter,
+(7: [1, 2, 3])
+should become:
+dict[7], not dict.7
 */
 
 + Dictionary {
@@ -21,7 +27,8 @@ NTMI.printInterface("NTMI.");
 			(prefix ++ key.cs).postln;
 		}
 	}
-	printInterface { | prefix = "dict." |
+
+	printInterface { | prefix = "dict.", maxLevel = 2 |
 		this.skeys.do { |key|
 			var codeStr = (prefix ++ key);
 			var val = this.at(key);
@@ -40,9 +47,8 @@ NTMI.printInterface("NTMI.");
 			(codeStr + "//" + val.class).postln;
 
 			// recur if Dictionary:
-			if (val.isKindOf(Dictionary)) {
-				val.printInterface("	" ++ codeStr ++ ".");
-
+			if (val.isKindOf(Dictionary) and: (maxLevel > 0)) {
+				val.printInterface("	" ++ codeStr ++ ".", maxLevel - 1);
 			}
 		}
 	}
