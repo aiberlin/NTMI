@@ -19,12 +19,13 @@ NTMI {
 				path = (path ? Quark("NTMI").localPath +/+ "NTMI_AI_sc_setup/00_loadMe.scd");
 				path.loadPaths
 			},
-			//
+			// init necessary dicts
+			defaults: (),
 			process: (),
 			pre: (),
+			slots: (),
 			inph: (),
 			mfx: (),
-			defaults: ()
 		)
 	}
 
