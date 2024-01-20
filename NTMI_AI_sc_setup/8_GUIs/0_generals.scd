@@ -22,7 +22,7 @@ if (NTMI.hasSmallScreen) {
 	MKtlGUI.minViewSize = 32;
 };
 
-//// set global prefs here:
+//// set global GUI prefs here:
 g.alpha = g.alpha ? 0.8;
 g.fontName = g.fontName ? Font.defaultSansFace;
 g.font = Font(g.fontName, (36 * g.screenScale).round);
