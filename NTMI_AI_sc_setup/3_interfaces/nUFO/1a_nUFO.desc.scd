@@ -67,7 +67,7 @@ n.sendMsg("/ntmi/enc", rrand(1, 6) * [-1, 1].choose);
 
 MKtlDesc.fromDict(
 	(
-		descName: "ai-ntmi",
+		descName: "nUFO",
 		deviceName: "ntmi",
 		protocol: \osc,
 		deviceType: \multiController,

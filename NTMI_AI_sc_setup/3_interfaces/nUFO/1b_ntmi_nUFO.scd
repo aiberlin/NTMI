@@ -39,13 +39,10 @@ MKtl(\nUFO).elementsDict.do { |el| el.action.enable(\post) };
 (
 // use this dict for everything osc related
 NTMI.nUFO = NTMI.nUFO ? ();
-NTMI.nUFO.nUFO = NTMI.nUFO.nUFO ? ();
 
-
-///////// make a new nUFO MKtl from desc in
-// ".../0_globals/3_ai-ntmi.desc.scd"
+///////// make a new nUFO MKtl from desc in this folder:
 MKtl.all.at(\nUFO).free;
-MKtl(\nUFO, "ai-ntmi");
+MKtl(\nUFO, "nUFO");
 
 
 // send login message to nUFO, so it knows where to send
