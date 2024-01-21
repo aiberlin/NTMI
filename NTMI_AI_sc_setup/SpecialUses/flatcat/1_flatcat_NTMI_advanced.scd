@@ -45,6 +45,11 @@ OSCdef.trace(false);
 OSCdef(\flatcat).disable;
 OSCdef(\flatcat).enable;
 
+// turn posting for debugging on/off:
+NTMI.flatcat.debugOn = true;
+NTMI.flatcat.debugOn = false;
+
+
 */
 
 /**** The incoming data from the flatcat consist of:
@@ -132,23 +137,29 @@ Tdef(\flatcatSim).stop;
 // NTMI.flatcat.onData: the actions to do when data come in
 NTMI.flatcat.onData = MFunc();
 
-NTMI.flatcat.setAbs = {
-	NTMI.flatcat.onData.enable(\setAbs);
-	NTMI.flatcat.onData.disable(\setRel);
-};
-NTMI.flatcat.setRel = {
-	NTMI.flatcat.onData.enable(\setRel);
-	NTMI.flatcat.onData.disable(\setAbs);
-};
-
-
 /*
-	NTMI.flatcat.onData.disable(\post);
-	NTMI.flatcat.onData.disable(\meta);
-	NTMI.flatcat.onData.disable(\vizdata);
+// onData eventually has these functions:
+NTMI.flatcat.onData.disable(\post);
+NTMI.flatcat.onData.disable(\meta);
+NTMI.flatcat.onData.disable(\vizdata);
 NTMI.flatcat.onData.disable(\setRel);
 NTMI.flatcat.onData.disable(\setAbs);
 */
+
+// switching setAbs/Rel as in other interfaces
+NTMI.flatcat.setAbs = {
+	NTMI.flatcat.onData.enable(\setAbs);
+	NTMI.flatcat.onData.disable(\setRel);
+	NTMI.flatcat.influxMode = \setAbs;
+	"NTMI.flatcat.influxMode is %\n".postf(NTMI.flatcat.influxMode);
+};
+
+NTMI.flatcat.setRel = {
+	NTMI.flatcat.onData.enable(\setRel);
+	NTMI.flatcat.onData.disable(\setAbs);
+	NTMI.flatcat.influxMode = \setRel;
+	"NTMI.flatcat.influxMode is %\n".postf(NTMI.flatcat.influxMode);
+};
 
 (
 MKtl(\flatcat).collAt(\alldata).action = NTMI.flatcat.onData;
@@ -183,41 +194,23 @@ NTMI.flatcat.onData.add(\setAbs, {
 			bipolars].flop.flat;
 	);
 });
-
-/*
-NTMI.flatcat.onData.disable(\setAbs);
-NTMI.flatcat.onData.enable(\setAbs);
-NTMI.flatcat.onData.disable(\setRel);
-NTMI.flatcat.onData.enable(\setRel);
-*/
 );
-
-/* play an NTMI sound slot
-NTMI.slots.playAt(0);
-*/
 
 MKtl(\flatcat).elAt.action = nil;
 
-// MKtl(\flatcat).elAt.action = { |el|
-// 	// var debug = "flatcat global".postln;
-// 	// value change should set all other indiv. elements,
-// 	// so prevValues are correctly 0:
-// 	MKtl(\flatcat).elAt.do { |el2|
-// 		if (el2 != el) { el2.value = el2.value };
-// 	};
-// 	// then trigger global set had come in:
-// 	MKtl(\flatcat).collAt(\alldata).doAction;
-// };
+// this is needed to make the gui behave well:
+// when an element sets gets used, set all values again,
+// so that group.prevValue gets the correct differences.
+MKtl(\flatcat).elAt.action = { |el|
+	MKtl(\flatcat).elAt.value = MKtl(\flatcat).elAt.value;
+//	MKtl(\flatcat).collAt(\alldata).doAction;
+};
 
-// SET-RELATIVE => Polyphonic INFLUENCE MODE !
-NTMI.flatcat.onData.disable(\setAbs);
-
-// use NTMI.flatcat.zoom to tune its degree of influence
 NTMI.flatcat.zoom = 1;
 
-
+// SET-RELATIVE => Polyphonic INFLUENCE MODE !
 NTMI.flatcat.onData.add(\setRel, {
-	var debug = "MFdef('flatcat') - setRel".postln;
+	// var debug = "MFdef('flatcat') - setRel".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var diffs = values - MKtl(\flatcat).elAt.prevValue;
 	diffs = diffs.drop(3);
@@ -231,7 +224,9 @@ NTMI.flatcat.onData.add(\setRel, {
 	);
 });
 
-NTMI.flatcat.onData.enable(\setRel);
+
+NTMI.flatcat.influxMode = NTMI.flatcat.influxMode ? \setRel;
+NTMI.flatcat.perform(NTMI.flatcat.influxMode);
 
 MKtl(\flatcat);
 )
