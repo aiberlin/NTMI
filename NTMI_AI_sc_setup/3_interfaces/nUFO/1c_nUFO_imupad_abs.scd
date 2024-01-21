@@ -15,39 +15,43 @@ function to run, see below.
 
 NTMI.nUFO.debugOn = false;
 
-// keep if already set, else set to abs for now
-NTMI.nUFO.influxMode = NTMI.nUFO.influxMode ? \setAbs;
+// keep if already set, else set to setRel
+NTMI.nUFO.influxMode = NTMI.nUFO.influxMode ? \setRel;
+NTMI.nUFO.zoom = NTMI.nUFO.zoom ? 1;
 
 // ///////////////////////////////////////////////////////////////
 // //// I M U
 // ///////////////////////////////////////////////////////////////
 
 
-MKtl(\nUFO).collectivesDict[\imu].action = {
-	// trigger the action only once (influx calc)
+MKtl(\nUFO).collAt(\imu).action = {
+	// trigger the action only once when array from imu comes in,
+	// not several times for every input value
 	MFdef(\nUFOImuFunc).value;
 };
 
 // set the first 9 values of the inphlux from the imu params:
 NTMI.inphlux.addHalo(\imuNames, NTMI.inphlux.inNames.keep(9));
 
-
-MFdef(\nUFOImuFunc).add(\setAbs, {
+MFdef(\nUFOImuFunc).add(\makeCalibVals, {
 	var imuInvalsBi = MKtl(\nUFO).elAt(\imu9).value.unibi;
 	var calibImuValsBi = imuInvalsBi - NTMI.nUFO.zero.imu;
-	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
-		var value = calibImuValsBi[i];
-		[name, value]
-	}.flat;
 	NTMI.nUFO.rawImuBiValues = imuInvalsBi;
 	NTMI.nUFO.calibImuValsBi = calibImuValsBi;
 	NTMI.nUFO.calibImuVals = calibImuValsBi.biuni;
+});
 
-	// "*** imufunc: ".post; keysvals.round(0.0001).postln;
+MFdef(\nUFOImuFunc).add(\setAbs, {
+	var calibImuValsBi = NTMI.nUFO.calibImuValsBi;
+	var indivZoom = NTMI.nUFO.zoom;
+	var keysvals = NTMI.inphlux.getHalo(\imuNames).collect { |name, i|
+		var value = calibImuValsBi[i];
+		[name, value * indivZoom]
+	}.flat;
+
+	// "*** imufunc setAbs: ".post; keysvals.round(0.01).postln;
 	NTMI.inphlux.set(*keysvals);
 }, false);
-
-MFdef(\nUFOImuFunc).disable(\setAbs);
 
 MFdef(\nUFOImuFunc).add(\set, {
 	if (NTMI.nUFO.debugOn) {
@@ -58,8 +62,7 @@ MFdef(\nUFOImuFunc).add(\set, {
 
 
 /*
-MFdef(\nUFOImuFunc).disable( \setInflux );
-MFdef(\nUFOImuFunc).enable( \setInflux );
+NTMI.nUFO.debugOn = true;
 */
 
 ///////////////////////////////////////////////////////////////
@@ -69,6 +72,7 @@ MFdef(\nUFOImuFunc).enable( \setInflux );
 ///////////////////////////////////////////////////////////////
 
 (
+MFdef(\capsToInph).orderedNames;
 
 NTMI.inphlux.addHalo(\padNames, NTMI.inphlux.inNames.copyRange(9, 16));
 
@@ -77,8 +81,9 @@ MFdef(\capsToInph).add(\setAbs, {
 	var influx = NTMI.inphlux;
 	var padVals = NTMI.nUFO.padVals;
 	var padInNames = NTMI.inphlux.getHalo(\padNames);
+	var indivZoom = NTMI.nUFO.zoom;
 	var keysValues = padVals.collect { |padval, i|
-		[ padInNames[i], padval]
+		[ padInNames[i], padval * indivZoom]
 	}.flat;
 	NTMI.inphlux.set(*keysValues);
 });
@@ -98,17 +103,16 @@ MFdef(\capsToInph).add(\set, {
 ////// coompensate for base values,
 ////// and send the final values only once.
 
-MKtl(\nUFO).collAt('caps').groupAction = nil;
-
 MKtl(\nUFO).addHalo(\capLedThresh, 0.3);
 
 NTMI.nUFO.capsin = MFunc();
-MKtl(\nUFO).collAt('caps').groupAction = NTMI.nUFO.capsin;
+MKtl(\nUFO).collAt('caps').action = NTMI.nUFO.capsin;
 
 
-NTMI.nUFO.capsin.add(\set, { |coll|
+NTMI.nUFO.capsin.add(\set, { |elOrColl|
+	// var debug =  "NTMI.nUFO.capsin set".postln;
 	var capLedThresh = MKtl(\nUFO).getHalo(\capLedThresh);
-	var rawPads = coll.value;
+	var rawPads = MKtl(\nUFO).elAt('cap').value;
 	var calibPadVals;
 
 	NTMI.nUFO.rawPads = rawPads;
@@ -120,13 +124,20 @@ NTMI.nUFO.capsin.add(\set, { |coll|
 		var stretched = rawval.linlin(zeroOffset, 0.9, 0, 1);
 		stretched;
 	};
+
 	// keep prev and new reordered and calibrated padVals here:
 	NTMI.nUFO.prevPadVals = NTMI.nUFO.padVals;
 	NTMI.nUFO.padVals = calibPadVals;
 
-	// // set element values back to the compensated values, no action
-	// MKtl(\nUFO).elAt('cap').value_(values);
-	// trigger touch to inphlux only once ...
+	// this func gets called from collective caps when from nUFO,
+	// and from indiv element when from GUI:
+	if (elOrColl.isKindOf(MKtlElement)) {
+		// if from single element, set all element values,
+		// to get correct differences for relative modes
+		MKtl(\nUFO).elAt('cap').do { |el, i| el.value_(rawPads[i]) };
+	};
+
+	///// trigger touch to inphlux only once ...
 	MFdef(\capsToInph).value;
 
 	// light up leds when pads are touched above thresh:
@@ -141,16 +152,5 @@ NTMI.nUFO.capsin.add(\set, { |coll|
 	}
 });
 
-// // individual pad action - useful for guis only
-// /// do global set only once, from MFdef(\touchToInph)
-// MKtl(\nUFO).elAt(\cap).do { |pad, i|
-// 	pad.action.add(\setAbs, {|ana|
-// 		var name = 	NTMI.inphlux.getHalo(\padNames).clipAt(i);
-// 		NTMI.inphlux.set(name, ana.value.pow(3));
-// 		//.pow(6));
-// 		// the pow(6) helps toflatten the steep curve of the FSRs as they are now.
-// 		ana.value
-// 	})
-// };
 );
 
