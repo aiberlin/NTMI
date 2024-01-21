@@ -67,12 +67,14 @@ NTMI.flatcat.onData.add(\vizdata, {
 	};
 });
 
-NTMI.flatcat.drawFunc = MFunc().add(\draw,  {
+NTMI.flatcat.drawFunc = MFunc().add(\draw,  { |uv|
 	var colorLine = Color.black,
 	colorBody = Color.grey(1.0, 0.5),
 	colorUp = Color.red,
 	colorDown = Color.blue;
 
+	var bounds = uv.bounds;
+	var scale = (bounds.extent / 400@400);
 	var joint1 = 0@0; // stays fixed and in center of image
 	var joint2 = -60@0; // stays fixed, because seg2 stays horizontal
 	var joint0 = -60@0; // moves
@@ -96,6 +98,7 @@ NTMI.flatcat.drawFunc = MFunc().add(\draw,  {
 		Pen.fill;
 	};
 
+	Pen.scale(scale.x, scale.y);
 	// go to center = joint1 for segment2
 	Pen.translate(210, 200);
 
