@@ -132,6 +132,24 @@ Tdef(\flatcatSim).stop;
 // NTMI.flatcat.onData: the actions to do when data come in
 NTMI.flatcat.onData = MFunc();
 
+NTMI.flatcat.setAbs = {
+	NTMI.flatcat.onData.enable(\setAbs);
+	NTMI.flatcat.onData.disable(\setRel);
+};
+NTMI.flatcat.setRel = {
+	NTMI.flatcat.onData.enable(\setRel);
+	NTMI.flatcat.onData.disable(\setAbs);
+};
+
+
+/*
+	NTMI.flatcat.onData.disable(\post);
+	NTMI.flatcat.onData.disable(\meta);
+	NTMI.flatcat.onData.disable(\vizdata);
+NTMI.flatcat.onData.disable(\setRel);
+NTMI.flatcat.onData.disable(\setAbs);
+*/
+
 (
 MKtl(\flatcat).collAt(\alldata).action = NTMI.flatcat.onData;
 
@@ -158,16 +176,19 @@ OSCdef(\flatcat2mktl, { |msg, time, senderAddr, recvPort|
 NTMI.flatcat.onData.add(\setAbs, {
 	// var debug = "MFdef('flatcat') - setAbs".postln;
 	var values = MKtl(\flatcat).elAt.value;
-	var bipolars = values.drop(3).unibi;
+	var bipolars = values.drop(3).unibi * NTMI.flatcat.zoom;
 
 	NTMI.inphlux.set(
 		*[ NTMI.inphlux.inNames.keep(values.size),
 			bipolars].flop.flat;
 	);
 });
+
 /*
 NTMI.flatcat.onData.disable(\setAbs);
-NTMI.flatcat.onData.enable(\\setAbs);
+NTMI.flatcat.onData.enable(\setAbs);
+NTMI.flatcat.onData.disable(\setRel);
+NTMI.flatcat.onData.enable(\setRel);
 */
 );
 
@@ -175,27 +196,28 @@ NTMI.flatcat.onData.enable(\\setAbs);
 NTMI.slots.playAt(0);
 */
 
-MKtl(\flatcat).elAt.action = { |el|
-	// var debug = "flatcat global".postln;
-	// value change should set all other indiv. elements,
-	// so prevValues are correctly 0:
-	MKtl(\flatcat).elAt.do { |el2|
-		if (el2 != el) { el2.value = el2.value };
-	};
-	// then trigger global set had come in:
-	MKtl(\flatcat).collAt(\alldata).doAction;
-};
+MKtl(\flatcat).elAt.action = nil;
+
+// MKtl(\flatcat).elAt.action = { |el|
+// 	// var debug = "flatcat global".postln;
+// 	// value change should set all other indiv. elements,
+// 	// so prevValues are correctly 0:
+// 	MKtl(\flatcat).elAt.do { |el2|
+// 		if (el2 != el) { el2.value = el2.value };
+// 	};
+// 	// then trigger global set had come in:
+// 	MKtl(\flatcat).collAt(\alldata).doAction;
+// };
 
 // SET-RELATIVE => Polyphonic INFLUENCE MODE !
 NTMI.flatcat.onData.disable(\setAbs);
 
-// use NTMI.zooms.flatcat to tune its degree of influence
-NTMI.zooms = NTMI.zooms ? ();
-NTMI.zooms.flatcat = 1;
+// use NTMI.flatcat.zoom to tune its degree of influence
+NTMI.flatcat.zoom = 1;
 
 
 NTMI.flatcat.onData.add(\setRel, {
-	// var debug = "MFdef('flatcat') - setRel".postln;
+	var debug = "MFdef('flatcat') - setRel".postln;
 	var values = MKtl(\flatcat).elAt.value;
 	var diffs = values - MKtl(\flatcat).elAt.prevValue;
 	diffs = diffs.drop(3);
@@ -205,7 +227,7 @@ NTMI.flatcat.onData.add(\setRel, {
 		(0..diffs.size-1),
 		diffs,
 		NTMI.inphlux.inScaler
-		* NTMI.zooms.flatcat
+		* NTMI.flatcat.zoom
 	);
 });
 
