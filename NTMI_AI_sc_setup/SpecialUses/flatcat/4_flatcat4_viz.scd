@@ -67,7 +67,9 @@ NTMI.flatcat.onData.add(\vizdata, {
 	};
 });
 
-NTMI.flatcat.drawFunc = MFunc().add(\draw,  { |uv|
+NTMI.flatcat.drawFunc = MFunc();
+
+NTMI.flatcat.drawFunc.add(\draw,  { |uv|
 	var colorLine = Color.black,
 	colorBody = Color.grey(1.0, 0.5),
 	colorUp = Color.red,
@@ -98,9 +100,11 @@ NTMI.flatcat.drawFunc = MFunc().add(\draw,  { |uv|
 		Pen.fill;
 	};
 
+	// flip x axis so angle0 is left
 	Pen.scale(scale.x, scale.y);
 	// go to center = joint1 for segment2
 	Pen.translate(210, 200);
+	Pen.scale(-1, 1);
 
 	Pen.push;
 	// draw joint 1 is in center

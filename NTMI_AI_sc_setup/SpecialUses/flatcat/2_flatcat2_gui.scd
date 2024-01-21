@@ -12,6 +12,9 @@ NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat/flatcat_gui.scd");
 WinBounds.addMake(\flatcat, {
 	var mg = MKtl(\flatcat).gui.showLabels;
 	var win = mg.parent;
+	// a zone for the extra buttons etc
+	var butzone = CompositeView(win, Rect(160, 0, 750, 25)).background_(Color.rand);
+
 	// a userview to draw the numeric values on
 	var uv = UserView(win, win.view.bounds.top_(200).height_(30))
 	.background_(Color.grey);
@@ -28,25 +31,27 @@ WinBounds.addMake(\flatcat, {
 	};
 	uv.frameRate_(10).animate_(true);
 
-	Button(win, Rect(160, 2, 80, 20))
+	butzone.addFlowLayout(2@2, 1@1);
+	Button(butzone, 80@20)
 	.states_([[\oscConnect, nil, Color.grey(0.85)], [\connected, nil, Color.green]])
 	.action_({ OSCdef(\flatcat2mktl).enable });
 
-	Button(win, Rect(240, 2, 80, 20))
+	Button(butzone, 80@20)
 	.states_([[\flatcatSim, nil, Color.grey(0.85)], [\flatcatSim, nil, Color.green]])
 	.action_({ |b| var t = Tdef(\flatcatSim); var pls = t.isPlaying;
 		if (pls) { t.stop } { t.play }; b.value = pls.not.binaryValue });
-	Button(win, Rect(240, 2, 80, 20))
+	Button(butzone, Rect(240, 2, 80, 20))
 	.states_([[\flatcatViz, nil, Color.grey(0.85)]])
 	.action_({ WinBounds.showOrMake(\flatcatViz) });
 
-	EZPopUpMenu(win, Rect(320, 2, 120, 20), \infMode, [\rel, \abs], { |pop|
+	EZPopUpMenu(butzone, 120@20, \infMode, [\rel, \abs], { |pop|
 		if (pop.value == 0) { NTMI.flatcat.setRel } { NTMI.flatcat.setAbs }
 	}, labelWidth: 60);
-	EZSlider(win, Rect(440, 2, 200, 20), \zoom, \unipolar,
+	EZSlider(butzone, 200@20, \zoom, \unipolar,
 		{ |sl| NTMI.zooms.flatcat = sl.value},
 		labelWidth: 40);
-
 	win;
 });
+try { Window.find(\flatcat).close };
+WinBounds.showOrMake(\flatcat);
 );
