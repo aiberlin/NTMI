@@ -69,6 +69,7 @@ NTMI.flatcat.onData.add(\vizdata, {
 
 NTMI.flatcat.drawFunc = MFunc();
 
+(
 NTMI.flatcat.drawFunc.add(\draw,  { |uv|
 	var colorLine = Color.black,
 	colorBody = Color.grey(1.0, 0.5),
@@ -103,7 +104,7 @@ NTMI.flatcat.drawFunc.add(\draw,  { |uv|
 	// flip x axis so angle0 is left
 	Pen.scale(scale.x, scale.y);
 	// go to center = joint1 for segment2
-	Pen.translate(210, 200);
+	Pen.translate(190, 200);
 	Pen.scale(-1, 1);
 
 	Pen.push;
@@ -159,9 +160,14 @@ NTMI.flatcat.drawFunc.add(\draw,  { |uv|
 	Pen.addRoundedRect(Rect(-20, -10, 105 + 30, 20), 5, 5);
 	Pen.color = colorLine;
 	Pen.stroke;
+	// eyes
+	Pen.addOval(Rect.aboutPoint(80@0, 2,2));
+	Pen.addOval(Rect.aboutPoint(100@0, 2,2));
+	Pen.fill;
 	drawCurrent.(curr0);
 
 });
+);
 
 WinBounds.addMake(\flatcatViz, {
 	var w = Window("flatcatViz", 400@400).front;
