@@ -11,9 +11,11 @@ NetAddr.localAddr.sendMsg("/ntmi/imu", 0.0);
 */
 
 Tdef(\allLEDs).set(\dt, 0.1);
+Tdef(\allLEDs).set(\repeats, 1);
+
 Tdef(\allLEDs, { |ev|
 	try { NTMI.nUFO.skip.stop };
-	2.do {
+	ev.repeats.do {
 		"leds back ON".postln;
 		MKtl(\nUFO).elAt(\led, \bk).do { |led|
 			led.value = 1;
