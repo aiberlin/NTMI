@@ -129,7 +129,10 @@ MKtlDesc.fromDict(
 			),
 			caps: (
 				oscPath: '/ntmi/caps',
-				elements: 8.collect {|i|
+				// this is the order in which the pads come from nUFO ... sigh:
+				/// [ 1, 4, 0, 3, 5, 6, 7, 2 ]
+				// so to get them in correct order ever after, this:
+				elements: [ 2, 0, 7, 3, 1, 4, 5, 6 ].collect {|i|
 					[\cap, (i + 1).asSymbol]
 				},
 				ioType: \in

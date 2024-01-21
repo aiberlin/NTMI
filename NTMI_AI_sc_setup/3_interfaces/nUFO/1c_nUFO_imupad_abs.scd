@@ -111,9 +111,6 @@ NTMI.nUFO.capsin.add(\set, { |coll|
 	var rawPads = coll.value;
 	var calibPadVals;
 
-	// reorder for proper order of pads and leds
-	rawPads = rawPads[[1, 4, 0, 3, 5, 6, 7, 2]];
-
 	NTMI.nUFO.rawPads = rawPads;
 
 	// NTMI.nUFO.zero.pads is the rest state of the pads

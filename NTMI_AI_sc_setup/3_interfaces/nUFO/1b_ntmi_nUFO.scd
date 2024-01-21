@@ -86,7 +86,7 @@ MKtl(\nUFO).elAt(\cap).valueAction_(0!8);
 /// name the elements
 MKtl(\nUFO).elAt(\slots).do { |sw, i| sw.elemDesc.label = "SND" + sw.keyInGroup };
 MKtl(\nUFO).elAt(\steps).do { |sw, i| sw.elemDesc.label = ["+UP", "-DOWN"]@i  };
-MKtl(\nUFO).elAt(\modSw).elemDesc.label_('move Mode');
+MKtl(\nUFO).elAt(\modSw).elemDesc.label_('nUFO Mode');
 
 
 // prepare for modalization:
