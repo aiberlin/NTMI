@@ -50,6 +50,7 @@ NTMI.slots.actives = NTMI.ndefs;
 // use this global fadeoutTime for ndef.stop(fadeoutTime);
 NTMI.slots.fadeoutTime = NTMI.slots.fadeoutTime ? 0.2;
 NTMI.slots.defaultVol = NTMI.slots.defaultVol ? 0.25;
+NTMI.slots.defaultAmp = NTMI.slots.defaultAmp ? 0.25;
 
 NTMI.slots.zz = [ Ndef(\zz1), Ndef(\zz2), Ndef(\zz3), Ndef(\zz4)];
 
