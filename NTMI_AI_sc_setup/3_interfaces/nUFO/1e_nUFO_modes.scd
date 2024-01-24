@@ -6,16 +6,6 @@
 NTMI.nUFO.setModeIndex(100.rand)
 NTMI.nUFO[\mode];
 
-// the full choice of modes is:
-NTMI.nUFO.modes = [
-\full,    // move/imu, touch/pads
-\move,    // only move/imu
-\touch,   // only touch/pads
-\binary,  // pads as binary preset-switching clavier
-\binMove, // pads as binary, plus move/imu best in setRel mode
-\off      // all
-];
-
 // binary + touch and bin + move + touch are impossible on nUFO,
 // so these modes do not exist.
 
@@ -24,9 +14,20 @@ NTMI.nUFO.modes = [\full, \move, \touch, \binary, \off];
 
 */
 
+// the full choice of modes is:
+NTMI.nUFO.allModes = [
+	\full,    // move/imu, touch/pads
+	\move,    // only move/imu
+	\touch,   // only touch/pads
+	\binary,  // pads as binary preset-switching clavier
+	\binMove, // pads as binary, plus move/imu best in setRel mode
+	\off      // all
+];
+
 // default choice of modes: [\full, \touch, \binary]
 
 NTMI.nUFO.modes = NTMI.nUFO.modes ? [\full, \touch, \binary];
+
 
 // switch colors to this dict later
 NTMI.nUFO.modeColDict = (

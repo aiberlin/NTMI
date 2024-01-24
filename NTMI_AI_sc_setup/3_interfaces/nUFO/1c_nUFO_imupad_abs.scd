@@ -15,8 +15,12 @@ function to run, see below.
 
 NTMI.nUFO.debugOn = false;
 
-// keep if already set, else set to setRel
+// available influx modes:
+NTMI.nUFO.influxModes = [\setRel, \setAbs];
+
+// when loading, keep if already set, else default to setRel
 NTMI.nUFO.influxMode = NTMI.nUFO.influxMode ? \setRel;
+// same with
 NTMI.nUFO.zoom = NTMI.nUFO.zoom ? 1;
 
 // ///////////////////////////////////////////////////////////////
