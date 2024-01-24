@@ -19,13 +19,13 @@ ribbon 4 (on 9) does nothing at all
 
 ->>>>> !!!! only use 8 krakens for NOW (Oktopus)!!!!!!
 
-******** ******** ******** ********
+******** Debug ******** ********
 
 SerialPort.devices;
 SerialPort.closeAll;
 
-NTMI.octo.rout.stop;
-NTMI.octo.serial.close;
+NTMI.kraken.rout.stop;
+NTMI.kraken.serial.close;
 
 // do sth in func:
 MFdef(\kr_pots).add(\post, {|v| v.postln; });
@@ -39,23 +39,23 @@ MFdef(\kr_pots).disable(\post);
 */
 
 (
-NTMI.octo = NTMI.octo ? ();
+NTMI.kraken = NTMI.kraken ? ();
 
 // open Serial port:
 (
 SerialPort.closeAll;
 
 //edit to match your port. see SerialPort.listDevices
-NTMI.octo.devname = "/dev/tty.usbmodem*".pathMatch.first;
+NTMI.kraken.devname = "/dev/tty.usbmodem*".pathMatch.first;
 
-if (NTMI.octo.devname.isNil) {
-	"NTMI.octo: could not find device matching \"/dev/tty.usbmodem*\"".warn;
+if (NTMI.kraken.devname.isNil) {
+	"NTMI.kraken: could not find device matching \"/dev/tty.usbmodem*\"".warn;
 	"continuing with virtual device.".postln
 } {
 
-	NTMI.octo.serial = SerialPort(
-		NTMI.octo.devname,
-		baudrate: 115200,    //check that baudrate is the same as in arduino sketch
+	NTMI.kraken.serial = SerialPort(
+		NTMI.kraken.devname,
+		baudrate: 115200,    //check that baudrate matches w arduino sketch
 		crtscts: true
 	).postln;
 
@@ -66,16 +66,16 @@ if (NTMI.octo.devname.isNil) {
 	// r[0,500,1023,0] for 4 ribbons, also 10bit.
 
 	(
-		try{NTMI.octo.rout.stop};
-		NTMI.octo.rout = Routine({
+		try{NTMI.kraken.rout.stop};
+		NTMI.kraken.rout = Routine({
 			var byte, str, res;
 			var t0 = Main.elapsedTime;
 			var t = t0;
 			inf.do { |i|
-				if(NTMI.octo.serial.read==10, {
+				if(NTMI.kraken.serial.read==10, {
 					var key, array;
 					str = "";
-					while({byte = NTMI.octo.serial.read; byte !=13 }, {
+					while({byte = NTMI.kraken.serial.read; byte !=13 }, {
 						str = str++byte.asAscii;
 					});
 					try {
@@ -102,7 +102,8 @@ if (NTMI.octo.devname.isNil) {
 
 //// Make an MKtl description for the Kraken
 (
-~krakDesc = (
+
+NTMI.kraken.desc = (
 	idInfo: ( ipAddress: "127.0.0.1" ),
 	protocol: \osc,
 	collectives: (
@@ -150,13 +151,14 @@ if (NTMI.octo.devname.isNil) {
 );
 );
 
+// Make an MKtl for the kraken
 (
 MKtl.all.kraken.free;
-m = MKtl( \kraken, ~krakDesc );
+m = MKtl( \kraken, NTMI.kraken.desc );
 m.gui;
 
-// pipe serial input data into MKtl -
-// do valueActions in MKtl only when changed:
+// pipe serial input data into the kraken MKtl
+// do valueActions in MKtl only when values changed:
 MFdef(\kr_buts).add(\store, { |rawvals|
 	var krakButs = MKtl(\kraken).elAt(\bt);
 	rawvals.do { |val, i|
@@ -196,179 +198,92 @@ MKtl( \kraken).elAt(\bt).action = { |el| [el.name, el.value].postln };
 MKtl( \kraken).elAt(\kn).action = { |el| [el.name, el.deviceValue].postln };
 MKtl( \kraken).elAt(\ribbon).action = { |el| [el.name, el.deviceValue].postln };
 
-//////////////////// Now attach to NTMI - quick and dirty
-/****
-(
-// raw influx - ugly but would work
-// influx first:
-MFdef(\kr_pots).add(\influx, { |rawvals|
-	var values = rawvals.linlin(0, 1023, -1, 1);
-	var inNames = NTMI.inphlux.inNames.keep(values.size);
-	NTMI.inphlux.set(*[inNames, values].flop.flat);
-});
-
-MFdef(\kr_ribs).add(\influx, { |rawvals|
-	var values = rawvals.linlin(0, 1023, 0, 1) * [-1, 1];
-	var inNames = NTMI.inphlux.inNames.drop(10).keep(values.size);
-	NTMI.inphlux.set(*[inNames, values].flop.flat);
-});
-);
-
-// and turn them off again:
-(
-MFdef(\kr_ribs).disable(\influx);
-MFdef(\kr_pots).disable(\influx);
-);
-****/
 
 /*****
-
 1 simple Logic :
 all knobs and ribbons go to influx directly
 first four buttons activate sound in slots 1-4;
 second four buttons switch preset or sound process in slots 1-4;
 ******/
-(
-MKtl( \kraken).elAt(\kn).action = { |el|
-	var inName = NTMI.inphlux.inNames[8 + el.indexInGroup];
-	NTMI.inphlux.set(inName, el.value * 2 - 1);
-};
-
-MKtl( \kraken).elAt(\ribbon).action = { |el|
-	var inName = NTMI.inphlux.inNames[5 + el.indexInGroup];
-	NTMI.inphlux.set(inName, el.value * 2 - 1);
-};
-
+// first pass at buttons:
+// buttons 0-3 turn sound on and off
 MKtl( \kraken).elAt(\bt, (0..3)).do(_.action = { |el|
 	var slotNum = el.indexInGroup.postln;
-	if (el.isOn) {
-		NTMI.slots.playAt(slotNum)
-	} {
-		NTMI.slots.stopAt(slotNum)
-	};
+	if (el.isOn) { NTMI.slots.toggleAt(slotNum) };
 });
 
-
+// buttons 4-7 randomly choose new sounds or presets
 MKtl(\kraken).elAt(\bt, (4..7)).do(_.action = { |el|
 	var slotNum = (el.indexInGroup - 4).postln;
 	var nextSnd, nextPre;
 	if (el.isOn) {
 		if (0.1.coin) {
-			NTMI.slots.addActive(slotNum, Ndef(NTMI.slots.choices[slotNum].choose));
+			// 10% of the times, start a new sound
+			"kraken: new sound at %\n".postf(slotNum);
+			NTMI.slots.stepNext(slotNum);
 			NTMI.slots.playAt(slotNum);
 		} {
-			MFdef(\stepSlotPres).(slotNum)
+			// 90%, switch to a random preset
+			"kraken: new preset at %\n".postf(slotNum);
+			NTMI.pre.stepNdefInf(NTMI.ndefs[slotNum]);
 		}
 	};
 });
 );
 
-// 1a - make all knobs and sliders relative influx
 
-NTMI.zooms = NTMI.zooms ? ();
-NTMI.zooms.kraken = NTMI.zooms.kraken ? 1;
+///////////// INflux: ////////////
 
-MKtl( \kraken).elAt(\kn).action = { |el|
-	// use influx vectors 8..15
-	MFdef(\setRelInf).(
-		el.indexInGroup + 8,
-		(el.value - el.prevValue),
-		NTMI.zoom * NTMI.zooms.kraken
-	);
+NTMI.kraken.zoom = NTMI.kraken.zoom ? 1;
+
+NTMI.kraken.inflAction = MFunc();
+MKtl( \kraken).elAt(\kn).action = NTMI.kraken.inflAction;
+MKtl( \kraken).elAt(\ribbon).action = NTMI.kraken.inflAction;
+
+NTMI.kraken.influxMode = \setRel;
+NTMI.kraken.setRel = {
+	"NTMI.kraken.influxMode = \\setRel;".postln;
+	NTMI.kraken.influxMode = \setRel;
+};
+NTMI.kraken.setAbs = {
+	"NTMI.kraken.influxMode = \\setAbs;".postln;
+	NTMI.kraken.influxMode = \setAbs;
 };
 
-MKtl( \kraken).elAt(\ribbon).action = { |el|
-	// use influx vectors 5, 6, 7
-	MFdef(\setRelInf).(
-		el.indexInGroup + 5,
-		(el.value - el.prevValue),
-		NTMI.zoom * NTMI.zooms.kraken
-	);
-};
-
+NTMI.kraken.influxNames = (
+	kn: (8..15),
+	ribbon: (5..7)
 );
 
-/*****
-2 more complex Logic idea:
-all knobs and ribbons go to influx, but relative;
-
-all eight buttons do the same:
-when pressed, they grab a slot and and own it:
-play my own sound on it
-hold to keep playing that sound,
-press 2 times quickly -> new rand preset
-press 3 times quickly -> new rand sound
-
-*****/
-
-///////// SKETCH ONLY, not working yet //////
-/****
-
-NTMI.octo.prevButs = 0!10;
-NTMI.octo.prevButs = 0!10;
-
-NTMI.octo.slotButs = [0, 1, 2, 3];
-
-MFdef.all.keys(Array).sort;
-
-NTMI.nufo.setModeIndex(1);
-
-NTMI.slots.keys(Array);
-
-NTMI.slots.actives.collect(_.isPlaying).selectIndices (_ == true);
-
-MFdef(\randBut).add(\rand, {
-	\randBut.postln;
-	[
-		// switch an active sound
-		{
-			var nowPlayingIndices = NTMI.slots.actives.collect(_.isPlaying)
-			.selectIndices (_ == true);
-			var indexToChange = nowPlayingIndices.choose;
-			if (indexToChange.notNil) {
-				NTMI.slots.chooseNext(indexToChange);
-				NTMI.slots.playAt(indexToChange)
-			};
-		},
-		// switch an active preset
-		// {
-		// 	var nowPlayingIndices = NTMI.slots.actives.collect(_.isPlaying)
-		// 	.selectIndices (_ == true);
-		// 	var indexToChange = nowPlayingIndices.choose;
-		// 	if (indexToChange.notNil) {
-		// 		NTMI.slots.keys
-		// 		(indexToChange);
-		// 		NTMI.slots.playAt(indexToChange)
-		//
-		// 	},
-		// switch influx preset
-		// { NTMI.nufo.nUFO.modeStep },
-		// switch rand mainFX preset
-		{ MFdef(\mainPreStep).value },
-	].choose.value;
-});
-
-// 2, 4, 7, 9 have ribbons
-
-MFdef(\kr_buts).add(\trig, { |vals|
-	vals = vals.keep(8);
-	vals.do { |val, i|
-		if (val != NTMI.octo.prevButs[i]) {
-			"but % is now %\n".postf(i, val);
-			// first four buttons toggle sounds on /off
-			if (i < 4) {
-				if (val == 0) {
-					NTMI.slots.stopAt(i)
-				} {
-					NTMI.slots.playAt(i)
-				};
-			} {
-				// all other buttons change something randomly
-				if (val > 0) { MFdef(\randBut).value }
-			};
-		};
+NTMI.kraken.inflAction.add(\which, { |el|
+	if (NTMI.kraken.influxMode == \setAbs) {
+		NTMI.kraken.inflAction[\setAbs].(el);
+	} {
+		NTMI.kraken.inflAction[\setRel].(el);
 	};
-	NTMI.octo.prevButs = vals;
 });
 
-****/
+NTMI.kraken.inflAction.add(\setAbs, { |el|
+	var groupname = el.parent.name;
+	var inNames = NTMI.kraken.influxNames[groupname];
+	var inName = inNames[el.indexInGroup];
+	\setAbs.postln;
+	NTMI.inphlux.set(inName,
+		el.value * 2 - 1
+		* NTMI.zoom * NTMI.kraken.zoom
+	);
+}, false);
+
+
+NTMI.kraken.inflAction.add(\setRel, { |el|
+	var groupname = el.parent.name;
+	var inNames = NTMI.kraken.influxNames[groupname];
+	var inName = inNames[el.indexInGroup];
+
+	MFdef(\setRelInf.postln).(
+		el.indexInGroup + 8,
+		(el.value - el.prevValue),
+		NTMI.zoom * NTMI.kraken.zoom
+	);
+}, false);
+
