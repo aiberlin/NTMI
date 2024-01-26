@@ -17,7 +17,7 @@ see also the HyperDisCo quark:
 
 /// E.g. forward all interface messages from the nUFO:
 /// get all osc message names coming from nUFO
-q.nufoMsgNames = MKtl.all.nUFO.device.oscFuncDictionary.collectAs(_.path, Set);
+q.nufoMsgNames = [ '/ntmi/btns', '/ntmi/caps', '/ntmi/enc', '/ntmi/imu' ];
 
 // set the address to forward them to
 q.forwardAddr = NetAddr("169.254.1.2", 51900);
