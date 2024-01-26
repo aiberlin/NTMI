@@ -32,15 +32,3 @@ q.nufoRelays = q.nufoMsgNames.collect { |msgName|
 	}, msgName);
 };
 
-/// Or you may want to send influx values to an external process.
-
-q.inphlux.action.add(\forward, {
-	// get all outVals in order
-	var outVals = q.inphlux.outNames.collect { |name|
-		q.inphlux.outValDict[name]
-	};
-	// // uncomment this line to debug
-	// outVals.postln;
-	q.forwardAddr.sendMsg(\influxOuts, *outVals);
-});
-
