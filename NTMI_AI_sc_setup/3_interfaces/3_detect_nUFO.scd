@@ -11,11 +11,13 @@ NTMI.nUFO.loadnUFO = { |dict, force = false|
 	var senderAddr = NTMI.nUFO.senderAddr;
 	if (force or: NTMI.nUFO.waitFornUFO) {
 		defer {
-			"*** loading nUFO interface:".postln;
-			LoadMe(NTMI.dir.setup +/+ "3_interfaces/nUFO/*nUFO*.scd");
+			if (MKtl.all.nUFO.isNil) {
+				"*** loading nUFO interface:".postln;
+				LoadMe(NTMI.dir.setup +/+ "3_interfaces/nUFO/*nUFO*.scd");
+			};
 			if (senderAddr.notNil) {
 
-				MKtl.all.nUFO.device.updateSrcAddr(senderAddr.ip, senderAddr.port)
+				MKtl.all.nUFO.device.updateSrcDstAddr(senderAddr.ip, senderAddr.port)
 			};
 			"*** nUFO loaded! .".postln;
 		};
