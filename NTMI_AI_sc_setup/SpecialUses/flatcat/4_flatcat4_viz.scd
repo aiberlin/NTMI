@@ -105,7 +105,7 @@ NTMI.flatcat.drawFunc.add(\draw,  { |uv|
 	Pen.scale(scale.x, scale.y);
 	// go to center = joint1 for segment2
 	Pen.translate(190, 200);
-	Pen.scale(-1, 1);
+	Pen.scale(-1, -1);
 
 	Pen.push;
 	// draw joint 1 is in center
