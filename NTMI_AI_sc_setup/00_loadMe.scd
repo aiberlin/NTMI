@@ -118,6 +118,7 @@ Task {
 
 	} {
 		"NTMI setting up server ... ".postln;
+		NTMI.serverSetupFile = NTMI.serverSetupFile ? NTMI.defaults.serverSetupFile;
 		// load a setup file with memory etc settings
 		if (NTMI.serverSetupFile.isNil) {
 			"no NTMI.serverSetupFile".postln;
