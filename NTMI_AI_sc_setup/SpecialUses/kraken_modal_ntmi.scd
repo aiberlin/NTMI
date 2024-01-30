@@ -128,22 +128,22 @@ NTMI.kraken.desc = (
 	elementsDesc: (
 		elements: [
 			(
-				key: 'bt',
-				shared: ( elementType: 'button', ioType: \collectiveIn, \spec: \but ),
-				elements: 8.collect { () }
-			),
-			(
 				key: 'kn',
 				shared: ( elementType: 'knob', ioType: \collectiveIn, \spec: [0, 1023] ),
 				elements: 8.collect { () }
+			),
+			(
+				key: 'bt',
+				shared: ( elementType: 'button', ioType: \collectiveIn, \spec: \but ),
+				elements: 8.collect { |i| (style: (height: 0.5, column: i)) }
 			),
 			// ribbons are on 2, 4, 7, 9
 			(
 				key: 'ribbon',
 				shared: ( elementType: 'slider', ioType: \collectiveIn, \spec: [0, 1023] ),
 				elements: 3.collect { |i| (
-					style: (column: [1, 3, 6, 8][i])
-				) }
+					style: (column: [1, 3, 6, 8][i], height: 0.5, width: 2))
+				}
 			),
 
 		]
@@ -155,7 +155,7 @@ NTMI.kraken.desc = (
 (
 MKtl.all.kraken.free;
 m = MKtl( \kraken, NTMI.kraken.desc );
-m.gui;
+m.gui.parent.moveTo(0,0);
 
 // pipe serial input data into the kraken MKtl
 // do valueActions in MKtl only when values changed:
@@ -280,7 +280,7 @@ NTMI.kraken.inflAction.add(\setRel, { |el|
 	var inNames = NTMI.kraken.influxNames[groupname];
 	var inName = inNames[el.indexInGroup];
 
-	MFdef(\setRelInf.postln).(
+	MFdef(\setRelInf).(
 		el.indexInGroup + 8,
 		(el.value - el.prevValue),
 		NTMI.zoom * NTMI.kraken.zoom
