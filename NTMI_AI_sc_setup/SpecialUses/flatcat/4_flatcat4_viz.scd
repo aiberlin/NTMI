@@ -65,6 +65,7 @@ NTMI.flatcat.onData.add(\vizdata, {
 	NTMI.flatcat.vals.keysValuesDo { |k, v|
 		NTMI.flatcat.vals.put(k, MKtl(\flatcat).elAt(k).deviceValue);
 	};
+	\vizdata
 });
 
 NTMI.flatcat.drawFunc = MFunc();

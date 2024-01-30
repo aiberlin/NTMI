@@ -15,3 +15,6 @@ NTMI.flatcat.fwdAddrs = List[
 NTMI.flatcat.fwdFunc = OSCFunc({ |msg|
 	NTMI.flatcat.fwdAddrs.do(_.sendMsg(*msg));
 }, \flatcat).permanent_(true);
+
+
+NTMI.flatcat.fwdFunc.disable;

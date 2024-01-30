@@ -193,6 +193,7 @@ NTMI.flatcat.onData.add(\setAbs, {
 		*[ NTMI.inphlux.inNames.keep(values.size),
 			bipolars].flop.flat;
 	);
+	\setAbs
 });
 );
 
@@ -222,6 +223,7 @@ NTMI.flatcat.onData.add(\setRel, {
 		NTMI.inphlux.inScaler
 		* NTMI.flatcat.zoom
 	);
+	\setRel
 });
 
 

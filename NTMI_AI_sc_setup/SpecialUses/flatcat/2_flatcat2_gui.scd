@@ -12,11 +12,12 @@ NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat/flatcat_gui.scd");
 WinBounds.addMake(\flatcat, {
 	var mg = MKtl(\flatcat).gui.showLabels;
 	var win = mg.parent;
+	var vbounds = win.view.bounds;
 	// a zone for the extra buttons etc
 	var butzone = CompositeView(win, Rect(160, 0, 750, 25)).background_(Color.rand);
 
 	// a userview to draw the numeric values on
-	var uv = UserView(win, win.view.bounds.top_(200).height_(30))
+	var uv = UserView(win, vbounds.top_(vbounds.height).height_(30))
 	.background_(Color.grey);
 	win.bounds = win.bounds.height_(win.bounds.height + 30);
 
