@@ -79,15 +79,37 @@ OSCdef(\slotStatus, { |msg|
 
 WinBounds.addMake(\webMouse, {
 	var win = Window("webmouse", Rect(200, 600, 200, 400)).front;
-	NTMI.webMouse.uv = UserView(win, win.view.bounds).front;
-	NTMI.webMouse.uv.drawFunc = { NTMI.webMouse.drawFunc.value };
 	NTMI.webMouse.win = win;
+	NTMI.webMouse.uv = UserView(win, win.view.bounds).front;
+	NTMI.webMouse.uv.drawFunc = { NTMI.webMouse[\drawFunc].value };
+	NTMI.webMouse.uv.mouseDownAction = { |uv, x, y|
+		NTMI.webMouse[\downAction].value(uv, x, y)
+	};
+	NTMI.webMouse.uv.mouseMoveAction = { |uv, x, y|
+		NTMI.webMouse[\moveAction].value(uv, x, y)
+	};
 	win
 });
 
 MFdef(\drawNdefs).add(\draw, { defer { NTMI.webMouse.uv.refresh }});
 
 (
+NTMI.webMouse.sendChans = { NTMI.inphlux.inNames.size.rand } ! 2;
+
+NTMI.webMouse.downAction = { |uv, x, y|
+	NTMI.webMouse.xy = [x, y];
+};
+
+NTMI.webMouse.moveAction = { |uv, x, y|
+	var newxy = [x, y];
+	var diffs = ((newxy - NTMI.webMouse.xy) / uv.bounds.extent.asArray);
+	var msgList = (NTMI.webMouse.sendChans ++ diffs).flat;
+	NTMI.webMouse.xy = [x, y];
+	// send here
+	NTMI.oscar.sendMsg("/mouse", *msgList);
+	NTMI.localAddr.sendMsg("/mouse", *msgList);
+};
+
 NTMI.webMouse.drawFunc = {
 	NTMI.webMouse.chunks.do { |chunk, i|
 		var name = chunk[0];
