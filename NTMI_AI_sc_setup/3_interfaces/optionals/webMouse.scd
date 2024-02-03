@@ -10,6 +10,9 @@ todo:
 -- multiple NTMI systems receiving, and sending display info back
 */
 
+
+
+
 NTMI.webMouse = NTMI.webMouse ? ();
 NTMI.webMouse.zoom = 1;
 NTMI.webMouse.influxMode = \setRel;
@@ -18,24 +21,41 @@ NTMI.webMouse.setRel = {
 	"NTMI.webMouse.influxMode: \setRel".postln;
 };
 NTMI.webMouse.setAbs = {
-	"sorry, no setAbs!".postln;
+	"sorry, webMouse has no setAbs!".postln;
 	NTMI.webMouse.setRel;
 };
 
 NTMI.myname = NTMI.myname ? unixCmdGetStdOut("hostname").reject(_ == Char.nl).asSymbol;
 NTMI.mypwd = NTMI.mypwd ? "senha";
 
-NTMI.oscar = OSCRouterClient(NTMI.myname, "ntmi", userPassword: NTMI.mypwd, groupPassword: "senha");
-NTMI.oscar.join;
+NTMI.localAddr = NetAddr.localAddr;
+// for testing on a single computer:
+NTMI.webMouse.sendLocally = true;
+
+
+// check whether default OSCRouterClient server is reachable:
+// (without access, startup can hang for 20-30 secs...)
+unixCmd("ping bgo.la -c 1", { |okNum|
+	if (okNum == 0) {
+		NTMI.oscar = OSCRouterClient(NTMI.myname, "ntmi",
+			userPassword: NTMI.mypwd, groupPassword: "senha");
+		NTMI.oscar.join;
+	} {
+"NTMI.webMouse: we have no internet connection,
+so we cannot make NTMI.oscar!
+Replacing with localAddr.".warn;
+		NTMI.oscar = NTMI.localAddr;
+	}
+});
+
 
 (
-OSCdef('/mouse', {|msg|
-	msg.round(0.001).postln;
+OSCdef('/mouse', {|msg, time, sender|
+	[sender, msg.round(0.001)].postln;
 	MFdef(\setRelInf).(msg[[1, 2]].asInteger, msg[[3, 4]], NTMI.webMouse.zoom * NTMI.zoom);
 }, '/mouse')
 );
 
-NTMI.localAddr = NetAddr.localAddr;
 MFdef(\sendStatus).add(\getData, {
 	var ndefdata = NTMI.ndefs.collect { |ndef|
 		var meter = ProxyMeter.all.detect { |mt| mt.arProxy == ndef };
@@ -50,7 +70,9 @@ MFdef(\sendStatus).add(\getData, {
 
 	NTMI.oscar.sendMsg(\slotStatus, NTMI.myname, *fullData);
 	// send to self for testing
-	NTMI.localAddr.sendMsg(\slotStatus, NTMI.myname, *fullData);
+	if (NTMI.webMouse.sendLocally) {
+		NTMI.localAddr.sendMsg(\slotStatus, NTMI.myname, *fullData);
+	};
 	fullData
 });
 
@@ -105,9 +127,11 @@ NTMI.webMouse.moveAction = { |uv, x, y|
 	var diffs = ((newxy - NTMI.webMouse.xy) / uv.bounds.extent.asArray);
 	var msgList = (NTMI.webMouse.sendChans ++ diffs).flat;
 	NTMI.webMouse.xy = [x, y];
-	// send here
-	NTMI.oscar.sendMsg("/mouse", *msgList);
-	NTMI.localAddr.sendMsg("/mouse", *msgList);
+
+	// send to local NTMI for testing
+	if (NTMI.webMouse.sendLocally) {
+		NTMI.localAddr.sendMsg("/mouse", *msgList);
+	};
 };
 
 NTMI.webMouse.drawFunc = {
