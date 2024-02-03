@@ -55,7 +55,7 @@ WinBounds.addMake('Main_NTMI', {
 	// define geometric constraints for good scaling of window -
 	// absolute numbers, dont scale:
 	// shrink butz width for small screens
-	var leftMinWidth = NTMI.g.bounds.width.linlin(480, 1200, 80, 130).postln;
+	var leftMinWidth = NTMI.g.bounds.width.linlin(480, 1200, 80, 130);
 	var topMinHeight = NTMI.g.bounds.height.linlin(320, 1200, 100, 230);
 	var botMinHeight = NTMI.g.bounds.height.linlin(320, 1200, 0, 230);
 	var meterWidth = ServerMeterView.getWidth(NTMI.numIns, NTMI.numChans, s);
@@ -121,7 +121,7 @@ WinBounds.addMake('Main_NTMI', {
 	main.meterLeft = main.meterCenterTop.x - (meterWidth / 2);
 	if (main.scopeLeft + scopeWidth > main.meterLeft) {
 		"move scope to the left".postln;
-		main.scopeLeft = (main.meterLeft - scopeWidth).max(0).postln;
+		main.scopeLeft = (main.meterLeft - scopeWidth).max(0);
 	};
 
 	main.stethoBounds = Rect(main.scopeLeft, 0, scopeWidth, topMinHeight);
@@ -186,13 +186,13 @@ WinBounds.addMake('Main_NTMI', {
 	LoadMe("subsParts/recButs.scd", NTMI.g.dir);
 
 	main.mainHeight = bounds.height - main.frontUVBounds.bottom - 40 / 2;
-	main.mainHeight.postln;
+
 	main.mainRect = Rect(
 		main.frontUVBounds.left,
 		main.frontUVBounds.bottom + (marg * 0.5),
 		main.frontUVBounds.width,
 		main.mainHeight
-	).postln;
+	);
 
 
 	if (NTMI.usesMainFX) {

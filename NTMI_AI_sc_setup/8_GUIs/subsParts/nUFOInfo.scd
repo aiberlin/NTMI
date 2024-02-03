@@ -8,7 +8,7 @@ var n2iRect = bounds.extent.asRect.top_(hi * 0.8).height_(hi * 0.2);
 
 var nUFOView = UserView(nUFOZone, uvRect)
 .background_(NTMI.g.butGrey);
-NTMI.g.main.nUFOView = nUFOView.postln;
+NTMI.g.main.nUFOView = nUFOView;
 
 nUFOView.drawFunc_({ |uv|
 	var bounds = uv.bounds.extent.asRect;
@@ -23,7 +23,7 @@ nUFOView.drawFunc_({ |uv|
 		font,
 		Color.white
 	);
-	// "nUFOView.drawFunc".postln;
+
 });
 
 NTMI.g.main.caliBut = Button(nUFOZone, caliRect)
@@ -35,7 +35,7 @@ NTMI.g.main.caliBut = Button(nUFOZone, caliRect)
 ]).font_(font)
 .action_({ |but|
 	but.value_(1);
-	NTMI.nUFO.calibrate(1, { |ok| but.value_(if (ok, 2, 0).postln) })
+	NTMI.nUFO.calibrate(1, { |ok| but.value_(if (ok, 2, 0)) })
 });
 
 (
