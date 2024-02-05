@@ -10,9 +10,6 @@ todo:
 -- multiple NTMI systems receiving, and sending display info back
 */
 
-
-
-
 NTMI.webMouse = NTMI.webMouse ? ();
 NTMI.webMouse.zoom = 1;
 NTMI.webMouse.influxMode = \setRel;
@@ -22,6 +19,7 @@ NTMI.webMouse.sendLocally = true; // for debugging on single machine
 NTMI.webMouse.setRel = {
 	"NTMI.webMouse.influxMode: \setRel".postln;
 };
+
 NTMI.webMouse.setAbs = {
 	"sorry, webMouse has no setAbs!".postln;
 	NTMI.webMouse.setRel;
@@ -81,6 +79,8 @@ WinBounds.addMake(\webMouse, {
 	var win = Window("webmouse", Rect(200, 600, 200, 400)).front;
 	NTMI.webMouse.win = win;
 	NTMI.webMouse.uv = UserView(win, win.view.bounds).front;
+	NTMI.webMouse.uv.clearOnRefresh = false;
+
 	NTMI.webMouse.uv.drawFunc = { NTMI.webMouse[\drawFunc].value };
 	NTMI.webMouse.uv.mouseDownAction = { |uv, x, y|
 		NTMI.webMouse[\downAction].value(uv, x, y)
@@ -122,19 +122,22 @@ NTMI.webMouse.drawFunc = {
 
 		// [name, i].postln;
 		// chunk.round(0.001).postln;
-		Pen.color = Color.rand(0.85, 0.9);
+		Pen.color = Color.grey(0.3, 0.05);
 		Pen.fillRect(zone); // background
 
 		Pen.color = Color.blue(1, 0.5); Pen.fillRect(Rect(0, 0, 200 * preVol,20));
-		Pen.color = Color.green;  Pen.fillRect(Rect(0, 0, 200 * postVol,20));
+		Pen.color = Color.green(1, 0.5);  Pen.fillRect(Rect(0, 0, 200 * postVol,20));
 
-		Pen.color = Color.rand(0.65, 0.7);
+		Pen.color = Color.rand(0.65, 0.8).alpha_(0.5);
 		paramVals.do { |val, i|
 			var rect = Rect(0, i * pHi + 20, 200 * val, pHi);
 			Pen.fillRect(rect);
 		};
-
-		Pen.stringCenteredIn(name.asString, zone, Font("Monaco", 24), Color.black, \center);
+		Pen.push;
+		Pen.rotate(0.2.rand2, *zone.center.asArray);
+		Pen.translate(50.rand2, 50.rand2);
+		Pen.stringCenteredIn(name.asString, zone, Font("Monaco", 24), Color.white, \center);
+		Pen.pop;
 		Pen.translate(0, 100);
 	};
 };
