@@ -1,9 +1,10 @@
 /*
 send x, y relative data from webpage to NTMI.
 
-todo:
-- fully unify with other interfaces as MKtl(\webMouse) etc;
+// for debugging on single machine
+NTMI.webMouse.sendLocally = true;
 
+Todo:
 - think through polyphony:
 -- multiple webpages sending
 -- mutlitouch on each page
@@ -13,17 +14,22 @@ todo:
 NTMI.webMouse = NTMI.webMouse ? ();
 NTMI.webMouse.zoom = 1;
 NTMI.webMouse.influxMode = \setRel;
-
-NTMI.webMouse.sendLocally = true; // for debugging on single machine
-
 NTMI.webMouse.setRel = {
 	"NTMI.webMouse.influxMode: \setRel".postln;
 };
 
 NTMI.webMouse.setAbs = {
-	"sorry, webMouse has no setAbs!".postln;
-	NTMI.webMouse.setRel;
+	"*** no setAbs! ".post; NTMI.webMouse.setRel;
 };
+// make a dummy MKtl for webMouse
+MKtl.all.webMouse.free;
+MKtl(\webMouse,
+	(idInfo: \webMouse, protocol: \dummy, elementsDesc: (elements: [])),
+	tryOpenDevice: false
+);
+
+NTMI.webMouse.sendLocally = false; // for debugging on single machine
+
 
 (
 OSCdef('/mouse', {|msg, time, sender|
@@ -106,6 +112,7 @@ NTMI.webMouse.moveAction = { |uv, x, y|
 	var msgList = (NTMI.webMouse.sendChans ++ diffs).flat;
 	NTMI.webMouse.xy = [x, y];
 
+	NTMI.oscar.sendMsg("/mouse", *msgList);
 	// send to local NTMI for testing
 	if (NTMI.webMouse.sendLocally) {
 		NTMI.localAddr.sendMsg("/mouse", *msgList);
