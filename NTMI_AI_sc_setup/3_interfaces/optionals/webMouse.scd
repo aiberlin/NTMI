@@ -17,6 +17,8 @@ NTMI.webMouse = NTMI.webMouse ? ();
 NTMI.webMouse.zoom = 1;
 NTMI.webMouse.influxMode = \setRel;
 
+NTMI.webMouse.sendLocally = true; // for debugging on single machine
+
 NTMI.webMouse.setRel = {
 	"NTMI.webMouse.influxMode: \setRel".postln;
 };
@@ -24,30 +26,6 @@ NTMI.webMouse.setAbs = {
 	"sorry, webMouse has no setAbs!".postln;
 	NTMI.webMouse.setRel;
 };
-
-NTMI.myname = NTMI.myname ? unixCmdGetStdOut("hostname").reject(_ == Char.nl).asSymbol;
-NTMI.mypwd = NTMI.mypwd ? "senha";
-
-NTMI.localAddr = NetAddr.localAddr;
-// for testing on a single computer:
-NTMI.webMouse.sendLocally = true;
-
-
-// check whether default OSCRouterClient server is reachable:
-// (without access, startup can hang for 20-30 secs...)
-unixCmd("ping bgo.la -c 1", { |okNum|
-	if (okNum == 0) {
-		NTMI.oscar = OSCRouterClient(NTMI.myname, "ntmi",
-			userPassword: NTMI.mypwd, groupPassword: "senha");
-		NTMI.oscar.join;
-	} {
-"NTMI.webMouse: we have no internet connection,
-so we cannot make NTMI.oscar!
-Replacing with localAddr.".warn;
-		NTMI.oscar = NTMI.localAddr;
-	}
-});
-
 
 (
 OSCdef('/mouse', {|msg, time, sender|
