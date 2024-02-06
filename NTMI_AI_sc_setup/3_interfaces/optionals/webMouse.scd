@@ -108,7 +108,7 @@ MFdef(\drawNdefs).add(\draw, { defer { NTMI.webMouse.uv.refresh }});
 
 (
 NTMI.webMouse.sendChans = { NTMI.inphlux.inNames.size.rand } ! 2;
-
+NTMI.webMouse.downCount = 0;
 NTMI.webMouse.downAction = { |uv, x, y|
 	NTMI.webMouse.xy = [x, y];
 	NTMI.webMouse.downCount = 1;

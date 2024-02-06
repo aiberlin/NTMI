@@ -159,7 +159,7 @@ NTMI.g.main.ndefMViews.do { |mview, i|
 		var ndef = NTMI.slots.actives[i];
 		if (didDrag.not) {
 			didDrag = false;
-			\toggle.postln;
+			// \toggle.postln;
 			NTMI.slots.toggleAt(i);
 			uv.refresh;
 		};

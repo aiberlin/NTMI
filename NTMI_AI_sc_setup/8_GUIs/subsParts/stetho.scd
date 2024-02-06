@@ -11,7 +11,7 @@ NTMI.g.scaleStetho = { |g, stetho, height = 230|
 	var scopeV = stetho.scopeView;
 	var yzoomSl  = stetho.view.children[5];
 	var cycleSl = stetho.view.children[6];
-	var deltaHeight = (cycleSl.bounds.bottom.postln - height.postln).postln;
+	var deltaHeight = (cycleSl.bounds.bottom - height);
 	scopeV.bounds = scopeV.bounds.height_(scopeV.bounds.height - deltaHeight);
 	cycleSl.bounds = cycleSl.bounds.top_(cycleSl.bounds.top - deltaHeight);
 	yzoomSl.bounds = yzoomSl.bounds.height_(height - 30 - 20);
