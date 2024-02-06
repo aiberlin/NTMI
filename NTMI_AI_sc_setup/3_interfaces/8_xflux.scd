@@ -1,6 +1,12 @@
 // listen to x-fluences via oscrouter
 /*
+// set to true for local testing:
+NTMI.xflux.sendLocally = true;
+NTMI.xflux.sendLocally = false;
+// send test msg by hand:
 NTMI.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
+
+
 */
 
 
@@ -23,7 +29,7 @@ MKtl(\xflux,
 );
 
 // set to true for testing:
-NTMI.xflux.sendLocally = true;
+NTMI.xflux.sendLocally = false;
 
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
