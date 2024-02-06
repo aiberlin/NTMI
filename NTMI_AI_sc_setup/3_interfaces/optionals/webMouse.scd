@@ -3,11 +3,12 @@ send x, y relative data from webpage to NTMI.
 
 // for debugging on single machine
 NTMI.webMouse.sendLocally = true;
+NTMI.webMouse.sendLocally = false;
 
 Todo:
 - think through polyphony:
 -- multiple webpages sending
--- mutlitouch on each page
+-- multitouch on each page
 -- multiple NTMI systems receiving, and sending display info back
 */
 
@@ -33,8 +34,10 @@ NTMI.webMouse.sendLocally = false; // for debugging on single machine
 
 (
 OSCdef('/mouse', {|msg, time, sender|
-	[sender, msg.round(0.001)].postln;
-	MFdef(\setRelInf).(msg[[1, 2]].asInteger, msg[[3, 4]], NTMI.webMouse.zoom * NTMI.zoom);
+	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
+	// [sender, msg.round(0.001)].postln;
+	// make sure we dont resend, to avoid feedback
+	MFdef(\setRelInf).valueAt(funcKeys, msg[[1, 2]].asInteger, msg[[3, 4]], NTMI.webMouse.zoom * NTMI.zoom);
 }, '/mouse')
 );
 
@@ -83,6 +86,7 @@ OSCdef(\slotStatus, { |msg|
 
 WinBounds.addMake(\webMouse, {
 	var win = Window("webmouse", Rect(200, 600, 200, 400)).front;
+	win.alpha_(NTMI.g.alpha);
 	NTMI.webMouse.win = win;
 	NTMI.webMouse.uv = UserView(win, win.view.bounds).front;
 	NTMI.webMouse.uv.clearOnRefresh = false;
@@ -94,6 +98,9 @@ WinBounds.addMake(\webMouse, {
 	NTMI.webMouse.uv.mouseMoveAction = { |uv, x, y|
 		NTMI.webMouse[\moveAction].value(uv, x, y)
 	};
+	NTMI.webMouse.uv.mouseUpAction = { |uv, x, y|
+		NTMI.webMouse[\upAction].value(uv, x, y)
+	};
 	win
 });
 
@@ -104,14 +111,19 @@ NTMI.webMouse.sendChans = { NTMI.inphlux.inNames.size.rand } ! 2;
 
 NTMI.webMouse.downAction = { |uv, x, y|
 	NTMI.webMouse.xy = [x, y];
+	NTMI.webMouse.downCount = 1;
 };
+NTMI.webMouse.upAction = { |uv, x, y|
+	// dont count if < 0
+	NTMI.webMouse.downCount = 0;
+};
+
 
 NTMI.webMouse.moveAction = { |uv, x, y|
 	var newxy = [x, y];
 	var diffs = ((newxy - NTMI.webMouse.xy) / uv.bounds.extent.asArray);
 	var msgList = (NTMI.webMouse.sendChans ++ diffs).flat;
 	NTMI.webMouse.xy = [x, y];
-
 	NTMI.oscar.sendMsg("/mouse", *msgList);
 	// send to local NTMI for testing
 	if (NTMI.webMouse.sendLocally) {
@@ -120,6 +132,8 @@ NTMI.webMouse.moveAction = { |uv, x, y|
 };
 
 NTMI.webMouse.drawFunc = {
+	var radii, mouseXY, white = Color.white;
+	Pen.push;
 	NTMI.webMouse.chunks.do { |chunk, i|
 		var name = chunk[0];
 		var preVol = chunk[1], postVol = chunk[2];
@@ -137,15 +151,28 @@ NTMI.webMouse.drawFunc = {
 
 		Pen.color = Color.rand(0.65, 0.8).alpha_(0.5);
 		paramVals.do { |val, i|
-			var rect = Rect(0, i * pHi + 20, 200 * val, pHi);
+			var rect = Rect(0, i * pHi + 20, 200 * val, pHi - 1.5);
 			Pen.fillRect(rect);
 		};
 		Pen.push;
 		Pen.rotate(0.2.rand2, *zone.center.asArray);
 		Pen.translate(50.rand2, 50.rand2);
-		Pen.stringCenteredIn(name.asString, zone, Font("Monaco", 24), Color.white, \center);
+		Pen.stringCenteredIn(name.asString, zone, Font("Monaco", 24), white, \center);
 		Pen.pop;
 		Pen.translate(0, 100);
+	};
+	Pen.pop;
+
+	if (NTMI.webMouse.downCount > 0) {
+		mouseXY = NTMI.webMouse.xy.asPoint;
+		NTMI.webMouse.downCount = NTMI.webMouse.downCount + 1;
+		radii = [0, 5, 10, 15] + NTMI.webMouse.downCount % 20;
+		radii.do { |rad|
+			Pen.addArc(mouseXY, rad, 0, 2pi)
+		};
+		Pen.width = 3;
+		Pen.color = Color.green;
+		Pen.stroke;
 	};
 };
 );
