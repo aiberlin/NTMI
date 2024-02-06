@@ -2,6 +2,10 @@
 This file connects the Kraken built by Kuntay Seferoglu
 to NTMI as a multi-person interface.
 
+// to add the kraken file/gui file to Butz->interfaces:
+NTMI.addInterfaceFile(\kraken, NTMI.dir.setup +/+ "SpecialUses/kraken_modal_ntmi.scd");
+
+
 ******** Status April 5 2023 ********
 buttons> 1-8 are OK,
 9 is dead, 10 is touch/sensitive, but crackles on&off
@@ -154,8 +158,7 @@ NTMI.kraken.desc = (
 // Make an MKtl for the kraken
 (
 MKtl.all.kraken.free;
-m = MKtl( \kraken, NTMI.kraken.desc );
-m.gui.parent.moveTo(0,0);
+MKtl( \kraken, NTMI.kraken.desc );
 
 // pipe serial input data into the kraken MKtl
 // do valueActions in MKtl only when values changed:
