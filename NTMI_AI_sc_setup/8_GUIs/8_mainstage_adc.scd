@@ -20,7 +20,6 @@ NTMI.g.main = NTMI.g.main ? ();
 
 // style, look, feel variables
 NTMI.g.main.sliderCols = [ Color.grey(1.0, 0.85), Color.grey(0.8, 0.75) ];
-NTMI.g.alpha = NTMI.g.alpha ? 0.8;
 
 NTMI.g.main.winUpdate = MFunc();
 NTMI.g.main.imuFunc = MFunc();
@@ -83,7 +82,7 @@ WinBounds.addMake('Main_NTMI', {
 	"leftMinWidth: %, botMinHeight: %\n".postf(leftMinWidth, botMinHeight);
 
 	///// then make the window:
-	w = Window(name, bounds).front.alpha_(NTMI.g.alpha ? 0.8);
+	w = Window(name, bounds).front.alpha_(NTMI.g.alpha);
 	w.background_(NTMI.inph.currPresetCol);
 	NTMI.g.main.w = w;
 

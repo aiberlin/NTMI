@@ -91,7 +91,7 @@ WinBounds.addMake(\miniNTMI, {
 
 
 
-	w.background_(Color.red(0.8, 0.8));
+	w.background_(Color.red(0.8, 0.8)).alpha_(NTMI.g.alpha);
 	g.mini.w = w;
 
 	popPreVols = NTMI.slots.actives.collect { |ndef, i|

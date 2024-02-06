@@ -8,8 +8,9 @@ WinBounds.addMake(\presets, { |dict, name = \presets|
 	var px = NTMI.ndefs[0];
 	var currPreset;
 	var pp, w, ppg, ng, hlv, vlv1, vlv2, butrow, randerButs;
-	w = Window(name, Rect(450, 0, 387+100, 440)).front;
-	// q.ndefPresetGlobalWin = w; // glob main win!
+	w = Window(name, Rect(450, 0, 387+100, 440));
+	w.alpha_(NTMI.g.alpha).front;
+
 	hlv = HLayoutView(w, w.bounds.moveTo(0,0));
 	vlv1 = VLayoutView(hlv, Rect.new(0,0, 100, hlv.bounds.height))
 		.background_(Color.green.alpha_(0.2));

@@ -17,6 +17,6 @@ WinBounds.addMake('randomOrbitz', {
 		Pen.stringCenteredIn("rd:" + NTMI.ro.lastval, uv.bounds.extent.asRect, NTMI.ro.bigFont);
 	};
 	NTMI.g.kpgui.parent.name = "randomOrbitz";
-	NTMI.g.kpgui.parent;
+	NTMI.g.kpgui.parent.view.alpha_(NTMI.g.alpha);
 })
 );

@@ -9,6 +9,7 @@ WinBounds.addMake(\MKtlInflMix, {
 	var mktls = MKtl.all.skeys.collect(MKtl(_));
 	var numItems = mktls.size + 4; // maybe some are added later
 	w.addFlowLayout(2@2, 2@2);
+	w.alpha_(NTMI.g.alpha);
 
 	StaticText(w, Rect(0, 0, 500, 20)).font_(f)
 	.string_("protocol, status, MKtl('name'), influxMode, influxZoom");

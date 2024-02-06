@@ -52,8 +52,8 @@ z = NdefGui(Ndef(\allArm));
 g.tuneNameView(s);
 */
 
-WinBounds.addMake('Tdef.all', { TdefAllGui(16).parent });
-WinBounds.addMake('Pdef.all', { PdefAllGui(16).parent });
+WinBounds.addMake('Tdef.all', { TdefAllGui(16).parent.alpha_(NTMI.g.alpha) });
+WinBounds.addMake('Pdef.all', { PdefAllGui(16).parent.alpha_(NTMI.g.alpha) });
 
 ///// add \ndefMixer makefunc to WinBounds:
 WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
@@ -76,7 +76,7 @@ WinBounds.addMake(\ndefMixer, { |dict, name = \ndefMixer|
 	g.ndefMixer = ndefMixer;
 	// alwways return the window,
 	// so WinBounds can resize and place it
-	ndefMixer.parent;
+	ndefMixer.parent.alpha_(NTMI.g.alpha);
 });
 
 /////////// and these are all the stored bounds:

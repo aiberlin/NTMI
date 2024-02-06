@@ -26,7 +26,7 @@ g.butzNames = [
 Butz.numButz = (g.butzNames.size + 6).max(15);
 
 // set Butz window style params:
-Butz.style;
+Butz.style.alpha = NTMI.g.alpha;
 Butz.style.winCol = Color.red(1, 0.8);
 Butz.style.winExtent_(60@16);
 Butz.style.font.name = Font.defaultMonoFace;
@@ -34,6 +34,7 @@ Butz.style.font.size = (18 * (NTMI.g.screenScale ** 0.5)).round;
 "// Butz font: %\n\n".postf(Butz.style.font);
 
 Butz.show;
+Butz.w.alpha_(NTMI.g.alpha);
 
 // add some top-level one-liners:
 Butz.addMiniMax;
@@ -104,7 +105,7 @@ WinBounds.addMake(\liveInput, { |dict, name = \liveInput|
 	ProxyMeter.addNdefGui(ndefGui);
 	win.alpha_(NTMI.g.alpha);
 	defer({ win.name = name }, 0.2);
-	win;
+	win.alpha_(NTMI.g.alpha);
 });
 
 Butz(\NTMI).add('slotSounds', { WinBounds.showOrMake('slotSounds') });
@@ -142,7 +143,7 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 	};
 	if (WinBounds.makeFuncs[name].isNil) {
 		WinBounds.addMake(name, {
-			MKtl(name).gui.showLabels.parent
+			MKtl(name).gui.showLabels.parent.alpha_(NTMI.g.alpha)
 		});
 	};
 

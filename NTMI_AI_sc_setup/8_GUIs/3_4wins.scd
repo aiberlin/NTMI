@@ -26,7 +26,7 @@ WinBounds.addMake('slotSounds', { |dict, name = \slotSounds|
 
 	("slotSounds Gui maxNumSlots: " + maxNumSlots).postln;
 	w.addFlowLayout;
-	w.alpha_(0.8);
+	w.alpha_(NTMI.g.alpha);
 	w.background_(Color.grey(0.5));
 	g.ndefPreGuis = q.ndefs.keep(4).collect { |px, i|
 		var ndefPre = NdefPreset(px);

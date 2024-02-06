@@ -23,5 +23,5 @@ WinBounds.addMake(\chanTest, {
 	q.chantest.pinkgui.name_("PINK");
 
 	q.chantest.postln;
-	q.chantest.win
+	q.chantest.win.alpha_(NTMI.g.alpha);
 });

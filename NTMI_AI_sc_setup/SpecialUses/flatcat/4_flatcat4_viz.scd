@@ -174,6 +174,7 @@ WinBounds.addMake(\flatcatViz, {
 	var w = Window("flatcatViz", 400@400).front;
 	var u = UserView(w, 400@400);
 	u.animate_(true);
+	w.alpha_(NTMI.g.alpha);
 
 	NTMI.flatcat.w = w;
 	NTMI.flatcat.u = u;

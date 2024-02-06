@@ -11,7 +11,7 @@ WinBounds.addMake(\mainFX, {
 	try { NTMI.mfx.win.close };
 	NTMI.mfx.win = Window('mainFX',
 		Rect(0,0, 520, min(800, NTMI.g.bounds.height - 20));
-		).front;
+	).front;
 	NTMI.mfx.win.addFlowLayout;
 
 	// ////// ******* SKETCH FOR PXPRESETGUI *********
@@ -63,10 +63,10 @@ WinBounds.addMake(\mainFX, {
 	// NTMI.mfx.slotPrePop.valueAction_(11);
 	//
 	NTMI.mfx.mgui = NTMI.mfx.chain.gui(
-			min(NTMI.mfx.maxItems, 50),
-			parent: NTMI.mfx.win);
+		min(NTMI.mfx.maxItems, 50),
+		parent: NTMI.mfx.win);
 	NTMI.mfx.win.bounds_(NTMI.mfx.win.bounds.moveTo(790, 1200));
-	NTMI.mfx.win.alpha_(0.85);
+	NTMI.mfx.win.alpha_(NTMI.g.alpha);
 
 	NTMI.tuneNameView(NTMI.mfx.mgui.editGui);
 

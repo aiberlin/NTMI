@@ -82,7 +82,7 @@ WinBounds.addMake('inphlux', { |dict, name = \inphlux|
 			size);
 	).front;
 	q.inph.ioWin.background_(Color.grey(0.8));
-	q.inph.ioWin.alpha_(0.8);
+	q.inph.ioWin.alpha_(NTMI.g.alpha);
 
 	infComp = CompositeView(w, (size2@size2) .asRect);
 	// infComp.bounds.postln;
