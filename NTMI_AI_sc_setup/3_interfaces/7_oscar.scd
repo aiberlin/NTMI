@@ -25,7 +25,7 @@ NTMI.oscServerName = NTMI.oscServerName ? NTMI.udkOscServerName;
 
 // check whether default OSCRouter server is reachable:
 // (without access, startup can hang for 20-30 secs...)
-unixCmd("ping % -c 1".format(NTMI.oscServer.hostname), { |okNum|
+unixCmd("ping % -c 1".format(NTMI.oscServerName), { |okNum|
 	if (okNum == 0) {
 		NTMI.oscar = OSCRouterClient(NTMI.myname, "ntmi",
 			serverAddr: NTMI.oscServerName,
