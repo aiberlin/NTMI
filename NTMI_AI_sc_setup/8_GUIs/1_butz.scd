@@ -54,10 +54,17 @@ Butz.add('mainFX', { WinBounds.showOrMake('mainFX') });
 Butz.add('meters', { s.meter; Window.find(s.name).name_(\meters) });
 Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
 
+Butz.add(\OSC_trace, {
+	OSCFunc.trace(OSCFunc.classVars[3].not, true);
+});
+Butz.add(\MIDI_trace, {
+	MIDIFunc.trace(MIDIFunc.classVars[2].not, true);
+});
+
 /// some general helpers
 Butz.add('setAll', { WinBounds.restoreAll });
-Butz.add('plotTree', { s.plotTree });
 Butz.add('chanTest', { WinBounds.showOrMake(\chanTest) });
+Butz.add('plotTree', { s.plotTree });
 
 
 
