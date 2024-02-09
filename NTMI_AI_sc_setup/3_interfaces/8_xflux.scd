@@ -6,7 +6,27 @@ NTMI.xflux.sendLocally = false;
 // send test msg by hand:
 NTMI.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
 
+MFdef(\setRelInf).activeNames
 
+currently, this just sends changeVectors.
+how to send changeSteps?
+- for slots - toggle, volume, sound, preset?
+- for influxweights, mainvol, mainfx presets too?
+- zoom should probably stay local
+
+// like this?
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \mainVol, step);
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \mainFXPre, step);
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotTog, index);
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotVol, index, step);
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotSnd, index, step);
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotPre, index, step);
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \infWPre, step);
+// unify - include setRelInf?
+NTMI.localAddr.sendMsg(\change, NTMI.myname, \setRelInf, inIndices, diffs, zoom);
+
+OSCdef.trace(true, true)
+OSCdef.trace(false)
 */
 
 
@@ -31,6 +51,7 @@ MKtl(\xflux,
 // set to true for testing:
 NTMI.xflux.sendLocally = false;
 
+
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
 	// "sending via xflux: %\n".postf(args.round(0.001));
@@ -47,9 +68,10 @@ OSCdef(\xflux, {|msg, time, sender|
 	var args = msg[2..];
 	var zoom = args.pop;
 	var inIndices, diffs;
+	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
 	#inIndices, diffs = args.clump(args.size/2);
 	// "xflux from % - % diffs \n".postf(name, diffs.size);
-	// msg.round(0.001).postln;
-	MFdef(\setRelInf).funcDict[\set].value(inIndices, diffs, zoom);
+	msg /*.round(0.001)*/ .postln;
+	MFdef(\setRelInf).valueAt(funcKeys).value(inIndices, diffs, zoom);
 }, \xflux);
 );

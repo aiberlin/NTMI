@@ -44,7 +44,7 @@ OSCdef('/mouse', {|msg, time, sender|
 MFdef(\sendStatus).add(\getData, {
 	var ndefdata = NTMI.ndefs.collect { |ndef|
 		var meter = ProxyMeter.all.detect { |mt| mt.arProxy == ndef };
-		var ampVals = if (meter.notNil) { meter.ampVals } { [0,0] };
+		var ampVals = if (meter.notNil) { meter.ampVals } ? [0,0];
 		var data = ndef.getHalo.namesToInflux.collect(ndef.getUni(_));
 		// ndef, ndef sound level,
 		[ ndef.key, ampVals[0].sqrt, ampVals[1].sqrt, \paramUniVals ]
@@ -131,7 +131,7 @@ NTMI.webMouse.moveAction = { |uv, x, y|
 	};
 };
 
-NTMI.webMouse.drawFunc = {
+NTMI.webMouse.drawFunc = { |uv|
 	var radii, mouseXY, white = Color.white;
 	Pen.push;
 	NTMI.webMouse.chunks.do { |chunk, i|
