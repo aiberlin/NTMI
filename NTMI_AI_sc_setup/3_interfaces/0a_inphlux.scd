@@ -110,6 +110,8 @@ MFdef(\setRelInf).(
     the delta values for these influx inputs,
 	and the zoom factor, often NTMI.zoom * NTMI.zooms[thisInterface]
 );
+
+MFdef(\setRelInf).([1, 2], [0.03, -0.05], 1);
 **/
 
 NTMI.zooms = NTMI.zooms ? ();
@@ -123,6 +125,8 @@ NTMI.inph.toSetNow = {
 MFdef(\setRelInf).add(\set, { |inIndices, diffs, zoom = 0.5|
 	var vector;
 	var ndefsToSet = NTMI.inph.toSetNow;
+	// "*** in setRelInf: ".postln;
+	// [inIndices, diffs, zoom].postln;
 	if (ndefsToSet.notEmpty) {
 		vector = NTMI.inphlux.changeVector(inIndices, diffs, zoom);
 		ndefsToSet.do { |ndef|

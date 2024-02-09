@@ -65,13 +65,23 @@ MFdef(\setRelInf).add(\xflux, { arg ...args;
 (
 OSCdef(\xflux, {|msg, time, sender|
 	var name = msg[1];
-	var args = msg[2..];
-	var zoom = args.pop;
-	var inIndices, diffs;
+	var vals = msg[2..];
+	var inIndices, diffs, zoom;
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
-	#inIndices, diffs = args.clump(args.size/2);
-	// "xflux from % - % diffs \n".postf(name, diffs.size);
-	msg /*.round(0.001)*/ .postln;
-	MFdef(\setRelInf).valueAt(funcKeys).value(inIndices, diffs, zoom);
+
+	// "vals.size: %\n".postf(vals.size);
+	if (vals.size.even) {
+		"xflux - even size of incoming values?\n"
+		"assuming zoom is missing and should be 1.".postln;
+		zoom = 1;
+	} {
+		// all is well:
+		zoom = vals.pop;
+		#inIndices, diffs = vals.clump(vals.size.div(2));
+	};
+
+	// "xflux from % - % diffs:\n".postf(name, diffs.size);
+	// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);
+	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom);
 }, \xflux);
 );
