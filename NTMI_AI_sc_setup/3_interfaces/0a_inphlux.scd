@@ -108,13 +108,11 @@ and zoom is  a scale factor.
 MFdef(\setRelInf).(
 	theInfluxIndices addressed by this group of elements,
     the delta values for these influx inputs,
-	and the zoom factor, often NTMI.zoom * NTMI.zooms[thisInterface]
+	and the zoom factor, often NTMI.zoom * NTMI.<intfName>.zoom
 );
 
 MFdef(\setRelInf).([1, 2], [0.03, -0.05], 1);
 **/
-
-NTMI.zooms = NTMI.zooms ? ();
 
 NTMI.inph.toSetNow = {
 	NTMI.slots.nowPlaying.select { |ndef|

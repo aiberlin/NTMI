@@ -49,7 +49,7 @@ WinBounds.addMake(\flatcat, {
 		if (pop.value == 0) { NTMI.flatcat.setRel } { NTMI.flatcat.setAbs }
 	}, labelWidth: 60);
 	EZSlider(butzone, 200@20, \zoom, \unipolar,
-		{ |sl| NTMI.zooms.flatcat = sl.value},
+		{ |sl| NTMI.flatcat.zoom = sl.value},
 		labelWidth: 40);
 	win;
 });

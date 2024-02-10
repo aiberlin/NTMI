@@ -33,7 +33,6 @@ MKtl('xtm').gui.showLabels;
 
 MKtl.all.xtm.free;
 MKtl('xtm', "*x-touch-mini*");
-NTMI.zooms.xtm = NTMI.zooms.xtm ? 1;
 
 // main volume
 MKtl('xtm').addNamed(\main, MKtl('xtm').elAt(\A, \sl));
@@ -76,7 +75,7 @@ MFdef(\setRelInf).(
 // add sliderOffset + 1, so we get to channel 8 for amp tweak
 i + NTMI.inph.sliderOffset ? 1 + 1,
 (enc.prevValue - enc.value),
-NTMI.zoom * (NTMI.zooms.xtm ? 1)
+NTMI.zoom * (NTMI.xtm.zoom ? 1)
 );
 }
 };
@@ -118,7 +117,7 @@ MKtl('xtm').elAt(\enc).do { |enc, i|
 				// add sliderOffset + 1, so we get to channel 8 for amp tweak
 				i + (NTMI.inph.sliderOffset ? 1),
 				(enc.prevValue - enc.value),
-				NTMI.zoom * (NTMI.zooms.xtm ? 1)
+				NTMI.zoom * (NTMI.xtm.zoom ? 1)
 			)
 		} { // if enchat is down,
 			// first 4 change volume ...

@@ -33,8 +33,6 @@ NTMI.nUFO.setRel;
 ***/
 
 (
-NTMI.zooms = NTMI.zooms ? ();
-NTMI.zooms.nUFO = NTMI.zooms.nUFO ? 1;
 
 MFdef(\nUFOImuFunc).add(\setRel, {
 	var imu = MKtl(\nUFO).elAt(\imu9);

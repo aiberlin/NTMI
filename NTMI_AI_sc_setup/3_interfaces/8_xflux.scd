@@ -8,23 +8,6 @@ NTMI.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
 
 MFdef(\setRelInf).activeNames
 
-currently, this just sends changeVectors.
-how to send changeSteps?
-- for slots - toggle, volume, sound, preset?
-- for influxweights, mainvol, mainfx presets too?
-- zoom should probably stay local
-
-// like this?
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \mainVol, step);
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \mainFXPre, step);
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotTog, index);
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotVol, index, step);
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotSnd, index, step);
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \slotPre, index, step);
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \infWPre, step);
-// unify - include setRelInf?
-NTMI.localAddr.sendMsg(\change, NTMI.myname, \setRelInf, inIndices, diffs, zoom);
-
 OSCdef.trace(true, true)
 OSCdef.trace(false)
 */
@@ -41,7 +24,7 @@ NTMI.xflux.setAbs = {
 };
 
 // make a dummy MKtl for xflux
-// quick and dirty, MKtl(\xflux).gui does not work
+// quick and dirty, and MKtl(\xflux).gui does nothing useful
 MKtl.all.xflux.free;
 MKtl(\xflux,
 	(idInfo: \xflux, protocol: \dummy, elementsDesc: (elements: [])),
