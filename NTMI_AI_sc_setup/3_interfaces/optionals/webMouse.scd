@@ -85,7 +85,7 @@ OSCdef(\slotStatus, { |msg|
 }, \slotStatus);
 
 WinBounds.addMake(\webMouse, {
-	var win = Window("webmouse", Rect(200, 600, 200, 400)).front;
+	var win = Window("\webMouse", Rect(200, 600, 200, 400)).front;
 	win.alpha_(NTMI.g.alpha);
 	NTMI.webMouse.win = win;
 	NTMI.webMouse.uv = UserView(win, win.view.bounds).front;
