@@ -44,6 +44,7 @@ NTMI.g.main.nUFO2InfBut = Button(nUFOZone, n2iRect)
 	["nUFO->influx is OFF", Color.black, NTMI.g.butGrey],
 	["nUFO->influx is ON", Color.black, Color.green(0.7, 0.7)]
 ]).front.font_(Font(NTMI.g.fontName, NTMI.g.font.size * 0.7))
+.value_(1)
 .action_({ |bt|
 	var funcs = [\imu, \caps].collect { |key|
 		MKtl(\nUFO).device.oscFuncDictionary[key]
