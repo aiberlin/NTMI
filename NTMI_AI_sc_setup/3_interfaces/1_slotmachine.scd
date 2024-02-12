@@ -69,7 +69,8 @@ NTMI.slots.playAt = { |sl, index|
 	"SLOT %: % starts - ".postf(index, obj);
 	obj.rebuild.play(vol: vol);
 	obj.set(\amp, NTMI.slots.defaultAmp);
-	if ([\full, \touch].includes(NTMI.nUFO.mode)) {
+//	if ([\full, \touch].includes(NTMI.nUFO.mode)) {
+	if (NTMI.inph.decoupled.includes(obj.key).not) {
 		NTMI.inphlux.attachMapped(obj);
 	};
 	// and make sure preset is active:
