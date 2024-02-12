@@ -39,20 +39,16 @@ NTMI.g.main.caliBut = Button(nUFOZone, caliRect)
 });
 
 (
-NTMI.g.main.nUFO2InfFuncs = [\imu, \caps].collect { |key|
-	MKtl(\nUFO).device.oscFuncDictionary[key]
-};
-NTMI.g.main.nUFO2InfIsOn = { NTMI.g.main.nUFO2InfFuncs.any(_.enabled) };
-
 NTMI.g.main.nUFO2InfBut = Button(nUFOZone, n2iRect)
 .states_([
 	["nUFO->influx is OFF", Color.black, NTMI.g.butGrey],
 	["nUFO->influx is ON", Color.black, Color.green(0.7, 0.7)]
 ]).front.font_(Font(NTMI.g.fontName, NTMI.g.font.size * 0.7))
-.value_(NTMI.g.main.nUFO2InfIsOn.binaryValue)
 .action_({ |bt|
-	var funcs = NTMI.g.main.nUFO2InfFuncs;
-	if (NTMI.g.main.nUFO2InfIsOn) { funcs.do(_.disable) } { funcs.do(_.enable) };
-	NTMI.g.main.nUFO2InfBut.value_(NTMI.g.main.nUFO2InfIsOn);
+	var funcs = [\imu, \caps].collect { |key|
+		MKtl(\nUFO).device.oscFuncDictionary[key]
+	};
+	if (bt.value == 0) { funcs.do(_.disable) } { funcs.do(_.enable) };
+	NTMI.g.main.nUFO2InfBut.value;
 });
 )
