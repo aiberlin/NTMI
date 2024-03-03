@@ -87,7 +87,7 @@ NTMI.mu8.lastPreTime = 0;
 (
 MKtl('mu8').elAt(\modSl).action = { |sl|
 	case { NTMI.mu8.butDown.isEmpty } {
-		"influx".postln;
+		// "influx".postln;
 		// inIndices, diffs, zoom
 		MFdef(\setRelInf).(
 			sl.indexInGroup,
@@ -97,7 +97,7 @@ MKtl('mu8').elAt(\modSl).action = { |sl|
 	} {
 		var step = sl.deviceValue - sl.prevDeviceValue;
 
-		"mode buts: %\n".postf(NTMI.mu8.butDown);
+		// "mode buts: %\n".postf(NTMI.mu8.butDown);
 		NTMI.mu8.butModeUsed = true;
 		case { sl.indexInGroup == 6 } {
 			var now = Main.elapsedTime;
@@ -108,17 +108,17 @@ MKtl('mu8').elAt(\modSl).action = { |sl|
 			};
 
 		} { sl.indexInGroup == 5 } {
-			"main zoom".postln;
+			// "main zoom".postln;
 			NTMI.incZoom(sl.deviceValue - sl.prevDeviceValue / 64);
 
 		} { sl.indexInGroup == 4 } {
 			var uniNewVal = NTMI.mu8.zoomSpec.unmap(NTMI.mu8.zoom) + (step / 64);
-			NTMI.mu8.zoom = NTMI.mu8.zoomSpec.map(uniNewVal).postln;
-			"mu8 zoom".postln;
+			NTMI.mu8.zoom = NTMI.mu8.zoomSpec.map(uniNewVal);
+			"NTMI.mu8.zoom: %\n".postf(NTMI.mu8.zoom);
 		} { sl.indexInGroup < 4 } {
 			var ndef = NTMI.ndefs[sl.indexInGroup];
 
-			"slot mode:".postln;
+			// "slot mode:".postln;
 			case { NTMI.mu8.butDown.includes(0) } {
 				MFdef(\ndefVolStep).(ndef, step)
 
