@@ -10,20 +10,26 @@ Instructions to run this setup within SuperCollider:
 `Quarks.install("NTMI");`
 This installs all other required quarks.
 
-- update all quraks that NTMI depends onto their current versions:
+- update all quarks that NTMI depends on to their current versions:
 `Quark("NTMI").dependencies.do(_.update);`
 
-- recompile the class library
+NOTE: if you have any local modifications in a quark, 
+`Quark("something").update` will fail silently. 
+In that case, open Terminal, go to the quark folder, 
+and check which files are changed with `git status` etc.
 
+When the quarks are updated: 
+- recompile the class library
 - for a first test, run the file "00loadMe.scd"
 -> you should see a big red GUI window called ntmi_mainStage.
 
-Recommendations: 
+Recommendation: 
 Also install SC3-plugins 
 (some sound processes require UGens from SC3-plugins)
 https://github.com/supercollider/sc3-plugins
 
-For auto-loading NTMI on startup, use the StartupFile quark:
+For auto-loading NTMI (or other projects) on startup, 
+use the StartupFile quark:
 ```
 StartupFile.writeStartupFileToExternalPath('ntmi',
  (Quark("NTMI").localPath +/+ "NTMI_AI_sc_setup/00_loadMe.scd")
