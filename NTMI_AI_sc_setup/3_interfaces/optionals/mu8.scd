@@ -36,6 +36,14 @@ NTMI.mu8 = (influxMode: \setRel, zoom: 1,
 
 MKtl.all.mu8.free;
 
+MKtlDesc("music_thing_8mu").elAt(\sl).elements.do { |eldesc|
+	eldesc.style.put(\height, 2);
+};
+MKtlDesc("music_thing_8mu").elAt(\acc).elements.do { |eldesc|
+	eldesc.style.put(\height, 2);
+};
+
+
 MKtl('mu8', "music_thing_8mu");
 
 NTMI.mu8.setRel = {
