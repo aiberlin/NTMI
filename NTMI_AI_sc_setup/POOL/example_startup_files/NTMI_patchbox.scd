@@ -20,16 +20,25 @@ NTMI.helloSound = {
 };
 
 // typical setup for patchbox
-q.isPi = true;       // raspberry - use smaller gui if desktop
+NTMI.isPi = true;       // raspberry - use smaller gui if desktop
 
-q.hasGui = false;    // set flag for headless
-// q.usesMidi = false;  // don't look for MIDI devices (faster and more stable)
-// q.usesHid  = false;  // don't look for HID devices   (faster and more stable)
+NTMI.hasGui = false;    // set flag for headless
 
-// See the ntmi_prefs file for further adjustments:
+// skipping some interface types will make loading faster and more stable:
+// NTMI.usesMidi = false; // skip MIDI
+NTMI.usesHid  = false;  // skip HID devices
+
+NTMI.interfacesToLoad = ["mu8"];
+// For further personalization, see here:
 /*
-("~/NTMI/ntmi_prefs.scd".standardizePath).openOS;
+Document.open(NTMI.dir.setup +/+ "HOW_TO_PERSONALIZE/1_Configure_setup.scd");
 */
+
+// for example, post which MKtls were loaded after setup:
+NTMI.finalSetup = {
+	"MKtls loaded: %\n".postf(MKtl.all);
+};
 
 //////// finally, run NTMI for full setup
 NTMI.run;
+
