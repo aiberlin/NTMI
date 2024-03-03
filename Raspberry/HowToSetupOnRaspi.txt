@@ -35,15 +35,16 @@ Quarks.installed.do(_.update);
 // or do git restore on the changed files
 
 // recompile ... then
-StartupFile.writeStartupFileToExternalPath('ntmi',
- (Quark("NTMI").localPath +/+ "code/00_loadMeNeuLaby.scd")
-);
+StartupFile.openDir
+// copy a file, rename it to "ntmi.scd", 
+// put this line in the file and save it 
+NTMI.run;
 
 // should be true:
-StartupFile.pathsDict.keys.includes('neuraLabyQuark');
-// write startup.scd that points to neuraLabyQuark:
-StartupFile.writeRedirectFile('neuraLabyQuark')
+StartupFile.pathsDict.keys.includes('ntmi');
+// write startup.scd that points to ntmi startup file:
+StartupFile.writeRedirectFile('ntmi')
 
 /// reboot interpreter ....
-/// if the server boots and you get a big red GUI window that says NTMI:
+/// if the server boots and you get a big GUI window that says NTMI:
 // DONE! //
