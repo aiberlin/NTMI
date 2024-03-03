@@ -20,7 +20,8 @@ and check which files are changed with `git status` etc.
 
 When the quarks are updated: 
 - recompile the class library
-- for a first test, run the file "00loadMe.scd"
+- for a first test, try evaluating this line: 
+`NTMI.run;`
 -> you should see a big red GUI window called ntmi_mainStage.
 
 Recommendation: 
@@ -28,7 +29,10 @@ Also install SC3-plugins
 (some sound processes require UGens from SC3-plugins)
 https://github.com/supercollider/sc3-plugins
 
-For auto-loading NTMI (or other projects) on startup, 
+For loading NTMI on startup, put this line in your startup file:
+
+NTMI.run;
+
 use the StartupFile quark:
 ```
 StartupFile.writeStartupFileToExternalPath('ntmi',
