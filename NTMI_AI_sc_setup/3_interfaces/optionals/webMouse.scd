@@ -90,8 +90,9 @@ WinBounds.addMake(\webMouse, {
 	NTMI.webMouse.win = win;
 	NTMI.webMouse.uv = UserView(win, win.view.bounds).front;
 	NTMI.webMouse.uv.clearOnRefresh = false;
+	NTMI.webMouse.uv.resize_(5);
 
-	NTMI.webMouse.uv.drawFunc = { NTMI.webMouse[\drawFunc].value };
+	NTMI.webMouse.uv.drawFunc = { |uv| NTMI.webMouse[\drawFunc].value(uv) };
 	NTMI.webMouse.uv.mouseDownAction = { |uv, x, y|
 		NTMI.webMouse[\downAction].value(uv, x, y)
 	};
@@ -133,11 +134,13 @@ NTMI.webMouse.moveAction = { |uv, x, y|
 
 NTMI.webMouse.drawFunc = { |uv|
 	var radii, mouseXY, white = Color.white;
+	var bounds = uv.bounds, width = bounds.width, height = bounds.height / 4;
+	var zone = Rect(0,0, width, height / 4);
+	var nameRandHi = height / 2;
 	Pen.push;
 	NTMI.webMouse.chunks.do { |chunk, i|
 		var name = chunk[0];
 		var preVol = chunk[1], postVol = chunk[2];
-		var zone = Rect(0,0, 200, 100);
 		var paramVals = chunk[4..];
 		var pHi = 80 / paramVals.size;
 
@@ -146,20 +149,20 @@ NTMI.webMouse.drawFunc = { |uv|
 		Pen.color = Color.grey(0.3, 0.05);
 		Pen.fillRect(zone); // background
 
-		Pen.color = Color.blue(1, 0.5); Pen.fillRect(Rect(0, 0, 200 * preVol,20));
-		Pen.color = Color.green(1, 0.5);  Pen.fillRect(Rect(0, 0, 200 * postVol,20));
+		Pen.color = Color.blue(1, 0.5); Pen.fillRect(Rect(0, 0, width * preVol,20));
+		Pen.color = Color.green(1, 0.5);  Pen.fillRect(Rect(0, 0, width * postVol,20));
 
 		Pen.color = Color.rand(0.65, 0.8).alpha_(0.5);
 		paramVals.do { |val, i|
-			var rect = Rect(0, i * pHi + 20, 200 * val, pHi - 1.5);
+			var rect = Rect(0, i * pHi + 20, width * val, pHi - 1.5);
 			Pen.fillRect(rect);
 		};
 		Pen.push;
-		Pen.rotate(0.2.rand2, *zone.center.asArray);
-		Pen.translate(50.rand2, 50.rand2);
+		Pen.rotate(0.3.rand2, *zone.center.asArray);
+		Pen.translate(nameRandHi.rand2, nameRandHi.rand2);
 		Pen.stringCenteredIn(name.asString, zone, Font("Monaco", 24), white, \center);
 		Pen.pop;
-		Pen.translate(0, 100);
+		Pen.translate(0, height);
 	};
 	Pen.pop;
 
