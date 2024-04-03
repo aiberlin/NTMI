@@ -2,6 +2,17 @@
 
 This repository contains the full setup for the Nontrivial Music Instrument (NTMI) by Airborne Instruments: http://airborneinstruments.eu/
 
+The NTMI is intended for an intuitive style of playing complex sound processes, 
+with multiple interfaces. The setup includes: 
+- 30+ sound processes to play, and you can add your own
+- several software interfaces to play with
+- Several supported hardware interfaces, and you can add your own:
+The Airborne Instruments nUFO, 
+Korg nanoKontrol2, 
+Faderfox UC4, 
+Thrustmaster gamepads, 
+and Music Thing 8mu faderbox + motion sensor. 
+
 The code is all in SuperCollider, and is best installed as a SuperCollider Quark, i.e. an extension package. (For better access to users with little interest in coding, it can also be packaged into Standalone apps made with SuperCollider).
 
 Instructions to run this setup within SuperCollider:
