@@ -13,6 +13,8 @@ OSCdef.trace(false)
 */
 
 NTMI.makeInfluxSource = { |q, name|
+	name = name.asSymbol;
+
 	if (NTMI.at(name).notNil) {
 		"cannot make influx source, name % exists".format(name).warn;
 	} {
