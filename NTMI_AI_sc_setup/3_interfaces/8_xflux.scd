@@ -51,6 +51,7 @@ OSCdef(\xflux, {|msg, time, sender|
 	var vals = msg[2..];
 	var inIndices, diffs, zoom;
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
+	var xfluxzoom = NTMI.at(\xflux).zoom ? 1;
 
 	// "vals.size: %\n".postf(vals.size);
 	if (vals.size.even) {
@@ -66,5 +67,6 @@ OSCdef(\xflux, {|msg, time, sender|
 	// "xflux from % - % diffs:\n".postf(name, diffs.size);
 	// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);
 	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom);
+	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom * xfluxzoom);
 }, \xflux);
 );
