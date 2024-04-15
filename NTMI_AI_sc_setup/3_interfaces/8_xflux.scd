@@ -12,24 +12,24 @@ OSCdef.trace(true, true)
 OSCdef.trace(false)
 */
 
-
-NTMI.xflux = NTMI.xflux ? ();
-NTMI.xflux.zoom = 1;
-NTMI.xflux.influxMode = \setRel;
-NTMI.xflux.setRel = {
-	"NTMI.xflux.influxMode: \setRel".postln;
+NTMI.makeInfluxSource = { |q, name|
+	if (NTMI.at(name).notNil) {
+		"cannot make influx source, name % exists".format(name).warn;
+	} {
+		NTMI.put(name, (
+			zoom: 1,
+			influxMode: \setRel,
+			setRel: { |dict| dict.influxMode = \setRel },
+			setAbs: { |dict| dict.setRel }
+		));
+		MKtl.all[name].free;
+		MKtl(name,
+			(idInfo: name, protocol: \dummy, elementsDesc: (elements: [])),
+			tryOpenDevice: false);
+	};
 };
-NTMI.xflux.setAbs = {
-	"*** no setAbs! ".post; NTMI.xflux.setRel;
-};
 
-// make a dummy MKtl for xflux
-// quick and dirty, and MKtl(\xflux).gui does nothing useful
-MKtl.all.xflux.free;
-MKtl(\xflux,
-	(idInfo: \xflux, protocol: \dummy, elementsDesc: (elements: [])),
-	tryOpenDevice: false
-);
+NTMI.makeInfluxSource(\xflux);
 
 // set to true for testing:
 NTMI.xflux.sendLocally = false;
@@ -53,6 +53,18 @@ OSCdef(\xflux, {|msg, time, sender|
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
 	var xfluxzoom = NTMI.at(\xflux).zoom ? 1;
 
+
+	// msg.round(0.001).postln;
+
+	/*** TO DO:
+	if (NTMI.at(name).isNil) {
+		// make a dummy MKtl with separate zoom value
+		// add it to the InfluxMixer so we can change zoom
+		// individually per source.
+
+	};
+	***/
+
 	// "vals.size: %\n".postf(vals.size);
 	if (vals.size.even) {
 		"xflux - even size of incoming values?\n"
@@ -66,7 +78,6 @@ OSCdef(\xflux, {|msg, time, sender|
 
 	// "xflux from % - % diffs:\n".postf(name, diffs.size);
 	// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);
-	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom);
 	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom * xfluxzoom);
 }, \xflux);
 );
