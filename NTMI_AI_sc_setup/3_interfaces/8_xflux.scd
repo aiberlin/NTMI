@@ -38,7 +38,7 @@ NTMI.xflux.sendLocally = false;
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
 	// "sending via xflux: %\n".postf(args.round(0.001));
-	NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
+	NTMI.oscar.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
 	if (NTMI.xflux.sendLocally) {
 		NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
 	};
@@ -47,7 +47,7 @@ MFdef(\setRelInf).add(\xflux, { arg ...args;
 
 (
 OSCdef(\xflux, {|msg, time, sender|
-	var name = msg[1];
+	var name = msg.postln[1];
 	var vals = msg[2..];
 	var inIndices, diffs, zoom;
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
