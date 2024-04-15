@@ -62,21 +62,7 @@ NTMI.oscar.tryReachServer = {
 	// check whether default OSCRouter server is reachable:
 	// (without access, startup can hang for 20-30 secs...)
 	"NTMI.oscar.tryReachServer:".postln;
-	pingID = unixCmd("ping % -c 2 -o -t 5".format(NTMI.oscServerName).postln, { |okNum|
-		("reachedOkNum:" + okNum).postln;
-		("killed: " + killed).postln;
-		if (okNum == 0 and: killed.not) {
-			"NTMI.oscar: reached server %, so making NTMI.oscar.oscar.\n"
-			.postf(NTMI.oscServerName);
-			defer { NTMI.oscar.makeServer };
-		} {
-			"*** NTMI.oscar: server unreachable, not making make NTMI.oscar!\n".postln;
-		};
-	});
-	defer ({
-		unixCmd("kill %".format(pingID), { |res|
-			killed = true; "NTMI.oscar:  2 sec".postln
-	}) }, 2);
+	defer { NTMI.oscar.makeServer };
 };
 
 NTMI.oscar.tryReachServer;
