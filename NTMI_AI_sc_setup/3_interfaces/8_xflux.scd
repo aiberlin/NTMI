@@ -34,10 +34,12 @@ NTMI.makeInfluxSource(\xflux);
 // set to true for testing:
 NTMI.xflux.sendLocally = false;
 
-
+NTMI.xflux.verbose = true;
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
-	// "sending via xflux: %\n".postf(args.round(0.001));
+	if (NTMI.xflux.verbose) {
+		"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.001));
+	};
 	NTMI.oscar.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
 	if (NTMI.xflux.sendLocally) {
 		NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
@@ -53,8 +55,9 @@ OSCdef(\xflux, {|msg, time, sender|
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
 	var xfluxzoom = NTMI.at(\xflux).zoom ? 1;
 
-
-	// msg.round(0.001).postln;
+	if (NTMI.xflux.verbose) {
+		"xflux received: %\n".postf(msg.round(0.0001));
+	};
 
 	/*** TO DO:
 	if (NTMI.at(name).isNil) {
