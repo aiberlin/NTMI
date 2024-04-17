@@ -13,6 +13,8 @@ OSCdef.trace(false)
 */
 
 NTMI.makeInfluxSource = { |q, name|
+	name = name.asSymbol;
+
 	if (NTMI.at(name).notNil) {
 		"cannot make influx source, name % exists".format(name).warn;
 	} {
@@ -49,24 +51,26 @@ MFdef(\setRelInf).add(\xflux, { arg ...args;
 
 (
 OSCdef(\xflux, {|msg, time, sender|
-	var name = msg.postln[1];
+	var name = msg[1];
 	var vals = msg[2..];
 	var inIndices, diffs, zoom;
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
 	var xfluxzoom = NTMI.at(\xflux).zoom ? 1;
+	var xf_name = "xf_%".format(name).asSymbol;
+	var xf_peer_zoom;
 
 	if (NTMI.xflux.verbose) {
 		"xflux received: %\n".postf(msg.round(0.0001));
 	};
 
-	/*** TO DO:
-	if (NTMI.at(name).isNil) {
+	if (NTMI.at(xf_name).isNil) {
 		// make a dummy MKtl with separate zoom value
 		// add it to the InfluxMixer so we can change zoom
 		// individually per source.
-
+		NTMI.makeInfluxSource(xf_name);
 	};
-	***/
+
+	xf_peer_zoom = NTMI.at(xf_name).zoom ? 1;
 
 	// "vals.size: %\n".postf(vals.size);
 	if (vals.size.even) {
@@ -81,6 +85,6 @@ OSCdef(\xflux, {|msg, time, sender|
 
 	// "xflux from % - % diffs:\n".postf(name, diffs.size);
 	// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);
-	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom * xfluxzoom);
+	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom * xfluxzoom * xf_peer_zoom);
 }, \xflux);
 );
