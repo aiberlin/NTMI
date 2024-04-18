@@ -52,6 +52,10 @@ NTMI.slots.fadeoutTime = NTMI.slots.fadeoutTime ? 0.2;
 NTMI.slots.defaultVol = NTMI.slots.defaultVol ? 0.25;
 NTMI.slots.defaultAmp = NTMI.slots.defaultAmp ? 0.25;
 
+// could be used to keep ndefs running that are used elsewhere:
+NTMI.slots.endOnStop = false;
+
+// mirror the 4 slots for plugging into others
 NTMI.slots.zz = [ Ndef(\zz1), Ndef(\zz2), Ndef(\zz3), Ndef(\zz4)];
 
 NTMI.slots.nowPlaying = {
@@ -78,22 +82,18 @@ NTMI.slots.playAt = { |sl, index|
 	"using preset % as influx offset.\n".postf(currPreName.cs);
 };
 
-NTMI.slots.stopAt = { |sl, index|
+NTMI.slots.stopAt = { |sl, index, endOnStop|
 	var obj = NTMI.slots.actives[index];
 	if (obj.isPlaying) {
-		"SLOT %: % stops.\n".postf(index, obj);
-		obj.stop(NTMI.slots.fadeoutTime)
-	};
-	try { NTMI.inphlux.removeMapped(obj.key) };
-};
-
-NTMI.slots.endAt = { |sl, index|
-	var obj = NTMI.slots.actives[index];
-	if (obj.isPlaying) {
-		"SLOT %: % ends.\n".postf(index, obj);
-		obj.end(NTMI.slots.fadeoutTime)
-	};
-	try { NTMI.inphlux.removeMapped(obj.key) };
+		if (endOnStop.postln ?? NTMI.slots.endOnStop) {
+			"SLOT %: % ends.\n".postf(index, obj);
+			obj.end(NTMI.slots.fadeoutTime)
+		} {
+			"SLOT %: % stops.\n".postf(index, obj);
+			obj.stop(NTMI.slots.fadeoutTime)
+		};
+		try { NTMI.inphlux.removeMapped(obj.key) };
+	}
 };
 
 NTMI.slots.toggleAt = { |sl, index|
