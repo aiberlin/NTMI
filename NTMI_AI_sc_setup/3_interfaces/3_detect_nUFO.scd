@@ -2,6 +2,25 @@
 OSCdef.trace(true, true);
 OSCdef.trace(false);
 MKtl.all.nUFO; // exists?
+
+nUFO startup logic:
+When an Airborne Instruments nUFO boots,it makes its own WLAN with
+SSID name: NTMI-00x -- (serial number)
+password: NTMINTMI
+
+its router address is NetAddr(169.254.1.1, 57120),
+and it immediately sends /ntmi/caps and /ntmi/imu messages.
+So nUFO needs NetAddr to be 57120!
+
+OSCdef(\nUFOdetectIMU) listens for /ntmi/imu,
+and loads all nUFO files when a nUFO message is detected;
+then MKtl(\nUFO) is created, and Tdef(\allLEDs)
+plays its little light patterns on the nUFO LEDs;
+then it sends NTMI playing state for display.
+
+// re-enable detection with:
+OSCdef(\nUFOdetectIMU).enable;
+
 */
 
 NTMI.nUFO = NTMI.nUFO ? ();
