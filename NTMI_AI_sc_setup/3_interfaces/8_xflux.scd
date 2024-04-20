@@ -1,8 +1,32 @@
 // listen to x-fluences via oscrouter
 /*
+TODO:
+- dummy MKtls add complication and confusion... replace them?
+-> better only the real MKtls, others just have a space in xflux
+-> or distuinguish by protocol: xflux
+
+- GUI should have:
+*** if oscar: oscar status, join but
+*** if oscar and xflux :
+* xflux send on/off, level
+* xflux receive on/off, level
+*** local MKtls, with setAbs/setRel if supported
+* xflux external sources w separate controls,
+and and irrel. buttons off
+
+
 // set to true for local testing:
 NTMI.xflux.sendLocally = true;
 NTMI.xflux.sendLocally = false;
+
+// flags to configure:
+NTMI.xflux.sends = true;
+NTMI.xflux.sends = false;
+NTMI.xflux.listens = true;
+NTMI.xflux.listens = false;
+NTMI.xflux.verbose = true;
+NTMI.xflux.verbose = false;
+
 // send test msg by hand:
 NTMI.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
 
@@ -26,7 +50,7 @@ NTMI.makeInfluxSource = { |q, name|
 		));
 		MKtl.all[name].free;
 		MKtl(name,
-			(idInfo: name, protocol: \dummy, elementsDesc: (elements: [])),
+			(idInfo: name, protocol: \xflux, elementsDesc: (elements: [])),
 			tryOpenDevice: false);
 	};
 };
@@ -36,16 +60,21 @@ NTMI.makeInfluxSource(\xflux);
 // set to true for testing:
 NTMI.xflux.sendLocally = false;
 
+NTMI.xflux.sends = true;
+NTMI.xflux.listens = true;
 NTMI.xflux.verbose = true;
+
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
-	if (NTMI.xflux.verbose) {
-		"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.001));
-	};
-	NTMI.oscar.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
-	if (NTMI.xflux.sendLocally) {
-		NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
-	};
+	if (NTMI.xflux.sends) {
+		if (NTMI.xflux.verbose) {
+			"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.001));
+		};
+		NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
+		if (NTMI.xflux.sendLocally) {
+			NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
+		}
+	}
 });
 );
 
@@ -59,32 +88,36 @@ OSCdef(\xflux, {|msg, time, sender|
 	var xf_name = "xf_%".format(name).asSymbol;
 	var xf_peer_zoom;
 
-	if (NTMI.xflux.verbose) {
-		"xflux received: %\n".postf(msg.round(0.0001));
-	};
+	if (NTMI.xflux.listens) {
+		if (NTMI.xflux.verbose) {
+			"xflux received: %\n".postf(msg.round(0.0001));
+		};
 
-	if (NTMI.at(xf_name).isNil) {
-		// make a dummy MKtl with separate zoom value
-		// add it to the InfluxMixer so we can change zoom
-		// individually per source.
-		NTMI.makeInfluxSource(xf_name);
-	};
+		if (NTMI.at(xf_name).isNil) {
+			// make a dummy MKtl with separate zoom value
+			// add it to the InfluxMixer so we can change zoom
+			// individually per source.
+			NTMI.makeInfluxSource(xf_name);
+		};
 
-	xf_peer_zoom = NTMI.at(xf_name).zoom ? 1;
+		xf_peer_zoom = NTMI.at(xf_name).zoom ? 1;
 
-	// "vals.size: %\n".postf(vals.size);
-	if (vals.size.even) {
-		"xflux - even size of incoming values?\n"
-		"assuming zoom is missing and should be 1.".postln;
-		zoom = 1;
-	} {
-		// all is well:
-		zoom = vals.pop;
-		#inIndices, diffs = vals.clump(vals.size.div(2));
-	};
+		// "vals.size: %\n".postf(vals.size);
+		if (vals.size.even) {
+			"xflux - even size of incoming values?\n"
+			"assuming zoom is missing and should be 1.".postln;
+			zoom = 1;
+		} {
+			// all is well:
+			zoom = vals.pop;
+			#inIndices, diffs = vals.clump(vals.size.div(2));
+		};
 
-	// "xflux from % - % diffs:\n".postf(name, diffs.size);
-	// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);
-	MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs, zoom * xfluxzoom * xf_peer_zoom);
+		// "xflux from % - % diffs:\n".postf(name, diffs.size);
+		// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);
+		MFdef(\setRelInf).valueAt(funcKeys, inIndices, diffs,
+			zoom * xfluxzoom * xf_peer_zoom
+		);
+	}
 }, \xflux);
 );
