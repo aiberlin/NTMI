@@ -13,7 +13,7 @@ g.butzNames = [
 	'miniMax',
 	'Main_NTMI',
 	'inphlux',
-	'MKtlInflMix',
+	'InfluxMixer',
 	'liveInput',
 	'presets',
 	'slotSounds',
@@ -92,7 +92,7 @@ Butz('interfaces').addMiniMax;
 
 [
 	'findConnect',
-	'MKtlInflMix',
+	'InfluxMixer',
 	'nUFO',
 	'nanoKtl',
 	'ferrari',

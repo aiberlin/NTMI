@@ -1,29 +1,83 @@
+/***
+This mixer shows all sources of Influence:
+- all local sources, typically MKtls
+- network connection via OSCRouter
+- xflux and sources arriving via xflux
+- xflux sending properties
+
+One can set the amount of influence of each of these sources
+***/
+
+
 NTMI.mkmix = NTMI.mkmix ? ();
 
-Butz('interfaces').add(\MKtlInflMix, { WinBounds.showOrMake(\MKtlInflMix) });
-Butz('NTMI').add(\MKtlInflMix, { WinBounds.showOrMake(\MKtlInflMix) });
+Butz('interfaces').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
+Butz('NTMI').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 
-WinBounds.addMake(\MKtlInflMix, {
-	var w = Window(\MKtlInflMix, Rect.aboutPoint(NTMI.g.bounds.center, 250, 100)).front;
+WinBounds.addMake(\InfluxMixer, {
+	var mktls = MKtl.all.skeys.select(_ != \xflux).collect(MKtl(_));
+	// maybe some sources are added later
+	var numItems = (NTMI.mkmix.numItems ? 6).max(mktls.size + 4);
+
 	var f = Font(Font.defaultMonoFace, 14, true);
-	var mktls = MKtl.all.skeys.collect(MKtl(_));
-	var numItems = mktls.size + 4; // maybe some are added later
+	var w = Window(\InfluxMixer,
+		Rect.aboutPoint(NTMI.g.bounds.center, 250, numItems + 2 * 12)
+	).front.alpha_(NTMI.g.alpha);
 	w.addFlowLayout(2@2, 2@2);
-	w.alpha_(NTMI.g.alpha);
 
+	NTMI.mkmix.numItems = numItems;
+
+	// only make oscar/xflux guis if there:
+	if (NTMI.oscar.oscar.notNil) {
+		// xflux global settings here:
+		// oscar status / join button
+		NTMI.mkmix.oscBut = Button(w, Rect(0, 0, 100, 40)).font_(f)
+		.states_([["NTMI.oscar \njoin"], ["NTMI.oscar \njoined", Color.black, Color.green]])
+		.action_({ |bt, mod = 0|
+			if (bt.value > 0) {
+				"join...".postln;
+				NTMI.oscar.oscar.join;
+			} {
+				if (mod > 0) {
+					NTMI.oscar.oscar.close;
+				} {
+					"Hold shift to close OSCRouter!".postln
+				};
+			}
+		});
+		NTMI.mkmix.peersV = StaticText(w, Rect(0, 0, 390, 40)).string_("peers").align_(\center).font_(f).background_(Color.grey(0.95));
+
+		// xflux status and global zoom levels
+		NTMI.mkmix.xsendBut = Button(w, Rect(0, 0, 120, 20)).font_(f)
+		.states_([["xflux send"], ["xflux sends", Color.black, Color.green]])
+		.action_({ |bt| NTMI.xflux.sends = bt.value > 0 });
+		NTMI.mkmix.xsendSl = EZSlider(w, Rect(0, 0, 340, 20), "zoomSend", [0, 1], { |sl|
+			NTMI.xflux.zoomSend = sl.value;
+		}, labelWidth: 100, numberWidth: 40).font_(f);
+
+		NTMI.mkmix.xlistenBut = Button(w, Rect(0, 0, 120, 20)).font_(f)
+		.states_([["xflux listens"], ["xflux listens", Color.black, Color.green]])
+		.action_({ |bt| NTMI.xflux.listens = bt.value > 0 });
+		NTMI.mkmix.xlistenSl = EZSlider(w, Rect(0, 0, 340, 20), "zoomListen", [0, 1], { |sl|
+			NTMI.xflux.zoomListen = sl.value;
+		}, labelWidth: 100, numberWidth: 40).font_(f);
+
+	};
+
+	// then local mktls
 	StaticText(w, Rect(0, 0, 500, 20)).font_(f)
-	.string_("protocol, status, MKtl('name'), influxMode, influxZoom");
+	.string_("protocol, status, MKtl name, influxMode, influxZoom");
 
 	NTMI.mkmix.influxModes = [\setRel, \setAbs];
 	NTMI.mkmix.mktls = mktls;
 	NTMI.mkmix.numMKtls = 0;
 
-	// if not there, make dict for mktl and fill w defaults
-	mktls.do { |mk, i|
+	// if not there, make dict for mktl and fill with defaults
+	mktls.postln.do { |mk, i|
 		var mkdict = NTMI.q[mk.name];
 
 		if (mkdict.isNil) {
-			"*** % has no NTMI dict - making it now.n".postf(mk);
+			"*** % has no NTMI dict - making it now.\n".postf(mk);
 			NTMI.q.put(mk.name, mkdict = ());
 		};
 		mkdict.influxMode = mkdict.influxMode ? NTMI.mkmix.influxModes[0];
@@ -33,7 +87,7 @@ WinBounds.addMake(\MKtlInflMix, {
 
 	NTMI.mkmix.lines = numItems.collect { |i|
 		[
-			StaticText(w, Rect(0, 0, 40, 20)).font_(f).string_("prot"),
+			StaticText(w, Rect(0, 0, 50, 20)).font_(f).string_("prot"),
 
 			Button(w, Rect(180, 0, 40, 20)).states_([["virtual"], ["real!"]])
 			.action_({ |bt, mod = 0|
@@ -70,18 +124,31 @@ WinBounds.addMake(\MKtlInflMix, {
 				NTMI.at(mk.name).influxMode = pop.item;
 			}),
 
-			EZSlider(w, Rect(290, i + 1 * 20, 140, 20), "", [0, 4, \amp], { |sl|
+			EZSlider(w, Rect(290, i + 1 * 20, 140, 20), "", [0, 1], { |sl|
 				var mk = NTMI.mkmix.mktls[i];
 				NTMI.at(mk.name).zoom = sl.value;
 			}, labelWidth: 0, numberWidth: 35)
 		]
 	};
 
-	NTMI.mkmix.skip.stop;
+	NTMI.mkmix.skip.stop.free;
 	NTMI.mkmix.prevMKtls = [];
 	NTMI.mkmix.skip = SkipJack({
+		var oscarExists = NTMI.oscar.oscar.notNil;
 
-		NTMI.mkmix.mktls = MKtl.all.skeys.collect(MKtl(_));
+		if (NTMI.oscar.oscar.notNil and: NTMI.mkmix.oscBut.notNil) {
+			// oscar/xflux status:
+			NTMI.mkmix.oscBut.value_(NTMI.oscar.oscar.hasJoined);
+			NTMI.mkmix.peersV.string = NTMI.oscar.oscar.peers.cs;
+			NTMI.mkmix.xsendBut.value_(NTMI.xflux.sends);
+			NTMI.mkmix.xsendSl.value_(NTMI.xflux.zoomSend ? 1);
+			NTMI.mkmix.xlistenBut.value_(NTMI.xflux.listens);
+			NTMI.mkmix.xlistenSl.value_(NTMI.xflux.zoomListen ? 1);
+		};
+
+		NTMI.mkmix.mktls = MKtl.all.skeys.select(_ != \xflux).collect(MKtl(_));
+
+
 
 		// only set visible if changed
 		if (NTMI.mkmix.mktls != NTMI.mkmix.prevMKtls) {
@@ -97,12 +164,20 @@ WinBounds.addMake(\MKtlInflMix, {
 		NTMI.mkmix.lines.keep(NTMI.mkmix.mktls.size).do { |line, i|
 			var mk = NTMI.mkmix.mktls[i];
 			var name = mk.name, mkdict = NTMI.q.at(name);
+			var isDirect = mk.desc.protocol != \xflux;
 
 			var infMode  = mkdict.influxMode;
 			var infModeIndex = NTMI.mkmix.influxModes.indexOf(infMode);
 			line[0].string = mk.desc.protocol;
+
 			line[1].value = mk.hasDevice;
+			line[1].visible = isDirect;
+			line[2].visible = isDirect;
+
 			line[3].object = mk;
+			line[1].value = mk.hasDevice;
+
+			line[4].enabled_(isDirect);
 			line[4].value = infModeIndex;
 			line[5].value = mkdict.zoom;
 		};

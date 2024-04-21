@@ -1,23 +1,23 @@
-// listen to x-fluences via oscrouter
 /*
+// xflux propagates changeVectors between NTMI setups
+on different computers via Internet/OSCRouter.
+
+SENDING:
+an interface changes: e.g. uc4, slider 1 steps up by 3
+-> setRelInf(chan(s), normDelta(s), uc4.zoom)
+-> change goes to local sounds
+-> xflux forwards:
+----> srcName, chans, deltas, (uc4.zoom * xflux.zoomSend)
+
+RECEIVING:
+xflux gets flat array of srcName, chans, deltas, zoom
+-> localZoom = zoomFromMsg * zoomListen
+-> run local setRelInf without sending
+
 TODO:
-- dummy MKtls add complication and confusion... replace them?
+- dummy MKtls add complication and confusion... replace or get rid of them?
 -> better only the real MKtls, others just have a space in xflux
 -> or distuinguish by protocol: xflux
-
-- GUI should have:
-*** if oscar: oscar status, join but
-*** if oscar and xflux :
-* xflux send on/off, level
-* xflux receive on/off, level
-*** local MKtls, with setAbs/setRel if supported
-* xflux external sources w separate controls,
-and and irrel. buttons off
-
-
-// set to true for local testing:
-NTMI.xflux.sendLocally = true;
-NTMI.xflux.sendLocally = false;
 
 // flags to configure:
 NTMI.xflux.sends = true;
@@ -28,7 +28,7 @@ NTMI.xflux.verbose = true;
 NTMI.xflux.verbose = false;
 
 // send test msg by hand:
-NTMI.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
+NetAddr.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05.rand2, 1);
 
 MFdef(\setRelInf).activeNames
 
@@ -57,23 +57,34 @@ NTMI.makeInfluxSource = { |q, name|
 
 NTMI.makeInfluxSource(\xflux);
 
-// set to true for testing:
-NTMI.xflux.sendLocally = false;
-
 NTMI.xflux.sends = true;
 NTMI.xflux.listens = true;
 NTMI.xflux.verbose = true;
+
+NTMI.at(\xflux).zoomListen = 1;
+NTMI.at(\xflux).zoomSend = 1;
+
+NTMI.xflux.enable = {
+	// off by default
+	MFdef(\setRelInf).enable(\xflux);
+	OSCdef(\xflux).enable;
+};
+NTMI.xflux.disable = {
+	// off by default
+	MFdef(\setRelInf).disable(\xflux);
+	OSCdef(\xflux).disable;
+};
+
+
 
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
 	if (NTMI.xflux.sends) {
 		if (NTMI.xflux.verbose) {
-			"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.001));
+			"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.00001));
 		};
-		NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
-		if (NTMI.xflux.sendLocally) {
-			NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
-		}
+		args.putLast(args.last * NTMI.xflux.zoomSend ? 1);
+		NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args);
 	}
 });
 );
@@ -84,13 +95,13 @@ OSCdef(\xflux, {|msg, time, sender|
 	var vals = msg[2..];
 	var inIndices, diffs, zoom;
 	var funcKeys = MFdef(\setRelInf).activeNames.reject(_ == \xflux);
-	var xfluxzoom = NTMI.at(\xflux).zoom ? 1;
+	var xfluxzoom = NTMI.at(\xflux).zoomListen ? 1;
 	var xf_name = "xf_%".format(name).asSymbol;
 	var xf_peer_zoom;
 
 	if (NTMI.xflux.listens) {
 		if (NTMI.xflux.verbose) {
-			"xflux received: %\n".postf(msg.round(0.0001));
+			"xflux received: %\n".postf(msg.round(0.00001));
 		};
 
 		if (NTMI.at(xf_name).isNil) {
