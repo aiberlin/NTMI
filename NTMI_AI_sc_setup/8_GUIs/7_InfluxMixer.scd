@@ -1,11 +1,13 @@
 /***
 This mixer shows all sources of Influence:
-- all local sources, typically MKtls
-- network connection via OSCRouter
-- xflux and sources arriving via xflux
-- xflux sending properties
 
-One can set the amount of influence of each of these sources
+- all local sources, typically MKtls
+- if existing, the /OSCRouter network connection
+- if enabled, xflux and sources arriving via xflux
+- xflux sending and listening settings - flags and zoom levels.
+
+One can set the amount of influence (zoom) for each of these sources,
+and (where available) switch between setRel and setAbs modes.
 ***/
 
 
