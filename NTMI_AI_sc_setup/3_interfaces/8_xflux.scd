@@ -80,11 +80,12 @@ NTMI.xflux.disable = {
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
 	if (NTMI.xflux.sends) {
+		args = args.flat;
+		args.putLast(args.last * NTMI.xflux.zoomSend ? 1);
+		NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args);
 		if (NTMI.xflux.verbose) {
 			"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.00001));
 		};
-		args.putLast(args.last * NTMI.xflux.zoomSend ? 1);
-		NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args);
 	}
 });
 );
