@@ -28,7 +28,8 @@ NTMI.xflux.verbose = true;
 NTMI.xflux.verbose = false;
 
 // send test msg by hand:
-NetAddr.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05.rand2, 1);
+NetAddr.localAddr.sendMsg(\xflux, \bgola, 4, 0.05.rand2, 1);
+MKtl(\xf_bgola).elAt(0).value_(0.5);
 
 MFdef(\setRelInf).activeNames
 
@@ -50,7 +51,9 @@ NTMI.makeInfluxSource = { |q, name|
 		));
 		MKtl.all[name].free;
 		MKtl(name,
-			(idInfo: name, protocol: \xflux, elementsDesc: (elements: [])),
+			(idInfo: name, protocol: \xflux, elementsDesc: (elements: [
+				(key: \dummy, spec: PassSpec)
+			])),
 			tryOpenDevice: false);
 	};
 };
@@ -59,7 +62,7 @@ NTMI.makeInfluxSource(\xflux);
 
 NTMI.xflux.sends = true;
 NTMI.xflux.listens = true;
-NTMI.xflux.verbose = true;
+NTMI.xflux.verbose = false;
 
 NTMI.at(\xflux).zoomListen = 1;
 NTMI.at(\xflux).zoomSend = 1;
@@ -124,6 +127,9 @@ OSCdef(\xflux, {|msg, time, sender|
 			zoom = vals.pop;
 			#inIndices, diffs = vals.clump(vals.size.div(2));
 		};
+
+		// update dummy Mktl value so we get an updateTime here...
+		MKtl(xf_name).elAt(0).value_(0.5);
 
 		// "xflux from % - % diffs:\n".postf(name, diffs.size);
 		// "inIndices: % \n diffs: %\nzoom: %\n".postf(inIndices, diffs, zoom);

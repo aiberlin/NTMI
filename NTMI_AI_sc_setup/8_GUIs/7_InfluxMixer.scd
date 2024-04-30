@@ -13,6 +13,8 @@ and (where available) switch between setRel and setAbs modes.
 
 NTMI.mkmix = NTMI.mkmix ? ();
 
+NTMI.mkmix.colors = 9.collect { |i| Color.hsv(i/9, 0.5, 1) };
+
 Butz('interfaces').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 Butz('NTMI').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 
@@ -64,6 +66,20 @@ WinBounds.addMake(\InfluxMixer, {
 			NTMI.xflux.zoomListen = sl.value;
 		}, labelWidth: 100, numberWidth: 40).font_(f);
 
+	} {
+		Button(w, Rect(0, 0, 500, 20)).font_(f)
+		.states_([["NTMI.oscar.makeServer"]])
+		.action_({ |bt, mod = 0|
+			NTMI.oscar.makeServer;
+			defer ({
+				if (NTMI.oscar.oscar.notNil) {
+					NTMI.mkmix.skip.stop.free;
+					w.close;
+					WinBounds.showOrMake(\InfluxMixer)
+				}
+			}, 0.2);
+		});
+
 	};
 
 	// then local mktls
@@ -75,7 +91,7 @@ WinBounds.addMake(\InfluxMixer, {
 	NTMI.mkmix.numMKtls = 0;
 
 	// if not there, make dict for mktl and fill with defaults
-	mktls.postln.do { |mk, i|
+	mktls.do { |mk, i|
 		var mkdict = NTMI.q[mk.name];
 
 		if (mkdict.isNil) {
@@ -84,7 +100,7 @@ WinBounds.addMake(\InfluxMixer, {
 		};
 		mkdict.influxMode = mkdict.influxMode ? NTMI.mkmix.influxModes[0];
 		mkdict.zoom = mkdict.zoom ? 0.5;
-		[mk, mkdict].postln;
+		// [mk, mkdict].postln;
 	};
 
 	NTMI.mkmix.lines = numItems.collect { |i|
@@ -135,8 +151,10 @@ WinBounds.addMake(\InfluxMixer, {
 
 	NTMI.mkmix.skip.stop.free;
 	NTMI.mkmix.prevMKtls = [];
+
 	NTMI.mkmix.skip = SkipJack({
 		var oscarExists = NTMI.oscar.oscar.notNil;
+		var now = Main.elapsedTime;
 
 		if (NTMI.oscar.oscar.notNil and: NTMI.mkmix.oscBut.notNil) {
 			// oscar/xflux status:
@@ -149,8 +167,6 @@ WinBounds.addMake(\InfluxMixer, {
 		};
 
 		NTMI.mkmix.mktls = MKtl.all.skeys.select(_ != \xflux).collect(MKtl(_));
-
-
 
 		// only set visible if changed
 		if (NTMI.mkmix.mktls != NTMI.mkmix.prevMKtls) {
@@ -172,18 +188,24 @@ WinBounds.addMake(\InfluxMixer, {
 			var infModeIndex = NTMI.mkmix.influxModes.indexOf(infMode);
 			line[0].string = mk.desc.protocol;
 
+
 			line[1].value = mk.hasDevice;
 			line[1].visible = isDirect;
 			line[2].visible = isDirect;
 
 			line[3].object = mk;
-			line[1].value = mk.hasDevice;
+			if (now - mk.lastUpdateTime < 0.5) {
+				line[3].background_(NTMI.mkmix.colors.choose);
+			} {
+				line[3].background_(Color.green);
+			};
 
 			line[4].enabled_(isDirect);
 			line[4].value = infModeIndex;
 			line[5].value = mkdict.zoom;
 		};
 
-	}, 0.5, { w.isClosed }, \mkmix);
+	}, 0.2, { w.isClosed }, \mkmix);
+
 	w
 });
