@@ -6,9 +6,25 @@ should respect usesMidi and usesHid flags
 
 MFdef(\findConnect).();
 
+
+
 */
+NTMI.prevFoundInfos = [];
 
 (
+NTMI.interfaces = NTMI.interfaces ? ();
+NTMI.interfaces.loaded = NTMI.interfaces.loaded ? ();
+
+NTMI.interfaces.knownFiles = (
+	'nanoKONTROL2': "7_nanoKtl.scd",
+	'Faderfox UC4': "2_uc4.scd",
+	'Music Thing m0 Plus': "mu8.scd",
+
+	'Run\'N\' Drive_Thrustmaster': "3_ferrari.scd",
+	'Thrustmaster dual analog 3.2_Thrustmaster': "11_dual_analog_3.2.scd",
+	'Thrustmaster dual analog 3.2_Mega World': "11_dual_analog_3.2.scd",
+	'Thrustmaster dual analog 4_Mega World': "10_dual_analog_4.scd"
+);
 
 MFdef(\findConnect).add(\findConnect, {
 	var foundInfos, newInfos, filenames = List[];
@@ -36,16 +52,16 @@ MFdef(\findConnect).add(\findConnect, {
 		} { NTMI.prevFoundInfos == foundInfos } {
 			"no new infos - done.".postln;
 		} {
-			"*** MFdef('findAndLoad') - new infos found:".postln;
 			newInfos = foundInfos.select { |info|
 				(NTMI.prevFoundInfos ? []).includesEqual(info).not
 			};
+			"*** MFdef('findAndLoad') - new infos found:".postln;
 			newInfos.postcs;
 
 			newInfos.do { |entry|
-				if (entry == "nanoKONTROL2") { filenames.add("7_nanoKtl.scd") };
-				if (entry == "Faderfox UC4") { filenames.add("2_uc4.scd") };
-				if (entry == "Run'N' Drive_Thrustmaster" ) { filenames.add("3_ferrari.scd") };
+				var found = NTMI.interfaces.knownFiles.at(entry.asSymbol);
+				if (entry.notNil) { filenames.add(found.postln) };
+				"found file % for interface %\n".postf(found, entry);
 			};
 
 			if (filenames.isEmpty and: MKtl.all.nanoKtl.isNil) {
@@ -54,13 +70,18 @@ MFdef(\findConnect).add(\findConnect, {
 			};
 
 			filenames.do { |filename| try {
-				LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals")
+				var loadedMKtl = LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals");
+				if (loadedMKtl.notNil) {
+					"loadedMKtl: %\n".postf(loadedMKtl);
+					NTMI.interfaces.loaded.put(loadedMKtl.name, loadedMKtl);
+				}
 			} };
 		}
 	};
 
 	NTMI.prevFoundInfos = foundInfos;
-	newInfos
+	// return loaded mktls:
+	"*** NTMI.interfaces.loaded (MKtls): \n%\n".postf(NTMI.interfaces.loaded);
 
 });
 MFdef(\findConnect).();
