@@ -60,6 +60,10 @@ Butz.add(\OSC_trace, {
 Butz.add(\MIDI_trace, {
 	MIDIFunc.trace(MIDIFunc.classVars[2].not, true);
 });
+Butz.add(\HID_trace, {
+	HIDFunc.trace(HIDFunc.classVars[2].not, true);
+});
+
 
 /// some general helpers
 Butz.add('setAll', { WinBounds.restoreAll });
@@ -212,6 +216,4 @@ Butz(\NTMI_Config).add(\SoundF_doc, {
 Butz(\NTMI_Config).add(\SoundF_open, { (NTMI.dir.user +/+ "soundfiles").openOS });
 Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
 );
-
 )
-
