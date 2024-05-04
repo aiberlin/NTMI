@@ -140,4 +140,5 @@ MKtl('mu8').elAt(\modSl).action = { |sl|
 		}
 	};
 };
+MKtl('mu8');
 );
