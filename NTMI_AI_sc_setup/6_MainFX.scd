@@ -54,12 +54,14 @@ fork ({
 }, AppClock);
 );
 
+
 // make sure MainFX wake up fully after cmd-period:
+// this can go after JITLibExtensions update that fixes MainFX issue
 ServerTree.add({
 	fork ({
 		s.sync;
 		0.2.wait;
-		NTMI.mfx.chain.proxy.rebuild.send
+		NTMI.mfx.chain.proxy.rebuild
 	})
 }, s);
 
