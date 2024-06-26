@@ -6,22 +6,18 @@ to NTMI as a multi-person interface.
 NTMI.addInterfaceFile(\kraken, NTMI.dir.setup +/+ "SpecialUses/kraken_modal_ntmi.scd");
 
 
-******** Status April 5 2023 ********
-buttons> 1-8 are OK,
-9 is dead, 10 is touch/sensitive, but crackles on&off
+******** Status June 25 2024 ********
+MKtl(\kraken).gui;
+MKtl(\kraken).elAt.deviceValue.printAll; "";
 
-pots> 1-5, 7 OK,
-6 works, but also controls ribbon 3 (at pos 7)
-8 works, but also reverse-controls pot 9 (0-> 1023, 1023-> 0)
-pot 9 is disconnected
-pot 10 works
-
-ribbon 1 (on 2) works
-ribbon 2 (on 4) works
-ribbon 3 (on 7) rib does nothing, gets value from pot
-ribbon 4 (on 9) does nothing at all
-
-->>>>> !!!! only use 8 krakens for NOW (Oktopus)!!!!!!
+1: bt OK, kn OK, -
+2: bt XX, kn OK, rib OK
+3: bt XX, kn OK, -
+4: bt XX, kn XX, rib OK
+5: bt OK, kn 720-1000, -
+6: bt OK, kn 700-860, -
+7: bt OK, kn 750-950,  rib XX
+8: bt OK, kn 832-837,  -
 
 ******** Debug ******** ********
 
@@ -30,6 +26,7 @@ SerialPort.closeAll;
 
 NTMI.kraken.rout.stop;
 NTMI.kraken.serial.close;
+
 
 // do sth in func:
 MFdef(\kr_pots).add(\post, {|v| v.postln; });
@@ -44,12 +41,14 @@ MFdef(\kr_pots).disable(\post);
 
 (
 NTMI.kraken = NTMI.kraken ? ();
+NTMI.kraken.minDiff = 4;
 
 // open Serial port:
 (
 SerialPort.closeAll;
-
-//edit to match your port. see SerialPort.listDevices
+/* this is a macOS device name - edit to match your port. See
+SerialPort.listDevices
+*/
 NTMI.kraken.devname = "/dev/tty.usbmodem*".pathMatch.first;
 
 if (NTMI.kraken.devname.isNil) {
@@ -177,7 +176,7 @@ MFdef(\kr_pots).add(\store, { |rawvals|
 	rawvals.do { |val, i|
 		var el = krakEls[i];
 		// ignore light pot jitter, observed 1-2 steps,
-		if (el.deviceValue.absdif(val) > 2) {
+		if (el.deviceValue.absdif(val) > NTMI.kraken.minDiff) {
 			el.deviceValueAction_(val);
 		}
 	}
@@ -188,19 +187,12 @@ MFdef(\kr_ribs).add(\store, { |rawvals|
 	rawvals.do { |val, i|
 		var el = krakEls[i];
 		// ignore light ribbon jitter, observed 1-2 steps,
-		if (el.deviceValue.absdif(val) > 2) {
+		if (el.deviceValue.absdif(val) > NTMI.kraken.minDiff) {
 			el.deviceValueAction_(val);
 		}
 	}
 });
 );
-
-
-// add 3 test actions:
-MKtl( \kraken).elAt(\bt).action = { |el| [el.name, el.value].postln };
-MKtl( \kraken).elAt(\kn).action = { |el| [el.name, el.deviceValue].postln };
-MKtl( \kraken).elAt(\ribbon).action = { |el| [el.name, el.deviceValue].postln };
-
 
 /*****
 1 simple Logic :
@@ -234,8 +226,7 @@ MKtl(\kraken).elAt(\bt, (4..7)).do(_.action = { |el|
 });
 );
 
-
-///////////// INflux: ////////////
+///////////// Influx: ////////////
 
 NTMI.kraken.zoom = NTMI.kraken.zoom ? 1;
 
