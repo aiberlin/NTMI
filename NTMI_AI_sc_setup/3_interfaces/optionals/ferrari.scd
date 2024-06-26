@@ -4,7 +4,7 @@
 
 /*
 MKtl.find(\hid);
-MKtl('ferrari').gui;
+MKtl(~ferrari).gui;
 
 There are 4 slots with named sounds - see the left side views.
 
@@ -77,46 +77,48 @@ so the positions can be stored and reset to these  positions.
 
 
 ///////// tests
-MKtl('ferrari').openDevice;
-MKtl('ferrari').gui.showLabels;
-MKtl('ferrari').elAt(\bt, 0).dump
+MKtl(~ferrari).openDevice;
+MKtl(~ferrari).gui.showLabels;
+MKtl(~ferrari).elAt(\bt, 0).dump
 
 */
 
-NTMI.ferrari = NTMI.ferrari ? ();
+~ferrari = ~ferrari ? \ferrari;
+NTMI.put(~ferrari, NTMI.at(~ferrari) ? ());
+
 ///// look for wired and wireless
 if (MKtlLookup.findByIDInfo("Run'N' Drive_Thrustmaster").size == 1) {
 	"*** wired Ferrari  found!".postln;
-	MKtl.all['ferrari'].free;
-	MKtl('ferrari', "*run-n-drive");
+	MKtl.all[~ferrari].free;
+	MKtl(~ferrari, "*run-n-drive");
 } {
 	if (MKtlLookup.findByIDInfo("Run'N' Drive Wireless_Thrustmaster").size == 1) {
 		"*** wireless Ferrari  found!".postln;
-		MKtl.all['ferrari'].free;
-		MKtl('ferrari', "*run-n-drive-wireless");
+		MKtl.all[~ferrari].free;
+		MKtl(~ferrari, "*run-n-drive-wireless");
 	};
 };
 
-if (MKtl('ferrari').isNil) {
+if (MKtl(~ferrari).isNil) {
 	"No Ferrari Gamepad found - creating virtual one.".postln;
-	MKtl.all['ferrari'].free;
-	MKtl('ferrari', "*run-n-drive");
+	MKtl.all[~ferrari].free;
+	MKtl(~ferrari, "*run-n-drive");
 };
 "*** Ferrari Gamepad loading ...".postln;
 
 // prepare all elements for debugging:
-MKtl('ferrari').elementsDict.do(_.action_(MFunc()));
-MKtl('ferrari').elementsDict.do { |el|
+MKtl(~ferrari).elementsDict.do(_.action_(MFunc()));
+MKtl(~ferrari).elementsDict.do { |el|
 	el.action.add(\post, { |el| [el.name, el.value.round(0.0001)].postln })
 };
 
-MKtl('ferrari').elementsDict.do { |el| el.action.enable(\post) };
-MKtl('ferrari').elementsDict.do { |el| el.action.disable(\post) };
+MKtl(~ferrari).elementsDict.do { |el| el.action.enable(\post) };
+MKtl(~ferrari).elementsDict.do { |el| el.action.disable(\post) };
 
 //////// NAME ElementGroups
 ////////// 4 joyaxes
-MKtl('ferrari').addNamed(\joyAxes,
-	MKtl('ferrari').elAt(\joy, nil, [\x, \y]).flat
+MKtl(~ferrari).addNamed(\joyAxes,
+	MKtl(~ferrari).elAt(\joy, nil, [\x, \y]).flat
 );
 
 NTMI.ferrari.vols = ();
@@ -124,11 +126,11 @@ NTMI.ferrari.selectedSlots = List[];
 
 
 // 4 SOUND BUTTONS:
-MKtl('ferrari').addNamed(\sndButs, MKtl('ferrari').elAt(\bt, (0..3)));
-NTMI.ferrari.sndButs = MKtl('ferrari').elAt(\sndButs);
+MKtl(~ferrari).addNamed(\sndButs, MKtl(~ferrari).elAt(\bt, (0..3)));
+NTMI.ferrari.sndButs = MKtl(~ferrari).elAt(\sndButs);
 
 // soundbuttons 1-4 turn 4 slots on/off
-MKtl('ferrari').elAt(\sndButs).do { |bt, i|
+MKtl(~ferrari).elAt(\sndButs).do { |bt, i|
 	bt.elemDesc.label = "snd % play".format(i+1);
 	bt.action.add(\toggle, {
 		if (bt.isOn) {
@@ -161,7 +163,7 @@ MKtl('ferrari').elAt(\sndButs).do { |bt, i|
 NTMI.ferrari.zoom = 0.5;
 
 ////////// 4 joyaxes set relative influx inputs
-MKtl('ferrari').elAt(\joyAxes).do { |el, i|
+MKtl(~ferrari).elAt(\joyAxes).do { |el, i|
 	var inIndex = [9, 11, 12, 13][i];
 	var sign = (x: 1, y: -1)[el.key];
 	el.elemDesc.label = "infl" + inIndex;
@@ -180,7 +182,7 @@ MKtl('ferrari').elAt(\joyAxes).do { |el, i|
 
 
 ////////// 2 throttles set relative influx inputs
-MKtl('ferrari').elAt(\throt).do { |el, i|
+MKtl(~ferrari).elAt(\throt).do { |el, i|
 	// influx inputs: ampPlus is input \l, ampminus  p
 	// var inName = NTMI.inphlux.inNames[i + 9 + 4];
 	var inIndex = [10, 14][i];
@@ -204,10 +206,10 @@ MKtl('ferrari').elAt(\throt).do { |el, i|
 // dont do basic action on second release
 
 NTMI.ferrari.hatWasUsed = false;
-MKtl('ferrari').elAt(\joy, \l, \hat).elemDesc.label = "INPH prev";
-MKtl('ferrari').elAt(\joy, \l, \hat).action = { |hat|
+MKtl(~ferrari).elAt(\joy, \l, \hat).elemDesc.label = "INPH prev";
+MKtl(~ferrari).elAt(\joy, \l, \hat).action = { |hat|
 	if (hat.isOn.not) {
-		if (MKtl('ferrari').elAt(\joy, \r, \hat).isOn) {
+		if (MKtl(~ferrari).elAt(\joy, \r, \hat).isOn) {
 			NTMI.ferrari.hatWasUsed = true;
 			NTMI.inph.stepWPre(nil); // rand
 		} {
@@ -219,11 +221,11 @@ MKtl('ferrari').elAt(\joy, \l, \hat).action = { |hat|
 	};
 };
 
-MKtl('ferrari').elAt(\joy, \r, \hat).elemDesc.label = "INPH next";
-MKtl('ferrari').elAt(\joy, \r, \hat).action = { |hat|
+MKtl(~ferrari).elAt(\joy, \r, \hat).elemDesc.label = "INPH next";
+MKtl(~ferrari).elAt(\joy, \r, \hat).action = { |hat|
 	hat.elemDesc.label = "prev pre";
 	if (hat.isOn.not) {
-		if (MKtl('ferrari').elAt(\joy, \l, \hat).isOn) {
+		if (MKtl(~ferrari).elAt(\joy, \l, \hat).isOn) {
 			NTMI.inph.stepWPre(nil); // rand
 			NTMI.ferrari.mfxWasUsed = true;
 		} {
@@ -240,10 +242,10 @@ MKtl('ferrari').elAt(\joy, \r, \hat).action = { |hat|
 // dont do basic action on second release
 
 NTMI.ferrari.mfxWasUsed = false;
-MKtl('ferrari').elAt(\bt, \7).elemDesc.label = "MFX prev";
-MKtl('ferrari').elAt(\bt, \7).action = { |bt|
+MKtl(~ferrari).elAt(\bt, \7).elemDesc.label = "MFX prev";
+MKtl(~ferrari).elAt(\bt, \7).action = { |bt|
 	if (bt.isOn.not) {
-		if (MKtl('ferrari').elAt(\bt, \8).isOn) {
+		if (MKtl(~ferrari).elAt(\bt, \8).isOn) {
 			NTMI.ferrari.mfxWasUsed = true;
 			MFdef('mainPreStep').value(nil); // rand
 		} {
@@ -254,10 +256,10 @@ MKtl('ferrari').elAt(\bt, \7).action = { |bt|
 		};
 	};
 };
-MKtl('ferrari').elAt(\bt, \8).elemDesc.label = "MFX next";
-MKtl('ferrari').elAt(\bt, \8).action = { |bt|
+MKtl(~ferrari).elAt(\bt, \8).elemDesc.label = "MFX next";
+MKtl(~ferrari).elAt(\bt, \8).action = { |bt|
 	if (bt.isOn.not) {
-		if (MKtl('ferrari').elAt(\bt, \7).isOn) {
+		if (MKtl(~ferrari).elAt(\bt, \7).isOn) {
 			NTMI.ferrari.mfxWasUsed = true;
 			MFdef('mainPreStep').value(nil); // rand
 		} {
@@ -275,8 +277,8 @@ MKtl('ferrari').elAt(\bt, \8).action = { |bt|
 // sets main vol when bt 10 is down;
 // sets slot volume when or more buttons of 1-4 are down
 NTMI.ferrari.uniMainVolOffset = 0;
-MKtl('ferrari').elAt(\wheel).elemDesc.label = "set vol";
-MKtl('ferrari').elAt(\wheel).action.add(\setvol, { |wheel|
+MKtl(~ferrari).elAt(\wheel).elemDesc.label = "set vol";
+MKtl(~ferrari).elAt(\wheel).action.add(\setvol, { |wheel|
 	var indices;
 	if (NTMI.ferrari.mode == \slot) {
 		// get the slot(s) in focus, set its/their volume(s)
@@ -287,7 +289,7 @@ MKtl('ferrari').elAt(\wheel).action.add(\setvol, { |wheel|
 		};
 		NTMI.ferrari.slotModeWasUsed = true;
 	} {
-		if (MKtl('ferrari').elAt(\bt, \10).isOn) {
+		if (MKtl(~ferrari).elAt(\bt, \10).isOn) {
 			"set mainVolume center:".post;
 			NTMI.ferrari.uniMainVolOffset = (wheel.value - 0.5).postln;
 			MFdef(\mainVolSetUni).value( wheel.value);
@@ -299,11 +301,11 @@ MKtl('ferrari').elAt(\wheel).action.add(\setvol, { |wheel|
 });
 
 // use compass for navigation of presets and sounds:
-MKtl('ferrari').elAt(\compass).elemDesc.label = "step pre";
+MKtl(~ferrari).elAt(\compass).elemDesc.label = "step pre";
 
-MKtl('ferrari').elAt(\compass).action.add(\stepPre, { |cp|
+MKtl(~ferrari).elAt(\compass).action.add(\stepPre, { |cp|
 	var val = (cp.value * 7).round.asInteger;
-	var slotFlags = MKtl('ferrari').elAt(\sndButs).value.collect(_ > 0);
+	var slotFlags = MKtl(~ferrari).elAt(\sndButs).value.collect(_ > 0);
 	if (NTMI.ferrari.mode == \slot) {
 		NTMI.ferrari.slotModeWasUsed = true;
 		val.switch(
@@ -329,8 +331,8 @@ MKtl('ferrari').elAt(\compass).action.add(\stepPre, { |cp|
 });
 
 // bt 9 -> random preset
-MKtl('ferrari').elAt(\bt, \9).elemDesc.label = "rand pre";
-MKtl('ferrari').elAt(\bt, \9).action.add(\randPre, {
+MKtl(~ferrari).elAt(\bt, \9).elemDesc.label = "rand pre";
+MKtl(~ferrari).elAt(\bt, \9).action.add(\randPre, {
 	if (NTMI.ferrari.mode == \slot) {
 		NTMI.ferrari.sndButs.do { |bt, slIndex|
 			if (bt.isOn) { NTMI.pre.stepNdefInf(NTMI.ndefs[slIndex], nil) }
@@ -339,8 +341,8 @@ MKtl('ferrari').elAt(\bt, \9).action.add(\randPre, {
 });
 
 // bt 9 -> random sound func
-MKtl('ferrari').elAt(\bt, \10).elemDesc.label = "rand snd";
-MKtl('ferrari').elAt(\bt, \10).action.add(\randPre, {
+MKtl(~ferrari).elAt(\bt, \10).elemDesc.label = "rand snd";
+MKtl(~ferrari).elAt(\bt, \10).action.add(\randPre, {
 	if (NTMI.ferrari.mode == \slot) {
 		NTMI.ferrari.sndButs.do { |bt, slIndex|
 			if (bt.isOn) { NTMI.slots.stepNext(slIndex, nil) }
@@ -348,9 +350,9 @@ MKtl('ferrari').elAt(\bt, \10).action.add(\randPre, {
 	}
 });
 
-MKtl('ferrari').elAt(\bt, \6).elemDesc.label = "snap Pre";
-MKtl('ferrari').elAt(\bt, \6).action.add(\snapPre, {
+MKtl(~ferrari).elAt(\bt, \6).elemDesc.label = "snap Pre";
+MKtl(~ferrari).elAt(\bt, \6).action.add(\snapPre, {
 	MFdef('snapshot').value;
 });
 
-MKtl('ferrari');
+MKtl(~ferrari);
