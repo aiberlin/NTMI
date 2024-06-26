@@ -131,12 +131,11 @@ NTMI.slots.addActive = { |sl, index, obj|
 	}
 	{		// all is well
 		if (NTMI.slots.actives[index] != obj) {
-			NTMI.slots.endAt(index); // end the old one
+			NTMI.slots.stopAt(index, true); // end the old one
 		};
 		NTMI.slots.actives.put(index, obj);
 		"slots: % source is %\n".postf(NTMI.slots.zz[index], obj);
 		NTMI.slots.zz[index].postln.source = { obj.ar };
-		// NTMI.slots.stopAt(index);
 		NTMI.slots.updateChoices;
 	}
 };
