@@ -1,67 +1,98 @@
+/*
 
-/*   // load all interfaces:
-(thisProcess.nowExecutingPath.dirname +/+ "interfaces/" ++ "*.scd").loadPaths;
+Logic for loading polyphonic interfaces:
+- find all present devices
+
+
+- identify files to use for each present device
+- run each file for each found device;
+- if multiples, use separate names for multiples.
+*** test that it works for multiples!
+
+for individual devices:
+running single file should also work.
+how best to hand over name and idInfo?
+
+// test loading all interfaces:
+(thisProcess.nowExecutingPath.dirname +/+ "optionals/" ++ "*.scd").loadPaths;
+-- nufo fails with device not found
 
 should respect usesMidi and usesHid flags
 
+NTMI.prevFoundInfos = nil;
 MFdef(\findConnect).();
 
 */
 
 (
+NTMI.prevFoundInfos = nil;
+MKtl.find;
+/*
+MKtlLookup.all.printAll;
+*/
+
+NTMI.filesForFoundInfos = Dictionary[
+	// midi
+	"nanoKONTROL2" -> "nanoKtl.scd",
+	"Faderfox UC4" -> "uc4.scd",
+	"Music Thing 8mu" -> "mu8.scd",
+	// hid
+	"Run'N' Drive_Thrustmaster" -> "ferrari.scd",
+	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari.scd",
+	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4.scd",
+	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2.scd"
+];
 
 MFdef(\findConnect).add(\findConnect, {
-	var foundInfos, newInfos, filenames = List[];
+
+	var foundInfos, newInfos;
 	var protocols = [\midi, \hid];
-	if (NTMI.usesMidi.not) { protocols.remove(\midi) };
-	if (NTMI.usesHid.not) { protocols.remove(\hid) };
+	MKtl.find(protocols);
+	foundInfos = MKtlLookup.allFor(protocols).asArray.collect(_.idInfo);
 
-	if(protocols.isEmpty) {
-		"MFdef('findConnect'): - no protocols available. \n"
-		" Please set NTMI.usesMidi or NTMI.usesHid to true.".postln;
+	case { foundInfos.isEmpty } {
+		"no infos found - done.".postln;
+	} { NTMI.prevFoundInfos == foundInfos } {
+		"no new infos found - done.".postln;
 	} {
-
-		"MFdef('findConnect'):\n"
-		"- find supported MKtl devices and connect them.".postln;
-
-		MKtl.find(protocols);
-		foundInfos = MKtlLookup.all.asArray.collect(_.idInfo)
-		.select(_.isString)
-		.reject(_.contains("_Apple"))
-		.reject(_ == "")
-		.asArray.sort;
-
-		case { foundInfos.isEmpty } {
-			"no infos found - done.".postln;
-		} { NTMI.prevFoundInfos == foundInfos } {
-			"no new infos - done.".postln;
-		} {
-			"*** MFdef('findAndLoad') - new infos found:".postln;
-			newInfos = foundInfos.select { |info|
-				(NTMI.prevFoundInfos ? []).includesEqual(info).not
+		"*** MFdef('findAndLoad') - found new infos:".postln;
+		newInfos = foundInfos.select { |info|
+			(NTMI.prevFoundInfos ? []).includesEqual(info).not
+		};
+		newInfos.do { |info|
+			var filename, mktlName;
+			if (info.isKindOf(Dictionary)) {
+				"\nmultiple found:".postln;
+				info.postln;
+				filename = NTMI.filesForFoundInfos[info.deviceName].postln;
+				if (filename.notNil) {
+					"...loading multi file:".postln;
+					info.put(\multiIndex, info.destPortIndex ? info.srcPortIndex);
+					info.put(\mktlName,
+						"%_%".format(
+							filename.splitext.first, info.at(\multiIndex)
+						).asSymbol
+					).postln;
+					// hand info over to interface code file:
+					NTMI.currInfo = info;
+					LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals");
+					NTMI.currInfo = nil;
+				};
+			} {
+				// info is a string
+				"\nsingle found:".postln;
+				info.postln;
+				filename = NTMI.filesForFoundInfos[info].postln;
+				if (filename.notNil) {
+					"...loading single file...".postln;
+					LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals")
+				};
 			};
-			newInfos.postcs;
-
-			newInfos.do { |entry|
-				if (entry == "nanoKONTROL2") { filenames.add("nanoKtl.scd") };
-				if (entry == "Faderfox UC4") { filenames.add("uc4.scd") };
-				if (entry == "Run'N' Drive_Thrustmaster" ) { filenames.add("ferrari.scd") };
-			};
-
-			if (filenames.isEmpty and: MKtl.all.nanoKtl.isNil) {
-				"loading as default: ".post;
-				filenames.add("7_nanoKtl.scd".postcs);
-			};
-
-			filenames.do { |filename| try {
-				LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals")
-			} };
-		}
+		};
 	};
 
 	NTMI.prevFoundInfos = foundInfos;
 	newInfos
-
 });
 MFdef(\findConnect).();
 )
