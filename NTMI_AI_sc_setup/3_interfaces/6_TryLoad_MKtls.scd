@@ -22,14 +22,12 @@ should respect usesMidi and usesHid flags
 NTMI.prevFoundInfos = nil;
 MFdef(\findConnect).();
 
+MKtlLookup.all.printAll;
+
 */
 
 (
-NTMI.prevFoundInfos = nil;
-MKtl.find;
-/*
-MKtlLookup.all.printAll;
-*/
+MKtl.all.postln;
 
 NTMI.filesForFoundInfos = Dictionary[
 	// midi
@@ -46,8 +44,18 @@ NTMI.filesForFoundInfos = Dictionary[
 MFdef(\findConnect).add(\findConnect, {
 
 	var foundInfos, newInfos;
-	var protocols = [\midi, \hid];
+	var protocols = List[];
+	if (NTMI.usesHid) {
+		Platform.case(\windows) {
+			"HID on windows is not working in SC3.13.0.".warn
+		} {
+			protocols.add(\hid)
+		}
+	};
+	if (NTMI.usesMidi) { protocols.add(\midi) };
+
 	MKtl.find(protocols);
+
 	foundInfos = MKtlLookup.allFor(protocols).asArray.collect(_.idInfo);
 
 	case { foundInfos.isEmpty } {
@@ -55,7 +63,7 @@ MFdef(\findConnect).add(\findConnect, {
 	} { NTMI.prevFoundInfos == foundInfos } {
 		"no new infos found - done.".postln;
 	} {
-		"*** MFdef('findAndLoad') - found new infos:".postln;
+		"*** MFdef('findConnect') - found new infos:".postln;
 		newInfos = foundInfos.select { |info|
 			(NTMI.prevFoundInfos ? []).includesEqual(info).not
 		};

@@ -73,21 +73,6 @@ Task {
 		NTMI.warnWin = { |q, string="?!?", title="?!?"| warn(title + string) }
 	};
 
-	if (NTMI.usesMidi) {
-		"*** Modality: find MIDI devices ***".postln;
-		MKtl.find(\midi); 0.1.wait;
-	};
-
-	if (NTMI.usesHid) {
-		Platform.case(\windows) {
-			"HID on windows is not working in SC3.13.0.".warn
-		} {
-			"*** Modality: find HID devices ***".postln;
-			MKtl.find(\hid); 0.1.wait;
-		};
-	};
-
-
 	if (NTMI.reboot) {
 		// Server.killAll; // ?
 		"*** NTMI kills server to reboot.".postln;
