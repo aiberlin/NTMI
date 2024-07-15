@@ -28,8 +28,8 @@ NTMI.xflux.verbose = true;
 NTMI.xflux.verbose = false;
 
 // send test msg by hand:
-NTMI.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
-
+NetAddr.localAddr.sendMsg(\xflux, NTMI.myname, 4, 0.05, 0.5);
+MKtl('xf_adc').timeSinceLast
 MFdef(\setRelInf).activeNames
 
 OSCdef.trace(true, true)
@@ -50,12 +50,15 @@ NTMI.makeInfluxSource = { |q, name|
 		));
 		MKtl.all[name].free;
 		MKtl(name,
-			(idInfo: name, protocol: \xflux, elementsDesc: (elements: [])),
+			(idInfo: name, protocol: \xflux, elementsDesc: (elements: [
+				(key: \dummy, elementType: \slider, spec: \unipolar)
+			])),
 			tryOpenDevice: false);
 	};
 };
 
-NTMI.makeInfluxSource(\xflux);
+NTMI.xflux = NTMI.xflux ? ();
+// NTMI.makeInfluxSource(\xflux);
 
 // set to true for testing:
 NTMI.xflux.sendLocally = false;
@@ -102,6 +105,8 @@ OSCdef(\xflux, {|msg, time, sender|
 
 		xf_peer_zoom = NTMI.at(xf_name).zoom ? 1;
 
+		// set dummy value so we have a timeSinceLast
+		MKtl(xf_name).set(\dummy, 0.5);
 		// "vals.size: %\n".postf(vals.size);
 		if (vals.size.even) {
 			"xflux - even size of incoming values?\n"
