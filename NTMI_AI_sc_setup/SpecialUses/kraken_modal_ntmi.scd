@@ -6,8 +6,27 @@ to NTMI as a multi-person interface.
 NTMI.addInterfaceFile(\kraken, NTMI.dir.setup +/+ "SpecialUses/kraken_modal_ntmi.scd");
 
 
+todo: make setRel, setAbs actions
+for whole array of knobs and ribons in one go.
+
+a = Array.rand(8, 0, 1023);
+bench { "[ 1000, 317, 888, 399, 551, 79, 674, 1011 ]".interpret };
+bench { MFdef(\kr_pots).value(a.scramble) };
+
+bench {
+MFdef(\setRelInf).(
+NTMI.kraken.influxNames.kn,
+Array.rand(8, 0.1, 0.1),
+NTMI.zoom * NTMI.kraken.zoom
+);
+};
+
+
 ******** Status June 25 2024 ********
+// trace does not work because not going thru low-level setting
+MKtl(\kraken).trace;
 MKtl(\kraken).gui;
+
 MKtl(\kraken).elAt.deviceValue.printAll; "";
 
 1: bt OK, kn OK, -
@@ -183,14 +202,19 @@ MFdef(\kr_pots).add(\store, { |rawvals|
 });
 
 MFdef(\kr_ribs).add(\store, { |rawvals|
+	// was deviceValueAction, but that triggers inflAction multiple times,
+	// so better just do a set here first
+	var krakd = NTMI.kraken;
 	var krakEls = MKtl(\kraken).elAt(\ribbon);
-	rawvals.do { |val, i|
-		var el = krakEls[i];
-		// ignore light ribbon jitter, observed 1-2 steps,
-		if (el.deviceValue.absdif(val) > NTMI.kraken.minDiff) {
-			el.deviceValueAction_(val);
-		}
+	var oldVals = krakEls.deviceValue;
+	krakEls.deviceValue = rawvals;
+
+	if (oldVals.absdif(rawvals).maxItem > krakd.minDiff) {
+		// and then decide which
+		krakd[krakd.influxName].value(krakEls, krakd.influxNames.kn);
 	}
+
+	// and if big enough changes, do them for all at once
 });
 );
 
@@ -249,6 +273,15 @@ NTMI.kraken.influxNames = (
 	ribbon: (5..7)
 );
 
+NTMI.kraken.setAbs = { |els, inNames|
+
+};
+NTMI.kraken.setRel = { |els, inNames|
+
+};
+
+// this is the individual element set action,
+// which is only used by the gui:
 NTMI.kraken.inflAction.add(\which, { |el|
 	if (NTMI.kraken.influxMode == \setAbs) {
 		NTMI.kraken.inflAction[\setAbs].(el);
@@ -256,18 +289,17 @@ NTMI.kraken.inflAction.add(\which, { |el|
 		NTMI.kraken.inflAction[\setRel].(el);
 	};
 });
-
+// the setAbs and setRel actions are only stored, but not active
 NTMI.kraken.inflAction.add(\setAbs, { |el|
 	var groupname = el.parent.name;
 	var inNames = NTMI.kraken.influxNames[groupname];
 	var inName = inNames[el.indexInGroup];
-	\setAbs.postln;
+
 	NTMI.inphlux.set(inName,
 		el.value * 2 - 1
 		* NTMI.zoom * NTMI.kraken.zoom
 	);
 }, false);
-
 
 NTMI.kraken.inflAction.add(\setRel, { |el|
 	var groupname = el.parent.name;
