@@ -1,10 +1,10 @@
 NTMI.mkmix = NTMI.mkmix ? ();
 
-Butz('interfaces').add(\MKtlInflMix, { WinBounds.showOrMake(\MKtlInflMix) });
-Butz('NTMI').add(\MKtlInflMix, { WinBounds.showOrMake(\MKtlInflMix) });
+Butz('interfaces').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
+Butz('NTMI').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 
-WinBounds.addMake(\MKtlInflMix, {
-	var w = Window(\MKtlInflMix, Rect.aboutPoint(NTMI.g.bounds.center, 250, 100)).front;
+WinBounds.addMake(\InfluxMixer, {
+	var w = Window(\InfluxMixer, Rect.aboutPoint(NTMI.g.bounds.center, 250, 100)).front;
 	var f = Font(Font.defaultMonoFace, 14, true);
 	var mktls = MKtl.all.skeys.collect(MKtl(_));
 	var numItems = mktls.size + 4; // maybe some are added later
@@ -58,7 +58,7 @@ WinBounds.addMake(\MKtlInflMix, {
 				} { mk.gui.showLabels }
 			}),
 
-			DragSource(w, Rect(40, 0, 140, 20)).font_(f).background_(Color.green)
+			DragSource(w, Rect(40, 0, 140, 20)).font_(f).background_(Color.grey(1.0))
 			.object_(NTMI.mkmix.mktls[i]),
 
 			PopUpMenu(w, Rect(220, 0, 70, 20)).items_([ \setRel, \setAbs])
@@ -70,7 +70,7 @@ WinBounds.addMake(\MKtlInflMix, {
 				NTMI.at(mk.name).influxMode = pop.item;
 			}),
 
-			EZSlider(w, Rect(290, i + 1 * 20, 140, 20), "", [0, 4, \amp], { |sl|
+			EZSlider(w, Rect(290, 0, 140, 20), "", [0, 4, \amp], { |sl|
 				var mk = NTMI.mkmix.mktls[i];
 				NTMI.at(mk.name).zoom = sl.value;
 			}, labelWidth: 0, numberWidth: 35)
@@ -90,6 +90,7 @@ WinBounds.addMake(\MKtlInflMix, {
 				line.do(_.visible_(show));
 			};
 		};
+
 		NTMI.mkmix.prevMKtls = NTMI.mkmix.mktls;
 		NTMI.mkmix.numMKtls = NTMI.mkmix.mktls.size;
 
@@ -97,6 +98,7 @@ WinBounds.addMake(\MKtlInflMix, {
 		NTMI.mkmix.lines.keep(NTMI.mkmix.mktls.size).do { |line, i|
 			var mk = NTMI.mkmix.mktls[i];
 			var name = mk.name, mkdict = NTMI.q.at(name);
+			var colArr;
 
 			var infMode  = mkdict.influxMode;
 			var infModeIndex = NTMI.mkmix.influxModes.indexOf(infMode);
@@ -105,8 +107,16 @@ WinBounds.addMake(\MKtlInflMix, {
 			line[3].object = mk;
 			line[4].value = infModeIndex;
 			line[5].value = mkdict.zoom;
-		};
-
-	}, 0.5, { w.isClosed }, \mkmix);
+			if (mk.timeSinceLast < 0.5) {
+				line[3].background_(Color.hsv(1.0.rand, 0.5, 1, 1))
+			} {
+				colArr = line[3].background.asArray;
+				if (colArr != [1,1,1,1]) {
+					colArr = (colArr + [0.02, 0.02, 0.02, 0]).clip(0, 1);
+					line[3].background_(Color.fromArray(colArr))
+				};
+			}
+		}
+	}, 0.1, { w.isClosed }, \mkmix);
 	w
 });
