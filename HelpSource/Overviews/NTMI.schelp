@@ -1,0 +1,116 @@
+title:: NTMI
+summary:: An overview of the Nontrivial Music Instrument (NTMI)
+categories:: Tutorials, Utility
+related:: Overviews/Modality, Overviews/JITLib, Overviews/JITLibExtensions
+
+
+section::Introduction
+
+The NTMI is intended for an intuitive style of playing complex sound processes, with multiple interfaces. The basic setup comes with multiple sound processes and supports multiple MIDI, HID and OSC interfaces through LINK::https://supercollider.github.io/downloads.html##Modality-Toolkit::. This setup is fully customizable, you can add your own sound process and add support for your own interfaces.
+
+
+section::Installing
+
+To run NTMI you will need LINK::https://supercollider.github.io/downloads.html##SuperCollider>=3.12:: installed and also LINK::https://github.com/supercollider/sc3-plugins##sc3-plugins:: for some of the sound processes.
+
+From within SuperCollider you can install NTMI and all required dependencies by running:
+
+CODE::
+Quarks.install("NTMI");
+::
+
+In case you had already some dependencies installed you can force an update to the current version:
+
+CODE::
+Quark("NTMI").dependencies.do(_.update);
+::
+
+STRONG::NOTE::: if you have any local modifications in a quark, Quark("something").update will fail silently. In that case, open Terminal, go to the quark folder, and check which files are changed with git status etc.
+
+When the quarks are updated you can recompile the class library by running:
+
+CODE::
+thisProcess.recompile;
+::
+
+or via the SuperCollider IDE (Language->Recompile Class Library). You can then check if everything is working by running:
+
+CODE::
+NTMI.run;
+::
+
+section::NTMI Concepts
+
+IMAGE::NTMI_mainStage.png#The NTMI Main Stage::
+
+When you run NTMI you will first see two windows: the emphasis::Butz:: and emphasis::Main Stage::. emphasis::Butz:: works as a navigation menu through different areas of NTMI, which we will explore later.
+
+The emphasis::Main Stage::, as the name implies, is the main window where you can have an overall view of the current state of NTMI. On the left-side you will see a Scope and the current selected sound processes.
+
+For each sound process you see its name, the current selected preset and a third button that shows either TELETYPE::--:: or TELETYPE::- -::.
+
+You can press on the sound process name to open a dropdown menu and change the process to another one. The same applies for the presets. Notice that by default (and when you change it) the sound processes are muted, you can click on the sound process slot to turn it on or off. If you click and drag the darker vertical bar in this area you can change the level for that sound process.
+
+The third button in each sound process is to decouple/couple the process from Influx and is an essential feature of NTMI. We will dive into Influx soon, but for now try turning on and off the sound process, change sounds and presets, and change the levels of each.
+
+Continuing on Main Stage, we have a level meter and the emphasis::SNAP!:: button. emphasis::SNAP!:: will save the current state as a preset for each sound process enabled, with the current date and time as the preset's. You can later change the name to a better one that makes more sense to you, emphasis::SNAP!:: is meant to be a quick and easy way of saving a state while you perform or explore sounds in NTMI.
+
+Under snap is the emphasis::MainFX:: button. There are different main effects chain in NTMI stored as presets, clicking on the emphasis::MainFX:: will switch randomly to one of the saved presets. emphasis::mainVol:: is the main volume of NTMI, after the main effects.
+
+On the right side is the emphasis::zoom:: slider to change the Influx zoom level. Also, emphasis::preUp:: and emphasis::preDown:: are related to Influx, changing between different weights presets for Influx. In the next section we will understand better what Influx is and what those buttons do.
+
+To finish with the emphasis::Main Stage:: window, there is the clock and recording buttons, that are useful to keep track of time during the performance and to record / see all your recordings.
+
+section::Nontrivial Sound Processes and intuitive playing
+
+In NTMI sound processes are defined as Ndefs / NodeProxies, see LINK::https://doc.sccode.org/Overviews/JITLib.html##JITLib::, later we will explore how to add your own Ndefs to NTMI. The sound processes processes that ship with NTMI tend to have many input parameters and produce complex sounding output. Those are called Nontrivial Sound Processes. To help with playing with those sound processes at the center of NTMI is LINK::https://github.com/supercollider-quarks/Influx##Influx::.
+
+Influx is a SuperCollider quark that explores the idea of performing with running processes by means of influence on process parameters rather than direct control. In NTMI the main method of changing parameters on sound processes is via Influx.
+
+To try this out, turn on some sound processes and click on the strong::inphlux:: button in the emphasis::Butz:: window.
+
+
+IMAGE::NTMI_inphlux.png#Inphlux window::
+
+You can see the Influx inputs (the green line with letters strong::x:: to strong::l::). Clicking and dragging over the inputs will influence the parameters of the current running sound processes. The emphasis::zoom:: button in the emphasis::Main Stage:: window is a way to define how much influence from Influx will be applied to the parameters of the processes. To see this in action you can click on the emphasis::slotSounds:: button in emphasis::Butz:: and move the influx inputs. Each slider on the emphasis::slotSounds:: window is an input parameter.
+
+IMAGE::NTMI_soundSlots.png#Inphlux influencing sound processes parameters::
+
+Try changing the emphasis::Zoom:: slider and also the emphasis::preUp:: and emphasis::preDown:: to understand the effect of those into how Influx will influence the parameters.
+
+The idea with NTMI and Influx is to explore intuitive playing with complex sound processes. And to do that you learn by listening how different gestures in Influx will map to the sonic output.
+
+
+section::Multiple influences
+
+NTMI ships with full support to different MIDI, HID or OSC controllers. If you happen to own one of those, you can connect it to your computer and in the emphasis::Butz:: window change to the emphasis::Interfaces:: menu (by clicking on the top menu and choose emphasis::interfaces:: from the dropdown list). From the interfaces menu if you click on emphasis::findConnect:: your device should be detected automatically.
+
+IMAGE::NTMI_interfaces.png#NTMI interfaces menu::
+
+Each device has specific mappings on how they work with NTMI, check LINK::nUFO_Quickstart_Manual_2023.pdf##nUFO Quickstart Manual:: for some specific details for supported interfaces. Multiple controllers can work simultaneously, and each with its own zoom level. For an overview of the controllers go back to the emphasis::NTMI:: menu in emphasis::Butz:: using the top menu and selecting emphasis::NTMI:: from the dropdown list, and then click on emphasis::MKtlInflMix::.
+
+IMAGE::NTMI_mktlinflmix.png#The MKtlInflMix window shows all connected interface::
+
+In this window you can set the Influx zoom level for each interface and define if it is running in absolute or relative mode. In the next section we will understand what are the differences between absolute and relative, and why it matters when using multiple interfaces with NTMI.
+
+section::Absolute and relative influences
+
+
+
+
+section::Customizing
+- which sounds to use
+
+- mainFX
+
+- new sound processes
+
+- presets?
+
+- new controllers
+
+- buffers / soundfiles
+
+- audio setup / multichannel
+
+
