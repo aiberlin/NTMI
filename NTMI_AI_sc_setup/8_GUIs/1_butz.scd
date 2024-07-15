@@ -125,7 +125,6 @@ Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 // /////// the INTERFACES Butz: /////////////
 Butz(\interfaces).add(\findConnect, {
 	Task {
-		MFdef(\findConnect).value;
 		LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
 		0.5.wait;
 		MKtl.all.do { |mk|
