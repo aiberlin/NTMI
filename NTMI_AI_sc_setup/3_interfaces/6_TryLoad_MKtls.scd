@@ -3,21 +3,22 @@
 Logic for loading polyphonic interfaces:
 - find all present devices
 
-
 - identify files to use for each present device
 - run each file for each found device;
 - if multiples, use separate names for multiples.
+-> also for ferrari wired/wireless!
 *** test that it works for multiples!
 
 for individual devices:
 running single file should also work.
-how best to hand over name and idInfo?
+Handover is by shortterm global variable:
+NTMI.currInfo = info;
+LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals");
+NTMI.currInfo = nil;
 
 // test loading all interfaces:
 (thisProcess.nowExecutingPath.dirname +/+ "optionals/" ++ "*.scd").loadPaths;
 -- nufo fails with device not found
-
-should respect usesMidi and usesHid flags
 
 NTMI.prevFoundInfos = nil;
 MFdef(\findConnect).();
