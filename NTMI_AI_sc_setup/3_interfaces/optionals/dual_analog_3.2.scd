@@ -1,6 +1,4 @@
-///// ******** dual_analog_3_2 Gamepad patch for Liz Allbee *********
-///// ********     adapted into NTMI / UFO app      *********
-
+///// ******** dual_analog_3_2 Gamepad patch *********
 
 /*
 MKtl.find(\hid);
@@ -58,23 +56,6 @@ which you can later change and keep.
 All buttons (except the last 2) open GUIs for parts of the nUFO machinery,
 and push them to the front.
 hold down the option key to force-remake the window if needed.
-
-- NTMI_Main opens or remakes the main gui window.
-- ntmi opens a GUI for the NTMI/nUFO interface (for debugging)
-- inphlux opens a GUI for the Influx which shows the current weights and in/out values
-- slotSounds opens a window showing editors for the sounds in the four slots
-- liveInput allows editing the liveInput process used by the xf-sounds
-- ndefMixer opens a Mixer for all available Ndefs = sound processes
-- mainFX opens a GUI for the MainFX section
-- nanoKtl opens a GUI for a korg nanoKontrol faderbox
-- dual_analog_3_2 opens a GUI for a Thrustmaster dual_analog_3_2 gamepad
-- uc4 opens a GUI for a FaderFox UC4 faderbox
-- ndefPresets opens a GUI for trying out and editing the sound presets
-- z_CLOSEALL closes all windows (except MakeGui)
-- z_setAll posts the current positions of all open windows as code,
-so the positions can be stored and reset to these  positions.
-
-
 
 ///////// tests
 MKtl('dual_analog_3_2').openDevice;
