@@ -164,13 +164,13 @@ NTMI.addInterfaceFile = { |dict, name, filepath|
 
 // add 4 interfaces
 NTMI.addInterfaceFile(\ferrari,
-	"3_interfaces/optionals/3_ferrari.scd");
+	"3_interfaces/optionals/ferrari.scd");
 
 NTMI.addInterfaceFile(\uc4,
-	"3_interfaces/optionals/2_uc4.scd");
+	"3_interfaces/optionals/uc4.scd");
 
 NTMI.addInterfaceFile(\nanoKtl,
-	"3_interfaces/optionals/7_nanoKtl.scd");
+	"3_interfaces/optionals/nanoKtl.scd");
 
 NTMI.addInterfaceFile(\nUFO,
 	"3_interfaces/nUFO/1*nUFO*.scd");
