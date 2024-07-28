@@ -50,6 +50,13 @@ NTMI.oscar.sendMsg = { |oscar ... args|
 	};
 };
 
+NTMI.oscar.quit = {
+	try {
+		NTMI.oscar.oscar.close;
+		NTMI.oscar.oscar = nil;
+	};
+};
+
 // if it is reachable, make it:
 NTMI.oscar.makeServer = {
 	"NTMI.oscar.makeServer".postln;

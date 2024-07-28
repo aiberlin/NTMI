@@ -19,8 +19,14 @@ WinBounds.addMake(\InfluxMixer, {
 	.string_("protocol, status, MKtl('name'), influxMode, influxZoom");
 
 	NTMI.mkmix.startBut = Button(w, 120@30).font_(f)
-	.states_([['START ?'], ['RUNNING!', nil, Color.green]])
-	.action_({ |bt| NTMI.oscar.makeServer });
+	.states_([['XFLUX ?'], ['XFLUX ON!', nil, Color.green]])
+	.action_({ |bt, mod|
+		if (bt.value > 0) {
+			NTMI.oscar.makeServer
+		} {
+			NTMI.oscar.quit;
+		}
+	});
 	NTMI.mkmix.sendBut = Button(w, 120@30).font_(f)
 	.states_([['send ?'], ['sending!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.sends = bt.value > 0 });
