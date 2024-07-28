@@ -10,10 +10,12 @@ as the source 'xflux'.
 
 When OSCRouter address cannot be reached,
 e.g. when using nUFO local network, or generally not internet connection,
-NTMI.oscar does not try to join, to avoid network error messages.
+NTMI.oscar should not try to join, to avoid network error messages.
 
 NTMI.oscar.close;
 NTMI.oscar.join;
+
+
 
 */
 
@@ -29,6 +31,9 @@ NTMI.mypwd = NTMI.mypwd ? "senha";
 NTMI.oscar.udkServerName = "gencomp.medienhaus.udk-berlin.de";
 NTMI.oscar.udkServerIP = NTMI.oscar.udkServerIP ? "194.95.202.114";
 
+///// testIP does not work properly yet:
+///// when in nUFO or flatcat network,
+// .testIP returns true even though it cannot reach the online server
 NTMI.oscar.testIP = {
 	NTMI.oscar.reachedServer = false;
 	try {
@@ -37,6 +42,7 @@ NTMI.oscar.testIP = {
 	};
 	NTMI.oscar.reachedServer
 };
+
 
 // always use NTMI.oscar.sendMsg wrapper:
 // will quietly dummy-send when network drops out
