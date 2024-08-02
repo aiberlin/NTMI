@@ -51,6 +51,7 @@ NTMI.nUFO.alive = {
 OSCdef(\nUFOAlive, { |msg, time|
 	// \nUFOAlive.postln;
 	if (NTMI.nUFO.lastInTime == 0 or: { NTMI.nUFO.timeSinceLast > 10 }) {
+		"*** OSCdef nUFOAlive triggers Tdef(\allLEDs).play;".postln;
 		Tdef(\allLEDs).play;
 	};
 	NTMI.nUFO.deviceName = \nUFO;
