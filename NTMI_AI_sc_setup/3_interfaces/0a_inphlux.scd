@@ -144,7 +144,7 @@ MFdef(\setRelInf).add(\callsPerSec, {
 	if (nowSec != NTMI.inph.nowSec) {
 		NTMI.inph.nowSec = nowSec;
 		NTMI.inph.callsPerSec = NTMI.inph.callsCount;
-		"NTMI.inph.callsPerSec: %\n".postf(NTMI.inph.callsPerSec);
+		// "NTMI.inph.callsPerSec: %\n".postf(NTMI.inph.callsPerSec);
 		NTMI.inph.callsCount = 1;
 	} {
 		NTMI.inph.callsCount = NTMI.inph.callsCount + 1;
