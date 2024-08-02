@@ -18,7 +18,7 @@ WinBounds.addMake(\InfluxMixer, {
 	StaticText(w, Rect(0, 0, 500, 20)).font_(f)
 	.string_("protocol, status, MKtl('name'), influxMode, influxZoom");
 
-	NTMI.mkmix.startBut = Button(w, 120@30).font_(f)
+	NTMI.mkmix.startBut = Button(w, 100@30).font_(f)
 	.states_([['XFLUX ?'], ['XFLUX ON!', nil, Color.green]])
 	.action_({ |bt, mod|
 		if (bt.value > 0) {
@@ -27,17 +27,17 @@ WinBounds.addMake(\InfluxMixer, {
 			NTMI.oscar.quit;
 		}
 	});
-	NTMI.mkmix.sendBut = Button(w, 120@30).font_(f)
+	NTMI.mkmix.sendBut = Button(w, 100@30).font_(f)
 	.states_([['send ?'], ['sending!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.sends = bt.value > 0 });
-	NTMI.mkmix.listenBut = Button(w, 120@30).font_(f)
+	NTMI.mkmix.listenBut = Button(w, 100@30).font_(f)
 	.states_([['listen ?'], ['listening!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.listens = bt.value > 0 });
-	NTMI.mkmix.verboseBut = Button(w, 120@30).font_(f)
+	NTMI.mkmix.verboseBut = Button(w, 100@30).font_(f)
 	.states_([['verbose ?'], ['verbose!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.verbose = bt.value > 0 });
+	NTMI.mkmix.perSec = StaticText(w, 80@30).string_("0/sec").font_(f);
 
-	w.view.dump.postln;
 
 	NTMI.mkmix.influxModes = [\setRel, \setAbs];
 	NTMI.mkmix.mktls = mktls;
@@ -110,6 +110,7 @@ WinBounds.addMake(\InfluxMixer, {
 		NTMI.mkmix.sendBut.value_(NTMI.xflux.sends.binaryValue);
 		NTMI.mkmix.listenBut.value_(NTMI.xflux.listens.binaryValue);
 		NTMI.mkmix.verboseBut.value_(NTMI.xflux.verbose.binaryValue);
+		NTMI.mkmix.perSec.string_("%/sec".format(NTMI.inph.callsPerSec));
 
 		NTMI.mkmix.mktls = MKtl.all.skeys.collect(MKtl(_));
 
