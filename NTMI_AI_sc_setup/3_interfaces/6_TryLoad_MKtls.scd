@@ -39,7 +39,8 @@ NTMI.filesForFoundInfos = Dictionary[
 	"Run'N' Drive_Thrustmaster" -> "ferrari.scd",
 	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari.scd",
 	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4.scd",
-	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2.scd"
+	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2.scd",
+	"X-TOUCH MINI" -> "xtouch_mini.scd"
 ];
 
 MFdef(\findConnect).add(\findConnect, {
