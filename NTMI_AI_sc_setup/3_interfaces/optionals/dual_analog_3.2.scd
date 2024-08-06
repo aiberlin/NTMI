@@ -66,18 +66,19 @@ MKtl('dual_analog_3_2').elAt(\bt, 0).dump
 
 NTMI.dual_analog_3_2 = NTMI.dual_analog_3_2 ? ();
 ///// look for wired and wireless
-if (MKtlLookup.findByIDInfo("Thrustmaster dual analog 3.2_Thrustmaster").size == 1) {
-	"*** wired Dual Analog 4  found!".postln;
+if (MKtlLookup.findByIDInfo("Thrustmaster dual analog 3.2_Thrustmaster").size == 1
+	or: (MKtlLookup.findByIDInfo("Thrustmaster dual analog 3.2_Thrustmaster").size == 1)) {
+	"*** Dual Analog 3.2  found!".postln;
 	MKtl.all['dual_analog_3_2'].free;
 	MKtl('dual_analog_3_2', "*dual-analog-3.2");
 };
 
 if (MKtl('dual_analog_3_2').isNil) {
-	"No Dual Analog 4 Gamepad found - creating virtual one.".postln;
+	"No Dual Analog 3.2 Gamepad found - creating virtual one.".postln;
 	MKtl.all['dual_analog_3_2'].free;
 	MKtl('dual_analog_3_2', "*dual-analog-3.2");
 };
-"*** Dual Analog 4 Gamepad loading ...".postln;
+"*** Dual Analog 3.2 Gamepad loading ...".postln;
 
 // prepare all elements for debugging:
 MKtl('dual_analog_3_2').elementsDict.do(_.action_(MFunc()));
