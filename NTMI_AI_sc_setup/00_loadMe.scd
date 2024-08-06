@@ -102,6 +102,9 @@ Task {
 		};
 
 	} {
+		// set default samplerate to ensure boot with different input/output devices
+		s.options.sampleRate = s.options.sampleRate ? 44100;
+
 		"NTMI setting up server ... ".postln;
 		NTMI.serverSetupFile = NTMI.serverSetupFile ? NTMI.defaults.serverSetupFile;
 		// load a setup file with memory etc settings
