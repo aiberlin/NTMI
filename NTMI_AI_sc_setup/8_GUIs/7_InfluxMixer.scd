@@ -1,6 +1,7 @@
 /***
 add buttons for NTMI.xflux.sends, listens, verbose
 
+Window.find(\InfluxMixer).bounds
 ***/
 NTMI.mkmix = NTMI.mkmix ? ();
 
@@ -8,10 +9,12 @@ Butz('interfaces').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 Butz('NTMI').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 
 WinBounds.addMake(\InfluxMixer, {
-	var w = Window(\InfluxMixer, Rect.aboutPoint(NTMI.g.bounds.center, 250, 100)).front;
-	var f = Font(Font.defaultMonoFace, 14, true);
 	var mktls = MKtl.all.skeys.collect(MKtl(_));
 	var numItems = mktls.size + 4; // maybe some are added later
+	var halfWinH = 22 * (numItems + 2) / 2;
+	var bounds = Rect.aboutPoint(NTMI.g.bounds.center, 250, halfWinH);
+	var w = Window(\InfluxMixer, bounds).front;
+	var f = Font(Font.defaultMonoFace, 14, true);
 	w.addFlowLayout(2@2, 2@2);
 	w.alpha_(NTMI.g.alpha);
 
@@ -53,21 +56,22 @@ WinBounds.addMake(\InfluxMixer, {
 		};
 		mkdict.influxMode = mkdict.influxMode ? NTMI.mkmix.influxModes[0];
 		mkdict.zoom = mkdict.zoom ? 0.5;
-		[mk, mkdict].postln;
+		[mk, mkdict];
 	};
 
 	NTMI.mkmix.lines = numItems.collect { |i|
 		[
-			StaticText(w, Rect(0, 0, 40, 20)).font_(f).string_("prot"),
+			StaticText(w, Rect(0, 0, 45, 20)).font_(f).string_("prot").align_(\center),
 
-			Button(w, Rect(180, 0, 40, 20)).states_([["virtual"], ["real!"]])
+			Button(w, Rect(180, 0, 40, 20))
+			.states_([["sim"], ["real!", Color.black, Color.green]])
 			.action_({ |bt, mod = 0|
 				var mk = NTMI.mkmix.mktls[i];
 				if (bt.value > 0 and: mk.hasDevice.not) {
 					mk.openDevice
 				} {
-					if (mod.postln == 0) {
-						"hold shift, alt or ctrl to close device...".postln;
+					if (mod == 0) {
+						"hold shift, alt or ctrl to close device!".postln;
 					} {
 						mk.closeDevice
 					};
@@ -89,8 +93,8 @@ WinBounds.addMake(\InfluxMixer, {
 			PopUpMenu(w, Rect(220, 0, 70, 20)).items_([ \setRel, \setAbs])
 			.action_({ |pop|
 				var mk = NTMI.mkmix.mktls[i];
-				// if there is a swth function, call it
-				NTMI.at(mk.name)[pop.item.postln].value.postln;
+				// if there is a switch function, call it
+				NTMI.at(mk.name)[pop.item].value;
 				// if not, always set the mode
 				NTMI.at(mk.name).influxMode = pop.item;
 			}),
@@ -149,5 +153,5 @@ WinBounds.addMake(\InfluxMixer, {
 			}
 		}
 	}, 0.1, { w.isClosed }, \mkmix);
-	w
+	w;
 });
