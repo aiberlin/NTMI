@@ -60,12 +60,13 @@ NTMI.makeInfluxSource = { |q, name|
 NTMI.xflux = NTMI.xflux ? ();
 // NTMI.makeInfluxSource(\xflux);
 
-// set to true for testing:
+// set to true for local-only testing:
 NTMI.xflux.sendLocally = false;
 
-NTMI.xflux.sends = true;
-NTMI.xflux.listens = true;
-NTMI.xflux.verbose = true;
+// only turn these on when using xflux
+NTMI.xflux.sends = false;
+NTMI.xflux.listens = false;
+NTMI.xflux.verbose = false;
 
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
