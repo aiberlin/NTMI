@@ -52,8 +52,9 @@ NTMI.slots.fadeoutTime = NTMI.slots.fadeoutTime ? 0.2;
 NTMI.slots.defaultVol = NTMI.slots.defaultVol ? 0.25;
 NTMI.slots.defaultAmp = NTMI.slots.defaultAmp ? 0.25;
 
-// could be used to keep ndefs running that are used elsewhere:
-NTMI.slots.endOnStop = false;
+// could also be a function that keeps ndefs running
+// that are used elsewhere:
+NTMI.slots.endOnStop = true;
 
 // mirror the 4 slots for plugging into others
 NTMI.slots.zz = [ Ndef(\zz1), Ndef(\zz2), Ndef(\zz3), Ndef(\zz4)];
