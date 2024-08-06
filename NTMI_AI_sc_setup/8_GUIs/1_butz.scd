@@ -149,7 +149,31 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 	};
 	if (WinBounds.makeFuncs[name].isNil) {
 		WinBounds.addMake(name, {
-			MKtl(name).gui.showLabels.parent.alpha_(NTMI.g.alpha)
+			var mktl = MKtl(name);
+			var mkgui = mktl.gui.showLabels;
+			mkgui.parent.alpha_(NTMI.g.alpha);
+
+			// allow devicebutton to close with
+			mkgui.deviceButton.action = { |bt, mod = 0|
+
+				if (bt.value > 0) {
+					mktl.openDevice;
+				} {
+					if (mod > 0) {
+						mktl.closeDevice;
+					} {
+						"% - hold shift or option to close.\n".postf(mktl);
+					}
+				};
+
+				if (mktl.hasDevice) {
+					"% device is open now.\n".postf(mktl);
+				} {
+					"% device has no device now.\n".postf(mktl);
+				};
+				bt.value_(mktl.hasDevice);
+			};
+			mkgui.parent.postln;
 		});
 	};
 
