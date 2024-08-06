@@ -17,10 +17,10 @@ Quark("NTMI").update;
 Quark("NTMI").dependencies.collect(_.name).postln;
 
 // make sure you have them all
-Quark("NTMI").do(_.install);
+Quark("NTMI").dependencies.do(_.install);
 
 // make sure you have the latest versions
-Quark("NTMI").do(_.update);
+Quark("NTMI").dependencies.do(_.update);
 
 
 // if you want to use networked xflux,
@@ -45,3 +45,6 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", OWNER="root", GROUP="plugdev", MODE="066
 ### to make it work immediately, do
 sudo udevadm trigger
 
+
+
+//  
