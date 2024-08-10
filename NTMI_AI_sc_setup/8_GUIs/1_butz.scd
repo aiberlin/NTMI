@@ -200,40 +200,39 @@ NTMI.addInterfaceFile(\nUFO,
 	"3_interfaces/nUFO/1*nUFO*.scd");
 
 (
-Butz(\NTMI_Config).clear;
-Butz(\NTMI_Config).addMiniMax;
-Butz(\NTMI_Config).add('Prefs_doc', {
+Butz(\Personalize).clear;
+Butz(\Personalize).addMiniMax;
+Butz(\Personalize).add('Prefs_doc', {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/1_Configure_setup.scd")
 });
-Butz(\NTMI_Config).add(\Prefs_file, { Document.open(NTMI.prefs.userPrefPath) });
 
-Butz(\NTMI_Config).add('Presets_doc', {
+Butz(\Personalize).add('Presets_doc', {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/2_adding_presets.scd")
 });
-Butz(\NTMI_Config).add('Presets_dir', {
+Butz(\Personalize).add('Presets_dir', {
 	(NTMI.dir.userPOOL +/+ "/2_process/presets/").openOS
 });
 
-Butz(\NTMI_Config).add(\userDir_POOL, {
+Butz(\Personalize).add(\userDir_POOL, {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3a_userDir_POOL.scd")
 });
-Butz(\NTMI_Config).add(\POOL_open, { NTMI.dir.userPOOL.openOS });
+Butz(\Personalize).add(\POOL_open, { NTMI.dir.userPOOL.openOS });
 
-Butz(\NTMI_Config).add('Process_doc', {
+Butz(\Personalize).add('Process_doc', {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/3b_adding_sound_processes.scd")
 });
-Butz(\NTMI_Config).add(\Process_open, { (NTMI.dir.userPOOL +/+"2_process").openOS });
+Butz(\Personalize).add(\Process_open, { (NTMI.dir.userPOOL +/+"2_process").openOS });
 
-Butz(\NTMI_Config).add('Interface_doc', {
+Butz(\Personalize).add('Interface_doc', {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/4a_Connecting_new_interfaces.scd")
 });
 
-Butz(\NTMI_Config).add(\SoundF_doc, {
+Butz(\Personalize).add(\SoundF_doc, {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/5_Adding_soundfiles.scd")
 });
 
-Butz(\NTMI_Config).add(\SoundF_open, { (NTMI.dir.user +/+ "soundfiles").openOS });
-Butz(\NTMI_Config).add('Setup_Quark', { NTMI.dir.setup.openOS });
+Butz(\Personalize).add(\SoundF_open, { (NTMI.dir.user +/+ "soundfiles").openOS });
+Butz(\Personalize).add('Setup_Quark', { NTMI.dir.setup.openOS });
 );
 
 )

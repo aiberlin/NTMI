@@ -2,19 +2,22 @@
 
 // OVERVIEW OF ways to customize NTMI to your preferences:
 
-// 1.  configuring which elements NTMI setup loads
-// 1a. add additional code at different stages in the load process
-// --- explained in this file!
+// 1.  configuring which elements of NTMI setup will load
+// 1a. how to add additional code at different stages in the load process
+// --- both explained in this file!
 
 // 2. add, rename, and edit presets for all sound processes - see:
 Document.open("2_adding_presets.scd".resolveRelative);
 
 // 3. choose which sound processes to use,
-// and add your own sound processes - see:
+// and add your own sound processes - to be written...
 
 // 4. choose which supported physical interfaces to connect
 // and add your own interfaces e.g. with Modality-toolkit - see:
 
+Document.open("2_adding_presets.scd".resolveRelative);
+
+Butz(\Personalize).run(\Interface_doc);
 
 // 1.  configure which elements NTMI setup loads
 
