@@ -31,7 +31,7 @@ Task {
 	"\n\n*** loadMe file for NTMI_AI_sc_setup loading...\n\n".postln;
 	LoadMe.start;
 
-	//// Set generally useful globals:
+	//// Set generally useful global  defaults, if not set in startup file:
 
 	// internally useful:
 	NTMI.myname = NTMI.myname ?? { Platform.userHomeDir.basename.asSymbol };
@@ -56,14 +56,14 @@ Task {
 	// these may have been set in startup file already:
 	NTMI.usesMidi = NTMI.usesMidi ? true;
 	NTMI.usesHid  = NTMI.usesHid ? true;
-
 	// which of the supported interfaces should be loaded?
 	// can include custom ones in userPOOL
-	NTMI.interfacesToLoad  = NTMI.interfacesToLoad ? [ "nanoKtl" ];
+	NTMI.interfacesToLoad  = NTMI.interfacesToLoad ? [ "nanoKtl", "xtm" ];
+
 	// reboot server when starting NTMI?
 	NTMI.reboot = NTMI.reboot ? false;
 
-	// turn off MainFX if desired (will use s.volume for mainVol control)
+	// turn off MainFX if desired (if off, mainVol will use s.volume)
 	NTMI.usesMainFX = NTMI.usesMainFX ? true;
 
 	// replace warning window with post if no GUI

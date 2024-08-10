@@ -26,12 +26,20 @@ if(NTMI.dev) {
 	if (File.exists(NTMI.dir.user).not) {
 		"NTMI: making NTMI.dir.user".postln;
 		unixCmd("mkdir" + quote(NTMI.dir.user));
+	} {
+		if (File.exists(NTMI.dir.user).not) {
+			"NTMI: making NTMI.dir.userSoundfiles FAILED".warn;
+		}
 	};
 
 	// check for soundfiles dir and make it if needed
 	if (File.exists(NTMI.dir.userSoundfiles).not) {
 		"NTMI: making NTMI.dir.userSoundfiles".postln;
 		unixCmd("mkdir" + quote(NTMI.dir.userSoundfiles));
+	} {
+		if (File.exists(NTMI.dir.userSoundfiles).not) {
+			"NTMI: creating NTMI.dir.userSoundfiles FAILED".warn;
+		}
 	};
 	//// check if soundfiles/examples is already in user NTMI dir,
 	//// and if not, copy it there
@@ -41,6 +49,13 @@ if(NTMI.dev) {
 			+ quote(NTMI.dir.setup +/+ "soundfiles/examples")
 			+ quote(NTMI.dir.userSFExamples)
 		);
+		if (File.exists(quote(NTMI.dir.setup +/+ "soundfiles/examples"))) {
+			"... copied.".postln;
+		} {
+			"*** ... copying FAILED!".warn;
+
+		};
+
 		(NTMI.dir.userSFExamples).openOS;
 	};
 
