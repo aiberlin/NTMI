@@ -151,11 +151,6 @@ Task {
 		"\n\n*** *** *** FOLDER % : \n".postf("3_interfaces");
 		LoadMe("3_interfaces/*scd");
 
-		"NTMI.interfacesToLoad: %\n\n".postf(NTMI.interfacesToLoad);
-		NTMI.interfacesToLoad.do { |name|
-			LoadMe("3_interfaces/*/*%*scd".format(name));
-		};
-
 		"*** NTMI.postInterfaces runs.".postln;
 		NTMI.postInterfaces;
 
