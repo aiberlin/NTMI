@@ -136,18 +136,17 @@ Butz(\interfaces).add(\findConnect, {
 	}.play(AppClock);
 });
 
+MKtl.all.postcs.sortedKeysValuesDo { |name, v|
+	var mktl = MKtl(name);
+	Butz(\interfaces).add(name, {
+		if (MKtl.all[name].isNil) {
+			NTMI.loadInterface(name)
+		};
+		WinBounds.showOrMake(name.postcs);
+	});
 
-// function to load an interface file or gui:
-NTMI.loadInterfaceFile = { |dict, name, filepath|
-	"NTMI.loadInterfaceFile: name: %, path: %\n".postf(name, filepath);
-	if (PathName(filepath).isRelativePath) {
-		filepath = (NTMI.dir.setup +/+ filepath);
-	};
-	if (MKtl.all[name].isNil) {
-		"LoadMe(filepath);".postln;
-		LoadMe(filepath);
-	};
 	if (WinBounds.makeFuncs[name].isNil) {
+		"WinBounds.addMake(%)\n".postf(name);
 		WinBounds.addMake(name, {
 			var mktl = MKtl(name);
 			var mkgui = mktl.gui.showLabels;
@@ -157,11 +156,9 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 			mkgui.deviceButton.action = { |bt, mod = 0|
 
 				if (bt.value > 0) {
-					mktl.openDevice;
+					mktl.openDevice
 				} {
-					if (mod > 0) {
-						mktl.closeDevice;
-					} {
+					if (mod > 0) { mktl.closeDevice } {
 						"% - hold shift or option to close.\n".postf(mktl);
 					}
 				};
@@ -176,28 +173,7 @@ NTMI.loadInterfaceFile = { |dict, name, filepath|
 			mkgui.parent.postln;
 		});
 	};
-
-	WinBounds.showOrMake(name);
 };
-
-NTMI.addInterfaceFile = { |dict, name, filepath|
-	Butz(\interfaces).add(name, {
-		NTMI.loadInterfaceFile(name, filepath);
-	});
-};
-
-// add 4 interfaces
-NTMI.addInterfaceFile(\ferrari,
-	"3_interfaces/optionals/ferrari.scd");
-
-NTMI.addInterfaceFile(\uc4,
-	"3_interfaces/optionals/uc4.scd");
-
-NTMI.addInterfaceFile(\nanoKtl,
-	"3_interfaces/optionals/nanoKtl.scd");
-
-NTMI.addInterfaceFile(\nUFO,
-	"3_interfaces/nUFO/1*nUFO*.scd");
 
 (
 Butz(\Personalize).clear;
