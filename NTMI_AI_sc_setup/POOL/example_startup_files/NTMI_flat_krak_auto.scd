@@ -32,7 +32,8 @@ NTMI.interfacesToLoad = [
 	"nanoKtl",
 	"dual_analog_3.2",
 	"dual_analog_4",
-	"ferrari"
+	"ferrari",
+	"xtm"
 ];
 
 // Schedule loading the flatcat files
