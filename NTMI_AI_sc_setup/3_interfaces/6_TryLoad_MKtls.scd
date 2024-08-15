@@ -20,15 +20,64 @@ NTMI.currInfo = nil;
 (thisProcess.nowExecutingPath.dirname +/+ "optionals/" ++ "*.scd").loadPaths;
 -- nufo fails with device not found
 
+
+// unify interface loading functions:
+// 1 - load a specific interface file with a given name
+// 2 - make a showOrMake func if not there yet
+// make findConnect optional
+// 3 - findConnect: check which files match with present devices
+// identify if singles or
+
+
 NTMI.prevFoundInfos = nil;
 MFdef(\findConnect).();
 
 MKtlLookup.all.printAll;
 
+
 */
+NTMI.allInterfaces = [
+	"nUFO",
+	"uc4", "mu8",
+	"nanoKtl",
+	"dual_analog_3.2",
+	"dual_analog_4",
+	"ferrari",
+	"xtm"
+];
 
 (
-MKtl.all.postln;
+// MKtl.all.postln;
+
+// function to load one interface via its file(s):
+NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
+	name = name.asSymbol;
+	filepath = filepath ? "3_interfaces/optionals/%.scd".format(name);
+	if (PathName(filepath).isRelativePath) {
+		filepath = (NTMI.dir.setup +/+ filepath);
+	};
+	if (MKtl.all[name].isNil or: reload) {
+		MKtl.all[name].free;
+		"trying LoadMe(filepath);".postln;
+		try { LoadMe(filepath) } {
+			"*** NTMI.tryLoadMKtl FAILED! \n"
+			"name: %, filepath: % \n".postf(name.cs, filepath.cs);
+		} ;
+	};
+	MKtl.all[name];
+};
+
+/*
+NTMI.tryLoadMKtl("ferrari");
+NTMI.tryLoadMKtl("nanoKtl");
+NTMI.tryLoadMKtl(\nUFO, "nUFO/*nUFO*");
+NTMI.tryLoadMKtl(\nUFO, NTMI.dir.setup +/+ "*interfaces/nUFO/*nUFO*");
+NTMI.tryLoadMKtl("kraken", "SpecialUses/kraken*");
+NTMI.tryLoadMKtl("flatcat", "SpecialUses/flatcat/flatcat*");
+*/*/*/
+
+"NTMI.interfacesToLoad: %\n\n".postf(NTMI.interfacesToLoad);
+NTMI.interfacesToLoad.do { |name| NTMI.tryLoadMKtl(name) };
 
 NTMI.filesForFoundInfos = Dictionary[
 	// midi
@@ -42,7 +91,7 @@ NTMI.filesForFoundInfos = Dictionary[
 	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2.scd",
 	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4.scd",
 	"Thrustmaster dual analog 3.2_Mega World" -> "dual_analog_3.2.scd",
-	"X-TOUCH MINI" -> "xtouch_mini.scd"
+	"X-TOUCH MINI" -> "xtm.scd"
 ];
 
 MFdef(\findConnect).add(\findConnect, {
@@ -74,7 +123,7 @@ MFdef(\findConnect).add(\findConnect, {
 		newInfos.do { |info|
 			var filename, mktlName;
 			if (info.isKindOf(Dictionary)) {
-				"\nmultiple found:".postln;
+				"\nmultiples found:".postln;
 				info.postln;
 				filename = NTMI.filesForFoundInfos[info.deviceName].postln;
 				if (filename.notNil) {
@@ -87,7 +136,7 @@ MFdef(\findConnect).add(\findConnect, {
 					).postln;
 					// hand info over to interface code file:
 					NTMI.currInfo = info;
-					LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals");
+					NTMI.loadInterface(filename);
 					NTMI.currInfo = nil;
 				};
 			} {
@@ -97,7 +146,7 @@ MFdef(\findConnect).add(\findConnect, {
 				filename = NTMI.filesForFoundInfos[info].postln;
 				if (filename.notNil) {
 					"...loading single file...".postln;
-					LoadMe(filename, NTMI.dir.setup +/+ "3_interfaces/optionals")
+					NTMI.loadInterface(filename);
 				};
 			};
 		};
