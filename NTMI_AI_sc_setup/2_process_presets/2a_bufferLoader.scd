@@ -6,6 +6,7 @@ var hasNoSFs = { |path|
 	SoundFile.collect(globalBufFolder +/+ "*").isEmpty
 };
 
+NTMI.dir.scSoundfiles = Platform.resourceDir +/+ "sounds";
 
 // buffers should be in global dict q, not in NTMI.bufs
 q = q ? ();
