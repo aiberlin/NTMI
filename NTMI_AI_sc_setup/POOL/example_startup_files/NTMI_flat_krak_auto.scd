@@ -27,7 +27,7 @@ MKtl(\nUFO).closeDevice;
 // s.options.device = "UMC404HD 192k";
 
 NTMI.interfacesToLoad = [
-	"nUFO",
+	"nUFO/*nUFO*",
 	"uc4", "mu8",
 	"nanoKtl",
 	"dual_analog_3.2",
@@ -42,8 +42,8 @@ NTMI.finalSetup = {
 
 	"\n\n*** NTMI.finalSetup for AbsRel+kraken+flatcat setup: \n".postln;
 
-	// Butz(\NTMI).run(\InfluxMixer);
-	// Window.find(\InfluxMixer).moveTo(500, 700).front;
+	Butz(\NTMI).run(\InfluxMixer);
+	Window.find(\InfluxMixer).moveTo(500, 700).front;
 
 	LoadMe("SpecialUses/kraken_modal*.scd", NTMI.dir.setup);
 
