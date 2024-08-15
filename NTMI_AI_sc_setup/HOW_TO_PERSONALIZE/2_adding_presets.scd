@@ -7,7 +7,13 @@ of the sound processes used in the NTMI setup.
 and (while playing) by using the NTMI snapshot function.
 - Preset lists are stored as text files, which can be edited
 as text, or by GUI.
+- For NTMI, they are stored in the userPOOL folder,
+which is in the current user's home directory:
 
+"~/NTMI/POOL/2_process/presets/".openOS;
+
+This way, they are independent of the NTMI quark folder,
+which should not be changed, since that makes updating difficult.
 */
 
 //// add presets by code:
