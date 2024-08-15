@@ -1,5 +1,9 @@
-/****
-*** AutoPilot variant for ntmi sound processes:
+/*******
+
+This was written for Korea exhibition
+- NOT WORKING ANYMORE, needs UPDATE!
+
+AutoPilot variant for ntmi sound processes:
 - load all sound processes and presets
 - Tdef picks a sound, and morphs between its presets
 - amp is random-modulated for dynamics
