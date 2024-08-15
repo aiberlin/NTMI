@@ -45,19 +45,19 @@ NTMI.finalSetup = {
 	Butz(\NTMI).run(\InfluxMixer);
 	Window.find(\InfluxMixer).moveTo(500, 700).front;
 
-	LoadMe("SpecialUses/kraken_modal*.scd", NTMI.dir.setup);
+	NTMI.tryLoadMKtl("kraken_modal*");
 
 	0.5.wait;
 	// load flatcat setup/connection file
-	LoadMe("SpecialUses/flatcat/*flatcat*.scd", NTMI.dir.setup);
+	NTMI.tryLoadMKtl("flatcat/*flatcat*");
 	NTMI.g.main.imuUV.drawFunc.add(\flatcat, NTMI.flatcat.drawFunc);
 	// NTMI.g.main.imuUV.drawFunc.disable(\imuPad);
 	NTMI.g.main.imuUV.animate_(true);
 
 	NTMI.flatcat.zoom = 0.5;
 	NTMI.kraken.zoom = 0.5;
-
-	Window.find(\flatcat).moveTo(500, 200).front;
+	//
+	// Window.find(\flatcat).moveTo(500, 200).front;
 
 	// autostart flatcat sim?
 	// defer ({ Tdef(\flatcatSim).stop.play }, 5);
