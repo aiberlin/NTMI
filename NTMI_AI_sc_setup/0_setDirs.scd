@@ -28,7 +28,7 @@ forkIfNeeded {
 		var numAttempts = 10;
 		// normal use - if not there, make them in userHomeDir/NTMI
 		// later, provide update/sync functionality
-		NTMI.dir.user = Platform.userHomeDir +/+ "NTMI4";
+		NTMI.dir.user = Platform.userHomeDir +/+ "NTMI";
 		NTMI.dir.userPOOL = NTMI.dir.user +/+ "POOL";
 		NTMI.dir.userSoundfiles = NTMI.dir.user +/+ "soundfiles";
 		NTMI.dir.userSFExamples = NTMI.dir.user +/+ "soundfiles/examples";
