@@ -5,7 +5,7 @@ http://airborneinstruments.eu/
 
 An NTMI tutorial is at https://s4ntp/ntmi
 
-	Short overview:
+### Short overview:
 NTMI is a performance environment originally designed for playing with
 a custom interface, the nUFO, designed by Isak Han for intuitive playing.
 It has since been expanded to work with a variety of common interfaces 
@@ -29,41 +29,40 @@ several Thrustmaster gamepads,
 and the Music Thing 8mu faderbox + motion sensor.
 
 
-The code is best installed as a SuperCollider Quark, i.e. an extension package.s
 
-* How to install and run this setup within SuperCollider:
+### How to install and run NTMI within SuperCollider:
+The code is best installed as a SuperCollider Quark, i.e. an extension package.
 
 (if needed:) 
 
--  install SuperCollider from https://supercollider.github.io 
-
-SuperCollider needs git, a software codebase management tool
-for loading its libraries. 
+- install SuperCollider from https://supercollider.github.io 
+SuperCollider needs git, a software codebase management tool for loading its libraries. 
 To check if you have it already, run this line in SuperCollider:
 `Git.checkForGit`
-if true, you have git installed
-if not, 
-- install Git:
-	linux: almost always has it
-	windows: 
+if true, you have git installed!
+
+- if not, install Git:
+	... linux: almost always has it
+	... windows: 
 		get from https://git-scm.com, 
 		reboot computer
-	macOS: 
+	... macOS: 
 		get from https://git-scm.com, 
 		from brew, 
 		or get xcode commandline developer tools.
 
-* install the NTMI Quark with:
+- now install the NTMI Quark with:
 `Quarks.install("NTMI");`
 This installs all other required quarks.
 
-- update all quarks that NTMI depends on to current versions:
+- if you some quarks installed before, update all 
+quarks that NTMI depends on to current versions:
 `Quark("NTMI").dependencies.do(_.update);`
 
 NOTE: if you have any local modifications in a quark, 
 `Quark("something").update` will fail silently. 
 In that case, open Terminal, go to the quark folder, 
-and check which files are changed with `git status` etc.
+check which files are changed with `git status` etc.
 
 When the required quarks are updated: 
 - recompile the class library
@@ -74,7 +73,7 @@ When the required quarks are updated:
 Now go to the NTMI tutorial at https://s4ntp/ntmi,
 or in the Butz window, go to NTMI_Demos and watch them
 
-Recommendations: 
+###Recommendations: 
 - Also install SC3-plugins 
 (some sound processes require UGens from SC3-plugins)
 from https://github.com/supercollider/sc3-plugins
@@ -102,3 +101,12 @@ https://ccrma.stanford.edu/~ruviaro/texts/A_Gentle_Introduction_To_SuperCollider
 also in Brazilian: 
 https://ccrma.stanford.edu/~ruviaro/texts/Uma_Gentil_Introducao_ao_SuperCollider.pdf
 
+For adding interfaces, see
+
+https://modality.github.io
+
+### Known issues: 
+On Windows, HID devices such as gamepads are not supported. One could make bridges with other softare and connect via OSC...
+On linux, HID devices need permissions, and depending on the distribution, other support libraries. 
+In SuperCollider, please see
+`"Guides/HID_permissions".help;`
