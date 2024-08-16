@@ -1,6 +1,6 @@
-# NTMI 
+# NTMI - a Nontrivial Music Instrument
 
-NTMI is short for Nontrivial Music Instrument, a project by Airborne Instruments: 
+NTMI is a project by Airborne Instruments: 
 http://airborneinstruments.eu/
 
 An NTMI tutorial is at https://s4ntp/ntmi
