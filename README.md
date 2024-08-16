@@ -73,7 +73,7 @@ When the required quarks are updated:
 Now go to the NTMI tutorial at https://s4ntp/ntmi,
 or in the Butz window, go to NTMI_Demos and watch them
 
-###Recommendations: 
+### Recommendations: 
 - Also install SC3-plugins 
 (some sound processes require UGens from SC3-plugins)
 from https://github.com/supercollider/sc3-plugins
