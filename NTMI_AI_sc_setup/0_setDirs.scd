@@ -62,7 +62,7 @@ forkIfNeeded {
 		"making %\n".postf(targetDir);
 		while { File.exists(targetDir).not and: (numAttempts > 0) } {
 			unixCmd("cp -nR"
-				+ quote(NTMI.dir.setup +/+ "POOL")
+				+ quote(NTMI.dir.setup +/+ name)
 				+ quote(targetDir)
 			);
 			numAttempts = (numAttempts - 1).postln;
@@ -70,9 +70,9 @@ forkIfNeeded {
 		};
 		if (File.exists(targetDir).not) {
 			"*** NTMI: making % FAILED. \n".postf(targetDir);
-			"Please copy folders 'soundfiles' and 'POOL'\n"
+			"Please copy folder '%' \n"
 			"from NTMI.dir.setup to homedir/NTMI by hand! \n"
-			"then do NTMI.run again.".postln;
+			"then do NTMI.run again.".postf(name);
 			2.wait;
 			NTMI.dir.setup.openOS;
 			thisThread.stop;
