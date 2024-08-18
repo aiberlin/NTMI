@@ -54,7 +54,7 @@ NTMI.allInterfaces = [
 NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 	name = name.asSymbol;
 	filepath = filepath ? "3_interfaces/optionals/%.scd".format(name);
-	if (filepath.dirname.pathMatch.isEmpty) {
+	if (LoadMe.isRelative(filepath)) {
 		filepath = (NTMI.dir.setup +/+ filepath);
 	};
 	if (MKtl.all[name].isNil or: reload) {
