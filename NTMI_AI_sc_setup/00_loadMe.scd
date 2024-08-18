@@ -56,9 +56,6 @@ Task {
 	// these may have been set in startup file already:
 	NTMI.usesMidi = NTMI.usesMidi ? true;
 	NTMI.usesHid  = NTMI.usesHid ? true;
-	// which of the supported interfaces should be loaded?
-	// can include custom ones in userPOOL
-	NTMI.interfacesToLoad  = NTMI.interfacesToLoad ? [ "nanoKtl", "xtm" ];
 
 	// reboot server when starting NTMI?
 	NTMI.reboot = NTMI.reboot ? false;
