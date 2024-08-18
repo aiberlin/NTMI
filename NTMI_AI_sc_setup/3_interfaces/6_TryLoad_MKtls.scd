@@ -37,18 +37,19 @@ MKtlLookup.all.printAll;
 
 */
 NTMI.allInterfaces = [
-	"nUFO",
-	"uc4", "mu8",
+	// "nUFO/*nUFO*",
 	"nanoKtl",
+	"xtm",
+	"uc4",
+	"mu8",
 	"dual_analog_3.2",
 	"dual_analog_4",
 	"ferrari",
-	"xtm"
+	// "flatcat/*flatcat*",
+	// "kraken*",
 ];
 
 (
-// MKtl.all.postln;
-
 // function to load one interface via its file(s):
 NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 	name = name.asSymbol;
@@ -76,22 +77,23 @@ NTMI.tryLoadMKtl("kraken", "SpecialUses/kraken*");
 NTMI.tryLoadMKtl("flatcat", "SpecialUses/flatcat/flatcat*");
 */*/*/
 
+NTMI.interfacesToLoad = NTMI.interfacesToLoad ? NTMI.allInterfaces;
 "NTMI.interfacesToLoad: %\n\n".postf(NTMI.interfacesToLoad);
 NTMI.interfacesToLoad.do { |name| NTMI.tryLoadMKtl(name) };
 
 NTMI.filesForFoundInfos = Dictionary[
 	// midi
-	"nanoKONTROL2" -> "nanoKtl.scd",
-	"Faderfox UC4" -> "uc4.scd",
-	"Music Thing 8mu" -> "mu8.scd",
+	"nanoKONTROL2" -> "nanoKtl",
+	"Faderfox UC4" -> "uc4",
+	"Music Thing 8mu" -> "mu8",
 	// hid
-	"Run'N' Drive_Thrustmaster" -> "ferrari.scd",
-	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari.scd",
-	"Thrustmaster dual analog 4_Mega World" -> "dual_analog_4.scd",
-	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2.scd",
-	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4.scd",
-	"Thrustmaster dual analog 3.2_Mega World" -> "dual_analog_3.2.scd",
-	"X-TOUCH MINI" -> "xtm.scd"
+	"Run'N' Drive_Thrustmaster" -> "ferrari",
+	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari",
+	"Thrustmaster dual analog 4_Mega World" -> "dual_analog_4",
+	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2",
+	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4",
+	"Thrustmaster dual analog 3.2_Mega World" -> "dual_analog_3.2",
+	"X-TOUCH MINI" -> "xtm"
 ];
 
 MFdef(\findConnect).add(\findConnect, {
@@ -136,7 +138,7 @@ MFdef(\findConnect).add(\findConnect, {
 					).postln;
 					// hand info over to interface code file:
 					NTMI.currInfo = info;
-					NTMI.loadInterface(filename);
+					NTMI.tryLoadMKtl(filename);
 					NTMI.currInfo = nil;
 				};
 			} {
@@ -146,7 +148,7 @@ MFdef(\findConnect).add(\findConnect, {
 				filename = NTMI.filesForFoundInfos[info].postln;
 				if (filename.notNil) {
 					"...loading single file...".postln;
-					NTMI.loadInterface(filename);
+					NTMI.tryLoadMKtl(filename);
 				};
 			};
 		};
@@ -156,4 +158,4 @@ MFdef(\findConnect).add(\findConnect, {
 	newInfos
 });
 MFdef(\findConnect).();
-)
+);
