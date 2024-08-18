@@ -67,8 +67,6 @@ Butz.add('chanTest', { WinBounds.showOrMake(\chanTest) });
 Butz.add('plotTree', { s.plotTree });
 
 
-
-
 /****
 Make an NTMI separate Butz for windows and functions
 - many functions defined in other GUI files
@@ -93,10 +91,6 @@ Butz('interfaces').addMiniMax;
 [
 	'findConnect',
 	'InfluxMixer',
-	'nUFO',
-	'nanoKtl',
-	'ferrari',
-	'uc4'
 ].do { |ifName|
 	Butz(\interfaces).add(ifName, { ifName.postln });
 };
@@ -136,13 +130,26 @@ Butz(\interfaces).add(\findConnect, {
 	}.play(AppClock);
 });
 
-MKtl.all.postcs.sortedKeysValuesDo { |name, v|
-	var mktl = MKtl(name);
+(
+NTMI.interfacesToLoad.do { |name, i|
+	name = name.asSymbol;
 	Butz(\interfaces).add(name, {
-		if (MKtl.all[name].isNil) {
-			NTMI.loadInterface(name)
-		};
-		WinBounds.showOrMake(name.postcs);
+		defer {
+			"%: check for MKtl ...\n".postf(name);
+			if (MKtl.all[name].isNil) {
+				"%: tryLoadMKtl\n".postf(name);
+				NTMI.tryLoadMKtl(name)
+			} {
+				if (MKtl.all[name].hasDevice) {
+					"% : already open\n".postln;
+				} {
+
+					"& : try openDevice\n".postln;
+					MKtl.all[name].openDevice;
+				};
+			};
+			WinBounds.showOrMake(name);
+		}
 	});
 
 	if (WinBounds.makeFuncs[name].isNil) {
@@ -170,10 +177,11 @@ MKtl.all.postcs.sortedKeysValuesDo { |name, v|
 				};
 				bt.value_(mktl.hasDevice);
 			};
-			mkgui.parent.postln;
+			mkgui.parent;
 		});
 	};
 };
+);
 
 (
 Butz(\Personalize).clear;
