@@ -16,8 +16,9 @@ NTMI {
 	*initClass {
 		q = (
 			run: {|dict, path|
-				path = (path ? Quark("NTMI").localPath +/+ "NTMI_AI_sc_setup/00_loadMe.scd");
-				path.loadPaths
+				path = (path ? (NTMI.filenameSymbol.asString.dirname.dirname
+					+/+ "NTMI_AI_sc_setup/00_loadMe.scd"));
+				path.postcs.loadPaths
 			},
 			// init necessary dicts
 			defaults: (),
