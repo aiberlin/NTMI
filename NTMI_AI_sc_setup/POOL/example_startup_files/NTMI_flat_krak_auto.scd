@@ -47,6 +47,8 @@ NTMI.finalSetup = {
 
 	NTMI.tryLoadMKtl("kraken_modal*");
 
+	Butz(\NTMI).add(\stopNUFO, { MKtl.all.nUFO.closeDevice; "nUFO is closed.".postln });
+
 	0.5.wait;
 	// load flatcat setup/connection file
 	NTMI.tryLoadMKtl("flatcat/*flatcat*");
