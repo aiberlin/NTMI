@@ -143,42 +143,52 @@ NTMI.interfacesToLoad.do { |name, i|
 				if (MKtl.all[name].hasDevice) {
 					"% : already open\n".postln;
 				} {
-
 					"& : try openDevice\n".postln;
 					MKtl.all[name].openDevice;
 				};
 			};
-			WinBounds.showOrMake(name);
+			if (MKtl.all[name].isNil) {
+				"*** MKtl % does not exist! \n".postf(name);
+			}{
+				WinBounds.showOrMake(name);
+			}
 		}
 	});
 
 	if (WinBounds.makeFuncs[name].isNil) {
 		"WinBounds.addMake(%)\n".postf(name);
 		WinBounds.addMake(name, {
-			var mktl = MKtl(name);
-			var mkgui = mktl.gui.showLabels;
-			mkgui.parent.alpha_(NTMI.g.alpha);
+			var mktl = MKtl.all[name];
+			var mkgui;
+			if (mktl.isNil) {
+				"*** MKtl % does not exist! \n".postf(name);
+				"could not make window for it".postln;
+				nil;
+			} {
+				mkgui = mktl.gui.showLabels;
+				mkgui.parent.alpha_(NTMI.g.alpha);
 
-			// allow devicebutton to close with
-			mkgui.deviceButton.action = { |bt, mod = 0|
-
-				if (bt.value > 0) {
-					mktl.openDevice
-				} {
-					if (mod > 0) { mktl.closeDevice } {
-						"% - hold shift or option to close.\n".postf(mktl);
-					}
+				// move this to MKtlGui later:
+				// allow devicebutton to close with mod keys
+				mkgui.deviceButton.action = { |bt, mod = 0|
+					if (bt.value > 0) {
+						mktl.openDevice
+					} {
+						if (mod > 0) { mktl.closeDevice } {
+							"% - hold shift or option to close.\n".postf(mktl);
+						}
+					};
+					if (mktl.hasDevice) {
+						"% device is open now.\n".postf(mktl);
+					} {
+						"% device has no device now.\n".postf(mktl);
+					};
+					bt.value_(mktl.hasDevice);
 				};
-
-				if (mktl.hasDevice) {
-					"% device is open now.\n".postf(mktl);
-				} {
-					"% device has no device now.\n".postf(mktl);
-				};
-				bt.value_(mktl.hasDevice);
-			};
-			mkgui.parent;
+				mkgui.parent;
+			}
 		});
+
 	};
 };
 );
