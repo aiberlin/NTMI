@@ -14,43 +14,31 @@ Document.open("2_adding_presets.scd".resolveRelative);
 
 // 4. choose which supported physical interfaces to connect
 // and add your own interfaces e.g. with Modality-toolkit - see:
-
-Document.open("2_adding_presets.scd".resolveRelative);
+"*.scd".resolveRelative.pathMatch.printAll.size
+Document.open("4a_Connecting_new_interfaces.scd".resolveRelative);
 
 Butz(\Personalize).run(\Interface_doc);
 
 // 1.  configure which elements NTMI setup loads
 
 //// 1. The NTMI user dir, POOL and prefs files
-//// NTMI creates a user directory, usually at "~/NTMI",
+//// NTMI creates a user directory in the user home folder:
+"~/NTMI".standardizePath.postcs
+
 // which contains configurable files and directories:
-// an ntmi_prefs file,
 // a POOL directory which contains:
 // the soundprocesses to load,
-// a soundfiles directory,
-// and optionally other general loadable resources,
-// such as files for additional code to run at different boot stages.
+// a directory for soundfiles,
+// a directory with examples startup files,
+// and optionally other general loadable resources, such as
+// files for additional code to run within startup,
+// for example code for attaching preferred interfaces.
+
 NTMI.dir.user;
 NTMI.dir.user.openOS;
 
+/**** DEFAULT SETTINGS ****/
 
-// NTMI keeps it preferences information in this dictionary:
-NTMI.prefs;
-
-// where the user preferences file is stored under this path:
-NTMI.prefs.userPrefPath;
-// and which can be opened for detailed reading and editing:
-NTMI.prefs.open;
-
-// *** Read this file carefully, and try changing things there,
-// to find out how tweaking these settings works best for you! ***
-
-
-// A copy of the default prefs file lives in the NTMI quark,
-// at the path here - may be useful for comparisons/repairs
-NTMI.prefs.defaultPath;
-// And these are its settings:
-NTMI.prefs.default;
 
 
 // 1a. adding additional code at different stages in the loading process
@@ -64,7 +52,6 @@ NTMI.prefs.default;
 // Now, the question arises how to handle the sound server:
 // is is booted already?
 // if yes, should we leave it as is, or reboot? can be set in prefs:
-NTMI.prefs.active.reboot;
 // if boot or reboot, we can configure the server by a script file:
 NTMI.prefs.active.serverSetup.postcs;
 
