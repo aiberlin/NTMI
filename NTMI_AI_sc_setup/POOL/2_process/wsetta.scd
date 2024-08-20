@@ -69,11 +69,17 @@ if (NTMI.hasGui) {
 		/*
 		Document.open(NTMI.dir.userPOOL +/+ "2_process/wsetta.scd");
 		*/
-		NTMI.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 150)).front;
+		NTMI.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 170)).front;
 		NTMI.wse.win.view.addFlowLayout;
-		\Button.asClass.new(NTMI.wse.win, 100@30).states_([["new files"]]);
+		// \Button.asClass.new(NTMI.wse.win, 100@30).states_([["play"]]).action
+		\Button.asClass.new(NTMI.wse.win, 100@30).states_([["new files"]])
+		.action_({
+			FileDialog({ |paths|
+				paths.do { |path| NTMI.wse.loadWSEs(path.postcs) }
+			}, nil, 2, 0);
+		});
 		\TdefGui.asClass.new(Tdef('wsetta'), 3, NTMI.wse.win);
-		\NdefGui.asClass.new(Ndef('wsetta'), 12, NTMI.wse.win);
+		\NdefPresetGui.asClass.new(NdefPreset('wsetta'), 12, NTMI.wse.win);
 
 		NTMI.wse.win
 	});
@@ -206,7 +212,8 @@ Tdef(\wsetta, {
 		// i.postln; 1.wait;
 
 		/////// which wavesets? post if changed
-		wse = NTMI.wse.wses.wrapAt((ev.wse_index ? 0).asInteger);
+		wse = NTMI.wse.wses.wrapAt((ev.wse_index ? 0).asInteger.postln);
+		wse.buffer.path.basename.postcs;
 		if (wse.isNil) {
 			"wsetta: no wavesets loaded in NTMI.wse.wses!".postln;
 			1.wait;
@@ -227,7 +234,7 @@ Tdef(\wsetta, {
 				rate: mymap[\rate],
 				rate2: mymap[\rate2],
 				pan: mymap[\pan].rand2,
-				wsamp: mymap[\amp] / mymap[\legato].max(1).sqrt,
+				amp: mymap[\amp] / mymap[\legato].max(1).sqrt,
 				out: myndef.index
 			));
 
