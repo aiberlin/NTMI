@@ -168,23 +168,7 @@ NTMI.interfacesToLoad.do { |name, i|
 				mkgui = mktl.gui.showLabels;
 				mkgui.parent.alpha_(NTMI.g.alpha);
 
-				// move this to MKtlGui later:
-				// allow devicebutton to close with mod keys
-				mkgui.deviceButton.action = { |bt, mod = 0|
-					if (bt.value > 0) {
-						mktl.openDevice
-					} {
-						if (mod > 0) { mktl.closeDevice } {
-							"% - hold shift or option to close.\n".postf(mktl);
-						}
-					};
-					if (mktl.hasDevice) {
-						"% device is open now.\n".postf(mktl);
-					} {
-						"% device has no device now.\n".postf(mktl);
-					};
-					bt.value_(mktl.hasDevice);
-				};
+				// moved to MKtlGui: devicebutton can close with mod keys
 				mkgui.parent;
 			}
 		});
