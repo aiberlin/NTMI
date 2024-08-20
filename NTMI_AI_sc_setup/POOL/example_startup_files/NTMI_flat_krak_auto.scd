@@ -33,33 +33,42 @@ NTMI.interfacesToLoad = [
 	"dual_analog_3.2",
 	"dual_analog_4",
 	"ferrari",
-	"xtm"
+	"xtm",
+	// "flatcat/*flatcat*",
 ];
+
 
 // Schedule loading the flatcat files
 // after the full NTMI setup finishes:
 NTMI.finalSetup = {
+
+	NTMI.nUFO.modes = [\full, \touch, \binary, \binMove];
 
 	"\n\n*** NTMI.finalSetup for AbsRel+kraken+flatcat setup: \n".postln;
 
 	Butz(\NTMI).run(\InfluxMixer);
 	Window.find(\InfluxMixer).moveTo(500, 700).front;
 
-	NTMI.tryLoadMKtl("kraken_modal*");
+	// NTMI.tryLoadMKtl("kraken_modal*");
 
+	Butz(\NTMI).remove(\miniNTMI);
 	Butz(\NTMI).add(\stopNUFO, { MKtl.all.nUFO.closeDevice; "nUFO is closed.".postln });
+	Butz(\NTMI).add(\flatcat, {
+		defer {
+			// load flatcat setup/connection file
+			NTMI.tryLoadMKtl("flatcat/*flatcat*");
+			NTMI.g.main.imuUV.drawFunc.add(\flatcat, NTMI.flatcat.drawFunc);
+			// NTMI.g.main.imuUV.drawFunc.disable(\imuPad);
+			NTMI.g.main.imuUV.animate_(true);
+			NTMI.flatcat.zoom = 1.0;
 
-	0.5.wait;
-	// load flatcat setup/connection file
-	NTMI.tryLoadMKtl("flatcat/*flatcat*");
-	NTMI.g.main.imuUV.drawFunc.add(\flatcat, NTMI.flatcat.drawFunc);
-	// NTMI.g.main.imuUV.drawFunc.disable(\imuPad);
-	NTMI.g.main.imuUV.animate_(true);
+			// Window.find(\flatcat).moveTo(500, 200).front;
+		}
+	});
 
-	NTMI.flatcat.zoom = 0.5;
-	NTMI.kraken.zoom = 0.5;
+
+	// NTMI.kraken.zoom = 0.5;
 	//
-	// Window.find(\flatcat).moveTo(500, 200).front;
 
 	// autostart flatcat sim?
 	// defer ({ Tdef(\flatcatSim).stop.play }, 5);
@@ -67,5 +76,5 @@ NTMI.finalSetup = {
 };
 
 // now run NTMI setup, then flatcat
-NTMI.run("~/src/aiberlin/NTMI");
+NTMI.run;
 
