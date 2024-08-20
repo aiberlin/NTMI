@@ -37,7 +37,7 @@ MKtlLookup.all.printAll;
 
 */
 NTMI.allInterfaces = [
-	// "nUFO/*nUFO*",
+	"nUFO/*nUFO*",
 	"nanoKtl",
 	"xtm",
 	"uc4",
@@ -72,7 +72,7 @@ NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 NTMI.tryLoadMKtl("ferrari");
 NTMI.tryLoadMKtl("nanoKtl");
 NTMI.tryLoadMKtl(\nUFO, "nUFO/*nUFO*");
-NTMI.tryLoadMKtl(\nUFO, NTMI.dir.setup +/+ "*interfaces/nUFO/*nUFO*");
+NTMI.tryLoadMKtl(\nUFO, NTMI.dir.setup +/+ "*interfaces/optionals/nUFO/*nUFO*");
 NTMI.tryLoadMKtl("kraken", "SpecialUses/kraken*");
 NTMI.tryLoadMKtl("flatcat", "SpecialUses/flatcat/flatcat*");
 */*/*/
