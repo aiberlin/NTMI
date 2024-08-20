@@ -45,13 +45,27 @@ Butz.run(\inphlux);
 // connect sliders 0-6 to NTMI.inphlux inputs 9-15:
 // now every slider introduces a complex change in the sound
 // by influencing every parameter to some degree
+/////// note that this is absolute control mode!
 MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
 	knob.action = {
 		NTMI.inphlux.set(
-			NTMI.inphlux.inNames[index + 9],
-			knob.value.unibi
+			NTMI.inphlux.inNames[index + 9], // which influx input
+			knob.value.unibi  // absolute value between -1 and 1
 		);
 	};
 };
+
+// recommended: use relative mode!
+MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
+	knob.action = {
+		// special function
+		MFdef(\setRelInf).value(
+			NTMI.inphlux.inNames[index + 9], // which influx input
+			// difference between old and new element value/position
+			knob.value - knob.prevValue
+		);
+	};
+};
+
 
 // to be continued ... 
