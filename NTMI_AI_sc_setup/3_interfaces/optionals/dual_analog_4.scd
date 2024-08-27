@@ -85,7 +85,7 @@ MKtl('dual_analog_4').elAt(\bt, 0).dump
 
 NTMI.dual_analog_4 = NTMI.dual_analog_4 ? ();
 ///// look for wired and wireless
-if (MKtlLookup.findByIDInfo("Thrustmaster dual analog 3.2_Thrustmaster").size == 1) {
+if (MKtlLookup.findByIDInfo("Thrustmaster dual analog 4_Thrustmaster").size == 1) {
 	"*** wired Dual Analog 4  found!".postln;
 	MKtl.all['dual_analog_4'].free;
 	MKtl('dual_analog_4', "*dual-analog-4");
