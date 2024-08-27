@@ -30,7 +30,7 @@ NTMI.interfacesToLoad = [
 	"nUFO/*nUFO*",
 	"uc4", "mu8",
 	"nanoKtl",
-	"dual_analog_3.2",
+	"dual_analog_3_2",
 	"dual_analog_4",
 	"ferrari",
 	"xtm",
