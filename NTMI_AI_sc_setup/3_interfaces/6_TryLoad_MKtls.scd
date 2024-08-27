@@ -42,7 +42,7 @@ NTMI.allInterfaces = [
 	"xtm",
 	"uc4",
 	"mu8",
-	"dual_analog_3.2",
+	"dual_analog_3_2",
 	"dual_analog_4",
 	"ferrari",
 	// "flatcat/*flatcat*",
@@ -90,9 +90,9 @@ NTMI.filesForFoundInfos = Dictionary[
 	"Run'N' Drive_Thrustmaster" -> "ferrari",
 	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari",
 	"Thrustmaster dual analog 4_Mega World" -> "dual_analog_4",
-	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_analog_3.2",
+	"Thrustmaster dual analog 3_2_Thrustmaster" -> "dual_analog_3_2",
 	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4",
-	"Thrustmaster dual analog 3.2_Mega World" -> "dual_analog_3.2",
+	"Thrustmaster dual analog 3_2_Mega World" -> "dual_analog_3_2",
 	"X-TOUCH MINI" -> "xtm"
 ];
 
