@@ -37,7 +37,7 @@ MKtlLookup.all.printAll;
 
 */
 NTMI.allInterfaces = [
-	"nUFO/*nUFO*",
+	"nUFO",
 	"nanoKtl",
 	"xtm",
 	"uc4",
