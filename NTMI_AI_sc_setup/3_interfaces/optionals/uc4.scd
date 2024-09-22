@@ -136,9 +136,11 @@ MKtl(~uc4).elAt(\pgKn1, \kn).do(_.deviceSpec_(MKtl(~uc4).getSpec(\knRel)));
 MKtl(~uc4).elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
-		MFdef(\ndefVolStep).(ndef, ((el.deviceValue - 64) * 0.4));
-		el.deviceValue = 64;
-	};
+		MFdef(\ndefVolStep).(ndef, ((el.deviceValue - el.prevDeviceValue) * 0.4));
+		// recenter if hitting top or bottom
+		if ([0, 127].includes(el.deviceValue)) {
+			defer ({ el.value_(0.5) }, 0.03);
+	};	};
 };
 
 /// top 4 buttons toggle sound slots on/off
@@ -160,7 +162,7 @@ MKtl(~uc4).elAt('main').action = { |xf|
 MKtl(~uc4).elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
-		var relStep = (el.deviceValue - 64);
+		var relStep = (el.deviceValue - el.prevDeviceValue);
 
 		if (MKtl(~uc4).elAt(\selMode)[i].isOn) {
 			// next sound
@@ -169,7 +171,10 @@ MKtl(~uc4).elAt(\select).do { |el, i|
 			// next preset
 			NTMI.pre.stepNdefInf(ndef, relStep);
 		};
-		el.deviceValue = 64;
+		// recenter if hitting top or bottom
+		if ([0, 127].includes(el.deviceValue)) {
+			defer ({ el.value_(0.5) }, 0.03);
+		};
 	}
 };
 
