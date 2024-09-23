@@ -132,19 +132,29 @@ NTMI.at(~uc4).setRel;
 MKtl(~uc4).addSpec(\knRel, [56, 72, \lin, 1, 64]);
 MKtl(~uc4).elAt(\pgKn1, \kn).do(_.deviceSpec_(MKtl(~uc4).getSpec(\knRel)));
 
-/// top 4 knobs change slots volume
+/* *****
+*** We leave uc4 encoders on default absolute mode (0..127),
+    and make them endless here:
+- when we hit 0, go back up to 7 to allow next step down;
+- when we hit 127, go back up to 120 to allow next step up;
+****/
+
+/// lower 4 knobs change slots volume
 MKtl(~uc4).elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
-		MFdef(\ndefVolStep).(ndef, ((el.deviceValue - el.prevDeviceValue) * 0.4));
-		// recenter if hitting top or bottom
-		if ([0, 127].includes(el.deviceValue)) {
-			defer ({ el.value_(0.5) }, 0.03);
-	};	};
+		// limit to +-6, the largest ever step on an encoder
+		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
+		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
+		// make encoder endless with small jump back;
+		// defer is needed for uc4 to accept new value
+		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
+			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
+		)[el.deviceValue].value;
+	}
 };
 
-/// top 4 buttons toggle sound slots on/off
-
+/// lower 4 buttons toggle sound slots on/off
 MKtl(~uc4).elAt(\playBts).do { |el, i|
 	el.action = { |el|
 		if (el.value > 0) { NTMI.slots.toggleAt(i) }
@@ -159,10 +169,11 @@ MKtl(~uc4).elAt('main').action = { |xf|
 
 // normal: select next setting
 // hat down: select next sound
+// same
 MKtl(~uc4).elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
-		var relStep = (el.deviceValue - el.prevDeviceValue);
+		var relStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
 
 		if (MKtl(~uc4).elAt(\selMode)[i].isOn) {
 			// next sound
@@ -171,12 +182,14 @@ MKtl(~uc4).elAt(\select).do { |el, i|
 			// next preset
 			NTMI.pre.stepNdefInf(ndef, relStep);
 		};
-		// recenter if hitting top or bottom
-		if ([0, 127].includes(el.deviceValue)) {
-			defer ({ el.value_(0.5) }, 0.03);
-		};
+		// make encoder endless with small jump back:
+		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
+			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
+		)[el.deviceValue].value;
 	}
 };
+
+
 
 // bt5, snapshots presets of all currently playing sounds
 MKtl(~uc4).elAt(\snap).action = { |el|
