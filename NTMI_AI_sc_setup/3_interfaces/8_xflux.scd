@@ -80,7 +80,7 @@ MFdef(\setRelInf).add(\xflux, { arg ...args;
 			"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.001));
 		};
 		//args[1].abs.sum;
-		if (args[2] > 0.0 and: {(args[1].sum(_.abs) * args[2]) > NTMI.xflux.jitterThreshold}) {
+		if (args[2] > 0.0 and: {(args[1].asArray.sum(_.abs) * args[2]) > NTMI.xflux.jitterThreshold}) {
 			NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
 			if (NTMI.xflux.sendLocally) {
 				NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
