@@ -58,6 +58,11 @@ NTMI.makeInfluxSource = { |q, name|
 };
 
 NTMI.xflux = NTMI.xflux ? ();
+
+// Magical number for jitter filter (nUFO / Flatcat)
+// 0.0079 is the minimum value of change when using MIDI devices
+NTMI.xflux.jitterThreshold = 0.0075;
+
 // NTMI.makeInfluxSource(\xflux);
 
 // set to true for local-only testing:
@@ -74,13 +79,17 @@ MFdef(\setRelInf).add(\xflux, { arg ...args;
 		if (NTMI.xflux.verbose) {
 			"xflux sends: %, %\n".postf(NTMI.myname, args.round(0.001));
 		};
-		NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
-		if (NTMI.xflux.sendLocally) {
-			NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
-		}
+		//args[1].abs.sum;
+		if (args[2] > 0.0 and: {(args[1].sum(_.abs) * args[2]) > NTMI.xflux.jitterThreshold}) {
+			NTMI.oscar.sendMsg(\xflux, NTMI.myname, *args.flat);
+			if (NTMI.xflux.sendLocally) {
+				NTMI.localAddr.sendMsg(\xflux, NTMI.myname, *args.flat);
+			}
+		};
 	}
 });
 );
+
 
 (
 OSCdef(\xflux, {|msg, time, sender|
