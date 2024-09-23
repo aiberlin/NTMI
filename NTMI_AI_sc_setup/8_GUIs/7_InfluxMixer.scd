@@ -49,7 +49,7 @@ WinBounds.addMake(\InfluxMixer, {
 	NTMI.mkmix.verboseBut = Button(w, 80@30).font_(f)
 	.states_([['verbose ?'], ['verbose!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.verbose = bt.value > 0 });
-	NTMI.mkmix.perSec = StaticText(w, 80@30).string_("0/sec").font_(f);
+	NTMI.mkmix.perSec = StaticText(w, 60@30).string_("0/sec").font_(f);
 
 
 	NTMI.mkmix.influxModes = [\setRel, \setAbs];
@@ -125,6 +125,13 @@ WinBounds.addMake(\InfluxMixer, {
 		NTMI.mkmix.listenBut.value_(NTMI.xflux.listens.binaryValue);
 		NTMI.mkmix.verboseBut.value_(NTMI.xflux.verbose.binaryValue);
 		NTMI.mkmix.perSec.string_("%/sec".format(NTMI.inph.callsPerSec));
+
+		if (NTMI.oscar.oscar.notNil) {
+			var str = "% peers".format(NTMI.oscar.oscar.peers.size);
+			NTMI.mkmix.peerBut.states_([[str]])
+		} {
+			NTMI.mkmix.peerBut.states_([["¿peers?"]])
+		};
 
 		NTMI.mkmix.mktls = MKtl.all.skeys.collect(MKtl(_));
 
