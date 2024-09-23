@@ -180,7 +180,7 @@ NTMI.interfacesToLoad.do { |name, i|
 (
 Butz(\Personalize).clear;
 Butz(\Personalize).addMiniMax;
-Butz(\Personalize).add('Prefs_doc', {
+Butz(\Personalize).add('Overview', {
 	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/1_Configure_setup.scd")
 });
 
