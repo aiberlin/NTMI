@@ -30,13 +30,23 @@ WinBounds.addMake(\InfluxMixer, {
 			NTMI.oscar.quit;
 		}
 	});
-	NTMI.mkmix.sendBut = Button(w, 100@30).font_(f)
+	NTMI.mkmix.peerBut = Button(w, 80@30).font_(f)
+	.states_([['peers ?']])
+	.action_({ |bt|
+		var str = "peers: %".format(NTMI.oscar.oscar.peers);
+		var w = Window("NTMI.oscar.oscar.peers",
+			Window.find("InfluxMixer").bounds
+		).front.alpha_(0.7);
+		StaticText(w, w.view.bounds).string_(str)
+		.font_(Font(Font.defaultMonoFace, 32));
+	});
+	NTMI.mkmix.sendBut = Button(w, 80@30).font_(f)
 	.states_([['send ?'], ['sending!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.sends = bt.value > 0 });
-	NTMI.mkmix.listenBut = Button(w, 100@30).font_(f)
+	NTMI.mkmix.listenBut = Button(w, 80@30).font_(f)
 	.states_([['listen ?'], ['listening!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.listens = bt.value > 0 });
-	NTMI.mkmix.verboseBut = Button(w, 100@30).font_(f)
+	NTMI.mkmix.verboseBut = Button(w, 80@30).font_(f)
 	.states_([['verbose ?'], ['verbose!', nil, Color.green]])
 	.action_({ |bt| NTMI.xflux.verbose = bt.value > 0 });
 	NTMI.mkmix.perSec = StaticText(w, 80@30).string_("0/sec").font_(f);
