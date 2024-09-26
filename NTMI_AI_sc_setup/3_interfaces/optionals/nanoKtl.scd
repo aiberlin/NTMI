@@ -100,13 +100,24 @@ mute all others
 
 MKtl(~nanoKtl).addNamed(\solo, MKtl(~nanoKtl).elAt(\bt, \S, (0..3)));
 
+MKtl(~nanoKtl).elAt(\solo).do { |bt, i|
+	bt.elemDesc.label = "So%".format(i+1);
+};
+
 MKtl(~nanoKtl).elAt(\solo).action = {
+	var nowPlaying = NTMI.slots.nowPlaying;
 	"*** solo: ".post;
 	MKtl(~nanoKtl).elAt(\solo).value.postln.do { |val, i|
-		if (val > 0) {
-			NTMI.slots.playAt(i)
-		} {
-			NTMI.slots.stopAt(i)
+		defer {
+			if (val > 0) {
+				if (nowPlaying.includes(NTMI.slots.actives[i]).not) {
+					NTMI.slots.playAt(i)
+				};
+			} {
+				if (nowPlaying.includes(NTMI.slots.actives[i])) {
+					NTMI.slots.stopAt(i)
+				};
+			}
 		}
 	}
 };
