@@ -90,6 +90,26 @@ NTMI.nanoKtl.setAbs = {
 NTMI.nanoKtl.influxMode;
 NTMI.nanoKtl.setRel;
 
+/* SOLO BUTTONS:
+make the first 4 S buttons solo:
+- solo all slots where S button is held,
+mute all others
+- release: stop released one
+- last release / all stopped
+*/
+
+MKtl(~nanoKtl).addNamed(\solo, MKtl(~nanoKtl).elAt(\bt, \S, (0..3)));
+
+MKtl(~nanoKtl).elAt(\solo).action = {
+	"*** solo: ".post;
+	MKtl(~nanoKtl).elAt(\solo).value.postln.do { |val, i|
+		if (val > 0) {
+			NTMI.slots.playAt(i)
+		} {
+			NTMI.slots.stopAt(i)
+		}
+	}
+};
 
 MKtl(~nanoKtl).elAt(\inflSet).do(_.value = 0.5);
 
