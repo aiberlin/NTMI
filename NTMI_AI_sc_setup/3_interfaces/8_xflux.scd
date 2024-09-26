@@ -73,6 +73,9 @@ NTMI.xflux.sends = false;
 NTMI.xflux.listens = false;
 NTMI.xflux.verbose = false;
 
+// Master zoom for all xflux peers
+NTMI.xflux.zoom = 1;
+
 (
 MFdef(\setRelInf).add(\xflux, { arg ...args;
 	if (NTMI.xflux.sends) {

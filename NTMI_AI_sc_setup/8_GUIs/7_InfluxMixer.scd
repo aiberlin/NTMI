@@ -51,6 +51,12 @@ WinBounds.addMake(\InfluxMixer, {
 	.action_({ |bt| NTMI.xflux.verbose = bt.value > 0 });
 	NTMI.mkmix.perSec = StaticText(w, 60@30).string_("0/sec").font_(f);
 
+	StaticText(w, Rect(0, 0, 50, 20)).font_(f)
+	.string_("xfluxZoom");
+
+	NTMI.mkmix.xfluxZoom = EZSlider(w, Rect(0, 0, 400, 20), "", [0, 1, \amp], { |sl|
+		NTMI.xflux.zoom = sl.value;
+	}, labelWidth: 0, numberWidth: 35);
 
 	NTMI.mkmix.influxModes = [\setRel, \setAbs];
 	NTMI.mkmix.mktls = mktls;
@@ -125,6 +131,7 @@ WinBounds.addMake(\InfluxMixer, {
 		NTMI.mkmix.listenBut.value_(NTMI.xflux.listens.binaryValue);
 		NTMI.mkmix.verboseBut.value_(NTMI.xflux.verbose.binaryValue);
 		NTMI.mkmix.perSec.string_("%/sec".format(NTMI.inph.callsPerSec));
+		NTMI.mkmix.xfluxZoom.value_(NTMI.xflux.zoom);
 
 		if (NTMI.oscar.oscar.notNil) {
 			var str = "% peers".format(NTMI.oscar.oscar.peers.size);
