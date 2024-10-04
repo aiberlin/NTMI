@@ -33,12 +33,16 @@ WinBounds.addMake(\InfluxMixer, {
 	NTMI.mkmix.peerBut = Button(w, 80@30).font_(f)
 	.states_([['peers ?']])
 	.action_({ |bt|
-		var str = "peers: %".format(NTMI.oscar.oscar.peers);
-		var w = Window("NTMI.oscar.oscar.peers",
-			Window.find("InfluxMixer").bounds
-		).front.alpha_(0.7);
-		StaticText(w, w.view.bounds).string_(str)
-		.font_(Font(Font.defaultMonoFace, 32));
+		if (NTMI.oscar.oscar.isNil) {
+			"NTMI.oscar.oscar not made yet!".postln;
+		} {
+			var str = "peers: %".format(NTMI.oscar.oscar.peers);
+			var w = Window("NTMI.oscar.oscar.peers",
+				Window.find("InfluxMixer").bounds
+			).front.alpha_(0.7);
+			StaticText(w, w.view.bounds).string_(str)
+			.font_(Font(Font.defaultMonoFace, 32));
+		}
 	});
 	NTMI.mkmix.sendBut = Button(w, 80@30).font_(f)
 	.states_([['send ?'], ['sending!', nil, Color.green]])

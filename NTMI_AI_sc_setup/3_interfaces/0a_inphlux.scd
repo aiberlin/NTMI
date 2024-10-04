@@ -138,6 +138,8 @@ MFdef(\setRelInf).add(\set, { |inIndices, diffs, zoom = 0.5|
 // track overall setRel activity ... works when busy,
 // needs more work to show 0 if nothing is coming in at all:
 // schedule reset at every full second if callsPerSec too old
+NTMI.inph.callsCount = 0;
+NTMI.inph.callsPerSec = 0;
 MFdef(\setRelInf).add(\callsPerSec, {
 	var nowSec = Main.elapsedTime.round(1);
 	// at every new sec, store how many previous calls of setRelInf
