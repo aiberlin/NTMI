@@ -1,13 +1,13 @@
 /******* UC4 setup for NTMI:
 
-- top 4 knobs  		change slots volume / relative
-- top 4 hat-buttons toggle sound slots on/off
-
-- lower 4 knobs:
+- top 4 knobs:
 --					scroll thru presets
 -- 					if hat held down, scroll thru sounds
 
-- 8 sliders: 		influx!
+- lower 4 knobs  		change slots volume / relative
+- lower 4 hat-buttons 	toggle sound slots on/off
+
+- 8 sliders: 		all influx!
 
 - xfader:           mainVol via mainVol param
 
@@ -16,25 +16,22 @@
 - bot buts 6 7 8:	rand, prev, next mainFX preset
 - bot but 4 		set nflux to zero if needed
 
-
-***********/
-// to switch encoders to relative: on the device, select grp1,
-// then go into edit mode: hold \shift, press \edit_setup
-// select enc1 on knob 1, change ctlmode to Ccr2,
-// hold until running bars go away -> all encoders are now relative
+//// while you can switch encoder to relative,
+//// we keep them on default for this setup!
+*/
 
 
+/*
 // flexify name in order to build multiple MKtls with this file:
-/* TEST:
+// TEST:
 ~uc4 = \karl; // then run file ...
 MKtl.all.karl.gui
 MKtl.all.uc4.gui
-
 */
 // if not set, use default name
 ~uc4 = ~uc4 ? 'uc4';
 
-// MKtlDesc.loadDescs;
+
 MKtl.all[~uc4].free; MKtl(~uc4, "*uc4_pg");
 
 
@@ -123,14 +120,6 @@ NTMI.at(~uc4).setAbs = {
 // read and set:
 NTMI.at(~uc4).influxMode;
 NTMI.at(~uc4).setRel;
-
-
-// add a spec to uc4, for relative use:
-// ccr2 is from 58 ... 63 down / 65 .. 70 up,
-// so use this for good resolution on gui elements
-
-MKtl(~uc4).addSpec(\knRel, [56, 72, \lin, 1, 64]);
-MKtl(~uc4).elAt(\pgKn1, \kn).do(_.deviceSpec_(MKtl(~uc4).getSpec(\knRel)));
 
 /* *****
 *** We leave uc4 encoders on default absolute mode (0..127),
