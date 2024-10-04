@@ -1,14 +1,12 @@
-/******* make the same control interface for the NTMI app for two devices:
+/******* this setup is for the nanoKontrol 2 only;
 
-A nanoKontrol1 if present, or else a nanoKontrol2.
-
-It does that by giving the elements custom access names first,
-then given them the same actions, independently of which device they are on.
-The same concept also works for gamepads and other devices.
+nanoKontrol1 is moved to its own separate file.
 
 -------- THE LAYOUT: ----------
 - left knobs 1-4  		change slots volume (with softVol takeover)
-- bottom buttons 1-4 	toggle sound slots on/off
+
+- S buttons 1-4 (top)     solo: play all held btn slots, end all others.
+- R buttons 1-4 (bottom)  toggle sound slots on/off
 
 - knobs 5-8 		select presets or sounds
 -- button 5-8 up	scroll thru presets
@@ -27,6 +25,7 @@ nk2: stop, play, rec:  rand, prev, next MainFX preset
 
 - top row(s) of buttons still unused.
 
+MKtl(~nanoKtl).elAt(\bt)
 ***********/
 
 // support multiple identical interfaces:
