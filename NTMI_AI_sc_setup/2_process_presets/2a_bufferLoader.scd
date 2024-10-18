@@ -1,6 +1,6 @@
 /// load global buffers
 
-var globalBufFolder = NTMI.globalBufFolder ? NTMI.dir.userSFExamples;
+var globalBufFolder = NTMI.globalBufFolder ? (NTMI.dir.userSFExamples +/+ "..");
 var bufsName = \global;
 var hasNoSFs = { |path|
 	SoundFile.collect(globalBufFolder +/+ "*").isEmpty
