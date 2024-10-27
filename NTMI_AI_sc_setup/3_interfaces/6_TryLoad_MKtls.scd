@@ -45,6 +45,7 @@ NTMI.allInterfaces = [
 	"dual_analog_3_2",
 	"dual_analog_4",
 	"ferrari",
+	"shbobo_shnth"
 	// "flatcat/*flatcat*",
 	// "kraken*",
 ];
@@ -87,6 +88,7 @@ NTMI.filesForFoundInfos = Dictionary[
 	"Faderfox UC4" -> "uc4",
 	"Music Thing 8mu" -> "mu8",
 	// hid
+	"SHNTH_SHBOBO" -> "shbobo_shnth",
 	"Run'N' Drive_Thrustmaster" -> "ferrari",
 	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari",
 	"Thrustmaster dual analog 4_Mega World" -> "dual_analog_4",
