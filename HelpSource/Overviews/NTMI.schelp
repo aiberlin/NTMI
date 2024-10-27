@@ -96,22 +96,52 @@ In this window you can set the Influx zoom level for each interface and define w
 
 section::Absolute and relative influences
 
+The underlying intention in Influx mode at the core of NTMI is to gracefully leave analytic control behind in favor of a very fast sensomotoric feedback loop: make a movement with/on the interface, listen to the  change in the sound world, and learn to go with this flow of intuitive decisions by ear.
 
+This was initially developed for a single performer and the special custom sensor/touch interface nUFO; later we added optional secondary interfaces like faderboxes, gamepads, and phones as motion sensors. Trying to play with those at the same time, while still in absolute mode, where controller state sets processstate, posed interesting questions - the interfaces would overwrite each other’s influences, causing jumps, unless one would add more and more independent Influx inputs.
 
+On an interface that always syncs to the current parameter state, such as onscreen GUIs, or motorized physical faders, a human player always continues from the current state already. On non-syncing interfaces (or with multiple processes playing in parallel), this is where the idea of consistent relativity came in: every interface always already has a current physical state, and when you play, you create a new state with a clear difference to the earlier one; this difference can be translated into a difference in the process parameter state, using Influx matrix projection.
+
+Generalizing this idea of relative change to all the interfaces attached to one NTMI setup allowed playing with all of these at the same time, which turns it into an easily approachable shared-influence instrument. So, in strong::Absolute mode:: the interface state is directly mapped (via the Influx matrix) to aspects of the process state. In strong::Relative mode:: the differences in interface state are mapped onto differences in process state. This enables multiple sources to influence the same generative setup equally and simultaneously, by moving its configuration and its parameter states in desirable directions.
 
 section::Customizing
-- which sounds to use
 
-- mainFX
+NTMI is fully customizable. In this section we will see how to easily add your own sound processes, sound files (for sound processes that use buffers) and add support to new MIDI/HID/OSC controllers.
 
-- new sound processes
+subsection::Custom sound processes
 
-- presets?
+When you run NTMI for the first time it will create a directory in your HOME directory called emphasis::NTMI:: with the current sound processes, supported interfaces, sound files, etc. You can check this directory's content by running:
 
-- new controllers
+CODE::
+(thisProcess.platform.userHomeDir +/+ "NTMI").openOS;
+::
 
-- buffers / soundfiles
+Inside the emphasis::~/NTMI/POOL/2_process/:: directory are the current known sound processes, you are encouraged to check the source code of the existing sound processes. Now, to add a new one you can create a new file in that folder and add an LINK::Classes/Ndef::. Notice that the LINK::Classes/Ndef:: should have the same name as the emphasis::.scd:: file.
 
-- audio setup / multichannel
+For example, create a file and save it as emphasis::~/NTMI/POOL/2_process/mySoundProc.scd:::
 
+CODE::
+Ndef(\mySoundProc).addSpec(\curve, [-10,10]);
+Ndef(\mySoundProc).addSpec(\rate, [1,500,\exp]);
+Ndef(\mySoundProc).addSpec(\freq, [50,8000,\exp]);
+Ndef(\mySoundProc, {arg amp=0.5, rate=1, freq=300, curve=0;
+	var env = Env.perc(0.01, 1/rate, 1, curve).ar(0, Impulse.ar(rate));
+	SinOsc.ar(freq*env) * amp;
+});
+::
 
+Run CODE::NTMI.run:: and you should be able to select your new sound in one of the sound slots. A few things to notice here are:
+
+- the first argument in your sound process should be the emphasis::amp:: parameter. This is because of the way controllers are mapped to influx, allowing the player to have ways to play with the amp of all sound processes currently running.
+- you should include LINK::Classes/ControlSpec:: for the parameters (this is how NTMI will be able to map from interfaces to sensible values in the sound process).
+- and as already mentioned, the name of the file should match the Ndef.
+
+subsection::Custom sound files
+
+Both default sound processes emphasis::bufRd:: and emphasis::granbuf:: use sound files. NTMI ships with a few example sound files but it is very easy to add your own.
+
+There are two ways to customize, either add your own sound files to emphasis::~/NTMI/soundfiles:: or override the emphasis::globalBufFolder:: configuration variable:
+code::
+NTMI.globalBufFolder = "/path/to/soundfiles";
+NTMI.run;
+::
