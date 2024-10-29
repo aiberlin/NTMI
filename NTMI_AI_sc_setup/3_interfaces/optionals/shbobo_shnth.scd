@@ -5,7 +5,7 @@ SHBOBO SHNTH for NTMI:
 For now only the 4 piezos and 2 antenas inputs are used to influence Influx
 
 */
-NTMI.shbobo_shnth = NTMI.shnth ? ();
+NTMI.shbobo_shnth = NTMI.shnth_shnth ? ();
 
 NTMI.shbobo_shnth.influxMode = \setRel;
 ///// look for wired and wireless
@@ -22,15 +22,9 @@ if (MKtl('shbobo_shnth').isNil) {
 };
 "*** Shbobo Shnth loading ...".postln;
 
-MKtl('shbobo_shnth').elementsDict.do { |el| el.action.enable(\post) };
-MKtl('shbobo_shnth').elementsDict.do { |el| el.action.disable(\post) };
-
 MKtl('shbobo_shnth').addNamed(\influx,
 	(MKtl('shbobo_shnth').elAt(\pz) ++ MKtl('shbobo_shnth').elAt(\an)).flat
 );
-
-NTMI.shbobo_shnth.vols = ();
-NTMI.shbobo_shnth.selectedSlots = List[];
 
 NTMI.shbobo_shnth.zoom = 0.5;
 
