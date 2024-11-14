@@ -58,7 +58,6 @@ NTMI.net.secondIP = NetAddr("192.168.8.175", 57120);
 NTMI.net.secondIP.sendMsg(\helloNTMI, "are you listening?");
 */
 
-MKtl('nUFO').device.oscFuncDictionary.keys(Array).sort.cs;
 // MKtl('nUFO').device.oscFuncDictionary.keys(Array).sort.cs;
 // [ 'battery', 'bt_1', 'bt_2', 'bt_3', 'bt_4', 'bt_5', 'bt_6', 'bt_7', 'bt_8', 'caps', 'enc', 'imu' ]
 
