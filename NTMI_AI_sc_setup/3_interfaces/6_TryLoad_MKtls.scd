@@ -1,7 +1,8 @@
 /*
 
 Logic for loading polyphonic interfaces:
-- find all present devices
+
+- find all present devices for the protocols to be used
 
 - identify files to use for each present device
 - run each file for each found device;
@@ -9,7 +10,7 @@ Logic for loading polyphonic interfaces:
 -> also for ferrari wired/wireless!
 *** test that it works for multiples!
 
-for individual devices:
+For single devices:
 running single file should also work.
 Handover is by shortterm global variable:
 NTMI.currInfo = info;
@@ -18,7 +19,6 @@ NTMI.currInfo = nil;
 
 // test loading all interfaces:
 (thisProcess.nowExecutingPath.dirname +/+ "optionals/" ++ "*.scd").loadPaths;
--- nufo fails with device not found
 
 
 // unify interface loading functions:
@@ -35,20 +35,56 @@ MFdef(\findConnect).();
 MKtlLookup.all.printAll;
 
 
+[  "nanoKtl1.scd", "nu_fo_Simulator.scd" ]
+
+fork({
+	NTMI.findOptionals;
+	NTMI.optionals.do { |path|
+		path.postln;
+		1.wait;
+		try { LoadMe(path.postln) };
+		1.wait;
+	}
+}, AppClock);
+
+NTMI.run;
+
 */
-NTMI.allInterfaces = [
-	"nUFO",
-	"nanoKtl",
-	"xtm",
-	"uc4",
-	"mu8",
-	"dual_analog_3_2",
-	"dual_analog_4",
-	"ferrari",
-	"shbobo_shnth"
-	// "flatcat/*flatcat*",
-	// "kraken*",
-];
+
+NTMI.findOptionals = {
+	NTMI.optionals = (NTMI.dir.setup +/+ "3_interfaces/optionals/""*.scd").pathMatch;
+	"\n\n*** Found % optional interface files: ".postf(NTMI.optionals.size);
+	NTMI.optionals.collect(_.basename).printcsAll;
+	"\n\n".postln;
+};
+
+NTMI.findOptionals;
+
+NTMI.allInterfaceNames = (
+	\osc: [
+		"nUFO",
+		"flatcat"
+	],
+	\midi: [
+		// midi
+		"nanoKtl",
+		"xtm",
+		"uc4",
+		"mu8",
+		"en16.scd",
+	],
+
+	\hid: [
+		"dual_analog_3_2",
+		"dual_analog_4",
+		"ferrari",
+		"shbobo_shnth"
+	],
+	\other: [
+		"kraken_modal_ntmi", // serial
+		"webMouse" // gui/osc
+	],
+);
 
 (
 // function to load one interface via its file(s):
@@ -64,7 +100,7 @@ NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 		try { LoadMe(filepath) } {
 			"*** NTMI.tryLoadMKtl FAILED! \n"
 			"name: %, filepath: % \n".postf(name.cs, filepath.cs);
-		} ;
+		};
 	};
 	MKtl.all[name];
 };
@@ -78,7 +114,7 @@ NTMI.tryLoadMKtl("kraken", "SpecialUses/kraken*");
 NTMI.tryLoadMKtl("flatcat", "SpecialUses/flatcat/flatcat*");
 */*/*/
 
-NTMI.interfacesToLoad = NTMI.interfacesToLoad ? NTMI.allInterfaces;
+NTMI.interfacesToLoad = NTMI.interfacesToLoad ? [];
 "NTMI.interfacesToLoad: %\n\n".postf(NTMI.interfacesToLoad);
 NTMI.interfacesToLoad.do { |name| NTMI.tryLoadMKtl(name) };
 
@@ -87,6 +123,8 @@ NTMI.filesForFoundInfos = Dictionary[
 	"nanoKONTROL2" -> "nanoKtl",
 	"Faderfox UC4" -> "uc4",
 	"Music Thing 8mu" -> "mu8",
+	"intech-grid" -> "en16",
+	"X-TOUCH MINI" -> "xtm",
 	// hid
 	"SHNTH_SHBOBO" -> "shbobo_shnth",
 	"Run'N' Drive_Thrustmaster" -> "ferrari",
@@ -95,7 +133,6 @@ NTMI.filesForFoundInfos = Dictionary[
 	"Thrustmaster dual analog 3_2_Thrustmaster" -> "dual_analog_3_2",
 	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4",
 	"Thrustmaster dual analog 3_2_Mega World" -> "dual_analog_3_2",
-	"X-TOUCH MINI" -> "xtm"
 ];
 
 MFdef(\findConnect).add(\findConnect, {
