@@ -13,9 +13,11 @@ StartupFile.dialog;
 NTMI.finalSetup = {
 	// load flatcat setup/connection file
 	LoadMe("3_interfaces/optionals/flatcat/*flatcat*.scd", NTMI.dir.setup);
-	NTMI.g.main.imuUV.drawFunc.add(\flatcat, NTMI.flatcat.drawFunc);
-	// NTMI.g.main.imuUV.drawFunc.disable(\imuPad);
-	NTMI.g.main.imuUV.animate_(true);
+	1.wait;
+	NTMI.flatcat.postln;
+	// NTMI.g.main.imuUVMFunc.add(\flatcat, NTMI.flatcat.drawFunc);
+	// // NTMI.g.main.imuUVMFunc.disable(\imuPad);
+	// NTMI.g.main.imuUV.animate_(true);
 };
 
 // now run NTMI setup, then flatcat
