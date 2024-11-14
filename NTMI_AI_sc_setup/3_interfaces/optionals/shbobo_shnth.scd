@@ -8,7 +8,7 @@ For now only the 4 piezos and 2 antenas inputs are used to influence Influx
 NTMI.shbobo_shnth = NTMI.shnth_shnth ? ();
 
 NTMI.shbobo_shnth.influxMode = \setRel;
-///// look for wired and wireless
+
 if (MKtlLookup.findByIDInfo("SHNTH_SHBOBO").size == 1) {
 	"*** Shbobo Shnth found!".postln;
 	MKtl.all['shbobo_shnth'].free;
@@ -18,7 +18,7 @@ if (MKtlLookup.findByIDInfo("SHNTH_SHBOBO").size == 1) {
 if (MKtl('shbobo_shnth').isNil) {
 	"No shbobo shnth found - creating virtual one.".postln;
 	MKtl.all['shbobo_shnth'].free;
-	MKtl('shbobo_shnth', "*dual-analog-4");
+	MKtl('shbobo_shnth', "*shbobo-shnth");
 };
 "*** Shbobo Shnth loading ...".postln;
 
