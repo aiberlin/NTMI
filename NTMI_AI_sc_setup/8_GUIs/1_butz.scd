@@ -117,6 +117,7 @@ Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 
 
 // /////// the INTERFACES Butz: /////////////
+Butz(\interfaces).addMiniMax;
 Butz(\interfaces).add(\findConnect, {
 	Task {
 		LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
@@ -131,7 +132,8 @@ Butz(\interfaces).add(\findConnect, {
 });
 
 (
-NTMI.interfacesToLoad.do { |name, i|
+(NTMI.interfaces.keys(Array).sort ++ '---'
+++ NTMI.optionalNames.removeAll(NTMI.interfaces.keys)).do { |name, mktl|
 	name = name.asSymbol;
 	Butz(\interfaces).add(name, {
 		defer {
@@ -141,9 +143,9 @@ NTMI.interfacesToLoad.do { |name, i|
 				NTMI.tryLoadMKtl(name)
 			} {
 				if (MKtl.all[name].hasDevice) {
-					"% : already open\n".postln;
+					"% : already open\n".postf(name);
 				} {
-					"& : try openDevice\n".postln;
+					"& : try openDevice\n".postf(name);
 					MKtl.all[name].openDevice;
 				};
 			};
@@ -155,7 +157,7 @@ NTMI.interfacesToLoad.do { |name, i|
 		}
 	});
 
-	if (WinBounds.makeFuncs[name].isNil) {
+	if (name != '---' and: WinBounds.makeFuncs[name].isNil) {
 		"WinBounds.addMake(%)\n".postf(name);
 		WinBounds.addMake(name, {
 			var mktl = MKtl.all[name];
@@ -172,7 +174,6 @@ NTMI.interfacesToLoad.do { |name, i|
 				mkgui.parent;
 			}
 		});
-
 	};
 };
 );
