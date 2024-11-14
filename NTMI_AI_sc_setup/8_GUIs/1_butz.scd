@@ -112,13 +112,7 @@ Butz('interfaces').addMiniMax;
 
 NTMI.updateInterfaceButz = {
 	Butz(\interfaces).clear.addMiniMax;
-	[
-		'findConnect',
-		'InfluxMixer',
-		'-loaded:-'
-	].do { |ifName|
-		Butz(\interfaces).add(ifName, { ifName.postln });
-	};
+
 	Butz(\interfaces).add(\findConnect, {
 		Task {
 			LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
@@ -130,6 +124,9 @@ NTMI.updateInterfaceButz = {
 				}
 			}
 		}.play(AppClock);
+	});
+	Butz(\interfaces).add(\InfluxMixer, {
+		WinBounds.showOrMake(\InfluxMixer)
 	});
 
 
