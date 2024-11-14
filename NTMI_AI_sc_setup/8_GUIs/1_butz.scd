@@ -23,7 +23,7 @@ g.butzNames = [
 ];
 
 // Butz.clear;
-Butz.numButz = (g.butzNames.size + 6).max(15);
+Butz.numButz = [NTMI.g.butzNames.size + 6, NTMI.optionalNames.size + 4, 18].maxItem;
 
 // set Butz window style params:
 Butz.style.alpha = NTMI.g.alpha;
@@ -83,19 +83,6 @@ if (WinBounds.makeFuncs[\wsetta].notNil) {
 };
 
 
-/// put the interfaces in a separate Butz list,
-/// add detailed funcs later
-Butz('interfaces').clear;
-Butz('interfaces').addMiniMax;
-
-[
-	'findConnect',
-	'InfluxMixer',
-].do { |ifName|
-	Butz(\interfaces).add(ifName, { ifName.postln });
-};
-
-
 Butz(\NTMI).add('inphlux', { WinBounds.showOrMake('inphlux') });
 
 Butz(\NTMI).add(\liveInput, { WinBounds.showOrMake(\liveInput) });
@@ -117,66 +104,83 @@ Butz(\NTMI).add('randomOrbitz', { WinBounds.showOrMake('randomOrbitz') });
 
 
 // /////// the INTERFACES Butz: /////////////
-Butz(\interfaces).addMiniMax;
-Butz(\interfaces).add(\findConnect, {
-	Task {
-		LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
-		0.5.wait;
-		MKtl.all.do { |mk|
-			mk.name;
-			if (mk.hasDevice) {
-				WinBounds.showOrMake(mk.name)
-			}
-		}
-	}.play(AppClock);
-});
+/// put the interfaces in a separate Butz list,
+/// add detailed funcs later
+Butz('interfaces').clear;
+Butz('interfaces').addMiniMax;
 
-(
-(NTMI.interfaces.keys(Array).sort ++ '---'
-++ NTMI.optionalNames.removeAll(NTMI.interfaces.keys)).do { |name, mktl|
-	name = name.asSymbol;
-	Butz(\interfaces).add(name, {
-		defer {
-			"%: check for MKtl ...\n".postf(name);
-			if (MKtl.all[name].isNil) {
-				"%: tryLoadMKtl\n".postf(name);
-				NTMI.tryLoadMKtl(name)
-			} {
-				if (MKtl.all[name].hasDevice) {
-					"% : already open\n".postf(name);
-				} {
-					"& : try openDevice\n".postf(name);
-					MKtl.all[name].openDevice;
-				};
-			};
-			if (MKtl.all[name].isNil) {
-				"*** MKtl % does not exist! \n".postf(name);
-			}{
-				WinBounds.showOrMake(name);
+
+NTMI.updateInterfaceButz = {
+	Butz(\interfaces).clear.addMiniMax;
+	[
+		'findConnect',
+		'InfluxMixer',
+		'-loaded:-'
+	].do { |ifName|
+		Butz(\interfaces).add(ifName, { ifName.postln });
+	};
+	Butz(\interfaces).add(\findConnect, {
+		Task {
+			LoadMe("3_interfaces/6_TryLoad_MKtls.scd", NTMI.dir.setup);
+			0.5.wait;
+			MKtl.all.do { |mk|
+				mk.name;
+				if (mk.hasDevice) {
+					WinBounds.showOrMake(mk.name)
+				}
 			}
-		}
+		}.play(AppClock);
 	});
 
-	if (name != '---' and: WinBounds.makeFuncs[name].isNil) {
-		"WinBounds.addMake(%)\n".postf(name);
-		WinBounds.addMake(name, {
-			var mktl = MKtl.all[name];
-			var mkgui;
-			if (mktl.isNil) {
-				"*** MKtl % does not exist! \n".postf(name);
-				"could not make window for it".postln;
-				nil;
-			} {
-				mkgui = mktl.gui.showLabels;
-				mkgui.parent.alpha_(NTMI.g.alpha);
 
-				// moved to MKtlGui: devicebutton can close with mod keys
-				mkgui.parent;
+	(NTMI.interfaces.keys(Array).sort ++ '-loadable:-'
+		++ NTMI.optionalNames.removeAll(NTMI.interfaces.keys)).do { |name, mktl|
+		name = name.asSymbol;
+		Butz(\interfaces).add(name, {
+			defer {
+				"%: check for MKtl ...\n".postf(name);
+				if (MKtl.all[name].isNil) {
+					"%: tryLoadMKtl\n".postf(name);
+					NTMI.tryLoadMKtl(name)
+				} {
+					if (MKtl.all[name].hasDevice) {
+						"% : already open\n".postf(name);
+					} {
+						"& : try openDevice\n".postf(name);
+						MKtl.all[name].openDevice;
+					};
+				};
+				if (MKtl.all[name].isNil) {
+					"*** MKtl % does not exist! \n".postf(name);
+				}{
+					WinBounds.showOrMake(name);
+				};
+				NTMI.updateInterfaceButz;
 			}
 		});
+
+		if (name != '-loadable:' and: WinBounds.makeFuncs[name].isNil) {
+			"WinBounds.addMake(%)\n".postf(name);
+			WinBounds.addMake(name, {
+				var mktl = MKtl.all[name];
+				var mkgui;
+				if (mktl.isNil) {
+					"*** MKtl % does not exist! \n".postf(name);
+					"could not make window for it".postln;
+					nil;
+				} {
+					mkgui = mktl.gui.showLabels;
+					mkgui.parent.alpha_(NTMI.g.alpha);
+
+					// moved to MKtlGui: devicebutton can close with mod keys
+					mkgui.parent;
+				}
+			});
+		};
 	};
 };
-);
+NTMI.updateInterfaceButz;
+
 
 (
 Butz(\Personalize).clear;

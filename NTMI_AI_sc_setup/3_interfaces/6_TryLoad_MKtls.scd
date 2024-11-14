@@ -33,6 +33,9 @@ MFdef(\findConnect).();
 
 MKtlLookup.all.printAll;
 
+NTMI.interfacesToLoad = ["ferrari", "nUFO"];
+NTMI.run;
+
 */
 
 NTMI.interfaces = NTMI.interfaces ? ();
