@@ -11,7 +11,7 @@ NTMI.addInterfaceFile(\flatcat, "SpecialUses/flatcat/flatcat_gui.scd");
 // add number readouts to gui:
 WinBounds.addMake(\flatcat, {
 	var mg = MKtl(\flatcat).gui.showLabels;
-	var win = mg.parent.alpha_(NTMI.g.alpha);
+	var win = mg.parent;
 	var vbounds = win.view.bounds;
 	// a zone for the extra buttons etc
 	var butzone = CompositeView(win, Rect(160, 0, 750, 25)).background_(Color.rand);
@@ -19,6 +19,8 @@ WinBounds.addMake(\flatcat, {
 	// a userview to draw the numeric values on
 	var uv = UserView(win, vbounds.top_(vbounds.height).height_(30))
 	.background_(Color.grey);
+
+	try { win.alpha_(NTMI.g.alpha) };
 	win.bounds = win.bounds.height_(win.bounds.height + 30);
 
 	uv.drawFunc = { |uv|
