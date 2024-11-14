@@ -28,38 +28,26 @@ NTMI.currInfo = nil;
 // 3 - findConnect: check which files match with present devices
 // identify if singles or
 
-
 NTMI.prevFoundInfos = nil;
 MFdef(\findConnect).();
 
 MKtlLookup.all.printAll;
 
-
-[  "nanoKtl1.scd", "nu_fo_Simulator.scd" ]
-
-fork({
-	NTMI.findOptionals;
-	NTMI.optionals.do { |path|
-		path.postln;
-		1.wait;
-		try { LoadMe(path.postln) };
-		1.wait;
-	}
-}, AppClock);
-
-NTMI.run;
-
 */
+
+NTMI.interfaces = NTMI.interfaces ? ();
 
 NTMI.findOptionals = {
 	NTMI.optionals = (NTMI.dir.setup +/+ "3_interfaces/optionals/""*.scd").pathMatch;
 	"\n\n*** Found % optional interface files: ".postf(NTMI.optionals.size);
-	NTMI.optionals.collect(_.basename).printcsAll;
+	NTMI.optionalNames = NTMI.optionals.collect {|p| p.basename.splitext[0].asSymbol };
+	NTMI.optionalNames.printcsAll;
 	"\n\n".postln;
 };
 
 NTMI.findOptionals;
 
+// to be used for selecting interface files by protocol
 NTMI.allInterfaceNames = (
 	\osc: [
 		"nUFO",
@@ -102,21 +90,20 @@ NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 			"name: %, filepath: % \n".postf(name.cs, filepath.cs);
 		};
 	};
-	MKtl.all[name];
+	if (MKtl.all[name].notNil) {
+		NTMI.interfaces.put(name, MKtl.all[name])
+	};
 };
 
 /*
 NTMI.tryLoadMKtl("ferrari");
 NTMI.tryLoadMKtl("nanoKtl");
-NTMI.tryLoadMKtl(\nUFO, "nUFO/*nUFO*");
-NTMI.tryLoadMKtl(\nUFO, NTMI.dir.setup +/+ "*interfaces/optionals/nUFO/*nUFO*");
-NTMI.tryLoadMKtl("kraken", "SpecialUses/kraken*");
-NTMI.tryLoadMKtl("flatcat", "SpecialUses/flatcat/flatcat*");
-*/*/*/
+*/
 
-NTMI.interfacesToLoad = NTMI.interfacesToLoad ? [];
 "NTMI.interfacesToLoad: %\n\n".postf(NTMI.interfacesToLoad);
 NTMI.interfacesToLoad.do { |name| NTMI.tryLoadMKtl(name) };
+
+NTMI.interfacesToShow = NTMI.interfacesToShow ? NTMI.optionalNames;
 
 NTMI.filesForFoundInfos = Dictionary[
 	// midi
