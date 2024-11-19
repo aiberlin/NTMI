@@ -1,12 +1,12 @@
 /***** Make_your_own_setup - OVERVIEW ******/
 
-// OVERVIEW OF ways to customize NTMI to your preferences:
+// OVERVIEW of ways to customize NTMI to your preferences:
 
 // 1.  configuring which elements of NTMI setup will load
-// 1a. how to add additional code at different stages in the load process
-// --- both explained in this file!
+// 1a. how to add additional code within the load process
+// ---> both explained in this file.
 
-// 2. add, rename, and edit presets for all sound processes - see:
+// 2. add, rename, and edit presets for sound processes - see here:
 Document.open("2_adding_presets.scd".resolveRelative);
 
 // 3. choose which sound processes to use,
@@ -14,7 +14,9 @@ Document.open("2_adding_presets.scd".resolveRelative);
 
 // 4. choose which supported physical interfaces to connect
 // and add your own interfaces e.g. with Modality-toolkit - see:
-"*.scd".resolveRelative.pathMatch.printAll.size
+
+// usesMidi, usesHID, connect found or not ...
+
 Document.open("4a_Connecting_new_interfaces.scd".resolveRelative);
 
 Butz(\Personalize).run(\Interface_doc);
@@ -23,7 +25,7 @@ Butz(\Personalize).run(\Interface_doc);
 
 //// 1. The NTMI user dir, POOL and prefs files
 //// NTMI creates a user directory in the user home folder:
-"~/NTMI".standardizePath.postcs
+"~/NTMI".standardizePath.postcs;
 
 // which contains configurable files and directories:
 // a POOL directory which contains:
@@ -37,9 +39,17 @@ Butz(\Personalize).run(\Interface_doc);
 NTMI.dir.user;
 NTMI.dir.user.openOS;
 
-/**** DEFAULT SETTINGS ****/
 
 
+
+/**** SETTINGS and DEFAULTS ****/
+
+// NTMI has many settings which users can define before running NTMI;
+// if these are not given, NTMI will use sensible default values.
+// these default values are stored here:
+NTMI.defaults.sortedKeysValuesDo { |key, val|
+	"\nNTMI.% = %;\n".postf(key, val.cs);
+}; "";
 
 // 1a. adding additional code at different stages in the loading process
 
@@ -53,7 +63,6 @@ NTMI.dir.user.openOS;
 // is is booted already?
 // if yes, should we leave it as is, or reboot? can be set in prefs:
 // if boot or reboot, we can configure the server by a script file:
-NTMI.prefs.active.serverSetup.postcs;
 
 // and just before booting, NTMI runs an optional preBoot function:
 NTMI.preBoot;
@@ -70,7 +79,7 @@ NTMI.postPresets;
 // - load all built-in interfaces, slots, randomOrbits etc
 // - Then, try to load all present MIDI or HID interfaces,
 // as well as the ones set in the prefs at:
-NTMI.prefs.active.interfacesToLoad.postcs;
+NTMI.interfacesToLoad.postcs;
 
 // - before loading the mainFX, this runs:
 NTMI.preMainFX;
