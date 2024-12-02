@@ -114,7 +114,7 @@ WinBounds.addMake(\InfluxMixer, {
 			.action_({ |pop|
 				var mk = NTMI.mkmix.mktls[i];
 				// if there is a switch function, call it
-				NTMI.at(mk.name)[pop.item].value;
+				NTMI.at(mk.name)[pop.item].value(NTMI.at(mk.name));
 				// if not, always set the mode
 				NTMI.at(mk.name).influxMode = pop.item;
 			}),
