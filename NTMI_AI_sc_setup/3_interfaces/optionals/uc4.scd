@@ -28,78 +28,86 @@
 MKtl.all.karl.gui
 MKtl.all.uc4.gui
 */
+
+// Inside this file, the mktl to make is m;
+// comment out var declaration while developing,
+// uncomment when done and committing
+var m;
+
+NTMI.currInfo = NTMI.currInfo ? (mktlName: 'uc4');
+"*** NTMI.currInfo: %\n".postf(NTMI.currInfo);
 // if not set, use default name
-~uc4 = ~uc4 ? 'uc4';
+~uc4 = NTMI.currInfo['mktlName'];
+"*** ~uc4: %\n".postf(~uc4);
 
-
-MKtl.all[~uc4].free; MKtl(~uc4, "*uc4_pg");
-
+MKtl.all[~uc4].free;
+m = MKtl(~uc4, "*uc4_pg", multiIndex: NTMI.currInfo[\multiIndex]);
 
 // make all named elements first
-MKtl(~uc4).addNamed(\main, MKtl(~uc4).elAt(\xfader));
-MKtl(~uc4).addNamed(\inflx, MKtl(~uc4).elAt(\pgSl1, \sl));
+m.addNamed(\main, m.elAt(\xfader));
+m.addNamed(\inflx, m.elAt(\pgSl1, \sl));
 
 // lower 4 encoders and their hatButtons for play and vol
-MKtl(~uc4).addNamed(\vols, MKtl(~uc4).elAt(\pgKn1, \kn, (4..7)));
-MKtl(~uc4).addNamed(\playBts, MKtl(~uc4).elAt(\pgKn1, \pbt, (4..7), 0));
+m.addNamed(\vols, m.elAt(\pgKn1, \kn, (4..7)));
+m.addNamed(\playBts, m.elAt(\pgKn1, \pbt, (4..7), 0));
 
 // higher 4 encoders for changing presets, hold hats for processes
 // select preset or sounds
-MKtl(~uc4).addNamed(\select, MKtl(~uc4).elAt(\pgKn1, \kn, (0..3)));
+m.addNamed(\select, m.elAt(\pgKn1, \kn, (0..3)));
 // if but up, select preset, if down, sound
-MKtl(~uc4).addNamed(\selMode, MKtl(~uc4).elAt(\pgKn1, \pbt, (0..3)));
+m.addNamed(\selMode, m.elAt(\pgKn1, \pbt, (0..3)));
 
-MKtl(~uc4).addNamed(\prev_inph, MKtl(~uc4).elAt(\pgSl1, \bt, 0, 0));
-MKtl(~uc4).addNamed(\rand_inph, MKtl(~uc4).elAt(\pgSl1, \bt, 1, 0));
-MKtl(~uc4).addNamed(\next_inph, MKtl(~uc4).elAt(\pgSl1, \bt, 2, 0));
-MKtl(~uc4).addNamed(\zero_inph, MKtl(~uc4).elAt(\pgSl1, \bt, 3, 0));
+m.addNamed(\prev_inph, m.elAt(\pgSl1, \bt, 0, 0));
+m.addNamed(\rand_inph, m.elAt(\pgSl1, \bt, 1, 0));
+m.addNamed(\next_inph, m.elAt(\pgSl1, \bt, 2, 0));
+m.addNamed(\zero_inph, m.elAt(\pgSl1, \bt, 3, 0));
 
 // use record button for snapshots
-MKtl(~uc4).addNamed(\snap, MKtl(~uc4).elAt(\pgSl1, \bt, 4, 0));
+m.addNamed(\snap, m.elAt(\pgSl1, \bt, 4, 0));
 
-MKtl(~uc4).addNamed(\prev_pre, MKtl(~uc4).elAt(\pgSl1, \bt, 5, 0));
-MKtl(~uc4).addNamed(\rand_pre, MKtl(~uc4).elAt(\pgSl1, \bt, 6, 0));
-MKtl(~uc4).addNamed(\next_pre, MKtl(~uc4).elAt(\pgSl1, \bt, 7, 0));
+m.addNamed(\prev_pre, m.elAt(\pgSl1, \bt, 5, 0));
+m.addNamed(\rand_pre, m.elAt(\pgSl1, \bt, 6, 0));
+m.addNamed(\next_pre, m.elAt(\pgSl1, \bt, 7, 0));
 
 
 // modify labels, use only semantic element names:
-MKtl(~uc4).elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
-MKtl(~uc4).elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
+m.elAt(\vols).do { |el, i| el.elemDesc.label = "snd % vol".format(i+1) };
+m.elAt(\playBts).do { |el, i| el.elemDesc.label = "snd % play".format(i+1) };
 
-MKtl(~uc4).elAt(\select).do { |el, i| el.elemDesc.label = "select".format(i+1) };
-MKtl(~uc4).elAt(\selMode).do { |el, i| el.elAt(0).elemDesc.label = "^-pre v-snd".format(i+1) };
+m.elAt(\select).do { |el, i| el.elemDesc.label = "select".format(i+1) };
+m.elAt(\selMode).do { |el, i| el.elAt(0).elemDesc.label = "^-pre v-snd".format(i+1) };
 
-MKtl(~uc4).elAt(\inflx).do { |sl, i| sl.elemDesc.label = "inf" + NTMI.inphlux.inNames[i].cs };
+m.elAt(\inflx).do { |sl, i| sl.elemDesc.label = "inf" + NTMI.inphlux.inNames[i].cs };
 
-MKtl(~uc4).elAt(\main).elemDesc.label = "Main Vol";
+m.elAt(\main).elemDesc.label = "Main Vol";
 
-MKtl(~uc4).elAt(\rand_inph).elemDesc.label = "rand inph";
-MKtl(~uc4).elAt(\prev_inph).elemDesc.label = "prev inph";
-MKtl(~uc4).elAt(\next_inph).elemDesc.label = "next inph";
-MKtl(~uc4).elAt(\zero_inph).elemDesc.label = "zero inph";
+m.elAt(\rand_inph).elemDesc.label = "rand inph";
+m.elAt(\prev_inph).elemDesc.label = "prev inph";
+m.elAt(\next_inph).elemDesc.label = "next inph";
+m.elAt(\zero_inph).elemDesc.label = "zero inph";
 
 
-MKtl(~uc4).elAt(\snap).elemDesc.label = "snap pre!";
-MKtl(~uc4).elAt(\rand_pre).elemDesc.label = "rand MFX";
-MKtl(~uc4).elAt(\prev_pre).elemDesc.label = "prev MFX";
-MKtl(~uc4).elAt(\next_pre).elemDesc.label = "next MFX";
+m.elAt(\snap).elemDesc.label = "snap pre!";
+m.elAt(\rand_pre).elemDesc.label = "rand MFX";
+m.elAt(\prev_pre).elemDesc.label = "prev MFX";
+m.elAt(\next_pre).elemDesc.label = "next MFX";
 
 
 // init values
-MKtl(~uc4).elAt('pgKn1', \kn).value = 0.5;
-MKtl(~uc4).elAt('pgSl1', \sl).value = 0.5;
-MKtl(~uc4).elAt('main').value = 0.5;
+m.elAt('pgKn1', \kn).value = 0.5;
+m.elAt('pgSl1', \sl).value = 0.5;
+m.elAt('main').value = 0.5;
 
 
 
 // *** add local settings and functions to uc4 ***
 // local zoom value:
-MKtl(~uc4).addSpec(\zoom, [0, 4, \amp]);
-MKtl(~uc4).addHalo(\zoom, 1);
+m.addSpec(\zoom, [0, 4, \amp]);
+m.addHalo(\zoom, 1);
 
 
 // allow direct access of halo via NTMI:
-NTMI.put(~uc4, MKtl(~uc4).getHalo);
+NTMI.put(~uc4, m.getHalo);
 // and access like this
 NTMI.at(~uc4).zoom.postln;
 
@@ -109,12 +117,12 @@ NTMI.at(~uc4).influxMode = \setRel;
 
 // set functions for the two supported modes:
 NTMI.at(~uc4).setRel = {
-	MKtl(~uc4).getHalo.influxMode = \setRel;
+	m.getHalo.influxMode = \setRel;
 	"uc4 influxMode is now: %\n.".postf(\setRel);
 };
 
 NTMI.at(~uc4).setAbs = {
-	MKtl(~uc4).getHalo.influxMode = \setAbs;
+	m.getHalo.influxMode = \setAbs;
 	"uc4 influxMode is now: %\n.".postf(\setAbs);
 };
 // read and set:
@@ -129,7 +137,7 @@ NTMI.at(~uc4).setRel;
 ****/
 
 /// lower 4 knobs change slots volume
-MKtl(~uc4).elAt(\vols).do { |el, i|
+m.elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
 		// limit to +-6, the largest ever step on an encoder
@@ -144,27 +152,60 @@ MKtl(~uc4).elAt(\vols).do { |el, i|
 };
 
 /// lower 4 buttons toggle sound slots on/off
-MKtl(~uc4).elAt(\playBts).do { |el, i|
+m.elAt(\playBts).do { |el, i|
 	el.action = { |el|
 		if (el.value > 0) { NTMI.slots.toggleAt(i) }
 	};
 };
 
 // xfader is main volume before limiter
-MKtl(~uc4).elAt('main').action = { |xf|
+m.elAt('main').action = { |xf|
 	// 	s.volume.volume_(\svol.asSpec.map(xf.value))
 	MFdef(\mainVolSetUni).value(xf.value);
+};
+
+/* top line buttons are modal:
+// click and release toggles de/coupling slot
+m.elAt('selMode', 0, \on).valueAction_(1);
+m.elAt('selMode', 0, \off).valueAction_(0);
+
+// click and turn hat: sound changes, no decoupling
+m.elAt('selMode', 0, \on).valueAction_(1);
+m.elAt(\select, 0).deviceValueAction_(43.rand);
+m.elAt('selMode', 0, \off).valueAction_(1);
+*/
+
+m.elAt('selMode').do { |onoffgroup, i|
+	onoffgroup[0].action = {
+		"prepare % for modal use\n".postf(i);
+		onoffgroup.addHalo(\wasUsed, false);
+	};
+	onoffgroup[1].action = {
+		if (onoffgroup.getHalo(\wasUsed).not) {
+			var ndef = NTMI.slots.actives[i];
+			if(NTMI.inph.decoupled.includes(ndef.key)) {
+				"couple slot % \n".postf(i);
+				NTMI.inph.couple(ndef)
+			} {
+				"decouple slot % \n".postf(i);
+				NTMI.inph.decouple(ndef)
+			};
+			NTMI.inph.decoupled.postln;
+		}
+	}
 };
 
 // normal: select next setting
 // hat down: select next sound
 // same
-MKtl(~uc4).elAt(\select).do { |el, i|
+m.elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
 		var relStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
+		var onoffbut = m.elAt(\selMode)[i];
 
-		if (MKtl(~uc4).elAt(\selMode)[i].isOn) {
+		if (onoffbut.isOn) {
+			onoffbut.addHalo(\wasUsed.postln, true);
 			// next sound
 			NTMI.slots.stepNext(i, relStep);
 		} {
@@ -181,7 +222,7 @@ MKtl(~uc4).elAt(\select).do { |el, i|
 
 
 // bt5, snapshots presets of all currently playing sounds
-MKtl(~uc4).elAt(\snap).action = { |el|
+m.elAt(\snap).action = { |el|
 	if (el.isOn) {
 		MFdef(\snapshot).value;
 	}
@@ -198,7 +239,7 @@ but all sliders overlap with nUFO ...
 */
 NTMI.at(~uc4).sliderOffset = NTMI.at(~uc4).sliderOffset ? 1;
 
-MKtl(~uc4).elAt(\inflx).do { |sl, i|
+m.elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
 		if (NTMI.at(~uc4).influxMode == \setAbs) {
 			var name = NTMI.inphlux.inNames[i + NTMI.at(~uc4).sliderOffset];
@@ -214,25 +255,25 @@ MKtl(~uc4).elAt(\inflx).do { |sl, i|
 };
 
 // Left 3 bottom buttons: inphPre rand, -1, +1
-MKtl(~uc4).elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };
-MKtl(~uc4).elAt(\prev_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(-1 ) } };
-MKtl(~uc4).elAt(\next_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre( 1 ) } };
-MKtl(~uc4).elAt(\zero_inph).action = { |el| if (el.isOn) { NTMI.inphlux.resetInvals } };
+m.elAt(\rand_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(nil) } };
+m.elAt(\prev_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre(-1 ) } };
+m.elAt(\next_inph).action = { |el| if (el.isOn) { NTMI.inph.stepWPre( 1 ) } };
+m.elAt(\zero_inph).action = { |el| if (el.isOn) { NTMI.inphlux.resetInvals } };
 
 
 // Right 3 bottom buttons: mainfx preset rand, -1, +1
-MKtl(~uc4).elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
-MKtl(~uc4).elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
-MKtl(~uc4).elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
+m.elAt(\rand_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(nil) } };
+m.elAt(\prev_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).(-1 ) } };
+m.elAt(\next_pre).action = { |el| if (el.isOn) { MFdef(\mainPreStep).( 1 ) } };
 
 /**** add UC4 page2 - direct mode:
 8 sliders on page2 PullSet set first 8 process params
 hold down pgSl2 bt_1 to get params 9-16
 ************/
 
-MKtl(~uc4).elAt('pgSl2', \sl).do { |sl, i|
+m.elAt('pgSl2', \sl).do { |sl, i|
 	sl.action = { |sl|
-		var index = MKtl(~uc4).elAt('pgSl2', \bt, 0).isOn.binaryValue * 8 + i;
+		var index = m.elAt('pgSl2', \bt, 0).isOn.binaryValue * 8 + i;
 		// [sl.name, sl.value.round(0.001)].postln;
 		NTMI.slots.nowPlaying.do { |ndef|
 			var paramKey = ndef.controlKeys[index];
@@ -243,4 +284,4 @@ MKtl(~uc4).elAt('pgSl2', \sl).do { |sl, i|
 	};
 };
 
-MKtl(~uc4);
+m;
