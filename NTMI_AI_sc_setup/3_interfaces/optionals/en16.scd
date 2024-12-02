@@ -15,10 +15,31 @@ m.gui.showLabels;
 MFdef.all.skeys
 NTMI.skeys.cs
 
+NTMI.at(~en16).setRel
+NTMI.at(~en16).setAbs
+
 ****/
+
+var m;
 
 // if not set, use default name
 ~en16 = ~en16 ? 'en16';
+
+if (NTMI.at(~en16).isNil) {
+	NTMI.put(~en16,
+		(
+			influxMode: \setRel,
+			setAbs: { |dict| "*** % only has setRel.\n".postf(~en16);
+				dict.postln;
+				dict.influxMode = \setRel;
+			},
+			setRel: { "*** % is always setRel.\n".postf(~en16) },
+			zoom: 1,
+			butDown: Set[], butsUsedForMode: false)
+	)
+};
+
+// NTMI.put(~en16, NTMI.at(~en16) ? ());
 
 MKtl.all[~en16].free;
 m = MKtl(~en16, "intech-grid");
@@ -98,4 +119,3 @@ m.elAt(\infl).do { |el, i|
 		)[el.deviceValue].value;
 	}
 };
-
