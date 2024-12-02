@@ -24,4 +24,4 @@ Ndef(\torus, { arg amp = 0.5, dens = 6, trigRate=8, att=0.012, rel=0.024, stretc
 	var sig = SinOsc.ar(2 + frq * stretch + shift + 50).sum * env;
 	sig * amp;
 })
-);
+)
