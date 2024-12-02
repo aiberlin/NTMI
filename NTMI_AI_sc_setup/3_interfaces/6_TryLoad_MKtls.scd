@@ -66,13 +66,13 @@ NTMI.allInterfaceNames = (
 	],
 
 	\hid: [
-		"dual_analog_3_2",
-		"dual_analog_4",
+		"dual_ana_32",
+		"dual_ana_4",
 		"ferrari",
 		"shbobo_shnth"
 	],
 	\other: [
-		"kraken_modal_ntmi", // serial
+		"kraken", // serial
 		"webMouse" // gui/osc
 	],
 );
@@ -151,7 +151,7 @@ MFdef(\findConnect).add(\findConnect, {
 		newInfos = foundInfos.select { |info|
 			(NTMI.prevFoundInfos ? []).includesEqual(info).not
 		};
-		newInfos.do { |info|
+		newInfos.do { |info, i|
 			var filename, mktlName;
 			if (info.isKindOf(Dictionary)) {
 				"\nmultiples found:".postln;
@@ -164,7 +164,7 @@ MFdef(\findConnect).add(\findConnect, {
 						"%_%".format(
 							filename.splitext.first, info.at(\multiIndex)
 						).asSymbol
-					).postln;
+					).postcs;
 					// hand info over to interface code file:
 					NTMI.currInfo = info;
 					NTMI.tryLoadMKtl(filename);
