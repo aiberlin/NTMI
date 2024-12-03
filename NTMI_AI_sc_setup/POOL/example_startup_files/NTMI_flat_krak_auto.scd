@@ -27,14 +27,14 @@ MKtl(\nUFO).closeDevice;
 // s.options.device = "UMC404HD 192k";
 
 NTMI.interfacesToLoad = [
-	"nUFO/*nUFO*",
+	// "nUFO",
 	"uc4", "mu8",
-	"nanoKtl",
-	"dual_analog_3_2",
-	"dual_analog_4",
+	// "nanoKtl",
+	// "dual_ana_32",
+	// "dual_ana_4",
 	"ferrari",
 	"xtm",
-	// "flatcat/*flatcat*",
+	"flatcat/",
 ];
 
 
