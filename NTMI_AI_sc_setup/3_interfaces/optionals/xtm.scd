@@ -25,24 +25,57 @@ hold MC button and turn
 -- button 5-8 up	scroll thru presets
 -- button 5-8 down	scroll thru sounds
 
-MKtl('xtm').gui.showLabels;
+m.gui.showLabels;
 
 ***********/
 
-// if (MKtlLookup.findByIDInfo("X-TOUCH MINI").size > 0) { };
 
-MKtl.all.xtm.free;
-MKtl('xtm', "*x-touch-mini*");
+// support multiple identical interfaces:
+if (NTMI.currInfo.notNil) {
+	~xtm = NTMI.currInfo.mktlName;
+	MKtl.all[~xtm].free;
+	MKtl(~xtm, "*x-touch-mini*", false, multiIndex: NTMI.currInfo.multiIndex);
+} {
+	// just one single interface:
+	// no need for NTMI.currInfo,
+	// just go by name given earlier or default
+	~xtm = ~xtm ? \xtm;
+	MKtl(~xtm, "*x-touch-mini*");
+};
+
+m = MKtl(~xtm);
+// give m a local zoom value:
+m.addSpec(\zoom, [0, 4, \amp]);
+// create halo by adding zoom value,
+// and sync it as NTMI space for m:
+m.addHalo(\zoom, 1);
+
+// then allow direct access of halo via NTMI:
+NTMI.q.put(m.name, m.getHalo);
+
+// flag whether to use influx in relative or absolute mode:
+// (there could be more modes, e.g. softAbs ...)
+m.getHalo.influxMode = \setRel;
+
+// set functions to switch between the two supported modes:
+m.getHalo.setRel = {
+	m.getHalo.influxMode = \setRel;
+	"% influxMode is now: setRel\n.".postf(m.name);
+};
+m.getHalo.setAbs = {
+	m.getHalo.influxMode = \setAbs;
+	"% influxMode is now: setAbs.\n".postf(m.name);
+};
 
 // main volume
-MKtl('xtm').addNamed(\main, MKtl('xtm').elAt(\A, \sl));
-MKtl('xtm').elAt(\main).elemDesc.label = "Main Vol";
-MKtl('xtm').elAt(\main).action = { |sl| MFdef(\mainVol).value((sl.value * 2).squared) };
+m.addNamed(\main, m.elAt(\A, \sl));
+m.elAt(\main).elemDesc.label = "Main Vol";
+m.elAt(\main).action = { |sl| MFdef(\mainVol).value((sl.value * 2).squared) };
 
 // play buttons for the four slots
-MKtl('xtm').addNamed(\playBts, MKtl('xtm').elAt(\A, \chan, (0..3), \bt, \A, 0));
-MKtl('xtm').elAt(\playBts).do { |el, i| el.elemDesc.label = "play" + (i + 1) };
-MKtl('xtm').elAt(\playBts).do { |el, i|
+m.addNamed(\playBts, m.elAt(\A, \chan, (0..3), \bt, \A, 0));
+m.elAt(\playBts).do { |el, i| el.elemDesc.label = "play" + (i + 1) };
+m.elAt(\playBts).do { |el, i|
 	el.action = { |bt| if (bt.isOn) { NTMI.slots.toggleAt(i) } };
 };
 
@@ -51,28 +84,28 @@ MKtl('xtm').elAt(\playBts).do { |el, i|
 // so, we need ways to switch modes...
 
 // first, we make the named elements - encoders, hats, MC button
-MKtl('xtm').addNamed(\enc, MKtl('xtm').elAt(\A, \chan, nil, \enc, 0));
-MKtl('xtm').addNamed(\enchat, MKtl('xtm').elAt(\A, \chan, nil, \enc, 1));
+m.addNamed(\enc, m.elAt(\A, \chan, nil, \enc, 0));
+m.addNamed(\enchat, m.elAt(\A, \chan, nil, \enc, 1));
 // define MC button to use for mode switching
-MKtl('xtm').addNamed(\MC, MKtl('xtm').elAt(\A, \chan, 0, \bt, \B, 0));
+m.addNamed(\MC, m.elAt(\A, \chan, 0, \bt, \B, 0));
 
 
-MKtl('xtm').elAt(\enc).value = 0.5;
+m.elAt(\enc).value = 0.5;
 
 
-MKtl('xtm').elAt(\enc).do { |enc, i|
+m.elAt(\enc).do { |enc, i|
 	enc.elemDesc.label = if (i < 4, "infvol", "infsel")
 };
 
-MKtl('xtm').elAt(\enchat).do { |hat, i|
+m.elAt(\enchat).do { |hat, i|
 	hat.elAt(0).elemDesc.label = "enc" ++ i ++ "mode";
 };
 
 // now merge the two - when enchat is down, new mode:
 // first 4 do volume per slot, second 4 do select
-MKtl('xtm').elAt(\enc).do { |enc, i|
+m.elAt(\enc).do { |enc, i|
 	enc.action = {
-		var enchat = MKtl('xtm').elAt(\enchat, i);
+		var enchat = m.elAt(\enchat, i);
 		var enchatIsUp =
 		enchat.elAt(0).lastUpdateTime <=
 		enchat.elAt(1).lastUpdateTime; // was noteOff or noteOn last?
@@ -83,7 +116,7 @@ MKtl('xtm').elAt(\enc).do { |enc, i|
 				// add sliderOffset + 1, so we get to channel 8 for amp tweak
 				i + (NTMI.inph.sliderOffset ? 1),
 				(enc.prevValue - enc.value),
-				NTMI.zoom * (NTMI.xtm.zoom ? 1)
+				NTMI.zoom * (m.getHalo.zoom ? 1)
 			)
 		} { // if enchat is down,
 
@@ -97,7 +130,7 @@ MKtl('xtm').elAt(\enc).do { |enc, i|
 				var ndef = NTMI.ndefs[slotIndex];
 				"// second 4 step thru NdefPreset setting".postln;
 
-				if (MKtl('xtm').elAt(\shift).isOn) {
+				if (m.elAt(\shift).isOn) {
 					"// if shift key, step sound!".postln;
 					NTMI.slots.stepNext(slotIndex, step);
 					// NTMI.slots.playAt(slotIndex);
@@ -110,29 +143,29 @@ MKtl('xtm').elAt(\enc).do { |enc, i|
 	}
 };
 
-MKtl('xtm').addNamed(\rec, MKtl('xtm').elAt(\A, \chan, 7, \bt, \B, \on));
-MKtl('xtm').elAt(\rec).action = { |bt| if (bt.isOn) { MFdef(\snapshot).value } };
-MKtl('xtm').elAt(\rec).elemDesc.label = "SNAP";
+m.addNamed(\rec, m.elAt(\A, \chan, 7, \bt, \B, \on));
+m.elAt(\rec).action = { |bt| if (bt.isOn) { MFdef(\snapshot).value } };
+m.elAt(\rec).elemDesc.label = "SNAP";
 
-MKtl('xtm').addNamed(\shift, MKtl('xtm').elAt(\A, \chan, 0, \bt, \B, \on));
-MKtl('xtm').elAt(\shift).elemDesc.label = "SHIFT";
+m.addNamed(\shift, m.elAt(\A, \chan, 0, \bt, \B, \on));
+m.elAt(\shift).elemDesc.label = "SHIFT";
 
-MKtl('xtm').addNamed(\fx, MKtl('xtm').elAt(\A, \chan, [4,5,6], \bt, \B, \on));
-MKtl('xtm').elAt(\fx).at(0).elemDesc.label = "prev MFX";
-MKtl('xtm').elAt(\fx).at(0).action = { |b| if (b.isOn) { MFdef(\mainPreStep).(-1) } };
-MKtl('xtm').elAt(\fx).at(1).elemDesc.label = "rand MFX";
-MKtl('xtm').elAt(\fx).at(1).action = { |b| if (b.isOn) { MFdef(\mainPreStep).() } };
-MKtl('xtm').elAt(\fx).at(2).elemDesc.label = "next MFX";
-MKtl('xtm').elAt(\fx).at(2).action = { |b| if (b.isOn) { MFdef(\mainPreStep).(1) } };
-
-
-MKtl('xtm').addNamed(\inph, MKtl('xtm').elAt(\A, \chan, [1, 2, 3], \bt, \B, \on));
-MKtl('xtm').elAt(\inph).at(0).elemDesc.label = "prev inph";
-MKtl('xtm').elAt(\inph).at(0).action = { |b| if (b.isOn) { NTMI.inph.stepWPre(-1) } };
-MKtl('xtm').elAt(\inph).at(1).elemDesc.label = "rand inph";
-MKtl('xtm').elAt(\inph).at(1).action = { |b| if (b.isOn) { NTMI.inph.stepWPre(nil) } };
-MKtl('xtm').elAt(\inph).at(2).elemDesc.label = "next inph";
-MKtl('xtm').elAt(\inph).at(2).action = { |b| if (b.isOn) { NTMI.inph.stepWPre(1) } };
+m.addNamed(\fx, m.elAt(\A, \chan, [4,5,6], \bt, \B, \on));
+m.elAt(\fx).at(0).elemDesc.label = "prev MFX";
+m.elAt(\fx).at(0).action = { |b| if (b.isOn) { MFdef(\mainPreStep).(-1) } };
+m.elAt(\fx).at(1).elemDesc.label = "rand MFX";
+m.elAt(\fx).at(1).action = { |b| if (b.isOn) { MFdef(\mainPreStep).() } };
+m.elAt(\fx).at(2).elemDesc.label = "next MFX";
+m.elAt(\fx).at(2).action = { |b| if (b.isOn) { MFdef(\mainPreStep).(1) } };
 
 
-MKtl('xtm');
+m.addNamed(\inph, m.elAt(\A, \chan, [1, 2, 3], \bt, \B, \on));
+m.elAt(\inph).at(0).elemDesc.label = "prev inph";
+m.elAt(\inph).at(0).action = { |b| if (b.isOn) { NTMI.inph.stepWPre(-1) } };
+m.elAt(\inph).at(1).elemDesc.label = "rand inph";
+m.elAt(\inph).at(1).action = { |b| if (b.isOn) { NTMI.inph.stepWPre(nil) } };
+m.elAt(\inph).at(2).elemDesc.label = "next inph";
+m.elAt(\inph).at(2).action = { |b| if (b.isOn) { NTMI.inph.stepWPre(1) } };
+
+
+m;
