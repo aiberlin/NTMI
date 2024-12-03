@@ -14,15 +14,12 @@ nanoKontrol1 is moved to its own separate file.
 
 - sliders 1-7: 	influx!
 
-- last slider 8:	mainVol via mainVol func
+- last slider / 8:	mainVol via mainVol func
 
 transport buttons:
 nk2: cycle, rew, fwd 	rand, prev, next influx preset
-
-nk1: loop, stop, rec:  rand, prev, next MainFX preset
 nk2: stop, play, rec:  rand, prev, next MainFX preset
 
-- top row(s) of buttons still unused.
 
 MKtl(~nanoKtl).elAt(\bt)
 ***********/
@@ -33,7 +30,7 @@ var m;
 if (NTMI.currInfo.notNil) {
 	~nanoKtl = NTMI.currInfo.mktlName;
 	MKtl.all[~nanoKtl].free;
-	MKtl(~nanoKtl, "korg-nanokontrol2", false, multiIndex: NTMI.currInfo.multiIndex);
+	MKtl(~nanoKtl, "*trol2", false, multiIndex: NTMI.currInfo.multiIndex);
 } {
 	// just one single interface:
 	// no need for NTMI.currInfo,
@@ -43,6 +40,28 @@ if (NTMI.currInfo.notNil) {
 };
 
 m = MKtl(~nanoKtl);
+// give m a local zoom value:
+m.addSpec(\zoom, [0, 4, \amp]);
+// create halo by adding zoom value,
+// and sync it as NTMI space for m:
+m.addHalo(\zoom, 1);
+
+// then allow direct access of halo via NTMI:
+NTMI.q.put(m.name, m.getHalo);
+
+// flag whether to use influx in relative or absolute mode:
+// (there could be more modes, e.g. softAbs ...)
+m.getHalo.influxMode = \setRel;
+
+// set functions to switch between the two supported modes:
+m.getHalo.setRel = {
+	m.getHalo.influxMode = \setRel;
+	"nanoKtl influxMode is now: %\n.".postf(\setRel);
+};
+m.getHalo.setAbs = {
+	m.getHalo.influxMode = \setAbs;
+	"nanoKtl influxMode is now: %\n.".postf(\setAbs);
+};
 
 // make all named elements first
 m.addNamed(\main, m.elAt(\sl, 7));
@@ -64,34 +83,6 @@ m.addNamed(\prev_pre, m.elAt(\tr, \stop));
 m.addNamed(\rand_pre, m.elAt(\tr, \play));
 m.addNamed(\next_pre, m.elAt(\tr, \rec));
 
-
-// *** add local settings and functions to nanoKtl Halo ***
-// local zoom value:
-m.addSpec(\zoom, [0, 4, \amp]);
-// create Halo
-m.addHalo(\zoom, 1);
-
-// then allow direct access of halo via NTMI:
-NTMI.q.put(~nanoKtl, m.getHalo);
-// and access like this
-m.getHalo.zoom.postln;
-
-// flag whether to use influx in relative or absolute mode:
-// (there could be more modes, e.g. softAbs ...)
-m.getHalo.influxMode = \setRel;
-
-// set functions for the two supported modes:
-m.getHalo.setRel = {
-	m.getHalo.influxMode = \setRel;
-	"nanoKtl influxMode is now: %\n.".postf(\setRel);
-};
-m.getHalo.setAbs = {
-	m.getHalo.influxMode = \setAbs;
-	"nanoKtl influxMode is now: %\n.".postf(\setAbs);
-};
-// read and set:
-m.getHalo.influxMode;
-m.getHalo.setRel;
 
 /* SOLO BUTTONS:
 make the first 4 S buttons solo:
