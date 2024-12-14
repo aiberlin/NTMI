@@ -57,7 +57,7 @@ ProxyChain.add3( '1ring',
 );
 
 ProxyChain.add3( '00_in',
-	\filterIn -> { arg in, level=1, llag=0.2, noisefloor=0.01;
+	\filterIn -> { arg in, level=1, llag=0.2, noisefloor=0.0001;
 		LeakDC.ar( in * level.lag(llag) )
 		+ BrownNoise.ar(0.0001).madd(noisefloor ! q.numChans);
 	},

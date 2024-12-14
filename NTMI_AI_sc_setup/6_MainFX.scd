@@ -42,7 +42,7 @@ NTMI.mfx.pxPres['3AdCVerb'].setRand(0.25);
 
 fork ({
 	0.1.wait;
-	NTMI.mfx.chain.add('00_in', 1);
+	NTMI.mfx.chain.add('00_in', 1).set(\noiseFloor, 0.0001);
 	0.1.wait;
 	NTMI.mfx.chain.add('0_DBComp', 1);
 	0.1.wait;
