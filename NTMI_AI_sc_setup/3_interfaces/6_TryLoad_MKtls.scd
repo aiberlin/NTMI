@@ -186,5 +186,7 @@ MFdef(\findConnect).add(\findConnect, {
 	NTMI.prevFoundInfos = foundInfos;
 	newInfos
 });
-MFdef(\findConnect).();
+if (NTMI.connectFoundInterfaces == true) {
+	MFdef(\findConnect).();
+};
 );
