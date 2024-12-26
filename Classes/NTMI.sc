@@ -27,7 +27,9 @@ NTMI {
 			slots: (),
 			inph: (),
 			mfx: (),
-		)
+		);
+		// use defaults automatically if nil:
+		NTMI.q.parent = NTMI.q.defaults;
 	}
 
 	// redirect everything to NTMI.q:
