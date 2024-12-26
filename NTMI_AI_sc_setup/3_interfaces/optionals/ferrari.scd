@@ -1,5 +1,5 @@
 ///// ******** FERRARI Gamepad patch for Liz Allbee *********
-///// ********     adapted into NTMI / UFO app      *********
+///// ********     adapted into NTMI / nUFO app      *********
 
 
 /*
@@ -30,7 +30,7 @@ right hat for up by one,
 both for random choice of influx preset
 
 5. sound preset choices:
-- hold one of button 1-4, and:
+- hold one of buttons 1-4, and:
 press compass down on left  side for next preset DOWN of that sound,
 press compass down on right side for next preset  UP  of that sound,
 press button 9                   for random preset    of that sound.
@@ -46,7 +46,7 @@ The nine MainFX presets, named 'theology', 'magic', etc,
 can be switched stepped or jumped thru:
 - press button 7 for lower preset,
 button 8 for next higher preset,
-both for a randomly chosen preset.
+and both for a randomly chosen preset.
 
 8. saving snapshots:
 When you like the way the active sound processes sound right now,
@@ -54,27 +54,19 @@ press button 6 - right shoulder button - to save the current settings as a prese
 This will be stored under a temporary name like "adc_190805_221134",
 which you can later change and keep.
 
-9. Other windows on MakeGui window buttons:
-All buttons (except the last 2) open GUIs for parts of the nUFO machinery,
+9. Other windows on Butz window buttons:
+Most buttons open GUIs for parts of the nUFO machinery,
 and push them to the front.
-hold down the option key to force-remake the window if needed.
+Hold down the option key to force-remake the window if needed.
 
+- minimax makes the Butz window small or large.
 - NTMI_Main opens or remakes the main gui window.
-- ntmi opens a GUI for the NTMI/nUFO interface (for debugging)
 - inphlux opens a GUI for the Influx which shows the current weights and in/out values
-- slotSounds opens a window showing editors for the sounds in the four slots
 - liveInput allows editing the liveInput process used by the xf-sounds
+- presets opens a preset editor for one sound process
+- slotSounds opens a window showing editors for the sounds in the four slots
 - ndefMixer opens a Mixer for all available Ndefs = sound processes
 - mainFX opens a GUI for the MainFX section
-- nanoKtl opens a GUI for a korg nanoKontrol faderbox
-- ferrari opens a GUI for a Thrustmaster Ferrari gamepad
-- uc4 opens a GUI for a FaderFox UC4 faderbox
-- ndefPresets opens a GUI for trying out and editing the sound presets
-- z_CLOSEALL closes all windows (except MakeGui)
-- z_setAll posts the current positions of all open windows as code,
-so the positions can be stored and reset to these  positions.
-
-
 
 ///////// tests
 MKtl(~ferrari).openDevice;
@@ -121,46 +113,46 @@ MKtl(~ferrari).addNamed(\joyAxes,
 	MKtl(~ferrari).elAt(\joy, nil, [\x, \y]).flat
 );
 
-NTMI.ferrari.vols = ();
-NTMI.ferrari.selectedSlots = List[];
+NTMI.at(~ferrari).vols = ();
+NTMI.at(~ferrari).selectedSlots = List[];
 
 
 // 4 SOUND BUTTONS:
 MKtl(~ferrari).addNamed(\sndButs, MKtl(~ferrari).elAt(\bt, (0..3)));
-NTMI.ferrari.sndButs = MKtl(~ferrari).elAt(\sndButs);
+NTMI.at(~ferrari).sndButs = MKtl(~ferrari).elAt(\sndButs);
 
 // soundbuttons 1-4 turn 4 slots on/off
 MKtl(~ferrari).elAt(\sndButs).do { |bt, i|
 	bt.elemDesc.label = "snd % play".format(i+1);
 	bt.action.add(\toggle, {
 		if (bt.isOn) {
-			NTMI.ferrari.selectedSlots.add(i).postln;
-			if (NTMI.ferrari.mode.isNil) {
+			NTMI.at(~ferrari).selectedSlots.add(i).postln;
+			if (NTMI.at(~ferrari).mode.isNil) {
 				"entering slot mode".postln;
-				NTMI.ferrari.mode = \slot;
+				NTMI.at(~ferrari).mode = \slot;
 			};
 		} {
 			// do action based on mode:
 			(
 				slot: {
-					if (NTMI.ferrari.slotModeWasUsed != true) {
+					if (NTMI.at(~ferrari).slotModeWasUsed != true) {
 						NTMI.slots.toggleAt(i);
 					};
 				}
-			)[NTMI.ferrari.mode].value;
+			)[NTMI.at(~ferrari).mode].value;
 			// when last slot button is released, remove mode
 			if (bt.parent.value.sum == 0) {
-				NTMI.ferrari.mode = nil;
-				NTMI.ferrari.slotModeWasUsed = false;
+				NTMI.at(~ferrari).mode = nil;
+				NTMI.at(~ferrari).slotModeWasUsed = false;
 				"leaving slot mode".postln;
 			};
-			NTMI.ferrari.selectedSlots.remove(i);
-			NTMI.ferrari.selectedSlots.postln;
+			NTMI.at(~ferrari).selectedSlots.remove(i);
+			NTMI.at(~ferrari).selectedSlots.postln;
 		}
 	})
 };
 
-NTMI.ferrari.zoom = 0.5;
+NTMI.at(~ferrari).zoom = 0.5;
 
 ////////// 4 joyaxes set relative influx inputs
 MKtl(~ferrari).elAt(\joyAxes).do { |el, i|
@@ -168,13 +160,13 @@ MKtl(~ferrari).elAt(\joyAxes).do { |el, i|
 	var sign = (x: 1, y: -1)[el.key];
 	el.elemDesc.label = "infl" + inIndex;
 	el.action = { |el|
-		if (NTMI.ferrari.influxMode == \setAbs) {
+		if (NTMI.at(~ferrari).influxMode == \setAbs) {
 			NTMI.inphlux.set(inIndex, el.value.unibi);
 		} {
 			MFdef(\setRelInf).(
 				inIndex,
 				(el.value - el.prevValue),
-				NTMI.zoom * NTMI.ferrari.zoom * sign
+				NTMI.zoom * NTMI.at(~ferrari).zoom * sign
 			);
 		}
 	}
@@ -188,13 +180,13 @@ MKtl(~ferrari).elAt(\throt).do { |el, i|
 	var inIndex = [10, 14][i];
 	el.elemDesc.label = "infl" + inIndex;
 	el.action = { |el|
-		if (NTMI.ferrari.influxMode == \setAbs) {
+		if (NTMI.at(~ferrari).influxMode == \setAbs) {
 			NTMI.inphlux.set(inIndex, el.value.unibi);
 		} {
 			MFdef(\setRelInf).(
 				inIndex,
 				(el.value - el.prevValue),
-				NTMI.zoom * NTMI.ferrari.zoom
+				NTMI.zoom * NTMI.at(~ferrari).zoom
 			)
 		};
 	};
@@ -205,18 +197,18 @@ MKtl(~ferrari).elAt(\throt).do { |el, i|
 /// FIXME: mark modalAction has happened,
 // dont do basic action on second release
 
-NTMI.ferrari.hatWasUsed = false;
+NTMI.at(~ferrari).hatWasUsed = false;
 MKtl(~ferrari).elAt(\joy, \l, \hat).elemDesc.label = "INPH prev";
 MKtl(~ferrari).elAt(\joy, \l, \hat).action = { |hat|
 	if (hat.isOn.not) {
 		if (MKtl(~ferrari).elAt(\joy, \r, \hat).isOn) {
-			NTMI.ferrari.hatWasUsed = true;
+			NTMI.at(~ferrari).hatWasUsed = true;
 			NTMI.inph.stepWPre(nil); // rand
 		} {
-			if (NTMI.ferrari.hatWasUsed.not) {
+			if (NTMI.at(~ferrari).hatWasUsed.not) {
 				NTMI.inph.stepWPre(-1); // prev
 			};
-			NTMI.ferrari.hatWasUsed = false;
+			NTMI.at(~ferrari).hatWasUsed = false;
 		};
 	};
 };
@@ -227,12 +219,12 @@ MKtl(~ferrari).elAt(\joy, \r, \hat).action = { |hat|
 	if (hat.isOn.not) {
 		if (MKtl(~ferrari).elAt(\joy, \l, \hat).isOn) {
 			NTMI.inph.stepWPre(nil); // rand
-			NTMI.ferrari.mfxWasUsed = true;
+			NTMI.at(~ferrari).mfxWasUsed = true;
 		} {
-			if (NTMI.ferrari.hatWasUsed.not) {
+			if (NTMI.at(~ferrari).hatWasUsed.not) {
 				NTMI.inph.stepWPre(1); // next
 			};
-			NTMI.ferrari.hatWasUsed = false;
+			NTMI.at(~ferrari).hatWasUsed = false;
 		};
 	};
 };
@@ -241,18 +233,18 @@ MKtl(~ferrari).elAt(\joy, \r, \hat).action = { |hat|
 /// FIXME: mark modalAction has happened,
 // dont do basic action on second release
 
-NTMI.ferrari.mfxWasUsed = false;
+NTMI.at(~ferrari).mfxWasUsed = false;
 MKtl(~ferrari).elAt(\bt, \7).elemDesc.label = "MFX prev";
 MKtl(~ferrari).elAt(\bt, \7).action = { |bt|
 	if (bt.isOn.not) {
 		if (MKtl(~ferrari).elAt(\bt, \8).isOn) {
-			NTMI.ferrari.mfxWasUsed = true;
+			NTMI.at(~ferrari).mfxWasUsed = true;
 			MFdef('mainPreStep').value(nil); // rand
 		} {
-			if (NTMI.ferrari.mfxWasUsed.not) {
+			if (NTMI.at(~ferrari).mfxWasUsed.not) {
 				MFdef('mainPreStep').value(-1); // prev
 			};
-			NTMI.ferrari.mfxWasUsed = false;
+			NTMI.at(~ferrari).mfxWasUsed = false;
 		};
 	};
 };
@@ -260,42 +252,40 @@ MKtl(~ferrari).elAt(\bt, \8).elemDesc.label = "MFX next";
 MKtl(~ferrari).elAt(\bt, \8).action = { |bt|
 	if (bt.isOn.not) {
 		if (MKtl(~ferrari).elAt(\bt, \7).isOn) {
-			NTMI.ferrari.mfxWasUsed = true;
+			NTMI.at(~ferrari).mfxWasUsed = true;
 			MFdef('mainPreStep').value(nil); // rand
 		} {
-			if (NTMI.ferrari.mfxWasUsed.not) {
+			if (NTMI.at(~ferrari).mfxWasUsed.not) {
 				MFdef('mainPreStep').value(1); // prev
 			};
-			NTMI.ferrari.mfxWasUsed = false;
+			NTMI.at(~ferrari).mfxWasUsed = false;
 		};
 	};
 };
 
-"ferrari: gets  here?".postln;
-
 // wheel controls main volume;
 // sets main vol when bt 10 is down;
 // sets slot volume when or more buttons of 1-4 are down
-NTMI.ferrari.uniMainVolOffset = 0;
+NTMI.at(~ferrari).uniMainVolOffset = 0;
 MKtl(~ferrari).elAt(\wheel).elemDesc.label = "set vol";
 MKtl(~ferrari).elAt(\wheel).action.add(\setvol, { |wheel|
 	var indices;
-	if (NTMI.ferrari.mode == \slot) {
+	if (NTMI.at(~ferrari).mode == \slot) {
 		// get the slot(s) in focus, set its/their volume(s)
-		indices = NTMI.ferrari.selectedSlots.select(_.isNumber);
+		indices = NTMI.at(~ferrari).selectedSlots.select(_.isNumber);
 		// "set slot vol: %\n".postf(NTMI.ndefs[indices]);
 		NTMI.ndefs[indices].do { |ndef|
 			ndef.softVol_(wheel.value.squared, 0.05, true, wheel.prevValue.squared);
 		};
-		NTMI.ferrari.slotModeWasUsed = true;
+		NTMI.at(~ferrari).slotModeWasUsed = true;
 	} {
 		if (MKtl(~ferrari).elAt(\bt, \10).isOn) {
 			"set mainVolume center:".post;
-			NTMI.ferrari.uniMainVolOffset = (wheel.value - 0.5).postln;
+			NTMI.at(~ferrari).uniMainVolOffset = (wheel.value - 0.5).postln;
 			MFdef(\mainVolSetUni).value( wheel.value);
 		} {
 			// "mainVol: ".postln;
-			MFdef(\mainVolSetUni).value(NTMI.ferrari.uniMainVolOffset + wheel.value);
+			MFdef(\mainVolSetUni).value(NTMI.at(~ferrari).uniMainVolOffset + wheel.value);
 		};
 	};
 });
@@ -306,8 +296,8 @@ MKtl(~ferrari).elAt(\compass).elemDesc.label = "step pre";
 MKtl(~ferrari).elAt(\compass).action.add(\stepPre, { |cp|
 	var val = (cp.value * 7).round.asInteger;
 	var slotFlags = MKtl(~ferrari).elAt(\sndButs).value.collect(_ > 0);
-	if (NTMI.ferrari.mode == \slot) {
-		NTMI.ferrari.slotModeWasUsed = true;
+	if (NTMI.at(~ferrari).mode == \slot) {
+		NTMI.at(~ferrari).slotModeWasUsed = true;
 		val.switch(
 			6, {
 				slotFlags.do { |down, slIndex|
@@ -333,8 +323,8 @@ MKtl(~ferrari).elAt(\compass).action.add(\stepPre, { |cp|
 // bt 9 -> random preset
 MKtl(~ferrari).elAt(\bt, \9).elemDesc.label = "rand pre";
 MKtl(~ferrari).elAt(\bt, \9).action.add(\randPre, {
-	if (NTMI.ferrari.mode == \slot) {
-		NTMI.ferrari.sndButs.do { |bt, slIndex|
+	if (NTMI.at(~ferrari).mode == \slot) {
+		NTMI.at(~ferrari).sndButs.do { |bt, slIndex|
 			if (bt.isOn) { NTMI.pre.stepNdefInf(NTMI.ndefs[slIndex], nil) }
 		}
 	}
@@ -343,8 +333,8 @@ MKtl(~ferrari).elAt(\bt, \9).action.add(\randPre, {
 // bt 9 -> random sound func
 MKtl(~ferrari).elAt(\bt, \10).elemDesc.label = "rand snd";
 MKtl(~ferrari).elAt(\bt, \10).action.add(\randPre, {
-	if (NTMI.ferrari.mode == \slot) {
-		NTMI.ferrari.sndButs.do { |bt, slIndex|
+	if (NTMI.at(~ferrari).mode == \slot) {
+		NTMI.at(~ferrari).sndButs.do { |bt, slIndex|
 			if (bt.isOn) { NTMI.slots.stepNext(slIndex, nil) }
 		}
 	}
