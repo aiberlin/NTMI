@@ -3,18 +3,19 @@ This file sets the default values for many preferences in NTMI;
 If not defined, the values will be looked up in here.
 */
 
-// when no initial sounds, presets are set,
-// should NTMI use random initial values,
-// so you get different ones every time?
+// GENERAL: should NTMI use random initial values
+// when no initial sounds & presets are set?
+// if yes, one gets to know different ones over time
 NTMI.defaults.usesRandomInit = false;
 
-NTMI.defaults.hasGui = true;
+// headless or regular desktop?
+NTMI.defaults.hasGui = \View.asClass.notNil;
+NTMI.defaults.hasSmallScreen = false;
 
-
-// in case it is useful, tell NTMI my username:
+// tell NTMI my username, e.g. for networking
 NTMI.defaults.myname = Platform.userHomeDir.basename.asSymbol;
 
-/****** server setup *******/
+/****** Server Setup *******/
 // set number of audio input and output channels,
 // for sound processes in the slots and for MainFX
 NTMI.defaults.numIns = 2;
@@ -26,16 +27,16 @@ NTMI.defaults.serverSetupFile = "serverBasic2.scd";
 // e.g. to set server options before booting?
 NTMI.defaults.reboot = true;
 
-//// a flag whether to load the MainFX  provided with NTMI:
+//// should the MainFX provided with NTMI load?
 NTMI.defaults.usesMainFX = true;
 
-
+// function to run right before booting
 NTMI.defaults.preBoot = nil;
 
-// write a custom sound function to play when starting NTMI:
-
+// which sound function to play when starting NTMI:
 NTMI.defaults.helloSound = { LoadMe("0_helloSound.scd") };
 
+// function to run right after booting
 NTMI.defaults.postBoot = nil;
 
 //// tell NTMI which soundfile folder to use initially for buffer-using sounds.
@@ -54,19 +55,19 @@ NTMI.dir.userPOOL.openOS;
 NTMI.process.allNames.cs;
 */
 
-// choose a specific subset of processNames to load:
-NTMI.defaults.process_namesToLoad = [
-	'allArm', 'beatX', 'bleepo', 'blippoo', 'brushes',
-	'dynstosyn', 'envelo', 'filterFB', 'formSing',
-	'frya', 'gendy1', 'gendy2', 'granbuf'
-];
+// // choose a specific subset of processNames to load:
+// NTMI.defaults.process_namesToLoad = [
+// 	'allArm', 'beatX', 'bleepo', 'brushes',
+// 	'dynstosyn', 'envelo', 'filterFB', 'formSing',
+// 	'frya', 'gendy1', 'gendy2', 'granbuf'
+// ];
 
-// THE 4 sounds to load into the slots on startup:
+// // Define which 4 sounds to load into the slots on startup:
 // NTMI.defaults.defaultActives = [ 'bleepo', 'xFMSH', 'rjkChaos', 'notThere' ];
-// if any of these dont exist as Ndefs, available Ndefs
+// If any of these do not exist as Ndefs, available Ndefs
 // will be picked randomly for these slots.
 
-//// Define which Ndef-presets to select for all sound processes,
+//// Define which Ndef-presets to select for any loaded sound processes,
 //// including the four sound slots
 NTMI.defaults.pre_initialPresetNames = [
 	'bleepo' -> 'vocca',
@@ -77,7 +78,10 @@ NTMI.defaults.pre_initialPresetNames = [
 	\robTron -> { |pre| 2000.rand },
 ];
 
+// function to run after sound processes and presets are loaded
 NTMI.defaults.postPresets = nil;
+
+
 
 //////////// Interfaces ////////////
 // //// flags whether to look for MIDI resp. HID interfaces -
@@ -88,6 +92,7 @@ NTMI.defaults.usesHid = false;
 //// tell NTMI which interfaces to load by default.
 //// turn off unused ones, unless you want to use them by GUI:
 NTMI.defaults.interfacesToLoad = [ "nanoKtl" ];
+NTMI.defaults.connectFoundInterfaces = true;
 
 /////////// INFLUX: //////
 //// The NTMI influx uses one of weight matrices to translate
@@ -107,9 +112,11 @@ NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to
 ////////// MainFX: which preset to use on startup?
 NTMI.defaults.mfx_domainName = \cybernetics;
 
-/// and two more functions
+// function to run after mainfx, before GUIs are loaded
 NTMI.defaults.preGui = nil;
 
+// function to run after NTMI setup finishes
 NTMI.defaults.finalSetup = nil;
 
+// flag whether demo tdefs should be loaded
 NTMI.defaults.loadDemos = true;
