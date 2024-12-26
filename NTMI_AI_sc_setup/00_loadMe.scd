@@ -42,26 +42,12 @@ Task {
 
 	0.1.wait;
 
-	//******* PREFERENCES
-	// ///// read user prefs (if there) or copy default prefs there:
-	// LoadMe("1_prefs/1_prefs.scd");
-
-	// Set flags for which parts to load:
-	// on headless systems, dont use guis
-	NTMI.hasGui = NTMI.hasGui ?? { \View.asClass.notNil };
-	NTMI.hasSmallScreen = NTMI.hasSmallScreen ?? false;
-	NTMI.usesRandomInit = NTMI.usesRandomInit ? true;
-
-	// which types of controllers will be used?
-	// these may have been set in startup file already:
-	NTMI.usesMidi = NTMI.usesMidi ? true;
-	NTMI.usesHid  = NTMI.usesHid ? true;
-
-	// reboot server when starting NTMI?
-	NTMI.reboot = NTMI.reboot ? false;
-
-	// turn off MainFX if desired (if off, mainVol will use s.volume)
-	NTMI.usesMainFX = NTMI.usesMainFX ? true;
+	// Load global functions and defaults
+	/* default settings / preferences are all defined here:
+	(NTMI.dir.setup +/+ "0_globals/ntmi_defaults.scd").openOS
+	****/
+	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
+	LoadMe("0_globals/*.scd");
 
 	// replace warning window with post if no GUI
 	if (NTMI.hasGui) {
@@ -77,12 +63,6 @@ Task {
 		0.2.wait;
 	};
 
-	"\n\n*** *** *** FOLDER %:\n".postf("0_globals");
-	LoadMe("0_globals/*.scd");
-
-	// set NTMI.numChans if not present
-	NTMI.numChans = NTMI.numChans ? NTMI.defaults.numChans ? 2;
-	NTMI.numIns = NTMI.numIns ?  NTMI.defaults.numIns ? 2;
 
 	if (s.serverRunning) {
 		var serverNumOuts = s.options.numOutputBusChannels;
