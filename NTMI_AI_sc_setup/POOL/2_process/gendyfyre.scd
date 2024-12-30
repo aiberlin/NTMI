@@ -5,9 +5,6 @@
 
 // Tdef('envGendy1').set(\maxVoices, 6);
 /*
-s.options.memSize = 8192 * 16;
-s.reboot;
-
 Ndef(\gendyfyre).gui(14);
 Ndef(\gendyfyre).play;
 */

@@ -18,16 +18,12 @@ NTMI.helloSound = {
 };
 
 // you can test different other configs on macOS for development
-// q.isPi = true;       // raspberry - e.g. use smaller gui
+// NTMI.isPi = true;       // raspberry - e.g. use smaller gui
 
-// q.hasGui = false;    // test headless
-// q.usesMidi = false;  // don't look for MIDI devices (faster and more stable)
-// q.usesHid  = false;  // dont look for HID devices   (faster and more stable)
+// NTMI.hasGui = false;    // test headless
+// NTMI.usesMidi = false;  // don't look for MIDI devices (faster and more stable)
+// NTMI.usesHid  = false;  // dont look for HID devices   (faster and more stable)
 
-// See the ntmi_prefs file for further adjustments:
-/*
-("~/NTMI/ntmi_prefs.scd".standardizePath).openOS;
-*/
 
 //////// finally, run NTMI for full setup
 NTMI.run;

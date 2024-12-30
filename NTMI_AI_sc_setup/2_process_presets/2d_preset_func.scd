@@ -89,7 +89,7 @@ NTMI.pre.presets.do { |pre|
 	var setIndex = 1, setName;
 
 	if (pre.settings.size > 1) {
-		if (NTMI.usesRandomInit == true) {
+		if (NTMI.usesRandomInit) {
 			setIndex = rrand(1, pre.settings.lastIndex);
 		};
 		setName = pre.settings[setIndex].key;

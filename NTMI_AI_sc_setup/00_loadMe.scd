@@ -83,13 +83,8 @@ Task {
 		s.options.sampleRate = s.options.sampleRate ? 44100;
 
 		"NTMI setting up server ... ".postln;
-		NTMI.serverSetupFile = NTMI.serverSetupFile ? NTMI.defaults.serverSetupFile;
-		// load a setup file with memory etc settings
-		if (NTMI.serverSetupFile.isNil) {
-			"no NTMI.serverSetupFile".postln;
-		} {
-			LoadMe(NTMI.serverSetupFile, NTMI.dir.user +/+ "POOL/1_*")
-		};
+		// load a setup file with memory settings etc
+		LoadMe(NTMI.serverSetupFile, NTMI.dir.user +/+ "POOL/1_*")
 
 		s.options.numInputBusChannels = NTMI.numIns;
 		s.options.numOutputBusChannels = NTMI.numChans;
@@ -112,8 +107,8 @@ Task {
 
 		"\n".postln;
 
-		NTMI.helloSound ?? { NTMI.defaults.helloSound };
 		"NTMI.helloSound plays".postln;
+		NTMI.helloSound;
 
 		"*** NTMI.postBoot runs.".postln;
 		NTMI.postBoot;
@@ -160,7 +155,7 @@ Task {
 				WinBounds.showOrMake(\miniNTMI);
 			};
 
-			if (NTMI.loadDemos ? NTMI.defaults.loadDemos) {
+			if (NTMI.loadDemos) {
 				LoadMe("9_demos/*scd")
 			};
 		};

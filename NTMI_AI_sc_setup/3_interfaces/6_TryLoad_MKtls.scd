@@ -5,8 +5,9 @@ Logic for loading polyphonic interfaces:
 - find all present devices for the protocols to be used
 
 - identify files to use for each present device
-- run each file for each found device;
-- if multiples, use separate names for multiples.
+- if NTMI.connectFoundInterfaces:
+-- run each file for each found device;
+-- if multiples, use separate names for multiples.
 -> also for ferrari wired/wireless!
 *** test that it works for multiples!
 
@@ -186,7 +187,7 @@ MFdef(\findConnect).add(\findConnect, {
 	NTMI.prevFoundInfos = foundInfos;
 	newInfos
 });
-if (NTMI.connectFoundInterfaces == true) {
+if (NTMI.connectFoundInterfaces) {
 	MFdef(\findConnect).();
 };
 );

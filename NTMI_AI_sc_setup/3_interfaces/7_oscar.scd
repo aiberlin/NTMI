@@ -23,7 +23,8 @@ NTMI.oscar.join;
 NTMI.oscar = NTMI.oscar ? ();
 NTMI.oscar.verbose = false;
 
-NTMI.myname = NTMI.myname ? unixCmdGetStdOut("hostname").reject(_ == Char.nl).asSymbol;
+NTMI.oscar.myname = NTMI.oscar.myname ? NTMI.myname;
+
 NTMI.mypwd = NTMI.mypwd ? "senha";
 
 // use gencomp oscserver as default
@@ -70,7 +71,7 @@ NTMI.oscar.makeServer = {
 	if (NTMI.oscar.testIP.not ) {
 		"*** NTMI.oscar: cannot start, because serverIP not reached.".postln;
 	} {
-		NTMI.oscar.oscar = OSCRouterClient(NTMI.myname, "ntmi",
+		NTMI.oscar.oscar = OSCRouterClient(NTMI.oscar.myname, "ntmi",
 			serverAddr: NTMI.oscar.udkServerIP,
 			userPassword: NTMI.mypwd,
 			groupPassword: "senha"

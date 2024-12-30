@@ -21,6 +21,8 @@ forkIfNeeded {
 		NTMI.process.foundPaths.size, NTMI.process.procPath.cs);
 	"// post them with: \nNTMI.process.foundNames.cs".postln;
 
+	// get
+	NTMI.process.namesToLoad = NTMI.process.namesToLoad ? NTMI.process_namesToLoad;
 	if (NTMI.process.namesToLoad.isNil) {
 		"loading all % found paths:\n".postf(NTMI.process.foundNames.size);
 		NTMI.process.namesToLoad = NTMI.process.foundNames;

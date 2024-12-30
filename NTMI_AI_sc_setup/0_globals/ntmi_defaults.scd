@@ -1,6 +1,7 @@
 /*
 This file sets the default values for many preferences in NTMI;
-If not defined, the values will be looked up in here.
+If they are not defined somewhere in a startup script,
+the values in here will be looked up and used as defaults.
 */
 
 // GENERAL: should NTMI use random initial values
@@ -41,7 +42,7 @@ NTMI.defaults.postBoot = nil;
 
 //// tell NTMI which soundfile folder to use initially for buffer-using sounds.
 //// NTMI quark has some default example files here:
-NTMI.defaults.globalBufFolder = { NTMI.dir.setup +/+ "/soundfiles/examples/" };
+NTMI.defaults.globalBufFolder = { NTMI.dir.setup +/+ "/soundfiles/" };
 
 
 /***** OPTIONAL: Sound Processes and Presets ******/
@@ -55,33 +56,30 @@ NTMI.dir.userPOOL.openOS;
 NTMI.process.allNames.cs;
 */
 
-// // choose a specific subset of processNames to load:
-// NTMI.defaults.process_namesToLoad = [
-// 	'allArm', 'beatX', 'bleepo', 'brushes',
-// 	'dynstosyn', 'envelo', 'filterFB', 'formSing',
-// 	'frya', 'gendy1', 'gendy2', 'granbuf'
-// ];
+// // choose a specific subset of processNames to load
+///// no default needed, defaults to all found processNames
+NTMI.defaults.process.namesToLoad = nil;
 
 // // Define which 4 sounds to load into the slots on startup:
 // NTMI.defaults.defaultActives = [ 'bleepo', 'xFMSH', 'rjkChaos', 'notThere' ];
 // If any of these do not exist as Ndefs, available Ndefs
 // will be picked randomly for these slots.
 
-//// Define which Ndef-presets to select for any loaded sound processes,
-//// including the four sound slots
-NTMI.defaults.pre_initialPresetNames = [
-	'bleepo' -> 'vocca',
-	'xFMSH' -> 'border',
-	\revFB -> \slolo,
-	'rjkChaos' -> 89, // can also be an index number
-	// or a function that generates an index number:
-	\robTron -> { |pre| 2000.rand },
-];
+//// Define which Ndef-presets to select for which loaded sound processes,
+//// often including the four defaultActives
+//// when not set, this defaults to random sounds and presets.
+NTMI.defaults.initialPresetNames = nil;
+// NTMI.defaults.initialPresetNames = [
+// 	'bleepo' -> 'vocca',
+// 	'xFMSH' -> 'border',
+// 	\revFB -> \slolo,
+// 	'rjkChaos' -> 89, // can also be an index number
+// 	// or a function that generates an index number:
+// 	\robTron -> { |pre| 2000.rand },
+// ];
 
 // function to run after sound processes and presets are loaded
 NTMI.defaults.postPresets = nil;
-
-
 
 //////////// Interfaces ////////////
 // //// flags whether to look for MIDI resp. HID interfaces -
@@ -107,7 +105,7 @@ NTMI.defaults.inph_randSeeds = [ 7, 13, 23, 42, 86, rrand(0, 1000), \diagL ];
 // // the preset key/name to set on startup
 NTMI.defaults.inph_presIndex = 0;
 
-NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to do after interfaces?".postln };
+NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to do after interfaces are loaded?".postln };
 
 ////////// MainFX: which preset to use on startup?
 NTMI.defaults.mfx_domainName = \cybernetics;
