@@ -84,7 +84,7 @@ Task {
 
 		"NTMI setting up server ... ".postln;
 		// load a setup file with memory settings etc
-		LoadMe(NTMI.serverSetupFile, NTMI.dir.user +/+ "POOL/1_*")
+		LoadMe(NTMI.serverSetupFile, NTMI.dir.user +/+ "POOL/1_*");
 
 		s.options.numInputBusChannels = NTMI.numIns;
 		s.options.numOutputBusChannels = NTMI.numChans;

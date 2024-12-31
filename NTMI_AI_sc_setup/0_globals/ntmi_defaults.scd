@@ -58,7 +58,7 @@ NTMI.process.allNames.cs;
 
 // // choose a specific subset of processNames to load
 ///// no default needed, defaults to all found processNames
-NTMI.defaults.process.namesToLoad = nil;
+NTMI.process.namesToLoad = nil;
 
 // // Define which 4 sounds to load into the slots on startup:
 // NTMI.defaults.defaultActives = [ 'bleepo', 'xFMSH', 'rjkChaos', 'notThere' ];
@@ -108,7 +108,8 @@ NTMI.defaults.inph_presIndex = 0;
 NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to do after interfaces are loaded?".postln };
 
 ////////// MainFX: which preset to use on startup?
-NTMI.defaults.mfx_domainName = \cybernetics;
+// usually nil, so it defaults to random choice
+NTMI.mfx.domainName = nil;
 
 // function to run after mainfx, before GUIs are loaded
 NTMI.defaults.preGui = nil;
