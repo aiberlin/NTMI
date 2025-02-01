@@ -59,7 +59,7 @@ ProxyChain.add3( '1ring',
 ProxyChain.add3( '00_in',
 	\filterIn -> { arg in, level=1, llag=0.2, noisefloor=0.0001;
 		LeakDC.ar( in * level.lag(llag) )
-		+ BrownNoise.ar(0.0001).madd(noisefloor ! q.numChans);
+		+ BrownNoise.ar(noisefloor);
 	},
 	1,
 	[
@@ -345,7 +345,10 @@ ProxyChain.add3( '9stereofy',
 
 ProxyChain.add3( '9monofy', \filterIn -> { arg in; (in).mean.dup(q.numChans) }, 1);
 
-ProxyChain.add3( 'ampFin',
+// keep orig ampFin with Limiter:
+/// this adds 20 msec latency,
+/// and LeakDC on the last out seem unnecessary
+ProxyChain.add3( 'ampFinLim',
 	\filterIn -> { |in, limDrive=1, ampLimit=0.9, postAmp=1 |
 		var st = Limiter.ar(in * limDrive, ampLimit) * postAmp;
 		LeakDC.ar(st)
@@ -357,6 +360,30 @@ ProxyChain.add3( 'ampFin',
 		\postAmp, \ampx4
 	]
 );
+
+// replace with Compander as Limiter:
+// no latency added, clip2 for transient peaks that pass,
+// and no LeakDC for better bass
+
+ProxyChain.add3( 'ampFin',
+	\filterIn -> { |in, limDrive=1, ampLimit=0.9, postAmp=1 |
+		var compIn = in * limDrive.lag(0.1);
+		var comped = Compander.ar(compIn, compIn,
+			thresh: ampLimit.lag(0.1) * 0.9,
+			slopeBelow: 1,
+			slopeAbove: 0.1,
+			clampTime: 0.003,
+			relaxTime: 0.03) * postAmp.lag(0.1);
+		comped.clip2(ampLimit);
+	},
+	1,
+	[
+		\limDrive, \ampx4,
+		\ampLimit, \amp,
+		\postAmp, \ampx4
+	]
+);
+
 
 )
 
