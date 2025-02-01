@@ -100,7 +100,7 @@ m.elAt(\vols).do { |el, i|
 		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
 		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
 		// make encoder endless with small jump back;
-		// defer is needed for uc4 to accept new value
+		// defer is needed for midi devices to accept new value
 		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
 			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
 		)[el.deviceValue].value;
@@ -113,7 +113,7 @@ m.elAt(\playBts).do { |el, i|
 m.elAt(\infl).do { |el, i|
 	el.action = {
 		MFdef(\setRelInf).(i + 9, el.value - el.prevValue);
-		// defer is needed for uc4 to accept new value
+		// defer is needed for midi devices to accept new value
 		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
 			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
 		)[el.deviceValue].value;
