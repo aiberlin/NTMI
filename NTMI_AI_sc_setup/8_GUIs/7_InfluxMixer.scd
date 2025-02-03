@@ -71,7 +71,7 @@ WinBounds.addMake(\InfluxMixer, {
 		var mkdict = NTMI.q[mk.name];
 
 		if (mkdict.isNil) {
-			"*** % has no NTMI dict - making it now.n".postf(mk);
+			"*** % has no NTMI dict - making it now.\n\n".postf(mk);
 			NTMI.q.put(mk.name, mkdict = ());
 		};
 		mkdict.influxMode = mkdict.influxMode ? NTMI.mkmix.influxModes[0];

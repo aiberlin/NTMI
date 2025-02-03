@@ -51,7 +51,7 @@ NTMI.defaults.sortedKeysValuesDo { |key, val|
 	"\nNTMI.% = %;\n".postf(key, val.cs);
 }; "";
 
-// 1a. adding additional code at different stages in the loading process
+// 1a. running additional code at different stages in the loading process
 
 // - check and set the directories NTMI uses - this is required.
 // - check early which MIDI or HID interfaces are present -
