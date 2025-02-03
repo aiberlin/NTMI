@@ -131,7 +131,7 @@ NTMI.updateInterfaceButz = {
 
 
 	(NTMI.interfaces.keys(Array).sort ++ '-loadable:-'
-		++ NTMI.optionalNames.removeAll(NTMI.interfaces.keys)).do { |name, mktl|
+		++ NTMI.interfacesToShow.removeAll(NTMI.interfaces.keys)).do { |name, mktl|
 		name = name.asSymbol;
 		Butz(\interfaces).add(name, {
 			defer {
