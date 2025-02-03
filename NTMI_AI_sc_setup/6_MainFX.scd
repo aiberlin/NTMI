@@ -26,7 +26,7 @@ NTMI.mFX = MainFX.new(server: s,
 NTMI.mfx.chain = NTMI.mFX.proxyChain;
 NTMI.mfx.chain.proxy.fadeTime = 2;
 
-// apply all know specs to proxy just in case:
+// apply all known specs to proxy just in case:
 ProxyChain.sourceDicts.do { |dict|
 	dict.specs.do { |spec| NTMI.mfx.chain.proxy.addSpec(spec) }
 };
@@ -85,7 +85,7 @@ NTMI.mfx.preNames = [
 (
 NTMI.mfx.preMap = (
 	'baseset': (
-		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.05], \ampFin],
+		chainElements: ['00_in', '0_DBComp', ['3AdCVerb', 0.02], \ampFin],
 		settings: [\postAmp, 1, \ampLimit, 0.8, \noisefloor, 0.0001],
 		// randomize: [\noisefloor ]
 	),
@@ -197,6 +197,7 @@ MFdef(\mainVolSetUni).add(\main, { |vol = 1|
 	NTMI.mFX.pxChain.proxy.setUni(\mainVol, vol);
 });
 
+"\n*** NTMI.mfx.domainName: %\n\n".postf(NTMI.mfx.domainName);
 
 MFdef(\mainPre).value(NTMI.mfx.domainName ??
 	{ if (NTMI.usesRandomInit) {

@@ -109,7 +109,7 @@ NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to
 
 ////////// MainFX: which preset to use on startup?
 // usually nil, so it defaults to random choice
-NTMI.mfx.domainName = nil;
+// NTMI.mfx.domainName = nil;
 
 // function to run after mainfx, before GUIs are loaded
 NTMI.defaults.preGui = nil;
