@@ -128,7 +128,7 @@ MFdef(\setRelInf).add(\set, { |inIndices, diffs, zoom = 0.5|
 	if (ndefsToSet.notEmpty) {
 		vector = NTMI.inphlux.changeVector(inIndices, diffs, zoom);
 		ndefsToSet.do { |ndef|
-			var params = ndef.getHalo.namesToInflux ? { ndef.controlKeys };
+			var params = ndef.getHalo.namesToInflux ?? { ndef.controlKeys };
 			var deltaPairs = [params, vector.keep(params.size)].flop;
 			MFdef(\relSet).(ndef, deltaPairs);
 		}
