@@ -85,6 +85,17 @@ MFdef(\bufSetRange).add(\setNdefs, { |ndefs, buffers, buflistname|
 	}
 });
 
+// user-redefinable record function
+NTMI.record = {
+	var path = ("~/Desktop/NTMI_%.wav".format(Date.getDate.stamp));
+	"\n----\n*** NTMI.record: ".postln;
+	s.recChannels = NTMI.numChans;
+	s.recHeaderFormat("wav");
+	s.record(path);
+	thisFunction.postcs;
+	"----\n".postln;
+};
+
 /*
 // example/test - load specific samples for Ndef(\granbuf):
 MFdef(\bufLoad).value(

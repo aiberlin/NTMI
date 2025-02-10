@@ -10,8 +10,8 @@ NTMI.g.main.recBut = Button(zone,
 ]).font_(NTMI.g.fontMid)
 .action_({ |bt|
 	if (bt.value > 0) {
-		s.recChannels_(q.numChans ? 2);
-		s.record;
+		// use custom record function!
+		NTMI.record;
 	} {
 		s.stopRecording;
 	}
