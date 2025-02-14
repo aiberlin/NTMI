@@ -7,6 +7,6 @@ NTMI.g.main.meterLeft = (NTMI.g.main.w.bounds.width - NTMI.g.main.meterWidth) di
 NTMI.g.main.meter = ServerMeterView(s,
 	NTMI.g.main.w,
 	NTMI.g.main.meterLeft@0,
-	NTMI.numIns ? NTMI.numChans,
-	NTMI.numChans
+	max(NTMI.numIns, s.options.numInputBusChannels),
+	max(NTMI.numChans, s.options.numOutputBusChannels)
 );

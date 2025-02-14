@@ -57,7 +57,10 @@ WinBounds.addMake('Main_NTMI', {
 	var leftMinWidth = NTMI.g.bounds.width.linlin(480, 1200, 80, 130);
 	var topMinHeight = NTMI.g.bounds.height.linlin(320, 1200, 100, 230);
 	var botMinHeight = NTMI.g.bounds.height.linlin(320, 1200, 0, 230);
-	var meterWidth = ServerMeterView.getWidth(NTMI.numIns, NTMI.numChans, s);
+	var meterWidth = ServerMeterView.getWidth(
+		max(NTMI.numIns, s.options.numInputBusChannels),
+		max(NTMI.numChans, s.options.numInputBusChannels),
+		s);
 	var scopeWidth = 264;
 	var frontUVSize = bounds.height / 2 - topMinHeight;
 	var marg = 6;
