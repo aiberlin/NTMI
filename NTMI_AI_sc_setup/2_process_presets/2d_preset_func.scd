@@ -50,7 +50,7 @@ NTMI.maxTanh = 0.98;
 MFdef(\relSet).add(\relSetTan, { |obj, deltaPairs|
 	// maxtanval limits
 
-	var newvals = deltaPairs.postln.collect {|pair, i|
+	var newvals = deltaPairs.collect {|pair, i|
 		var param, delta, spec, bival, bivaltan,
 		newbi, newval;
 		#param, delta = pair;
@@ -60,7 +60,7 @@ MFdef(\relSet).add(\relSetTan, { |obj, deltaPairs|
 		bivaltan = bival.clip2(NTMI.maxTanh).atanh;
 		newbi = (bivaltan + delta).tanh;
 		newval = spec.map(newbi.biuni);
-		[ param, newval ].postln;
+		[ param, newval ];
 	};
 	obj.set(*newvals.flat);
 });
