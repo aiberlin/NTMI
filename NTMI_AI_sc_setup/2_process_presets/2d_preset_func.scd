@@ -28,6 +28,44 @@ MFdef(\relSet).add(\relSet, { |obj, deltaPairs|
 	obj.set(*newvals.flat);
 });
 
+/***
+use tanh/atanh compression curve on bival to create elastic borders
+and to avoid hitting min or max values really quickly.
+tune maxTanh to determine where to clip above compression:
+
+maxTanh -> bival
+0.96.atanh // +-1.95
+0.98.atanh // +-2.3
+0.99.atanh // +-2.65
+0.995.atanh // +-3
+0.999.atanh // +-3.8
+
+// use new tanh
+MFdef(\relSet).disable(\relSet).enable(\relSetTan);
+// use standard relSet, hardclip at +-1
+MFdef(\relSet).enable(\relSet).disable(\relSetTan);
+*/
+NTMI.maxTanh = 0.98;
+
+MFdef(\relSet).add(\relSetTan, { |obj, deltaPairs|
+	// maxtanval limits
+
+	var newvals = deltaPairs.postln.collect {|pair, i|
+		var param, delta, spec, bival, bivaltan,
+		newbi, newval;
+		#param, delta = pair;
+		spec = obj.getSpec(param);
+		bival = obj.getUni(param).biuni;
+		// clip here:
+		bivaltan = bival.clip2(NTMI.maxTanh).atanh;
+		newbi = (bivaltan + delta).tanh;
+		newval = spec.map(newbi.biuni);
+		[ param, newval ].postln;
+	};
+	obj.set(*newvals.flat);
+});
+
+
 
 NTMI.pre = NTMI.pre ? ();
 NTMI.pre.settingsDir = NTMI.dir.userPOOL +/+ "2_process/presets/";
