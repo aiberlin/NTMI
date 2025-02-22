@@ -80,7 +80,7 @@ ProxyChain.add3( '0_DBComp',
 	1,
 	[
 		\xFreq, [100, 1000, \exp],
-		\mainVol, [0, 4, \amp],
+		\mainVol, [0.0001, 4, \amp],
 		\loGain, [0, 10, \amp, 0, 1],
 		\hiGain, [0, 10, \amp, 0, 1],
 		\compRatio, [1, 10, \exp]

@@ -174,7 +174,11 @@ m.elAt(\inflSet).do { |sl, i|
 
 // rightmost slider is main volume (into limiter)
 m.elAt(\main).action = { |sl|
-	MFdef(\mainVolSetUni).value(sl.value) };
+	////// set mainVol in absolute mode:
+	// 	MFdef(\mainVolSetUni).value(sl.value);
+	// best: step mainVol according to slider move
+	MFdef(\mainVolStep).value(sl.deviceValue - sl.prevDeviceValue);
+};
 m.elAt(\main).value = 0.5;
 
 // normal: select next setting
