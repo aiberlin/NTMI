@@ -160,8 +160,12 @@ m.elAt(\playBts).do { |el, i|
 
 // xfader is main volume before limiter
 m.elAt('main').action = { |xf|
+	////// set server volume directly:
 	// 	s.volume.volume_(\svol.asSpec.map(xf.value))
-	MFdef(\mainVolSetUni).value(xf.value);
+	////// set mainVol in absolute mode:
+	// 	MFdef(\mainVolSetUni).value(xf.value);
+	// best: step mainVol according to slider move
+	MFdef(\mainVolStep).value(xf.deviceValue - xf.prevDeviceValue);
 };
 
 /* top line buttons are modal:
