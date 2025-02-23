@@ -157,7 +157,7 @@ NTMI.updateInterfaceButz = {
 		});
 
 		if (name != '-loadable:' and: WinBounds.makeFuncs[name].isNil) {
-			"WinBounds.addMake(%)\n".postf(name);
+			"WinBounds.addMake(%)\n".postf(name.cs);
 			WinBounds.addMake(name, {
 				var mktl = MKtl.all[name];
 				var mkgui;
