@@ -21,25 +21,17 @@ nk2: cycle, rew, fwd 	rand, prev, next influx preset
 nk2: stop, play, rec:  rand, prev, next MainFX preset
 
 
-MKtl(~nanoKtl).elAt(\bt)
+MKtl(\nanoKtl).elAt(\bt)
 ***********/
 
-var m;
+
+// use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
+// arguments:MKtl name, desc filename, info reg. multiple hardware
+var m = NTMI.makeMKtl(\nanoKtl, "*trol2", NTMI.currInfo);
+
 
 // support multiple identical interfaces:
-if (NTMI.currInfo.notNil) {
-	~nanoKtl = NTMI.currInfo.mktlName;
-	MKtl.all[~nanoKtl].free;
-	MKtl(~nanoKtl, "*trol2", false, multiIndex: NTMI.currInfo.multiIndex);
-} {
-	// just one single interface:
-	// no need for NTMI.currInfo,
-	// just go by name given earlier or default
-	~nanoKtl = ~nanoKtl ? \nanoKtl;
-	MKtl(~nanoKtl, "korg-nanokontrol2");
-};
 
-m = MKtl(~nanoKtl);
 // give m a local zoom value:
 m.addSpec(\zoom, [0, 4, \amp]);
 // create halo by adding zoom value,
@@ -56,11 +48,11 @@ m.getHalo.influxMode = \setRel;
 // set functions to switch between the two supported modes:
 m.getHalo.setRel = {
 	m.getHalo.influxMode = \setRel;
-	"nanoKtl influxMode is now: %\n.".postf(\setRel);
+	"*** % influxMode is now: %\n.".postf(m.name, \setRel);
 };
 m.getHalo.setAbs = {
 	m.getHalo.influxMode = \setAbs;
-	"nanoKtl influxMode is now: %\n.".postf(\setAbs);
+	"*** % influxMode is now: %\n.".postf(m.name, \setAbs);
 };
 
 // make all named elements first
