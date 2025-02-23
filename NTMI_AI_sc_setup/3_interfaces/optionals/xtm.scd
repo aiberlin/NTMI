@@ -26,24 +26,14 @@ hold MC button and turn
 -- button 5-8 down	scroll thru sounds
 
 m.gui.showLabels;
-
+MKtl(\xtm).free;
 ***********/
 
 
-// support multiple identical interfaces:
-if (NTMI.currInfo.notNil) {
-	~xtm = NTMI.currInfo.mktlName;
-	MKtl.all[~xtm].free;
-	MKtl(~xtm, "*x-touch-mini*", false, multiIndex: NTMI.currInfo.multiIndex);
-} {
-	// just one single interface:
-	// no need for NTMI.currInfo,
-	// just go by name given earlier or default
-	~xtm = ~xtm ? \xtm;
-	MKtl(~xtm, "*x-touch-mini*");
-};
+// Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
+// arguments:MKtl name, desc filename, info reg. multiple hardware
+var m = NTMI.makeMKtl(\xtm, "*x-touch-mini*", NTMI.currInfo);
 
-m = MKtl(~xtm);
 // give m a local zoom value:
 m.addSpec(\zoom, [0, 4, \amp]);
 // create halo by adding zoom value,
