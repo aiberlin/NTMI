@@ -24,24 +24,16 @@
 /*
 // flexify name in order to build multiple MKtls with this file:
 // TEST:
-~uc4 = \karl; // then run file ...
+NTMI.currInfo = (mktlName: \karl);
+NTMI.makeMKtl(\uc4, "*uc4_pg", NTMI.currInfo);
 MKtl.all.karl.gui
 MKtl.all.uc4.gui
+MKtl.all.uc4.free;
 */
 
-// Inside this file, the mktl to make is m;
-// comment out var declaration while developing,
-// uncomment when done and committing
-var m;
-
-NTMI.currInfo = NTMI.currInfo ? (mktlName: 'uc4');
-"*** NTMI.currInfo: %\n".postf(NTMI.currInfo);
-// if not set, use default name
-~uc4 = NTMI.currInfo['mktlName'];
-"*** ~uc4: %\n".postf(~uc4);
-
-MKtl.all[~uc4].free;
-m = MKtl(~uc4, "*uc4_pg", multiIndex: NTMI.currInfo[\multiIndex]);
+// Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
+// arguments:MKtl name, desc filename, info reg. multiple hardware
+var m = NTMI.makeMKtl(\uc4, "*uc4_pg", NTMI.currInfo);
 
 // make all named elements first
 m.addNamed(\main, m.elAt(\xfader));
@@ -107,27 +99,27 @@ m.addHalo(\zoom, 1);
 
 
 // allow direct access of halo via NTMI:
-NTMI.put(~uc4, m.getHalo);
+NTMI.put(m.name, m.getHalo);
 // and access like this
-NTMI.at(~uc4).zoom.postln;
+m.getHalo.zoom.postln;
 
 // flag whether to use influx in relative or absolute mode:
 // (there could be more modes, e.g. softAbs ...)
-NTMI.at(~uc4).influxMode = \setRel;
+m.getHalo.influxMode = \setRel;
 
 // set functions for the two supported modes:
-NTMI.at(~uc4).setRel = {
+m.getHalo.setRel = {
 	m.getHalo.influxMode = \setRel;
 	"uc4 influxMode is now: %\n.".postf(\setRel);
 };
 
-NTMI.at(~uc4).setAbs = {
+m.getHalo.setAbs = {
 	m.getHalo.influxMode = \setAbs;
 	"uc4 influxMode is now: %\n.".postf(\setAbs);
 };
 // read and set:
-NTMI.at(~uc4).influxMode;
-NTMI.at(~uc4).setRel;
+m.getHalo.influxMode;
+m.getHalo.setRel;
 
 /* *****
 *** We leave uc4 encoders on default absolute mode (0..127),
@@ -241,18 +233,18 @@ so with offset 1, last slider becomes amp control,
 but all sliders overlap with nUFO ...
 -> for nufo setups, use offset 9, for non-nufo, use offset 1
 */
-NTMI.at(~uc4).sliderOffset = NTMI.at(~uc4).sliderOffset ? 1;
+m.getHalo.sliderOffset = m.getHalo.sliderOffset ? 1;
 
 m.elAt(\inflx).do { |sl, i|
 	sl.action = { |sl|
-		if (NTMI.at(~uc4).influxMode == \setAbs) {
-			var name = NTMI.inphlux.inNames[i + NTMI.at(~uc4).sliderOffset];
-			NTMI.inphlux.set(name, sl.value.unibi * NTMI.at(~uc4).zoom);
+		if (m.getHalo.influxMode == \setAbs) {
+			var name = NTMI.inphlux.inNames[i + m.getHalo.sliderOffset];
+			NTMI.inphlux.set(name, sl.value.unibi * m.getHalo.zoom);
 		} {
 			MFdef(\setRelInf).(
 				i + NTMI.inph.sliderOffset,
 				(sl.prevValue - sl.value).clip2(0.05),
-				NTMI.zoom * NTMI.at(~uc4).zoom
+				NTMI.zoom * m.getHalo.zoom
 			)
 		}
 	}
