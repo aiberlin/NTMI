@@ -25,20 +25,9 @@ nk1: loop, stop, rec:  rand, prev, next MainFX preset
 m.gui
 */
 
-// Inside this file, the mktl to make is called m;
-// comment out var declaration while developing,
-// and uncomment when done and ready to commit.
-var m;
-
-NTMI.currInfo = nil;
-NTMI.currInfo = NTMI.currInfo ? (mktlName: 'nanoKtl1');
-"*** NTMI.currInfo: %\n".postf(NTMI.currInfo);
-// if not set, use default name
-~nanoKtl1 = NTMI.currInfo['mktlName'];
-"*** ~nk1: %\n".postf(~nanoKtl1);
-
-MKtl.all[~nanoKtl1].free;
-m = MKtl(~nanoKtl1, "KORG-nanoKONTROL", multiIndex: NTMI.currInfo[\multiIndex]);
+// Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
+// arguments:MKtl name, desc filename, info reg. multiple hardware
+var m = NTMI.makeMKtl(\nanoKtl1, "KORG-nanoKONTROL", NTMI.currInfo);
 
 // make all named elements first
 m.addNamed(\main, m.elAt(\sl, 0, 8));
