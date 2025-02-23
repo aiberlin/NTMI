@@ -20,29 +20,24 @@ NTMI.at(~en16).setAbs
 
 ****/
 
-var m;
+// Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
+// arguments:MKtl name, desc filename, info reg. multiple hardware
+var m = NTMI.makeMKtl('en16', "intech-grid", NTMI.currInfo);
 
-// if not set, use default name
-~en16 = ~en16 ? 'en16';
+m.addHalo(\zoom, 1);
+NTMI.put(m.name, m.getHalo);
 
-if (NTMI.at(~en16).isNil) {
-	NTMI.put(~en16,
-		(
-			influxMode: \setRel,
-			setAbs: { |dict| "*** % only has setRel.\n".postf(~en16);
-				dict.postln;
-				dict.influxMode = \setRel;
-			},
-			setRel: { "*** % is always setRel.\n".postf(~en16) },
-			zoom: 1,
-			butDown: Set[], butsUsedForMode: false)
-	)
-};
-
-// NTMI.put(~en16, NTMI.at(~en16) ? ());
-
-MKtl.all[~en16].free;
-m = MKtl(~en16, "intech-grid");
+m.getHalo.putAll((
+	influxMode: \setRel,
+	setAbs: { |dict|
+		"*** % only has setRel.\n".postf(m);
+		dict.influxMode = \setRel;
+	},
+	setRel: { "*** % is always setRel.\n".postf(m) },
+	zoom: 1,
+	butDown: Set[],
+	butsUsedForMode: false
+));
 
 // name them first:
 m.addNamed(\FXstep, m.elAt(\enc, 0));
