@@ -99,6 +99,25 @@ NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 	};
 };
 
+NTMI.makeMKtl = { |q, defaultName, descName, currInfo|
+	// support multiple identical interfaces as passed in from TryLoad:
+	if (currInfo.notNil) {
+		var mktlName = NTMI.currInfo.mktlName;
+		var multiIndex = NTMI.currInfo.multiIndex;
+		("NTMI.currInfo: " + NTMI.currInfo.cs).postln;
+		MKtl.all[mktlName].free;
+		// clear currInfo, because we used it
+		NTMI.currInfo = nil;
+		// and make the multiple
+		m = MKtl(mktlName, descName, false, multiIndex: multiIndex);
+	} {
+		// just one single interface, real or virtual:
+		// no need for NTMI.currInfo, just use default name.
+		m = MKtl(defaultName, descName);
+	};
+	m;
+};
+
 /*
 NTMI.tryLoadMKtl("ferrari");
 NTMI.tryLoadMKtl("nanoKtl");
@@ -155,17 +174,21 @@ MFdef(\findConnect).add(\findConnect, {
 		newInfos.do { |info, i|
 			var filename, mktlName;
 			if (info.isKindOf(Dictionary)) {
-				"\nmultiples found:".postln;
-				info.postln;
-				filename = NTMI.filesForFoundInfos[info.deviceName].postln;
+				"\*** Multiples found:".postln;
+				info.postcs;
+				filename = NTMI.filesForFoundInfos[info.deviceName];
+				"finename: %\n".postf(filename);
 				if (filename.notNil) {
 					"...loading multi file:".postln;
 					info.put(\multiIndex, info.destPortIndex ? info.srcPortIndex);
-					info.put(\mktlName,
-						"%_%".format(
-							filename.splitext.first, info.at(\multiIndex)
-						).asSymbol
-					).postcs;
+					mktlName = filename.splitext.first;
+					// not working yet: first of several mktls
+					// should be e.g. 'uc4', not 'uc4_0'.
+					// if (i > 0) {
+						mktlName = "%_%".format(mktlName, info.at(\multiIndex));
+					// };
+					info.put(\mktlName, mktlName.asSymbol).postcs;
+
 					// hand info over to interface code file:
 					NTMI.currInfo = info;
 					NTMI.tryLoadMKtl(filename);
@@ -184,7 +207,7 @@ MFdef(\findConnect).add(\findConnect, {
 		};
 	};
 
-	NTMI.prevFoundInfos = foundInfos;
+	// NTMI.prevFoundInfos = foundInfos;
 	newInfos
 });
 if (NTMI.connectFoundInterfaces) {
