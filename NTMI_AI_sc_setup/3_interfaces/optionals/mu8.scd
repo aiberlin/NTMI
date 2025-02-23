@@ -31,11 +31,12 @@ this leaves button 4 free for an extra mode.
 
 */
 
-NTMI.mu8 = (influxMode: \setRel, zoom: 1,
-	butDown: Set[], butsUsedForMode: false);
+// Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
+// arguments:MKtl name, desc filename, info reg. multiple hardware
+var m = NTMI.makeMKtl('mu8', "music_thing_8mu", NTMI.currInfo);
+m;
 
-MKtl.all.mu8.free;
-
+// tweak gui look:
 MKtlDesc("music_thing_8mu").elAt(\sl).elements.do { |eldesc|
 	eldesc.style.put(\height, 2);
 };
@@ -43,16 +44,21 @@ MKtlDesc("music_thing_8mu").elAt(\acc).elements.do { |eldesc|
 	eldesc.style.put(\height, 2);
 };
 
+// prepare for NTMI influx:
+m.addHalo(\zoom, 1);
+m.addHalo(\influxMode, \setRel);
+m.addHalo(\butDown, Set[]);
+m.addHalo(\butsUsedForMode, false);
 
-MKtl('mu8', "music_thing_8mu");
+NTMI.put(m.name, m.getHalo);
 
-NTMI.mu8.setRel = {
-	NTMI.mu8.influxMode = 'setRel';
-	"NTMI.mu8.influxMode = 'setRel';".postln;
+m.getHalo.setRel = {
+	m.getHalo.influxMode = 'setRel';
+	"*** % influxMode: \n".postf(m.name, m.getHalo.influxMode);
 };
-NTMI.mu8.setAbs = {
-	"NTMI.mu8 has no setAbs, so: ".postln;
-	NTMI.mu8.setRel;
+m.getHalo.setAbs = {
+	"*** % has no setAbs, so: \n".postf(m.name);
+	m.getHalo.setRel;
 };
 
 // rightmost slider is main vol:
@@ -66,7 +72,7 @@ MKtl('mu8').elAt(\acc).action = { |ac|
 	MFdef(\setRelInf).(
 		ac.indexInGroup,
 		ac.value - ac.prevValue,
-		NTMI.mu8.zoom * NTMI.zoom
+		m.getHalo.zoom * NTMI.zoom
 	);
 };
 
@@ -74,14 +80,14 @@ MKtl('mu8').elAt(\bt).action = { |bt|
 	var slotIndex = bt.parent.indexInGroup;
 	if (bt.indexInGroup == 0) {
 		"on: ".post; [bt.name, bt.value].postln;
-		NTMI.mu8.butDown.add(slotIndex).postln;
-		NTMI.mu8.butModeUsed = false;
+		m.getHalo.butDown.add(slotIndex).postln;
+		m.getHalo.butModeUsed = false;
 	} {
 		"off: ".post; [bt.name, bt.value].postln;
-		NTMI.mu8.butDown.remove(slotIndex).postln;
-		if (NTMI.mu8.butModeUsed) {
+		m.getHalo.butDown.remove(slotIndex).postln;
+		if (m.getHalo.butModeUsed) {
 			"% was used for mode.\n".postf(bt.name);
-			NTMI.mu8.butModeUsed = false;
+			m.getHalo.butModeUsed = false;
 		} {
 			NTMI.slots.toggleAt(slotIndex);
 		};
@@ -90,29 +96,29 @@ MKtl('mu8').elAt(\bt).action = { |bt|
 
 MKtl('mu8').addNamed(\modSl, MKtl('mu8').elAt(\sl, (0..6)));
 
-NTMI.mu8.zoomSpec = [0, 4, \amp].asSpec;
-NTMI.mu8.lastPreTime = 0;
+m.getHalo.zoomSpec = [0, 4, \amp].asSpec;
+m.getHalo.lastPreTime = 0;
 (
 MKtl('mu8').elAt(\modSl).action = { |sl|
-	case { NTMI.mu8.butDown.isEmpty } {
+	case { m.getHalo.butDown.isEmpty } {
 		// "influx".postln;
 		// inIndices, diffs, zoom
 		MFdef(\setRelInf).(
 			sl.indexInGroup,
 			sl.value - sl.prevValue,
-			NTMI.mu8.zoom * NTMI.zoom
+			m.getHalo.zoom * NTMI.zoom
 		);
 	} {
 		var step = sl.deviceValue - sl.prevDeviceValue;
 
-		// "mode buts: %\n".postf(NTMI.mu8.butDown);
-		NTMI.mu8.butModeUsed = true;
+		// "mode buts: %\n".postf(m.getHalo.butDown);
+		m.getHalo.butModeUsed = true;
 		case { sl.indexInGroup == 6 } {
 			var now = Main.elapsedTime;
 			// speed limit to 0.25 sec!
-			if (now - NTMI.mu8.lastPreTime > 0.25) {
+			if (now - m.getHalo.lastPreTime > 0.25) {
 				MFdef('mainPreStep').(step);
-				NTMI.mu8.lastPreTime = now;
+				m.getHalo.lastPreTime = now;
 			};
 
 		} { sl.indexInGroup == 5 } {
@@ -120,20 +126,20 @@ MKtl('mu8').elAt(\modSl).action = { |sl|
 			NTMI.incZoom(sl.deviceValue - sl.prevDeviceValue / 64);
 
 		} { sl.indexInGroup == 4 } {
-			var uniNewVal = NTMI.mu8.zoomSpec.unmap(NTMI.mu8.zoom) + (step / 64);
-			NTMI.mu8.zoom = NTMI.mu8.zoomSpec.map(uniNewVal);
-			"NTMI.mu8.zoom: %\n".postf(NTMI.mu8.zoom);
+			var uniNewVal = m.getHalo.zoomSpec.unmap(m.getHalo.zoom) + (step / 64);
+			m.getHalo.zoom = m.getHalo.zoomSpec.map(uniNewVal);
+			"%.zoom: %\n".postf(m.name, m.getHalo.zoom);
 		} { sl.indexInGroup < 4 } {
 			var ndef = NTMI.ndefs[sl.indexInGroup];
 
 			// "slot mode:".postln;
-			case { NTMI.mu8.butDown.includes(0) } {
+			case { m.getHalo.butDown.includes(0) } {
 				MFdef(\ndefVolStep).(ndef, step)
 
-			} { NTMI.mu8.butDown.includes(1) } {
+			} { m.getHalo.butDown.includes(1) } {
 				NTMI.pre.stepNdefInf(ndef, step)
 
-			} { NTMI.mu8.butDown.includes(2) } {
+			} { m.getHalo.butDown.includes(2) } {
 				NTMI.slots.stepNext(sl.indexInGroup, step)
 
 			};
