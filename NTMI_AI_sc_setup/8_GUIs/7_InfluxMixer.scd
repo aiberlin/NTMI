@@ -8,6 +8,42 @@ NTMI.mkmix = NTMI.mkmix ? ();
 Butz('interfaces').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 Butz('NTMI').add(\InfluxMixer, { WinBounds.showOrMake(\InfluxMixer) });
 
+// GUI sketch only - todo:
+// add matrix mix functions
+// and gui-update skipjack
+
+WinBounds.addMake(\influxMatrix, {
+	var base = Window.find("InfluxMixer").bounds.postln;
+	var leftTop = NTMI.mkmix.lines[0][4].bounds.leftTop.postln;
+	var rightBot = NTMI.mkmix.lines.last.last.bounds.rightBottom;
+	var bounds = base.copy.moveBy(275, 0)
+	.width_(base.width - 270).height_(base.height - 60);
+
+	var w = Window("sources VS slots", bounds).front.alpha_(0.9);
+	var gridlines;
+	w.layout = GridLayout.rows(
+		[ "Slot 1", "Slot 2", "Slot 3", "Slot 4" ].collect { |name|
+			StaticText(w, ).string_(name).align_(\center)
+		},
+		*gridlines = NTMI.mkmix.mktls.collect { |mktl, i|
+			4.collect { |j|
+				var left = (100 * j), top = (40 * i);
+				var mv = MView(1.0.rand, w, Rect(left, top, 100, 30));
+				mv.dict.font.size_(20);
+				mv.dict.backCol_(Color.white);
+				mv.dict.valCol_(Color.black);
+
+				mv.uv.background_(Color.white);
+				mv.uv.minSize_(60@20);
+				mv.putDict(\myspec, [-2, 2].asSpec);
+			}
+		}
+	).spacing_(2);
+	NTMI.mkmix.mvgrid = gridlines;
+
+});
+
+
 WinBounds.addMake(\InfluxMixer, {
 	var mktls = MKtl.all.skeys.collect(MKtl(_));
 	var numItems = mktls.size + 4; // maybe some are added later
@@ -55,12 +91,20 @@ WinBounds.addMake(\InfluxMixer, {
 	.action_({ |bt| NTMI.xflux.verbose = bt.value > 0 });
 	NTMI.mkmix.perSec = StaticText(w, 60@30).string_("0/sec").font_(f);
 
-	StaticText(w, Rect(0, 0, 50, 20)).font_(f)
+
+	NTMI.mkmix.matrixBut = Button(w, 80@30).font_(f)
+	.states_([['matrix']]);
+	NTMI.mkmix.matrixBut.action_({
+		WinBounds.showOrMake(\influxMatrix)
+	});
+
+	StaticText(w, Rect(0, 0, 80, 20)).font_(f)
 	.string_("xfluxZoom");
 
-	NTMI.mkmix.xfluxZoom = EZSlider(w, Rect(0, 0, 400, 20), "", [0, 1, \amp], { |sl|
+	NTMI.mkmix.xfluxZoom = EZSlider(w, Rect(0, 0, 300, 30), "xfluxZoom", [0, 1, \amp], { |sl|
 		NTMI.xflux.zoom = sl.value;
 	}, labelWidth: 0, numberWidth: 35);
+	w.view.decorator.nextLine;
 
 	NTMI.mkmix.influxModes = [\setRel, \setAbs];
 	NTMI.mkmix.mktls = mktls;
@@ -107,7 +151,8 @@ WinBounds.addMake(\InfluxMixer, {
 				} { mk.gui.showLabels }
 			}),
 
-			DragSource(w, Rect(40, 0, 140, 20)).font_(f).background_(Color.grey(1.0))
+			DragSource(w, Rect(40, 0, 140, 20)).font_(f).align_(\center)
+			.background_(Color.grey(1.0))
 			.object_(NTMI.mkmix.mktls[i]),
 
 			PopUpMenu(w, Rect(220, 0, 70, 20)).items_([ \setRel, \setAbs])
@@ -168,6 +213,7 @@ WinBounds.addMake(\InfluxMixer, {
 			line[0].string = mk.desc.protocol;
 			line[1].value = mk.hasDevice;
 			line[3].object = mk;
+			try { line[3].string = mk.name };
 			line[4].value = infModeIndex;
 			line[5].value = mkdict.zoom;
 			if (mk.timeSinceLast < 0.5) {
