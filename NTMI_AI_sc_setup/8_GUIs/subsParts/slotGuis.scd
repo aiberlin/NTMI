@@ -224,9 +224,13 @@ NTMI.g.main[\updateSlots] = {
 		};
 
 
-		if (ndef.key != pop.item or: { newLabel != mview.label }) {
+		if (ndef.key != pop.item
+			or: { newLabel != mview.label
+				or: { pop.items != NTMI.slots.choices[0]
+				}
+			}) {
 			pop.items = NTMI.slots.choices[i];
-			pop.value = pop.items.indexOf(ndef.key);
+			pop.value = pop.items.indexOf(ndef.key ? pop.value);
 
 			mview.dict.object = ndef;
 			prepop.items = NdefPreset(ndef).getSetNames;
