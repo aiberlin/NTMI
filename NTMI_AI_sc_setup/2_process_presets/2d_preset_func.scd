@@ -26,7 +26,7 @@ MFdef(\relSet).add(\relSet, { |obj, deltaPairs|
 		[ param, newval ];
 	};
 	obj.set(*newvals.flat);
-});
+}, active: true);
 
 /***
 use tanh/atanh compression curve on bival to create elastic borders
@@ -40,12 +40,20 @@ maxTanh -> bival
 0.995.atanh // +-3
 0.999.atanh // +-3.8
 
-// use new tanh
-MFdef(\relSet).disable(\relSet).enable(\relSetTan);
-// use standard relSet, hardclip at +-1
-MFdef(\relSet).enable(\relSet).disable(\relSetTan);
 */
-NTMI.maxTanh = 0.98;
+// set the hard clip border for tanh:
+NTMI.maxTanh = 0.995;
+
+// define the two modes:
+MFdef(\relSet).modes.put(\lin, (on: \relSet, off: \relSetTan));
+MFdef(\relSet).modes.put(\tan, (on: \relSetTan, off: \relSet));
+/*
+// switch modes:
+// use standard relSet, hardclip at +-1
+MFdef(\relSet).mode = \lin; MFdef(\relSet).activeNames;
+// use new tanh
+MFdef(\relSet).mode = \tan; MFdef(\relSet).activeNames;
+*/
 
 MFdef(\relSet).add(\relSetTan, { |obj, deltaPairs|
 	// maxtanval limits
@@ -55,15 +63,15 @@ MFdef(\relSet).add(\relSetTan, { |obj, deltaPairs|
 		newbi, newval;
 		#param, delta = pair;
 		spec = obj.getSpec(param);
-		bival = obj.getUni(param).biuni;
+		bival = obj.getUni(param).unibi;
 		// clip here:
 		bivaltan = bival.clip2(NTMI.maxTanh).atanh;
-		newbi = (bivaltan + delta).tanh;
+		newbi = (bivaltan + (delta * 2)).tanh;
 		newval = spec.map(newbi.biuni);
 		[ param, newval ];
 	};
 	obj.set(*newvals.flat);
-});
+}, active: false);
 
 
 
