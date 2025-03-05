@@ -79,7 +79,7 @@ NTMI.process.allNames.cs;
 
 //// Define which Ndef-presets to select for any loaded sound processes,
 //// including the four sound slots
-NTMI.pre_initialPresetNames = [
+NTMI.initialPresetNames = [
 	'bleepo' -> 'vocca',
 	'xFMSH' -> 'border',
 	\revFB -> \slolo,
