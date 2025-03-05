@@ -42,7 +42,7 @@ maxTanh -> bival
 
 */
 // set the hard clip border for tanh:
-NTMI.maxTanh = 0.995;
+NTMI.maxTanh = 0.995; // +- 2.994
 
 // define the two modes:
 MFdef(\relSet).modes.put(\lin, (on: \relSet, off: \relSetTan));
@@ -117,6 +117,8 @@ NTMI.pre.makePreset = { |preDict, proxy|
 	} {
 		"--- PRESET %: no preset found! \n".postf(name);
 	};
+
+	preset.storeToDisk = true;
 
 	if (NTMI.pre.addsToTop == true){
 		preset.perform(\addsToTop_, true);
