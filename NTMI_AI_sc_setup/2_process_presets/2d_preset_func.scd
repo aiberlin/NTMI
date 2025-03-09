@@ -173,21 +173,37 @@ NTMI.pre.incrementSeed = {|q, proxy, inc=1|
 	}{ "%: sorry, no preset present.\n".postf(proxy) }
 };
 
+/*
+// two snapModes:
+NTMI.snapDialog = true; // open dialog(s)
+NTMI.snapDialog = nil;  // default, saves with datestamp
+*/
 
 ///// add a preset on the fly while playing
 MFdef(\snapshot1).add(\getset, { |proxy|
 	var presy = NdefPreset(proxy);
 	var name = "%".format(Date.getDate.stamp).asSymbol;
-	"% - adding preset %\n".postf(presy, name);
-	// saves to disk!
-	presy.addSet(name, toDisk: true);
+	if (NTMI.snapDialog == true) {
+		presy.storeDialog(loc: Window.screenBounds.center - (75 @ -200));
+		Window.allWindows.last.name_(proxy.key);
+	} {
+		"% - adding preset %\n".postf(presy);
+		// always saves to disk!
+		presy.addSet(name, toDisk: true);
+	};
 });
 
+
 MFdef(\snapshot).add(\getset, { |proxy|
-	"MFdef(\snapshot) stores:".postln;
-	NTMI.slots.nowPlaying.do { |proxy|
-		MFdef(\snapshot1).(proxy);
-	};
+	var ndefsToSave = NTMI.slots.nowPlaying;
+	if (ndefsToSave.isEmpty) {
+		"snap: nothing playing, nothing to save.".postln
+	} {
+		"MFdef(\snapshot) stores:".postln;
+		ndefsToSave.do { |proxy|
+			MFdef(\snapshot1).(proxy)
+		};
+	}
 });
 
 // inc nil: rand, 1 is next, 2 is prev in list
