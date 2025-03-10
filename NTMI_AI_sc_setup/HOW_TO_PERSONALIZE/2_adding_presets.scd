@@ -41,6 +41,10 @@ Butz(\NTMI).run(\presets);
 // -> presets with date stamp as name are added to the running ndef.
 // to check, look on the presets window.
 
+// if you want to snap-store by dialog,
+// e.g. to prepare for a show, set this flag:
+NTMI.snapDialog = true;
+
 //// renaming presets is easiest in the settings text file.
 //// open the text file with code,
 //// or by clicking the edit button on the Preset GUI:
