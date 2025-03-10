@@ -55,10 +55,12 @@ Butz.add('meters', { s.meter; Window.find(s.name).name_(\meters) });
 Butz.add('scope', { s.scope(s.options.numOutputBusChannels) });
 
 Butz.add(\OSC_trace, {
-	OSCFunc.trace(OSCFunc.classVars[3].not, true);
+	"*** OSC_trace: ".post;
+	OSCFunc.trace(OSCFunc.classVars[3].not.postln, true);
 });
 Butz.add(\MIDI_trace, {
-	MIDIFunc.trace(MIDIFunc.classVars[2].not, true);
+	"*** MIDI_trace: ".post;
+	MIDIFunc.trace(MIDIFunc.classVars[2].not.postln, true);
 });
 
 /// some general helpers
