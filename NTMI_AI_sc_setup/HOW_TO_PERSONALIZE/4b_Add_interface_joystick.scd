@@ -1,25 +1,22 @@
-How to add your own control interface to NTMI:
+/// How to add your own control interface to NTMI:
 
 // - see whether it is supported by Modality-toolkit
 // does any entry in this list look like it?
 MKtlDesc.postLoadable;
 
-// if no, and you would like to add it to modality:
-/// -> please read this:
-"Tutorials/How_to_create_a_description_file".help
+// If not, and you would like to add it to modality,
+// please start here:
+"Tutorials/How_to_create_a_description_file".help;
 
-// you can also use standard MIDI/HID/OSC setup,
+// You can also use standard MIDI/HID/OSC setup,
 // and add NTMI control functions to these.
 
-// if your device is supported in Modality already, great!
-// it makes things a lot easier.
+// If your device is supported in Modality already, great!
+// It makes things a lot easier.
 
-// open the NTMOI project folder
-NTMI.dir.ntmi.openOS;
-
-// this has all the NTMI interface functions you
-// will want to address with your interface.
-Document.open(NTMI.dir.ntmi +/+ "_Interface_Functions.scd");
+// This file has all the NTMI interface functions
+// you will want to address with your interface:
+Document.open(NTMI.dir.setup +/+ "HOW_TO_PERSONALIZE/All_Interface_Functions.scd");
 
 // for example, these are the four ndefs in the slots
 NTMI.ndefs;
@@ -45,7 +42,7 @@ m = MKtl(\logi, "*extreme*");
 // it knows how to make a gui for the controller!
 m.gui.showLabels;
 
-// // for the hysical device to register, may need to do
+// // for the physical device to register, you may need to do
 // Quark("Modality-toolkit").update;
 // // to get correct idInfo for 2023 extreme 3d pro
 
@@ -114,10 +111,9 @@ m.elAt(\bt, 0).action = { |sl|
 m.elAt(\bt, 0).elemDesc.label = "trig";
 m.elAt(\slider).elemDesc.label = "VOL";
 
-WinBounds.addMake(\logi, { m.gui.showLabels });
+// add this interface to the interfaces Butz page
+WinBounds.addMake(\logi, { m.gui.showLabels.parent });
 Butz(\interfaces).add(\logi, {
 	WinBounds.showOrMake(\logi);
 });
 
-Window.closeAll
-Butz.show

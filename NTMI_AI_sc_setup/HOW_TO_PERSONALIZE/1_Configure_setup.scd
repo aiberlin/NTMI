@@ -18,7 +18,9 @@ Document.open("3b_adding_sound_processes.scd".resolveRelative);
 // 4. choose which supported physical interfaces to connect
 // and add your own interfaces e.g. with Modality-toolkit - see:
 
-Document.open("4a_Connecting_new_interfaces.scd".resolveRelative);
+Document.open("4a_Connecting_interfaces.scd".resolveRelative);
+Document.open("4b_Add_interface_joystick.scd".resolveRelative);
+Document.open("4c_addInterface_xtouch_mini.scd".resolveRelative);
 
 // usesMidi, usesHID, connect found or not ...
 
