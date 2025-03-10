@@ -1,14 +1,31 @@
+// NTMI already supports many interfaces:
+NTMI.allInterfaceNames.cs;
 
-/* When adapting the app to play with a new interface,
+// By default, NTMI will connect all supported interfaces it finds.
+// You can turn this off by running:
+NTMI.connectFoundInterfaces = false;
+
+// You can also tell NTMI which interfaces to load:
+NTMI.interfacesToLoad = [\uc4, \nanoKtl];
+
+
+/*
+When adapting NTMI to play with a new interface,
 the basic functions of the nUFO can be put on buttons,
-sliders of the interface to be used choice.
-For longer examples to follow, see the nanoKtl and uc4 files.
+sliders, knobs etc of the interface to be used.
+
+For longer examples to follow, see the nanoKtl and uc4 files:
+
+Document.open(NTMI.dir.setup +/+ "3_interfaces/optionals/nanoKtl.scd");
+Document.open(NTMI.dir.setup +/+ "3_interfaces/optionals/uc4.scd");
 
 */
-/// this file discusses all basic functions:
+
+/// This file discusses all basic functions:
 Document.open(NTMI.dir.setup +/+ "HOW_TO_PERSONALIZE/All_Interface_Functions.scd");
 
-// using Modality-toolkit, make an MKtl for a korg nanokontrol:
+
+// using the Modality-toolkit, make an MKtl for a korg nanokontrol:
 MKtl('testa', "*kontrol2");
 // make a gui for it:
 MKtl('testa').gui;
@@ -28,7 +45,7 @@ MKtl('testa').elAt(\kn, (0..3)).do { |knob, index|
 	};
 };
 
-// set all sliders to center value:
+// set all sliders to center value initially:
 MKtl('testa').elAt(\sl).value = 0.5;
 
 // use the last slider for master volume
@@ -61,11 +78,13 @@ MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
 		// special function
 		MFdef(\setRelInf).value(
 			NTMI.inphlux.inNames[index + 9], // which influx input
-			// difference between old and new element value/position
-			knob.value - knob.prevValue
+			// difference between old and new element value/position,
+			knob.value - knob.prevValue,
+			// can be scaled by a zoom value, here fixed at 1
+			1
 		);
 	};
 };
 
 
-// to be continued ... 
+// for more details, see e.g. nanoKtl file.
