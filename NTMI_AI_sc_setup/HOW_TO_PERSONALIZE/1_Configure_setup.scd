@@ -4,24 +4,29 @@
 
 // 1.  configuring which elements of NTMI setup will load
 // 1a. how to add additional code within the load process
-// ---> both explained in this file.
+// ---> explained in this file.
 
-// 2. add, rename, and edit presets for sound processes - see here:
+// 2. add, rename, and edit presets for the sound processes:
 Document.open("2_adding_presets.scd".resolveRelative);
 
-// 3. choose which sound processes to use,
-// and add your own sound processes - to be written...
+// 3. choose which sound processes to load, and with which presets:
+Document.open("3a_userDir_POOL.scd".resolveRelative);
+
+// 3b. add your own sound processes:
+Document.open("3b_adding_sound_processes.scd".resolveRelative);
 
 // 4. choose which supported physical interfaces to connect
 // and add your own interfaces e.g. with Modality-toolkit - see:
 
-// usesMidi, usesHID, connect found or not ...
-
 Document.open("4a_Connecting_new_interfaces.scd".resolveRelative);
 
-Butz(\Personalize).run(\Interface_doc);
+// usesMidi, usesHID, connect found or not ...
 
-// 1.  configure which elements NTMI setup loads
+// 5. adding and using soundfiles and folders
+Document.open("5_Adding_soundfiles.scd".resolveRelative);
+
+////////////////////////////////////////////////
+// 1.  configure which elements the NTMI setup loads
 
 //// 1. The NTMI user dir, POOL and prefs files
 //// NTMI creates a user directory in the user home folder:
@@ -31,15 +36,13 @@ Butz(\Personalize).run(\Interface_doc);
 // a POOL directory which contains:
 // the soundprocesses to load,
 // a directory for soundfiles,
-// a directory with examples startup files,
+// a directory with examples for startup files,
 // and optionally other general loadable resources, such as
 // files for additional code to run within startup,
 // for example code for attaching preferred interfaces.
 
 NTMI.dir.user;
 NTMI.dir.user.openOS;
-
-
 
 
 /**** SETTINGS and DEFAULTS ****/
@@ -51,11 +54,18 @@ NTMI.defaults.sortedKeysValuesDo { |key, val|
 	"\nNTMI.% = %;\n".postf(key, val.cs);
 }; "";
 
-// 1a. running additional code at different stages in the loading process
+// Full discussion of the default values:
+Document.open(NTMI.dir.setup +/+ "0_globals/ntmi_defaults.scd");
 
-// - check and set the directories NTMI uses - this is required.
-// - check early which MIDI or HID interfaces are present -
+
+// 1a. The different stages in the loading process,
+////// and how to add functions between the stages.
+
+// - NTMI checks and sets the directories NTMI uses - this is required.
+// - NTMI checks early which MIDI or HID interfaces are present -
 // ... this can be configured to skip MIDI and HID to speed up booting.
+NTMI.usesHID = false;
+NTMI.usesMIDI = true;
 
 // - load various global functions ...
 
@@ -63,6 +73,7 @@ NTMI.defaults.sortedKeysValuesDo { |key, val|
 // is is booted already?
 // if yes, should we leave it as is, or reboot? can be set in prefs:
 // if boot or reboot, we can configure the server by a script file:
+NTMI.reboot; // true by default, NTMI will reboot.
 
 // and just before booting, NTMI runs an optional preBoot function:
 NTMI.preBoot;
@@ -76,10 +87,11 @@ NTMI.postBoot;
 // ... when presets are done, this runs:
 NTMI.postPresets;
 
-// - load all built-in interfaces, slots, randomOrbits etc
+// - load all built-in interfaces, such as slots, randomOrbits etc
 // - Then, try to load all present MIDI or HID interfaces,
-// as well as the ones set in the prefs at:
+// - as well as the ones set in the prefs at:
 NTMI.interfacesToLoad.postcs;
+NTMI.skeys.postcs;
 
 // - before loading the mainFX, this runs:
 NTMI.preMainFX;
@@ -90,7 +102,7 @@ NTMI.usesMainFX;
 // - before loading all GUIs, run this:
 NTMI.preGui;
 
-// - then load all guis, unless flag says to skip:
+// - then load all guis, unless this flag says to skip:
 NTMI.hasGui;
 
 // after the GUIs are loaded, NTMI is ready, and runs this:

@@ -57,8 +57,8 @@ NTMI.process.allNames.cs;
 */
 
 // // choose a specific subset of processNames to load
-///// no default needed, defaults to all found processNames
-NTMI.process.namesToLoad = nil;
+///// no default needed, nil defaults to all found processNames
+NTMI.defaults.namesToLoad;
 
 // // Define which 4 sounds to load into the slots on startup:
 // NTMI.defaults.defaultActives = [ 'bleepo', 'xFMSH', 'rjkChaos', 'notThere' ];
@@ -112,10 +112,10 @@ NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to
 // NTMI.mfx.domainName = nil;
 
 // function to run after mainfx, before GUIs are loaded
-NTMI.defaults.preGui = nil;
+NTMI.defaults.preGui;
 
 // function to run after NTMI setup finishes
-NTMI.defaults.finalSetup = nil;
+NTMI.defaults.finalSetup;
 
 // flag whether demo tdefs should be loaded
 NTMI.defaults.loadDemos = true;
