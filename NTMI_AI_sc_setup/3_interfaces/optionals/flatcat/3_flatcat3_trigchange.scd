@@ -79,7 +79,13 @@ NTMI.flatcat[\onData].add(\meta, {
 			MFdef(\mainPreStep).value;
 		};
 		// preset always changes
-		NTMI.pre.stepNdefInf(ndef);
+		if (preset.settings.size < 2 or: { 0.5.coin }) {
+			var seed = rrand(12, 1000);
+			"%: setRand seed %\n".postf(preset, seed);
+			preset.setRand(1.0, seed: seed);
+		} {
+			NTMI.pre.stepNdefInf(ndef);
+		};
 	};
 	\meta
 });
