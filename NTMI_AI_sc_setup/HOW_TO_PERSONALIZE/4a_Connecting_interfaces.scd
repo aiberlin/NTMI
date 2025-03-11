@@ -82,10 +82,10 @@ MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
 	};
 };
 
-// recommended: use relative mode!
+// recommended: use relativity mode!
 MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
 	knob.action = {
-		// special function
+		// special function for relative change:
 		MFdef(\setRelInf).value(
 			NTMI.inphlux.inNames[index + 9], // which influx input
 			// difference between old and new element value/position,

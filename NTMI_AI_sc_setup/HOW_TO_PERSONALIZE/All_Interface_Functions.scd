@@ -1,8 +1,5 @@
 /***** Overview of all NTMI functions to put on interfaces ****/
 
-/********** TODO: ************
-
-*******************/
 
 /*********** GENERAL interface functions: *********
 Most of these are accessible from the main NTMI window;
@@ -13,7 +10,7 @@ there are also many ways change them relatively,
 by little steps, or by random jumps.
 
 This makes it possible to play them with multiple
-interfacessharing influence over all playing processes.
+interfaces sharing influence over all playing processes.
 
 /***** OVERVIEW *****/
 
@@ -24,18 +21,18 @@ The 4 slots for sound processes have functions to:
 
 Each sound process has presets:
 - choose sound preset on each slot
-- store current sound settings as presets
-- (later) choose to couple/decouple sound from influx
+- store current sound settings as new preset
+- choose to couple/decouple sound from influx
 
 
 The Influx NTMI uses to play the sound processes has functions to:
 - set, step or jump the current influx weight preset
 - set or step-change the global influx zoom
-- set, step or change the influx inputs
+- set, step or change the influx input values
 - for each interface, choose absolute or relative influx mode
-- for each interface, set individual amount of zoom
+- for each interface, set an individual amount of zoom
 
-Global functions are:
+Global NTMI functions are:
 - set or step-change main volume
 - set, step-change or jump mainFX preset
 
@@ -51,18 +48,23 @@ Some interfaces may have specific functions:
 NTMI.slots.playAt(0); // start ndef at slot 0 and listen to its monitor
 NTMI.slots.stopAt(0); // stops ndef monitor (ndef itself continues)
 NTMI.slots.playAt(1); // play slot 2 ...
-NTMI.slots.endAt(1);  // this also stops the ndef itself
+// stopAt has a flag whether the ndef will only stop the monitor, or the synth too.
+NTMI.slots.stopAt(1, false);  // this only stops the monitor, synth keeps running
+NTMI.slots.stopAt(1, true);  // this calls ndef.end, so both monitor and synth stop.
 
-// for relative influence, toggle between stop or play
+// for a relative interface, toggle between stop or play
 NTMI.slots.toggleAt(0);
 NTMI.slots.toggleAt(0);
+
+// You can look up many of these functions like this:
+NTMI.slots[\toggleAt].cs;
 
 ////// 3b - set or change volume per slot
 // set absolute volume on a specific ndef in a slot:
 NTMI.slots.actives[2].vol_(0.5);
 NTMI.slots.actives[1].vol_(0.1);
 
-// change volume on a specific ndef by small integer steps
+// Change volume on a specific ndef by small integer steps
 // as they usually come from MIDI encoders
 // MFdef('ndefVolStep').(<ndef>, <increment>);
 // make ndef in slot 1 louder by 2 steps (as in MIDI cc steps)
@@ -70,15 +72,17 @@ MFdef('ndefVolStep').(NTMI.slots.actives[1], 2.postln);
 // see the function for that:
 MFdef('ndefVolStep').funcDict.postcs;
 
+
 /////////////// SOUND CHOICE and PRESET Functions: /////////////
 
 ///// Choose which sound plays in a slot /////
 // See the choices of available sounds for each slot:
 NTMI.slots.choices[0];
-// Since ndefs can only be in one slot at a time,
-// the choices always excludes the 4 ndefs currently in use.
+// Since ndefs can only be in one slot at a time, the choices
+// always exclude the 3 ndefs currently in use in the other slots.
 
-// step/jump a slot to a next sound: step 1 for up, -1 for down, nil for random jump
+// step/jump a slot to a next sound: this stops the slot.
+// step 1 for up, -1 for down, nil for random jump
 NTMI.slots.stepNext(0, 1);
 NTMI.slots.stepNext(0, nil);
 NTMI.slots.stepNext(0, -1);
@@ -95,9 +99,9 @@ NTMI.slots.chooseNext(0);
 
 // change the preset on a single sound:
 // NTMI.pre.stepNdefInf( ndef, step );
-NTMI.pre.stepNdefInf( Ndef(\cat), 1 );   // one step up
-NTMI.pre.stepNdefInf( Ndef(\cat), -1 );  // one step down
-NTMI.pre.stepNdefInf( Ndef(\cat), nil ); // random jump
+NTMI.pre.stepNdefInf( NTMI.ndefs[0], 1 );   // one step up
+NTMI.pre.stepNdefInf( NTMI.ndefs[0], -1 );  // one step down
+NTMI.pre.stepNdefInf( NTMI.ndefs[0], nil ); // random jump
 
 // change the presets on all playing sounds:
 // NTMI.slots.stepActivePres(step);
@@ -110,13 +114,16 @@ NTMI.slots.stepActivePres; // nil for random jump
 MFdef('snapshot1').value(NTMI.ndefs.choose);
 /////////// quick-store setting of every playing sound:
 MFdef('snapshot').value;
+// NTMI can also open a dialog on snapshot:
+NTMI.snapDialog = true;
+
 
 // For the curious, see all the functions and objects within NTMI.slots:
 NTMI.slots.printInterface("NTMI.slots."); "";
 
 
 
-//////////////////// INPHLUX functions:
+//////////////////// INPHLUX functions to change sound parameters:
 //// these are global, as influx usually influences all currently playing slots.
 
 // this is the Influx object NTMI uses:
@@ -125,11 +132,15 @@ NTMI.inphlux;
 Butz(\NTMI).run(\inphlux);
 
 NTMI.inphlux.resetInvals; // reset inphlux
+
 // setting a single input to an absolute value produces
-// a complex change in ALL output values:
+// a complex change in ALL influx output values:
 NTMI.inphlux.set(\x, 0.5);
 NTMI.inphlux.set(\x, 0.25);// half that shift
 NTMI.inphlux.set(\x, 0); // return to 0
+
+// This is used in absolute mode, setAbs, where a single interface
+// has full control of the sound processes.
 
 // setting a different input (by name) produces a different shift:
 NTMI.inphlux.set(\y, 0.5);
@@ -180,20 +191,44 @@ NTMI.inphlux.set(NTMI.inphlux.inNames.choose.postln, 1.0.rand2.round(0.001).post
 // flatten to zero:
 NTMI.inphlux.resetInvals;
 
-// 2f. do relative sets on the influx inputs
-NTMI.inphlux.set(\x, (NTMI.inphlux.get(\x) + 0.3.rand2.postln).clip2(1));
+// For playing with multiple interfaces and players,
+// NTMI has an Absolute Relativity Mode, setRel, which is
+// the recommended default.
+// Here, one takes the difference on an interface element
+// (e.g. a slider's current position minus is previous position,
+// and tells NTMI to shift the parameters of the running processes
+// by a difference vector coming from the influx weights.
 
-// or use influx preset for shifting the current setting of a given ndef:
-(
-var ndef = NTMI.ndefs[0];
-var whichInfluxIns = (1.. ndef.getKeysValues.size - 1);
-var delta = 0.1.rand.postln;
-var zoom = 0.3;
-NTMI.inphlux.setRel(ndef, deltas: delta, zoom: zoom);
-)
+// The function provided for this is MFdef(\setRelInf):
+
+MFdef(\setRelInf).value(
+	NTMI.inphlux.inNames[index + 9], // which influx input(s)
+	// difference between old and new element(s) value/position,
+	knob.value - knob.prevValue,
+	// can be scaled by a zoom value for each interface,
+	// here fixed at 1
+	1
+);
 
 
-////// 1. GLOBAL controls - Volume, MainFX, Influx
+// Finally, sounds can be decoupled from influx:
+// start first two slots
+NTMI.slots.playAt(0);
+NTMI.slots.playAt(1);
+
+NTMI.inph.decouple(NTMI.ndefs[0]);
+NTMI.inph.decouple(NTMI.ndefs[1]);
+NTMI.inph.decoupled
+
+NTMI.inph.couple(NTMI.ndefs[0]);
+NTMI.inph.couple(NTMI.ndefs[1]);
+// toggles coupling/decoupling:
+NTMI.clutch(NTMI.ndefs[0]);
+NTMI.clutch(NTMI.ndefs[0]);
+
+
+
+////// GLOBAL controls - Volume, MainFX
 
 ////// 1a. mainVol - set absolute volume to value within range 0-4 :
 MFdef(\mainVol).value(2.0.rand);  // [0, 4, \amp]
@@ -231,21 +266,6 @@ MFdef('mainPreStep').(); // nil is rand
 
 
 
-// decouple sound from influx -
-// start first two slots
-NTMI.slots.playAt(0);
-NTMI.slots.playAt(1);
-
-NTMI.inph.decouple(NTMI.ndefs[0]);
-NTMI.inph.decouple(NTMI.ndefs[1]);
-NTMI.inph.decoupled
-
-NTMI.inph.couple(NTMI.ndefs[0]);
-NTMI.inph.couple(NTMI.ndefs[1]);
-// toggles coupling/decoupling:
-NTMI.clutch(NTMI.ndefs[0]);
-NTMI.clutch(NTMI.ndefs[0]);
-
 
 
 
@@ -269,6 +289,7 @@ NTMI.slots.fadeoutTime;
 // step thru main nUFO modes:
 // - full, touch, binary
 NTMI.nUFO.modeStep();
+
 // full mode connects and imu, pads to influx
 // touch mode only connects pads to influx 9-16
 // binary uses only pads to build a "preset piano",
