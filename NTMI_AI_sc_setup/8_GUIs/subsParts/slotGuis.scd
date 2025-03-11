@@ -226,7 +226,7 @@ NTMI.g.main[\updateSlots] = {
 
 		if (ndef.key != pop.item
 			or: { newLabel != mview.label
-				or: { pop.items != NTMI.slots.choices[0]
+				or: { pop.items != NTMI.slots.choices[i]
 				}
 			}) {
 			pop.items = NTMI.slots.choices[i];
