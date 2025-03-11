@@ -43,6 +43,8 @@ Ndef(\granbuf, { |
 	scanspeed = 1, posvar = 0.001,
 	panvar = 0.25|
 
+	var numChans = NTMI.numChans ? 2;
+
 	var trig = Impulse.ar(dens * (1-trigrand)) + Dust.ar(dens * trigrand);
 	var sndbuf2 = sndbuf.linlin(0, 1, *Ndef(\granbuf).getHalo(\sndBufRange));
 	var sndbuf3 = sndbuf2 + Latch.ar(WhiteNoise.kr(sndbufvar), trig).round(1);
@@ -53,7 +55,7 @@ Ndef(\granbuf, { |
 
 	var amp2 = amp.lag(0.1) * (overlap.max(1) ** -0.25);
 
-	GrainBuf.ar(4, trig, overlap / dens, sndbuf3, ratekr, filepos2, 2, panpos) * amp2;
+	GrainBuf.ar(numChans, trig, overlap / dens, sndbuf3, ratekr, filepos2, 2, panpos) * amp2;
 });
 
 // Preset: don't store amp and sndbuf
