@@ -2,30 +2,40 @@
 NTMI.allInterfaceNames.cs;
 
 // By default, NTMI will connect all supported interfaces it finds.
-// You can turn this off by running:
+// You can turn this off with a flag:
 NTMI.connectFoundInterfaces = false;
 
-// You can also tell NTMI which interfaces to load:
+// for faster startup, you can turn MIDI or HID protocols off:
+// also not that on Windows, HID is not working in SuperCollider.
+NTMI.usesMidi = true;
+NTMI.usesHid = false;
+
+// You can also tell NTMI which specific interfaces to load:
 NTMI.interfacesToLoad = [\uc4, \nanoKtl];
+
+// load one by hand:
+NTMI.tryLoadMKtl(\uc4);
+// this opens that MKtl, and shows its gui,
+// which usually has labels on the elements
+// to show what each button, slider, knob etc does.
+
+// You can update Butz(\interfaces) to show it as loaded.
+NTMI.updateInterfaceButz;
 
 
 /*
-When adapting NTMI to play with a new interface,
-the basic functions of the nUFO can be put on buttons,
+When adapting NTMI to play it with a new interface,
+the basic functions of NTMI setup can be put on buttons,
 sliders, knobs etc of the interface to be used.
-
-For longer examples to follow, see the nanoKtl and uc4 files:
-
-Document.open(NTMI.dir.setup +/+ "3_interfaces/optionals/nanoKtl.scd");
-Document.open(NTMI.dir.setup +/+ "3_interfaces/optionals/uc4.scd");
-
 */
 
 /// This file discusses all basic functions:
 Document.open(NTMI.dir.setup +/+ "HOW_TO_PERSONALIZE/All_Interface_Functions.scd");
 
 
-// using the Modality-toolkit, make an MKtl for a korg nanokontrol:
+
+/////// Here a short example  how to proceed using the Modality-toolkit.
+/////// Make an MKtl for a korg nanokontrol2:
 MKtl('testa', "*kontrol2");
 // make a gui for it:
 MKtl('testa').gui;
@@ -86,5 +96,6 @@ MKtl('testa').elAt(\sl, (0..6)).do { |knob, index|
 	};
 };
 
-
-// for more details, see e.g. nanoKtl file.
+// For detailed examples, see the nanoKtl and uc4 files:
+Document.open(NTMI.dir.setup +/+ "3_interfaces/optionals/nanoKtl.scd");
+Document.open(NTMI.dir.setup +/+ "3_interfaces/optionals/uc4.scd");
