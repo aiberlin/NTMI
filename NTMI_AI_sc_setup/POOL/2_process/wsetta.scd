@@ -10,8 +10,8 @@ thisProcess.recompile;
 };
 
 
-Tdef(\wsetta).gui(16);
-Ndef(\wsetta).gui;
+Tdef('wsetta').gui(16);
+Ndef('wsetta').gui;
 
 // NTMI.wse.sfdir.openOS;
 
@@ -19,14 +19,8 @@ NTMI.wse.sfdir = NTMI.dir.user +/+ "soundfiles/examples";
 SoundFile.collect(NTMI.wse.sfdir +/+ "*");
 
 // todo:
-- if keep = true, keep earlier wavesets around
-- simple GUI  to load more samples from
-Butz.add(\wsetta, {
-
-
-});
-
-SoundFile.collect(NTMI.wse.sfdir +/+ "*");
+- keep mulitple lists of wavesets around for switching
+- make GUI code invisible for headless use
 */
 
 // init
@@ -61,28 +55,19 @@ NTMI.wse.loadWSEs = { |dict, dir, add = false|
 	};
 };
 
-// Wsetta has extra gui -
+// Wsetta has extra gui - only make it if not headless
 if (NTMI.hasGui) {
-	// this must happen after Butz was done - see GUIs/wsetta.scd
-	// Butz.add(\wsetta, { WinBounds.showOrMake(\wsetta) });
-	WinBounds.addMake(\wsetta, {
-		/*
-		Document.open(NTMI.dir.userPOOL +/+ "2_process/wsetta.scd");
-		*/
-		NTMI.wse.win = \Window.asClass.new("wsetta", Rect.aboutPoint(Window.screenBounds.center, 200, 170)).front;
+	"Butz.add('wsetta', { WinBounds.showOrMake('wsetta') });
+	WinBounds.addMake('wsetta', {
+		NTMI.wse.win = Window('wsetta',
+			Rect.aboutPoint(Window.screenBounds.center, 200, 150)
+		).front;
 		NTMI.wse.win.view.addFlowLayout;
-		// \Button.asClass.new(NTMI.wse.win, 100@30).states_([["play"]]).action
-		\Button.asClass.new(NTMI.wse.win, 100@30).states_([["new files"]])
-		.action_({
-			FileDialog({ |paths|
-				paths.do { |path| NTMI.wse.loadWSEs(path.postcs) }
-			}, nil, 2, 0);
-		});
-		\TdefGui.asClass.new(Tdef('wsetta'), 3, NTMI.wse.win);
-		\NdefPresetGui.asClass.new(NdefPreset('wsetta'), 12, NTMI.wse.win);
-
+		Button(NTMI.wse.win, 100@30).states_([['new files']]);
+		TdefGui(Tdef('wsetta'), 3, NTMI.wse.win);
+		NdefGui(Ndef('wsetta'), 12, NTMI.wse.win);
 		NTMI.wse.win
-	});
+	});".interpret;
 };
 
 // load the default here:
@@ -93,8 +78,6 @@ NTMI.wse.loadWSEs(NTMI.wse.sfdir);
 ServerBoot.add({ NTMI.wse.loadWSEs }, s);
 
 );
-
-
 
 /*
 General plan:
@@ -129,59 +112,57 @@ how much automatic variation?
 
 */
 
-
-
 (
 // non-storable params, remain in Tdef only:
 // which waveset by index
-Tdef(\wsetta).set(\wse_index, 0);
+Tdef('wsetta').set(\wse_index, 0);
 // show path on tdefgui
-Tdef(\wsetta).set(\wse_path, '?');
+Tdef('wsetta').set(\wse_path, '?');
 // running wavesets index
-Tdef(\wsetta).set(\pos, 0);
+Tdef('wsetta').set(\pos, 0);
 
-Tdef(\wsetta).addSpec(\wse_index, [0, 10, \lin, 1]);
-Tdef(\wsetta).addSpec(\pos, [0, 10000, 0, 1]);
+Tdef('wsetta').addSpec(\wse_index, [0, 10, \lin, 1]);
+Tdef('wsetta').addSpec(\pos, [0, 10000, 0, 1]);
 );
 
 (
 //////// get these params from Ndef:
 
-Ndef(\wsetta).clear;
-Ndef(\wsetta).ar(2);
+Ndef('wsetta').clear;
+Ndef('wsetta').ar(2);
 
 // and a silent dummy sound source, which determines the param names in order.
 // could also put some post-processing in here:
-Ndef(\wsetta, { |amp,
+Ndef('wsetta', { |amp,
 	num = 10, repeats = 1, progress = 10,
 	legato = 1, rate = 1, rate2 = 1, pan = 0.5|
 	Silent.ar(2);
 });
 // get default settings:
-Ndef(\wsetta).supplementNodeMap;
+Ndef('wsetta').supplementNodeMap;
 
-Ndef(\wsetta).addSpec(\num, [1, 100, \exp, 1]);
-Ndef(\wsetta).addSpec(\repeats, [1, 100, \exp, 1]);
-Ndef(\wsetta).addSpec(\legato, [0.1, 10, \exp]);
-Ndef(\wsetta).addSpec(\rate, [0.25, 4, \exp]);
-Ndef(\wsetta).addSpec(\rate2, [0.25, 4, \exp]);
-Ndef(\wsetta).addSpec(\legatoDev, [1, 10, \exp]);
-Ndef(\wsetta).addSpec(\wsamp, \amp);
+Ndef('wsetta').addSpec(\num, [1, 100, \exp, 1]);
+Ndef('wsetta').addSpec(\repeats, [1, 100, \exp, 1]);
+Ndef('wsetta').addSpec(\legato, [0.1, 10, \exp]);
+Ndef('wsetta').addSpec(\rate, [0.25, 4, \exp]);
+Ndef('wsetta').addSpec(\rate2, [0.25, 4, \exp]);
+Ndef('wsetta').addSpec(\legatoDev, [1, 10, \exp]);
+Ndef('wsetta').addSpec(\wsamp, \amp);
 
-Ndef(\wsetta).addSpec(\progress, [-34, 34, 0, 1]);
+Ndef('wsetta').addSpec(\progress, [-34, 34, 0, 1]);
 
 
 // ndef source is the Tdef ...
-Ndef(\wsetta).put(5, Tdef(\wsetta));
+Ndef('wsetta').put(5, Tdef('wsetta'));
 
-Ndef(\wsetta).end;
+Ndef('wsetta').end;
 );
 
 // simple, no random variation except pan
 (
-Tdef(\wsetta).quant_(0);
-Tdef(\wsetta, {
-	var myname = \wsetta;
+Tdef('wsetta').quant_(0);
+Tdef('wsetta', {
+	var myname = 'wsetta';
 	var myndef = Ndef(myname);
 	var mymap = myndef.nodeMap;
 	var mytdef = Tdef(myname);
@@ -197,7 +178,11 @@ Tdef(\wsetta, {
 
 	mymap.postcs;
 
-	"% runs ... \n".postf(mytdef);
+	"% runs ...\n".postf(mytdef);
+	while { NTMI.wse.wses.size < 1 } {
+	"% waits for wses to load ...\n".postf(mytdef);
+		1.wait;
+	};
 
 	mytdef.getSpec(\wse_index).maxval_(NTMI.wse.wses.size);
 
@@ -212,8 +197,7 @@ Tdef(\wsetta, {
 		// i.postln; 1.wait;
 
 		/////// which wavesets? post if changed
-		wse = NTMI.wse.wses.wrapAt((ev.wse_index ? 0).asInteger.postln);
-		wse.buffer.path.basename.postcs;
+		wse = NTMI.wse.wses.wrapAt((ev.wse_index ? 0).asInteger);
 		if (wse.isNil) {
 			"wsetta: no wavesets loaded in NTMI.wse.wses!".postln;
 			1.wait;
@@ -234,7 +218,7 @@ Tdef(\wsetta, {
 				rate: mymap[\rate],
 				rate2: mymap[\rate2],
 				pan: mymap[\pan].rand2,
-				amp: mymap[\amp] / mymap[\legato].max(1).sqrt,
+				wsamp: mymap[\amp] / mymap[\legato].max(1).sqrt,
 				out: myndef.index
 			));
 
@@ -269,4 +253,4 @@ Tdef(\wsetta, {
 );
 
 // return the Ndef!
-Ndef(\wsetta);
+Ndef('wsetta');
