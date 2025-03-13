@@ -94,6 +94,11 @@ IMAGE::NTMI_mktlinflmix.png#The InfluxMixer window shows all connected interface
 
 In this window you can set the Influx zoom level for each interface and define whether it is running in absolute or relative mode. In the next section we will understand the differences between absolute and relative modes, and why it matters when using multiple interfaces with NTMI.
 
+To try out several interfaces from their GUIs, go to Butz/interfaces:
+When you click on one of the loadables, it will load that interface,
+connect it if the hardware device is attached, and open its GUI,
+so you see its elements and their functions written on the labels.
+
 section::Absolute and relative influences
 
 The underlying intention in Influx mode at the core of NTMI is to gracefully leave analytic control behind in favor of a very fast sensomotoric feedback loop: make a movement with/on the interface, listen to the  change in the sound world, and learn to go with this flow of intuitive decisions by ear.
@@ -107,6 +112,12 @@ Generalizing this idea of relative change to all the interfaces attached to one 
 section::Customizing
 
 NTMI is fully customizable. In this section we will see how to easily add your own sound processes, sound files (for sound processes that use buffers) and add support to new MIDI/HID/OSC controllers.
+
+In the Butz window, the items in the Personalize Menu cover this in more detail;
+the texts here are a quick introduction.
+
+subsection::Custom sound presets
+NTMI sound processes can store settings by name, so you can recall them later.
 
 subsection::Custom sound processes
 
@@ -145,3 +156,13 @@ code::
 NTMI.globalBufFolder = "/path/to/soundfiles";
 NTMI.run;
 ::
+you can load sets of folders which will be globally accessible by name, in
+
+code:: q.bufs[<folderName>]; ::
+
+The sound processes that use buffers can be set to a range of buffers with:
+
+code::
+MFdef(\bufSetRange).([Ndef(\granbuf), Ndef(\bufRd)], q.bufs.global);
+MFdef(\bufSetRange).([Ndef(\granbuf), Ndef(\bufRd)], q.bufs.myfavorites);
+ ::
