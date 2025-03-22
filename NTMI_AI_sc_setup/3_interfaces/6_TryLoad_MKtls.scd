@@ -41,6 +41,30 @@ NTMI.run;
 
 NTMI.interfaces = NTMI.interfaces ? ();
 
+
+///// Helper func to make MIDI encoders endless in software:
+
+// Rotary encoders are often in absolute mode, meaning they hit a max or min,
+// of 0 or 127 even though they can physically rotate endlessly.
+// when it is inconvenient to switch them to relative encoder mode in the hardware,
+// this function is an alternative: reset to the center value,
+// so rotation can go anywhere from here.
+// Faderfox uc4 needs a bit of delay (0.02 sec) for this to work.
+
+NTMI.resetOnMinMax = { |q, el, min = 0, max = 127, newmin = 64, newmax = 64, delay = 0.02|
+	// reset if minval
+	if (el.deviceValue <= min) {
+		"% min reached, reset to %\n".postf(el, newmin);
+		// set deviceValue twice so prevDeviceValue is also new.
+		defer ({ el.deviceValue_(newmin).deviceValue_(newmin) }, delay)
+	};
+	// reset if maxval
+	if (el.deviceValue >= max) {
+		defer ({ el.deviceValue_(newmax).deviceValue_(newmax) }, delay)
+	};
+};
+
+
 NTMI.findOptionals = {
 	NTMI.optionals = (NTMI.dir.setup +/+ "3_interfaces/optionals/""*.scd").pathMatch;
 	"\n\n*** Found % optional interface files: ".postf(NTMI.optionals.size);
