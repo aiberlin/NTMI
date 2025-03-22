@@ -121,13 +121,6 @@ m.getHalo.setAbs = {
 m.getHalo.influxMode;
 m.getHalo.setRel;
 
-/* *****
-*** We leave uc4 encoders on default absolute mode (0..127),
-    and make them endless here:
-- when we hit 0, go back up to 7 to allow next step down;
-- when we hit 127, go back down to 120 to allow next step up.
-****/
-
 /// lower 4 knobs change slots volume
 m.elAt(\vols).do { |el, i|
 	el.action = { |el|
