@@ -50,7 +50,7 @@ MFdef(\nUFOImuFunc).add(\setRel, {
 	// imu.value = imu.value;
 
 	MFdef(\setRelInf).(
-		(0..diffs.size-1) + 8,
+		(0..diffs.size-1), // imu is chans 0-8
 		diffs,
 		NTMI.inphlux.inScaler * NTMI.nUFO.zoom
 	);
@@ -86,7 +86,7 @@ MFdef(\capsToInph).add(\setRel, {
 
 	// influence the playing slots
 	MFdef(\setRelInf).(
-		(0..diffs.size-1), // no offset for pads
+		(0..diffs.size-1) + 9, // offset 9 for pads
 		diffs,
 		NTMI.inphlux.inScaler * NTMI.nUFO.zoom
 	);
