@@ -135,11 +135,7 @@ m.elAt(\vols).do { |el, i|
 		// limit to +-6, the largest ever step on an encoder
 		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
 		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
-		// make encoder endless with small jump back;
-		// defer is needed for uc4 to accept new value
-		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
-			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
-		)[el.deviceValue].value;
+		NTMI.resetOnMinMax(el);
 	}
 };
 
@@ -193,7 +189,7 @@ m.elAt('selMode').do { |onoffgroup, i|
 
 // normal: select next setting
 // hat down: select next sound
-// same
+
 m.elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
@@ -208,10 +204,8 @@ m.elAt(\select).do { |el, i|
 			// next preset
 			NTMI.pre.stepNdefInf(ndef, relStep);
 		};
-		// make encoder endless with small jump back:
-		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
-			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
-		)[el.deviceValue].value;
+		// make encoder endless with jump to middle
+		NTMI.resetOnMinMax(el);
 	}
 };
 
