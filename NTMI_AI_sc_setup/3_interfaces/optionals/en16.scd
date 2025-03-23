@@ -1,14 +1,15 @@
-/**** EN16 grid layput for NTMI:
+/**** EN16 grid layout for NTMI:
 
-top row 1:     enc mainFX      enc influxPre          3: zoom         4: mainvol, snap
+-			1			2			3		4
+top row:	mainFX      influxPre   zoom    mainvol, snap
 
-2nd row 2: bt is play, enc is vol, but + enc = change snd
+2nd row: slots. bt is toggle play, enc is vol, but + enc = change snd
 
-sls row 3, 4: influx relatives
+row 3, 4: encs are influx relatives
 
-3 bt:  snd presets up x 4
-4 bt:  snd pre down x 4
-3 + 4 : jump snd preset
+row 3 bt: 4x snd preset up
+row 4 bt: 4x snd preset down
+3 + 4 bt: jump snd preset
 
 m.gui.showLabels;
 
@@ -17,7 +18,9 @@ NTMI.skeys.cs
 
 NTMI.at(~en16).setRel
 NTMI.at(~en16).setAbs
-
+MKtl(\en16).free;
+MKtl.all
+m.elAt(\bt, 2)
 ****/
 
 // Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
@@ -25,6 +28,7 @@ NTMI.at(~en16).setAbs
 var m = NTMI.makeMKtl('en16', "intech-grid", NTMI.currInfo);
 
 m.addHalo(\zoom, 1);
+m.addSpec(\zoom, [0, 4, \amp]);
 NTMI.put(m.name, m.getHalo);
 
 m.getHalo.putAll((
@@ -69,22 +73,39 @@ m.elAt(\infl).do { |el, i| el.elemDesc.label = "infl %".format(i+1) };
 
 /// then add actions:
 m.elAt(\FXstep).action = { |el|
+	var delta = el.deviceValue - el.prevDeviceValue.clip(1, 126);
 	// time-buffer this for safety
-	MFdef(\mainPreStep).(el.deviceValue - el.prevDeviceValue);
+	MFdef(\mainPreStep).(delta);
 };
 m.elAt(\FXjump).action = { MFdef(\mainPreStep).value };
 
 m.elAt(\infPre).action = { |el|
-	NTMI.inph.stepWPre.(el.deviceValue - el.prevDeviceValue);
+	var delta = el.deviceValue - el.prevDeviceValue.clip(1, 126);
+	NTMI.inph.stepWPre.(delta);
 };
 m.elAt(\infJmp).action = { NTMI.inph.stepWPre };
 
-m.elAt(\zoom).action = {
-	"which zoom to set here?".postln;
+
+m.elAt(\zoom).action = { |el|
+	var delta = el.deviceValue - el.prevDeviceValue.clip(1, 126);
+	// if knob down, set NTMI.zoom
+	if (m.elAt(\bt, 2).isOn) {
+		var spec = \zoom.asSpec;
+		var zoomval = spec.unmap(NTMI.zoom);
+		var relStep = delta * 0.025;
+		zoomval = spec.map(zoomval + relStep);
+		NTMI.zoom = zoomval;
+		// "NTMI.zoom: %\n".postf(NTMI.zoom);
+	} {
+		// default: set my interface zoom
+
+		"NTMI.%.zoom: %\n".postf(m.name, NTMI.at(m.name).zoom);
+	};
 };
 
 m.elAt(\mainVol).action = { |el|
-	MFdef(\mainVolStep).(el.deviceValue - el.prevDeviceValue);
+	var delta = el.deviceValue - el.prevDeviceValue.clip(1, 126);
+	MFdef(\mainVolStep).(delta);
 };
 m.elAt(\SNAP).action = { MFdef(\snapshot).value };
 
@@ -94,11 +115,6 @@ m.elAt(\vols).do { |el, i|
 		// limit to +-6, the largest ever step on an encoder
 		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
 		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
-		// make encoder endless with small jump back;
-		// defer is needed for midi devices to accept new value
-		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
-			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
-		)[el.deviceValue].value;
 	}
 };
 m.elAt(\playBts).do { |el, i|
@@ -108,9 +124,6 @@ m.elAt(\playBts).do { |el, i|
 m.elAt(\infl).do { |el, i|
 	el.action = {
 		MFdef(\setRelInf).(i + 9, el.value - el.prevValue);
-		// defer is needed for midi devices to accept new value
-		(    0: { defer ({ el.deviceValue_(7).trySend }, 0.03) },
-			127: { defer ({ el.deviceValue_(120).trySend }, 0.03) }
-		)[el.deviceValue].value;
+		NTMI.resetOnMinMax(el);
 	}
 };
