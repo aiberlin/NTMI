@@ -121,14 +121,14 @@ m.getHalo.setAbs = {
 m.getHalo.influxMode;
 m.getHalo.setRel;
 
+
 /// lower 4 knobs change slots volume
 m.elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
 		// limit to +-6, the largest ever step on an encoder
-		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
+		var valStep = NTMI.encDelta(el);
 		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
-		NTMI.resetOnMinMax(el);
 	}
 };
 
@@ -186,7 +186,7 @@ m.elAt('selMode').do { |onoffgroup, i|
 m.elAt(\select).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
-		var relStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
+		var relStep = NTMI.encDelta(el);
 		var onoffbut = m.elAt(\selMode)[i];
 
 		if (onoffbut.isOn) {
@@ -197,8 +197,6 @@ m.elAt(\select).do { |el, i|
 			// next preset
 			NTMI.pre.stepNdefInf(ndef, relStep);
 		};
-		// make encoder endless with jump to middle
-		NTMI.resetOnMinMax(el);
 	}
 };
 
