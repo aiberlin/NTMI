@@ -114,8 +114,8 @@ m.elAt(\enc).do { |enc, i|
 				"// first 4 change volume ...".postln;
 				NTMI.ndefs[i].softVol_(enc.value.squared, lastVal: enc.prevValue.squared);
 			} {
-
-				var step = enc.deviceValue - enc.prevDeviceValue;
+				// make encoder rotation endless
+				var step = enc.deviceValue - enc.prevDeviceValue.clip(1, 126);
 				var slotIndex = i-4;
 				var ndef = NTMI.ndefs[slotIndex];
 				"// second 4 step thru NdefPreset setting".postln;
