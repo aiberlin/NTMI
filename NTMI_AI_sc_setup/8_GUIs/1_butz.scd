@@ -206,7 +206,7 @@ Butz(\Personalize).add('Process_doc', {
 Butz(\Personalize).add(\Process_open, { (NTMI.dir.userPOOL +/+"2_process").openOS });
 
 Butz(\Personalize).add('Interface_doc', {
-	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/4a_Connecting_new_interfaces.scd")
+	Document.open(NTMI.dir.setup +/+ "/HOW_TO_PERSONALIZE/4a_Connecting_interfaces.scd")
 });
 
 Butz(\Personalize).add(\SoundF_doc, {

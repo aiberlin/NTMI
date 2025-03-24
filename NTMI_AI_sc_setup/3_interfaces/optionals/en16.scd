@@ -27,9 +27,8 @@ row 4 buttons: 4x randomize sound settings
 
 // Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
 // arguments:MKtl name, desc filename, info reg. multiple hardware
-// var m;
+var m;
 
-m.free;
 m = NTMI.makeMKtl('en16', "intech-grid", NTMI.currInfo);
 
 m.addHalo(\zoom, 1);
@@ -162,11 +161,11 @@ m.elAt(\randBts).do { |el, i|
 	}
 };
 
-
 m.elAt(\infl).do { |el, i|
 	el.action = { |el|
 		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
 		MFdef(\setRelInf).([i + 9], [valStep * 0.01], m.getHalo.zoom);
 	}
 };
-
+// return m
+m;
