@@ -14,27 +14,27 @@ interfaces sharing influence over all playing processes.
 
 /***** OVERVIEW *****/
 
-The 4 slots for sound processes have functions to:
-- play, stop, end, toggle sound process
-- set or change volume per slot
-- choose sound process on each slot
-
-Each sound process has presets:
-- choose sound preset on each slot
-- store current sound settings as new preset
-- choose to couple/decouple sound from influx
+The 4 slots for sound processes have functions,
+all accessible on the slotGui:
+- play, stop, toggle each sound process
+- volume per slot
+- choose sound process for slot
+- choose sound preset on slot
+- couple/decouple sound from influx
 
 
 The Influx NTMI uses to play the sound processes has functions to:
 - set, step or jump the current influx weight preset
-- set or step-change the global influx zoom
+- set or step global influx zoom
 - set, step or change the influx input values
-- for each interface, choose absolute or relative influx mode
+
+- for each interface, choose absolute or relative influx mode (setAbs or setRel)
 - for each interface, set an individual amount of zoom
 
 Global NTMI functions are:
 - set or step-change main volume
 - set, step-change or jump mainFX preset
+- SNAP - store a preset for the currently playing Ndefs
 
 Some interfaces may have specific functions:
 - nUFO can switch modes between, full, move, touch, binary, binMove and off.
