@@ -1,31 +1,36 @@
 /**** EN16 grid layout for NTMI:
 
--			1			2			3		4
-top row:	mainFX      influxPre   zoom    mainvol, snap
+-				1			2			3			4
+top row enc	rotate thru rotate      local or 	mainvol
+			mainFX      influxPre   glob. zoom
+top button: preset mode snd mode    hold for glob  SNAP
 
-2nd row: slots. bt is toggle play, enc is vol, but + enc = change snd
 
-row 3, 4: encs are influx relatives
+2nd row: 4x slots:
+		bt is toggle play/stop,
+		basic -> enc is vol;
+		if top left bt is down,
+		-> encoder chooses preset;
+		if top sec bt is down,
+		-> encoder chooses sound process.
 
-row 3 bt: 4x snd preset up
-row 4 bt: 4x snd preset down
-3 + 4 bt: jump snd preset
+row 3, 4: encs relative-set influx channels
 
-m.gui.showLabels;
+row 3 buttons: 4x de/couple to/from influx
+row 4 buttons: 4x randomize sound settings
 
-MFdef.all.skeys
-NTMI.skeys.cs
 
-NTMI.at(~en16).setRel
-NTMI.at(~en16).setAbs
-MKtl(\en16).free;
-MKtl.all
-m.elAt(\bt, 2)
+// todo: make setting deviceValue work on en16!
+// m.elAt(\enc).deviceValue = 64;
+
 ****/
 
 // Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
 // arguments:MKtl name, desc filename, info reg. multiple hardware
-var m = NTMI.makeMKtl('en16', "intech-grid", NTMI.currInfo);
+// var m;
+
+m.free;
+m = NTMI.makeMKtl('en16', "intech-grid", NTMI.currInfo);
 
 m.addHalo(\zoom, 1);
 m.addSpec(\zoom, [0, 4, \amp]);
@@ -46,13 +51,14 @@ m.getHalo.putAll((
 // name them first:
 m.addNamed(\FXstep, m.elAt(\enc, 0));
 m.elAt(\FXstep).elemDesc.label = "FXstep";
-m.addNamed(\FXjump, m.elAt(\bt, 0, 0));
-m.elAt(\FXjump).elemDesc.label = "FXjump";
+
+m.addNamed(\_pre, m.elAt(\bt, 0, 0));
+m.elAt(\_pre).elemDesc.label = "_pre";
 
 m.addNamed(\infPre, m.elAt(\enc, 1));
 m.elAt(\infPre).elemDesc.label = "infPre";
-m.addNamed(\infJmp, m.elAt(\bt, 1, 0));
-m.elAt(\infJmp).elemDesc.label = "infJmp";
+m.addNamed(\_snd, m.elAt(\bt, 1, 0));
+m.elAt(\_snd).elemDesc.label = "_snd";
 
 m.addNamed(\zoom, m.elAt(\enc, 2));
 m.elAt(\zoom).elemDesc.label = "zoom";
@@ -67,6 +73,12 @@ m.elAt(\vols).do { |el, i| el.elemDesc.label = "snd% vol".format(i+1) };
 m.addNamed(\playBts, m.elAt(\bt, (4..7), 0));
 m.elAt(\playBts).do { |el, i| el.elemDesc.label = "snd %".format(i+1) };
 
+m.addNamed(\coupBts, m.elAt(\bt, (8..11), 0));
+m.elAt(\coupBts).do { |el, i| el.elemDesc.label = "d/cp%".format(i+1) };
+
+m.addNamed(\randBts, m.elAt(\bt, (12..15), 0));
+m.elAt(\randBts).do { |el, i| el.elemDesc.label = "RAND".format(i+1) };
+
 m.addNamed(\infl, m.elAt(\enc, (8..15)));
 m.elAt(\infl).do { |el, i| el.elemDesc.label = "infl %".format(i+1) };
 
@@ -77,28 +89,33 @@ m.elAt(\FXstep).action = { |el|
 	// time-buffer this for safety
 	MFdef(\mainPreStep).(delta);
 };
-m.elAt(\FXjump).action = { MFdef(\mainPreStep).value };
 
 m.elAt(\infPre).action = { |el|
 	var delta = el.deviceValue - el.prevDeviceValue.clip(1, 126);
 	NTMI.inph.stepWPre.(delta);
 };
-m.elAt(\infJmp).action = { NTMI.inph.stepWPre };
 
-
+// second row encoders are modal:
+// normally, they change volume;
+// when top left but is down, they change preset;
+// when top second but is down, they change sound;
 m.elAt(\zoom).action = { |el|
 	var delta = el.deviceValue - el.prevDeviceValue.clip(1, 126);
+		var relStep = delta * 0.025;
 	// if knob down, set NTMI.zoom
 	if (m.elAt(\bt, 2).isOn) {
 		var spec = \zoom.asSpec;
 		var zoomval = spec.unmap(NTMI.zoom);
-		var relStep = delta * 0.025;
 		zoomval = spec.map(zoomval + relStep);
 		NTMI.zoom = zoomval;
-		// "NTMI.zoom: %\n".postf(NTMI.zoom);
+		"NTMI.zoom: %\n".postf(NTMI.zoom);
 	} {
 		// default: set my interface zoom
-
+		var spec = m.getSpec(\zoom);
+		var zoomval = spec.unmap(NTMI.at(m.name).zoom);
+		var relStep = (delta * 0.01);
+		zoomval = spec.map(zoomval + relStep);
+		NTMI.at(m.name).zoom = zoomval;
 		"NTMI.%.zoom: %\n".postf(m.name, NTMI.at(m.name).zoom);
 	};
 };
@@ -109,21 +126,47 @@ m.elAt(\mainVol).action = { |el|
 };
 m.elAt(\SNAP).action = { MFdef(\snapshot).value };
 
+/// lower 4 knobs change slots volume, preset or sound
 m.elAt(\vols).do { |el, i|
 	el.action = { |el|
 		var ndef = NTMI.ndefs[i];
 		// limit to +-6, the largest ever step on an encoder
 		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
-		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
+
+		case { m.elAt(\_pre).parent.isOn } {
+			NTMI.pre.stepNdefInf(ndef, valStep);
+		} { m.elAt(\_snd).parent.isOn } {
+			NTMI.slots.stepNext(i, valStep);
+		} {
+			// default: vol
+			MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
+		};
+		// reset if we hit maxval or minval
+		NTMI.resetOnMinMax(el);
 	}
 };
+
 m.elAt(\playBts).do { |el, i|
 	el.action = { NTMI.slots.toggleAt(i) }
 };
 
-m.elAt(\infl).do { |el, i|
+m.elAt(\coupBts).do { |el, i|
 	el.action = {
-		MFdef(\setRelInf).(i + 9, el.value - el.prevValue);
-		NTMI.resetOnMinMax(el);
+		NTMI.inph.clutch(NTMI.ndefs[i])
 	}
 };
+
+m.elAt(\randBts).do { |el, i|
+	el.action = {
+		NdefPreset(NTMI.ndefs[i]).setRand(1.0)
+	}
+};
+
+
+m.elAt(\infl).do { |el, i|
+	el.action = { |el|
+		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
+		MFdef(\setRelInf).([i + 9], [valStep * 0.01], m.getHalo.zoom);
+	}
+};
+
