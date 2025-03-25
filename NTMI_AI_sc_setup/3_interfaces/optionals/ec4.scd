@@ -1,27 +1,31 @@
 /**** EC4 mapping layout for NTMI,
 ***** mostly copied from EN16 grid:
 
--				1			2			3			4
-top row enc	rotate thru rotate      local or 	mainvol
-			mainFX      influxPre   glob. zoom
-top button: preset mode snd mode    hold for glob  SNAP
+top row encoders:
+left : rotate thru mainFX    local or
+2nd  : rotate thru influxPreset
+3rd  : zoom: local ec4 zoom, or click-hold and turn for global zoom
+right: main volume
 
+top row buttons:
+left : hold to make 2nd row knobs change sound presets
+2nd  : hold to make 2nd row knobs change sound processes
+3rd  : hold to make this encoder change global zoom
+right: press to store snapshot presets for all playing sounds
 
-2nd row: 4x slots:
-		bt is toggle play/stop,
-		basic -> enc is vol;
-		if top left bt is down,
-		-> encoder chooses preset;
-		if top sec bt is down,
-		-> encoder chooses sound process.
+2nd row: functions for the 4 slots:
+- button toggles play/stop,
+- encoder base mode: change slot sound volume
+-- if top left bt is down -> encoder chooses sound preset;
+-- if top 2nd  bt is down -> encoder chooses sound process.
 
-row 3, 4: encs relative-set influx channels
+row 3, 4: encoders do relative-set 8 influx channels
 
-row 3 buttons: 4x de/couple to/from influx
+row 3 buttons: 4x de/couple from/to influx
 row 4 buttons: 4x randomize sound settings
 
 
-// todo: check whetehr setting deviceValue works on ec4:
+// todo: check whether setting deviceValue works on ec4:
 // m.elAt(0, \kn).deviceValue = 64;
 
 ****/
