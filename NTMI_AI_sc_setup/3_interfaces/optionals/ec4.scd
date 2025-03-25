@@ -1,4 +1,5 @@
-/**** EN16 grid layout for NTMI:
+/**** EC4 mapping layout for NTMI,
+***** mostly copied from EN16 grid:
 
 -				1			2			3			4
 top row enc	rotate thru rotate      local or 	mainvol
@@ -30,7 +31,6 @@ row 4 buttons: 4x randomize sound settings
 
 var m;
 m = NTMI.makeMKtl(\ec4, "*ec4_basic", NTMI.currInfo);
-m.gui.showLabels;
 
 m.addHalo(\zoom, 1);
 m.addSpec(\zoom, [0, 4, \amp]);
@@ -52,13 +52,13 @@ m.getHalo.putAll((
 m.addNamed(\FXstep, m.elAt(0, \kn, 0));
 m.elAt(\FXstep).elemDesc.label = "FXstep";
 
-m.addNamed(\_pre, m.elAt(0, \hat, 0, 0));
-m.elAt(\_pre).elemDesc.label = "_pre";
+m.addNamed(\selPre, m.elAt(0, \hat, 0, 0));
+m.elAt(\selPre).elemDesc.label = "sel pre";
 
 m.addNamed(\infPre, m.elAt(0, \kn, 1));
 m.elAt(\infPre).elemDesc.label = "infPre";
-m.addNamed(\_snd, m.elAt(0, \hat, 1, 0));
-m.elAt(\_snd).elemDesc.label = "_snd";
+m.addNamed(\selSnd, m.elAt(0, \hat, 1, 0));
+m.elAt(\selSnd).elemDesc.label = "sel snd";
 
 m.addNamed(\zoom, m.elAt(0, \kn, 2));
 m.elAt(\zoom).elemDesc.label = "zoom";
@@ -133,9 +133,9 @@ m.elAt(\vols).do { |el, i|
 		// limit to +-6, the largest ever step on an encoder
 		var valStep = (el.deviceValue - el.prevDeviceValue).clip2(6);
 
-		case { m.elAt(\_pre).parent.isOn } {
+		case { m.elAt(\selPre).parent.isOn } {
 			NTMI.pre.stepNdefInf(ndef, valStep);
-		} { m.elAt(\_snd).parent.isOn } {
+		} { m.elAt(\selSnd).parent.isOn } {
 			NTMI.slots.stepNext(i, valStep);
 		} {
 			// default: vol
