@@ -32,7 +32,10 @@ MKtl(\xtm).free;
 
 // Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
 // arguments:MKtl name, desc filename, info reg. multiple hardware
-var m = NTMI.makeMKtl(\xtm, "*x-touch-mini*", NTMI.currInfo);
+
+var m;
+
+m = NTMI.makeMKtl(\xtm, "*x-touch-mini*", NTMI.currInfo);
 
 // give m a local zoom value:
 m.addSpec(\zoom, [0, 4, \amp]);
@@ -95,32 +98,31 @@ m.elAt(\enchat).do { |hat, i|
 // first 4 do volume per slot, second 4 do select
 m.elAt(\enc).do { |enc, i|
 	enc.action = {
+		// make encoder rotation endless
+		var step = enc.deviceValue - enc.prevDeviceValue.clip(1, 126);
+		// prepare for mode
 		var enchat = m.elAt(\enchat, i);
-		var enchatIsUp =
-		enchat.elAt(0).lastUpdateTime <=
-		enchat.elAt(1).lastUpdateTime; // was noteOff or noteOn last?
+		var enchatIsUp = enchat.isOn.not;
 
 		if (enchatIsUp) {
-			"// normal mode is influx ...".postln;
+			// "// normal mode is influx ...".postln;
 			MFdef(\setRelInf).(
 				// add sliderOffset + 1, so we get to channel 8 for amp tweak
 				i + (NTMI.inph.sliderOffset ? 1),
-				(enc.prevValue - enc.value),
+				step * 0.01,
 				NTMI.zoom * (m.getHalo.zoom ? 1)
 			)
 		} { // if enchat is down,
 
 			if (i < 4) {
-				"// first 4 change volume ...".postln;
+				// "// first 4 change volume ...".postln;
 				NTMI.ndefs[i].softVol_(enc.value.squared, lastVal: enc.prevValue.squared);
 			} {
-				// make encoder rotation endless
-				var step = enc.deviceValue - enc.prevDeviceValue.clip(1, 126);
 				var slotIndex = i-4;
 				var ndef = NTMI.ndefs[slotIndex];
-				"// second 4 step thru NdefPreset setting".postln;
+				// "// second 4 step thru NdefPreset setting".postln;
 
-				if (m.elAt(\shift).isOn) {
+				if (m.elAt(\shift).parent.isOn) {
 					"// if shift key, step sound!".postln;
 					NTMI.slots.stepNext(slotIndex, step);
 					// NTMI.slots.playAt(slotIndex);
@@ -139,6 +141,8 @@ m.elAt(\rec).elemDesc.label = "SNAP";
 
 m.addNamed(\shift, m.elAt(\A, \chan, 0, \bt, \B, \on));
 m.elAt(\shift).elemDesc.label = "SHIFT";
+m.elAt(\shift).action = { |bt| "shift...".postln };
+m.elAt(\A, \chan, 0, \bt, \B, \off).action = { |bt| "...unshift".postln };
 
 m.addNamed(\fx, m.elAt(\A, \chan, [4,5,6], \bt, \B, \on));
 m.elAt(\fx).at(0).elemDesc.label = "prev MFX";
