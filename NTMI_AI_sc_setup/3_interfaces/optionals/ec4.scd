@@ -36,21 +36,6 @@ row 4 buttons: 4x randomize sound settings
 var m;
 m = NTMI.makeMKtl(\ec4, "*ec4_basic", NTMI.currInfo);
 
-m.addHalo(\zoom, 1);
-m.addSpec(\zoom, [0, 4, \amp]);
-NTMI.put(m.name, m.getHalo);
-
-m.getHalo.putAll((
-	influxMode: \setRel,
-	setAbs: { |dict|
-		"*** % only has setRel.\n".postf(m);
-		dict.influxMode = \setRel;
-	},
-	setRel: { "*** % is always setRel.\n".postf(m) },
-	zoom: 1,
-	butDown: Set[],
-	butsUsedForMode: false
-));
 
 // name them first:
 m.addNamed(\FXstep, m.elAt(0, \kn, 0));

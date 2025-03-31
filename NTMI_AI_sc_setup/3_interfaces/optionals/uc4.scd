@@ -91,37 +91,6 @@ m.elAt('pgSl1', \sl).value = 0.5;
 m.elAt('main').value = 0.5;
 
 
-
-// *** add local settings and functions to uc4 ***
-// local zoom value:
-m.addSpec(\zoom, [0, 4, \amp]);
-m.addHalo(\zoom, 1);
-
-
-// allow direct access of halo via NTMI:
-NTMI.put(m.name, m.getHalo);
-// and access like this
-m.getHalo.zoom.postln;
-
-// flag whether to use influx in relative or absolute mode:
-// (there could be more modes, e.g. softAbs ...)
-m.getHalo.influxMode = \setRel;
-
-// set functions for the two supported modes:
-m.getHalo.setRel = {
-	m.getHalo.influxMode = \setRel;
-	"uc4 influxMode is now: %\n.".postf(\setRel);
-};
-
-m.getHalo.setAbs = {
-	m.getHalo.influxMode = \setAbs;
-	"uc4 influxMode is now: %\n.".postf(\setAbs);
-};
-// read and set:
-m.getHalo.influxMode;
-m.getHalo.setRel;
-
-
 /// lower 4 knobs change slots volume
 m.elAt(\vols).do { |el, i|
 	el.action = { |el|
