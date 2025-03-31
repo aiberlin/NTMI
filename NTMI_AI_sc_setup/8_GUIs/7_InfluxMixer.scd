@@ -116,11 +116,8 @@ WinBounds.addMake(\InfluxMixer, {
 
 		if (mkdict.isNil) {
 			"*** % has no NTMI dict - making it now.\n\n".postf(mk);
-			NTMI.q.put(mk.name, mkdict = ());
+			NTMI.makeMKtlHalo(mk);
 		};
-		mkdict.influxMode = mkdict.influxMode ? NTMI.mkmix.influxModes[0];
-		mkdict.zoom = mkdict.zoom ? 0.5;
-		[mk, mkdict];
 	};
 
 	NTMI.mkmix.lines = numItems.collect { |i|

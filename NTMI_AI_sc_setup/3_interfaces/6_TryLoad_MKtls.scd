@@ -99,7 +99,7 @@ NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 	};
 };
 
-NTMI.makeMKtl = { |q, defaultName, descName, currInfo|
+NTMI.makeMKtl = { |q, defaultName, descName, currInfo, makeHalo=true|
 	// support multiple identical interfaces as passed in from TryLoad:
 	if (currInfo.notNil) {
 		var mktlName = NTMI.currInfo.mktlName;
@@ -116,7 +116,41 @@ NTMI.makeMKtl = { |q, defaultName, descName, currInfo|
 		m = MKtl(defaultName, descName);
 	};
 	m;
+	if (m.getHalo.isNil and: makeHalo) {
+		NTMI.makeMKtlHalo(m);
+	};
 };
+
+Spec.add(\xZoom, [0, 4, \amp]);
+
+NTMI.baseMKtlHalo = (
+	influxMode: \setRel,
+	zoom: 1,
+	setRel: { |halo|
+		halo[\influxMode] = \setRel;
+		"% influxMode: %\n".postf(halo.mktl, halo[\influxMode]);
+	},
+	setAbs: { |halo|
+		halo[\influxMode] = \setAbs;
+		"% influxMode: %\n".postf(halo.mktl, halo[\influxMode]);
+	}
+);
+
+NTMI.makeMKtlHalo = { |q, mk|
+	var halo;
+	if (mk.notNil) {
+		if (mk.getHalo.isNil) {
+			mk.addHalo(\zoom, 1);
+		};
+		halo = mk.getHalo;
+		halo.mktl = mk;
+		// use proto for defaults and overwrite in MKtl halos:
+		halo.proto = NTMI.baseMKtlHalo;
+		 NTMI.q[mk.name] = halo;
+	};
+	mk
+};
+
 
 /*
 NTMI.tryLoadMKtl("ferrari");
