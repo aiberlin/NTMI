@@ -44,22 +44,8 @@ MKtlDesc("music_thing_8mu").elAt(\acc).elements.do { |eldesc|
 	eldesc.style.put(\height, 2);
 };
 
-// prepare for NTMI influx:
-m.addHalo(\zoom, 1);
-m.addHalo(\influxMode, \setRel);
 m.addHalo(\butDown, Set[]);
 m.addHalo(\butsUsedForMode, false);
-
-NTMI.put(m.name, m.getHalo);
-
-m.getHalo.setRel = {
-	m.getHalo.influxMode = 'setRel';
-	"*** % influxMode: \n".postf(m.name, m.getHalo.influxMode);
-};
-m.getHalo.setAbs = {
-	"*** % has no setAbs, so: \n".postf(m.name);
-	m.getHalo.setRel;
-};
 
 // rightmost slider is main vol:
 MKtl('mu8').elAt(\sl, 7).action = { |sl|
@@ -96,8 +82,6 @@ MKtl('mu8').elAt(\bt).action = { |bt|
 
 MKtl('mu8').addNamed(\modSl, MKtl('mu8').elAt(\sl, (0..6)));
 
-m.getHalo.zoomSpec = [0, 4, \amp].asSpec;
-m.getHalo.lastPreTime = 0;
 (
 MKtl('mu8').elAt(\modSl).action = { |sl|
 	case { m.getHalo.butDown.isEmpty } {
@@ -126,8 +110,9 @@ MKtl('mu8').elAt(\modSl).action = { |sl|
 			NTMI.incZoom(sl.deviceValue - sl.prevDeviceValue / 64);
 
 		} { sl.indexInGroup == 4 } {
-			var uniNewVal = m.getHalo.zoomSpec.unmap(m.getHalo.zoom) + (step / 64);
-			m.getHalo.zoom = m.getHalo.zoomSpec.map(uniNewVal);
+			var spec = \xZoom.asSpec;
+			var uniNewVal = spec.unmap(m.getHalo.zoom) + (step / 64);
+			m.getHalo.zoom = spec.map(uniNewVal);
 			"%.zoom: %\n".postf(m.name, m.getHalo.zoom);
 		} { sl.indexInGroup < 4 } {
 			var ndef = NTMI.ndefs[sl.indexInGroup];
