@@ -42,6 +42,8 @@ forkIfNeeded {
 		};
 	};
 
+	try { s.sync };
+
 	// prepare for several collections of Ndefs
 	NTMI.ndef = NTMI.ndef ? ();
 	NTMI.ndef.groups = NTMI.ndef.groups ? ();
