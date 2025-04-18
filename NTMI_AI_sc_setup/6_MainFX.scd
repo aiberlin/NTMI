@@ -198,14 +198,16 @@ MFdef(\mainVolSetUni).add(\main, { |vol = 1|
 });
 
 "\n*** NTMI.mfx.domainName: %\n\n".postf(NTMI.mfx.domainName);
-
-MFdef(\mainPre).value(NTMI.mfx.domainName ??
-	{ if (NTMI.usesRandomInit) {
-		NTMI.mfx.preNames.choose
-	} {
-		NTMI.mfx.preNames[0]
-	}
-});
+fork {
+	s.sync;
+	MFdef(\mainPre).value(NTMI.mfx.domainName ??
+		{ if (NTMI.usesRandomInit) {
+			NTMI.mfx.preNames.choose
+		} {
+			NTMI.mfx.preNames[0]
+		}
+	});
+};
 
 MFdef(\mainPreStep).add(\inc, { |inc|
 	var nextIndex, nextName;

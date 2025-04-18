@@ -19,7 +19,7 @@ NTMI.dir.names = NTMI.dir.fullNames.collect { |path| path.basename };
 // NTMI.dev false means normal user mode,
 NTMI.dev = NTMI.dev ? false;
 
-"*** NTMI: NTMI.dir.setup is at %\n".postf(NTMI.dir.setup.cs);
+"\n\n*** NTMI: NTMI.dir.setup is at \n%\n".postf(NTMI.dir.setup.cs);
 
 if(NTMI.dev) {
 	// ONLY WHILE DEVELOPING, direct back to dev/project dir!
@@ -82,9 +82,9 @@ if(NTMI.dev) {
 	};
 };
 
-"*** NTMI: NTMI.dir.user is %\n".postf(NTMI.dir.user.cs);
+"\n*** NTMI: NTMI.dir.user is %\n".postf(NTMI.dir.user.cs);
 "*** NTMI: NTMI.dir.userPOOL is %\n".postf(NTMI.dir.userPOOL.cs);
 "*** NTMI: NTMI.dir.userSoundfiles is %\n".postf(NTMI.dir.userSoundfiles.cs);
 
-"\n\n".post;
+"\n".post;
 
