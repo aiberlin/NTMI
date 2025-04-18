@@ -77,7 +77,7 @@ MFdef(\bufSetRange).add(\setNdefs, { |ndefs, buffers, buflistname|
 	} {
 		range = [ buffers.first.bufnum, buffers.last.bufnum ];
 		ndefs.do { |ndef|
-			"// % now uses % buffers in q.bufs.%, sndBufRange %.\n"
+			"\n// % now uses % buffers in q.bufs.%, sndBufRange %.\n"
 			.postf(ndef, buffers.size, buflistname, range);
 			ndef.addHalo(\sndBufRange, range);
 			ndef.rebuild;

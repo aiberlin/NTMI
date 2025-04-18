@@ -28,7 +28,7 @@ Task {
 
 	0.1.wait; /// wait for SC Welcome post ...
 
-	"\n\n*** loadMe file for NTMI_AI_sc_setup loading...\n\n".postln;
+	"\n*** 00_loadMe file for NTMI_AI_sc_setup ...\n".postln;
 	LoadMe.start;
 
 	//// Set generally useful global  defaults, if not set in startup file:
