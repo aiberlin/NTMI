@@ -165,8 +165,9 @@ Task {
 
 		// reinstate orig. latency
 		if (s.latency.isNil) {
+			s.sync;
 			s.latency = prevLatency;
-			"// server latency back to % after loading.\n\n".postf(s.latency);
+			"// server latency: setting back to % after loading.\n\n".postf(s.latency);
 		} {
 			"*** server prevLatency was %\n;"
 			"*** server latency now  is % - leaving it as is.\n".postf(prevLatency, s.latency);

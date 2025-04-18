@@ -50,7 +50,7 @@ fork ({
 	0.1.wait;
 	NTMI.mfx.chain.add('ampFin', 1);
 	0.1.wait;
-	NTMI.mfx.chain.set(\noiseFloor, 0.0001);
+	NTMI.mfx.chain.set(\noiseFloor, 0.00001);
 
 }, AppClock);
 );
@@ -197,9 +197,10 @@ MFdef(\mainVolSetUni).add(\main, { |vol = 1|
 	NTMI.mFX.pxChain.proxy.setUni(\mainVol, vol);
 });
 
-"\n*** NTMI.mfx.domainName: %\n\n".postf(NTMI.mfx.domainName);
 fork {
 	s.sync;
+	"\n*** NTMI.mfx.domainName: %\n\n".postf(NTMI.mfx.domainName);
+	0.2.wait;
 	MFdef(\mainPre).value(NTMI.mfx.domainName ??
 		{ if (NTMI.usesRandomInit) {
 			NTMI.mfx.preNames.choose
