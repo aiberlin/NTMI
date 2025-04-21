@@ -158,8 +158,8 @@ NTMI.updateInterfaceButz = {
 			}
 		});
 
-		if (name != '-loadable:' and: WinBounds.makeFuncs[name].isNil) {
-			"WinBounds.addMake(%)\n".postf(name.cs);
+		if (name != '-loadable:-' and: WinBounds.makeFuncs[name].isNil) {
+			// "WinBounds.addMake(%)\n".postf(name.cs);
 			WinBounds.addMake(name, {
 				var mktl = MKtl.all[name];
 				var mkgui;
@@ -178,6 +178,7 @@ NTMI.updateInterfaceButz = {
 		};
 	};
 };
+Butz(\interfaces).add('-loadable:-', { NTMI.updateInterfaceButz });
 NTMI.updateInterfaceButz;
 
 

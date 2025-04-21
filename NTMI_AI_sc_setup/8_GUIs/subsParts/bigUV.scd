@@ -10,8 +10,8 @@ NTMI.g.main.bigUV.drawFunc.add(\circleFXName, { |uv|
 
 	if (NTMI.usesMainFX) {
 		var fontScaler = uv.bounds.height / 900 * 1.618;
-		var mainIndex = NTMI.mfx.domainIndex;
-		var domainName = NTMI.mfx.preNames[mainIndex];
+		var mainIndex = NTMI.mfx.domainIndex ? -1;
+		var domainName = NTMI.mfx.preNames[mainIndex] ? "¿-?";
 		"bigUV updating.".postln;
 
 		Pen.rotate(mainIndex.linlin(-1, NTMI.mfx.preNames.size, 0.5pi, -0.5pi));
@@ -34,5 +34,5 @@ NTMI.g.main.bigUVUpdate = {
 
 // only update if using mainFX
 if (NTMI.usesMainFX) {
-	MFdef('mainPreStep').add(\updateMain, { NTMI.g.main.bigUVUpdate });
+	MFdef('mainPre').add(\updateMain, { NTMI.g.main.bigUVUpdate });
 }

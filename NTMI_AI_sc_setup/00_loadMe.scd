@@ -130,15 +130,12 @@ Task {
 			LoadMe("6_MainFX.scd");
 		} {
 			// fallback mainVol - use server volume
+			Spec.add(\mainVolS, [s.volume.min, s.volume.max, \db].asSpec);
 			MFdef(\mainVol).add(\main, { |univol = 0.5|
-				var model = s.volume;
-				var spec = [model.min, model.max, \db].asSpec;
-				model.volume = spec.map(univol);
+				s.volume.volume = \mainVolS.asSpec.map(univol);
 			});
 			MFdef(\mainVolGet).add(\get, {
-				var model = s.volume;
-				var spec = [model.min, model.max, \db].asSpec;
-				spec.unmap(model.volume);
+				\mainVolS.asSpec.unmap(s.volume.volume);
 			});
 		};
 
@@ -165,8 +162,9 @@ Task {
 
 		// reinstate orig. latency
 		if (s.latency.isNil) {
+			s.sync;
 			s.latency = prevLatency;
-			"// server latency back to % after loading.\n\n".postf(s.latency);
+			"// server latency: setting back to % after loading.\n\n".postf(s.latency);
 		} {
 			"*** server prevLatency was %\n;"
 			"*** server latency now  is % - leaving it as is.\n".postf(prevLatency, s.latency);

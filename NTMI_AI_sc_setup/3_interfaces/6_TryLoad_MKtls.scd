@@ -63,7 +63,7 @@ NTMI.allInterfaceNames = (
 		"xtm",
 		"uc4",
 		"mu8",
-		"en16.scd",
+		"en16",
 	],
 
 	\hid: [
@@ -146,7 +146,7 @@ NTMI.makeMKtlHalo = { |q, mk|
 		halo.mktl = mk;
 		// use proto for defaults and overwrite in MKtl halos:
 		halo.proto = NTMI.baseMKtlHalo;
-		 NTMI.q[mk.name] = halo;
+		NTMI.q[mk.name] = halo;
 	};
 	mk
 };
@@ -219,7 +219,7 @@ MFdef(\findConnect).add(\findConnect, {
 					// not working yet: first of several mktls
 					// should be e.g. 'uc4', not 'uc4_0'.
 					// if (i > 0) {
-						mktlName = "%_%".format(mktlName, info.at(\multiIndex));
+					mktlName = "%_%".format(mktlName, info.at(\multiIndex));
 					// };
 					info.put(\mktlName, mktlName.asSymbol).postcs;
 
@@ -229,14 +229,20 @@ MFdef(\findConnect).add(\findConnect, {
 					NTMI.currInfo = nil;
 				};
 			} {
-				// info is a string
-				"\nsingle found:".postln;
-				info.postln;
-				filename = NTMI.filesForFoundInfos[info].postln;
+
+				filename = NTMI.filesForFoundInfos[info];
 				if (filename.notNil) {
+					// info is just a string
+					"\nsupported single found:".postln;
+					NTMI.currInfo = (
+						deviceName: info,
+						descFileName: MKtlDesc.filenamesForIDInfo(info);
+					).postcs;
+
 					"...loading single file...".postln;
 					NTMI.tryLoadMKtl(filename);
 				};
+				NTMI.currInfo = nil;
 			};
 		};
 	};
