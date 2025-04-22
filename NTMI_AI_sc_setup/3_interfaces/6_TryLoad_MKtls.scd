@@ -43,10 +43,12 @@ NTMI.interfaces = NTMI.interfaces ? ();
 
 NTMI.findOptionals = {
 	NTMI.optionals = (NTMI.dir.setup +/+ "3_interfaces/optionals/""*.scd").pathMatch;
-	"\n\n*** Found % optional interface files: ".postf(NTMI.optionals.size);
-	NTMI.optionalNames = NTMI.optionals.collect {|p| p.basename.splitext[0].asSymbol };
+	"\n\n*** Found % optional interface files:\n".postf(NTMI.optionals.size);
+	NTMI.optionalNames = NTMI.optionals.collect {|p|
+		p.basename.splitext[0].asSymbol
+	};
 	NTMI.optionalNames.printcsAll;
-	"\n\n".postln;
+	"***\n".postln;
 };
 
 NTMI.findOptionals;
@@ -67,7 +69,7 @@ NTMI.allInterfaceNames = (
 	],
 
 	\hid: [
-		"dual_ana_32",
+		"dual_ana_3_2",
 		"dual_ana_4",
 		"ferrari",
 		"shbobo_shnth"
@@ -102,7 +104,7 @@ NTMI.tryLoadMKtl = { |dict, name, filepath, reload = false|
 NTMI.makeMKtl = { |q, defaultName, descName, currInfo, makeHalo=true|
 	// support multiple identical interfaces as passed in from TryLoad:
 	if (currInfo.notNil) {
-		var mktlName = NTMI.currInfo.mktlName;
+		var mktlName = NTMI.currInfo.mktlName ? defaultName;
 		var multiIndex = NTMI.currInfo.multiIndex;
 		("NTMI.currInfo: " + NTMI.currInfo.cs).postln;
 		MKtl.all[mktlName].free;
@@ -115,10 +117,10 @@ NTMI.makeMKtl = { |q, defaultName, descName, currInfo, makeHalo=true|
 		// no need for NTMI.currInfo, just use default name.
 		m = MKtl(defaultName, descName);
 	};
-	m;
 	if (m.getHalo.isNil and: makeHalo) {
 		NTMI.makeMKtlHalo(m);
 	};
+	m;
 };
 
 Spec.add(\xZoom, [0, 4, \amp]);
@@ -173,10 +175,10 @@ NTMI.filesForFoundInfos = Dictionary[
 	"SHNTH_SHBOBO" -> "shbobo_shnth",
 	"Run'N' Drive_Thrustmaster" -> "ferrari",
 	"Run'N' Drive Wireless_Thrustmaster" -> "ferrari",
-	"Thrustmaster dual analog 4_Mega World" -> "dual_analog_4",
-	"Thrustmaster dual analog 3_2_Thrustmaster" -> "dual_analog_3_2",
-	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_analog_4",
-	"Thrustmaster dual analog 3_2_Mega World" -> "dual_analog_3_2",
+	"Thrustmaster dual analog 4_Mega World" -> "dual_ana_4",
+	"Thrustmaster dual analog 4_Thrustmaster" -> "dual_ana_4",
+	"Thrustmaster dual analog 3.2_Thrustmaster" -> "dual_ana_3_2",
+	"Thrustmaster dual analog 3.2_Mega World" -> "dual_ana_3_2",
 ];
 
 MFdef(\findConnect).add(\findConnect, {
@@ -205,6 +207,7 @@ MFdef(\findConnect).add(\findConnect, {
 		newInfos = foundInfos.select { |info|
 			(NTMI.prevFoundInfos ? []).includesEqual(info).not
 		};
+		newInfos.postcs;
 		newInfos.do { |info, i|
 			var filename, mktlName;
 			if (info.isKindOf(Dictionary)) {
@@ -212,7 +215,10 @@ MFdef(\findConnect).add(\findConnect, {
 				info.postcs;
 				filename = NTMI.filesForFoundInfos[info.deviceName];
 				"finename: %\n".postf(filename);
-				if (filename.notNil) {
+				if (filename.isNil) {
+					"*** could not find a file for:".postln;
+					info.postcs;
+				}{
 					"...loading multi file:".postln;
 					info.put(\multiIndex, info.destPortIndex ? info.srcPortIndex);
 					mktlName = filename.splitext.first;
@@ -231,7 +237,10 @@ MFdef(\findConnect).add(\findConnect, {
 			} {
 
 				filename = NTMI.filesForFoundInfos[info];
-				if (filename.notNil) {
+				if (filename.isNil) {
+					"*** could not find a file for:".postln;
+					info.postcs;
+				}{
 					// info is just a string
 					"\nsupported single found:".postln;
 					NTMI.currInfo = (
