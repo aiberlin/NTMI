@@ -52,9 +52,14 @@ NTMI.dir.user.openOS;
 // NTMI has many settings which users can define before running NTMI;
 // if these are not given, NTMI will use sensible default values.
 // these default values are stored here:
-NTMI.defaults.sortedKeysValuesDo { |key, val|
-	"\nNTMI.% = %;\n".postf(key, val.cs);
-}; "";
+NTMI.defaults;
+
+// to list the defaults:
+NTMI.postDefaults
+
+// to compare settings with defaults:
+NTMI.postSettings
+
 
 // Full discussion of the default values:
 Document.open(NTMI.dir.setup +/+ "0_globals/ntmi_defaults.scd");
