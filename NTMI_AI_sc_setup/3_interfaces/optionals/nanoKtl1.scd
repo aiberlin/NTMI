@@ -49,32 +49,6 @@ m.addNamed(\rand_pre, m.elAt(\tr, \loop));
 m.addNamed(\prev_pre, m.elAt(\tr, \stop));
 m.addNamed(\next_pre, m.elAt(\tr, \rec));
 
-// *** add local settings and functions to nanoKtl ***
-// local zoom value:
-m.addSpec(\zoom, [0, 4, \amp]);
-m.addHalo(\zoom, 1);
-
-// allow direct access of halo via NTMI:
-NTMI.q.put(m.name, m.getHalo);
-// and access like this
-m.getHalo.zoom.postln;
-
-// flag whether to use influx in relative or absolute mode:
-// (there could be more modes, e.g. softAbs ...)
-m.getHalo.influxMode = \setRel;
-
-// set functions for the two supported modes:
-m.getHalo.setRel = {
-	m.getHalo.influxMode = \setRel;
-	"nanoKtl1 influxMode is now: %\n.".postf(\setRel);
-};
-m.getHalo.setAbs = {
-	m.getHalo.influxMode = \setAbs;
-	"nanoKtl1 influxMode is now: %\n.".postf(\setAbs);
-};
-// read and set:
-m.getHalo.influxMode;
-m.getHalo.setRel;
 
 m.elAt(\inflSet).do(_.value = 0.5);
 

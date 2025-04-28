@@ -37,28 +37,6 @@ var m;
 
 m = NTMI.makeMKtl(\xtm, "*x-touch-mini*", NTMI.currInfo);
 
-// give m a local zoom value:
-m.addSpec(\zoom, [0, 4, \amp]);
-// create halo by adding zoom value,
-// and sync it as NTMI space for m:
-m.addHalo(\zoom, 1);
-
-// then allow direct access of halo via NTMI:
-NTMI.q.put(m.name, m.getHalo);
-
-// flag whether to use influx in relative or absolute mode:
-// (there could be more modes, e.g. softAbs ...)
-m.getHalo.influxMode = \setRel;
-
-// set functions to switch between the two supported modes:
-m.getHalo.setRel = {
-	m.getHalo.influxMode = \setRel;
-	"% influxMode is now: setRel\n.".postf(m.name);
-};
-m.getHalo.setAbs = {
-	m.getHalo.influxMode = \setAbs;
-	"% influxMode is now: setAbs.\n".postf(m.name);
-};
 
 // main volume
 m.addNamed(\main, m.elAt(\A, \sl));
