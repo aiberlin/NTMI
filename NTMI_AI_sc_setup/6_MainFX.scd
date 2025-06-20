@@ -2,6 +2,12 @@
 NTMI.mfx = NTMI.mfx ? ();
 NTMI.numChans = NTMI.numChans ? 2;
 
+
+// Main outs can be any set of adjacent channels:
+NTMI.firstMainFXChan = 8; NTMI.firstMainFXChan ? 8;
+NTMI.numMainFXChans = NTMI.numMainFXChans ? NTMI.numChans;
+
+
 // add all global filter functions to use - these are then available by name.
 (NTMI.mfx.effectsPaths ? ["*.scd" ]).do { |filename|
 	LoadMe(filename, NTMI.dir.userPOOL +/+ "4_effects");
@@ -14,12 +20,12 @@ ProxyChain.checkDicts;
 (
 NTMI.mFX.clear;
 NTMI.mFX = MainFX.new(server: s,
-	numChannels: NTMI.numChans,
+	numChannels: NTMI.numMainFXChans,
 	// dont use NTMI.mfx.slotNames unless you are sure
 	slotNames: // NTMI.mfx.slotNames ?
 	// these are numbered to be in proper order:
 	ProxyChain.allSources.keys(Array).sort,
-	busIndex: 0
+	busIndex: NTMI.firstMainFXChan
 );
 
 // tweak
