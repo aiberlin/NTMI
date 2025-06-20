@@ -1,4 +1,6 @@
 /*
+this is for improving Object Modeling style.
+
 ~dict = (blink: { |dict, testarg| }, blank: { }, blonk: (boing: { |dict, bongo| }), klong: 123 );
 
 ~dict.skeys.cs;
@@ -32,10 +34,11 @@ dict[7], not dict.7
 		this.skeys.do { |key|
 			var codeStr = (prefix ++ key);
 			var val = this.at(key);
+			var arglist, argNames;
 
 			case { val.isKindOf(Function) } {
-				var arglist = "";
-				var argNames = (val.def.argNames ? []).drop(1);
+				arglist = "";
+				argNames = (val.def.argNames ? []).drop(1);
 
 				if (argNames.size > 0) {
 					arglist = "(" ++ argNames.collect { |name|

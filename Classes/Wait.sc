@@ -53,6 +53,8 @@ Wait {
 
 	wait {
 		var offgrid = 0, i = 0;
+		var check;
+
 		this.postInfo("starts");
 		while {
 			var check = checkFunc.value;
