@@ -57,7 +57,7 @@ Wait {
 
 		this.postInfo("starts");
 		while {
-			var check = checkFunc.value;
+			check = checkFunc.value;
 			offgrid = time % dt;
 			// align with dt-grid first
 			if (offgrid > 0) { offgrid.wait };
