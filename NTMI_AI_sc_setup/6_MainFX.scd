@@ -188,6 +188,7 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName, step|
 	};
 });
 
+
 MFdef(\mainVolGet).add(\get, {
 	NTMI.mFX.proxyChain.proxy.get(\mainVol);
 });
@@ -201,6 +202,15 @@ MFdef(\mainVolGetUni).add(\get, {
 
 MFdef(\mainVolSetUni).add(\main, { |vol = 1|
 	NTMI.mFX.pxChain.proxy.setUni(\mainVol, vol);
+});
+
+MFdef(\mainVolStep).add(\step, { |inc = 0|
+	// for fast turns, accelerate changes:
+	// 0.0 is linear, step1 -> 1, step 2 -> 2 etc
+	// 1.0 is quadratic, step1 -> 1, step 2 -> 4 etc
+	var acceleration = inc.abs ** 1.0;
+	"mainVol % by %\n".postf([\down, \up].wrapAt(inc.clip(0, 1)), inc);
+	RelSet(MainFX(s).proxy, \mainVol, inc * acceleration * 0.01);
 });
 
 fork {
