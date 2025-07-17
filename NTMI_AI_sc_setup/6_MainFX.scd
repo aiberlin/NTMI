@@ -4,7 +4,7 @@ NTMI.numChans = NTMI.numChans ? 2;
 
 
 // Main outs can be any set of adjacent channels:
-NTMI.firstMainFXChan = NTMI.firstMainFXChan ? 8;
+NTMI.firstMainFXChan = NTMI.firstMainFXChan ? 0;
 NTMI.numMainFXChans = NTMI.numMainFXChans ? NTMI.numChans;
 
 
