@@ -63,19 +63,22 @@ Tdef(\clocK).clock = SystemClock;
 Tdef(\clocK).addSpec(\runtime, [0, 10000, \lin, 1]);
 Tdef(\clocK).set(\runtime, 0, \isRunning, true);
 Tdef(\clocK).set(\timeStr, "00:00:00");
+Tdef(\clocK).set(\dt, 1);
+/*
+Tdef(\clocK).set(\runtime, 60, \dt, -1);
+*/
 
 Tdef(\clocK, { |envir|
-	var dt = 1;
+	envir.dt = 1; // can also be -1 for count down
 	inf.do { |i|
 		envir.timeStr = envir.runtime.asTimeString.drop(-4);
 		defer { try { NTMI.g.clok.uv.refresh } };
 
-		dt.wait;
+		1.wait;
 		if (envir.isRunning == true) {
-			envir.runtime = envir.runtime ? 0 + dt;
+			envir.runtime = envir.runtime ? 0 + envir.dt;
 		} {
 			envir.runtime = 0;
 		};
-
-	}
+	};
 }).play;

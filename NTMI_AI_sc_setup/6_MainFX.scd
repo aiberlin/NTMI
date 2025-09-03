@@ -2,6 +2,12 @@
 NTMI.mfx = NTMI.mfx ? ();
 NTMI.numChans = NTMI.numChans ? 2;
 
+
+// Main outs can be any set of adjacent channels:
+NTMI.firstMainFXChan = NTMI.firstMainFXChan ? 0;
+NTMI.numMainFXChans = NTMI.numMainFXChans ? NTMI.numChans;
+
+
 // add all global filter functions to use - these are then available by name.
 (NTMI.mfx.effectsPaths ? ["*.scd" ]).do { |filename|
 	LoadMe(filename, NTMI.dir.userPOOL +/+ "4_effects");
@@ -11,20 +17,29 @@ Spec.add(\mainVol, [0, 4, \amp]);
 //////// check integrity of all param specs - complains when specs are missing.
 ProxyChain.checkDicts;
 
+ProxyChain.add(\a_remap, \filter -> { |in|
+	// use this to remap speakers for different layouts,
+	// mixdowns for subwoofers, etc
+	// default: post function and return in.
+	thisFunction.postcs;
+	in;
+});
+
 (
 NTMI.mFX.clear;
 NTMI.mFX = MainFX.new(server: s,
-	numChannels: NTMI.numChans,
+	numChannels: NTMI.numMainFXChans,
 	// dont use NTMI.mfx.slotNames unless you are sure
 	slotNames: // NTMI.mfx.slotNames ?
 	// these are numbered to be in proper order:
 	ProxyChain.allSources.keys(Array).sort,
-	busIndex: 0
+	busIndex: NTMI.firstMainFXChan
 );
 
 // tweak
 NTMI.mfx.chain = NTMI.mFX.proxyChain;
 NTMI.mfx.chain.proxy.fadeTime = 2;
+
 
 // apply all known specs to proxy just in case:
 ProxyChain.sourceDicts.do { |dict|
@@ -182,6 +197,7 @@ MFdef(\mainPre).add(\voiceFXSwitch, { |domainName, step|
 	};
 });
 
+
 MFdef(\mainVolGet).add(\get, {
 	NTMI.mFX.proxyChain.proxy.get(\mainVol);
 });
@@ -195,6 +211,16 @@ MFdef(\mainVolGetUni).add(\get, {
 
 MFdef(\mainVolSetUni).add(\main, { |vol = 1|
 	NTMI.mFX.pxChain.proxy.setUni(\mainVol, vol);
+});
+
+MFdef(\mainVolStep).add(\step, { |inc = 0|
+	// for fast turns, accelerate changes:
+	// 0.0 is linear, step1 -> 1, step 2 -> 2 etc
+	// 1.0 is quadratic, step1 -> 1, step 2 -> 4 etc
+	var inc2 = inc.clip2(5, 5); // no big jumps
+	var acceleration = inc2.abs ** 0;
+	"mainVolStep %%\n".postf(["", $+].wrapAt(inc.clip(0, 1)), inc2);
+	RelSet(MainFX(s).proxy, \mainVol, inc2 * acceleration * 0.01);
 });
 
 
@@ -219,4 +245,36 @@ MFdef(\mainPreStep).add(\inc, { |inc|
 	MFdef(\mainPre).(nextName, inc);
 });
 );
+
+// nudging the general wet/dry balance in two ways
+
+// get the current wet keys values:
+NTMI.mfx.currWetKeysValues = {
+	var fixedWetKeys = [\wet10, \wet30, \wet220 ];
+	var proxy = MainFX(s).proxy;
+	var currWetKeys = proxy.controlKeys.select(_.isFilterRole).removeAll(fixedWetKeys);
+	proxy.getKeysValues(currWetKeys).flat.postln;
+};
+
+// step by fixed number, when dry/wet paning
+NTMI.mfx.stepWet = { |mfx, step = -0.01|
+	var newVals = (NTMI.mfx.currWetKeysValues + step).max(0).min(1);
+	 MainFX(s).proxy.set(*newVals.flat);
+};
+
+// scale by factor - nudge wet level as if in dB
+NTMI.mfx.scaleWet = { |mfx, factor = 0.95|
+	var newVals = (NTMI.mfx.currWetKeysValues * factor).max(0).min(1);
+	 MainFX(s).proxy.set(*newVals.flat);
+};
+
+/*
+NTMI.mfx.currWetKeysValues;
+
+NTMI.mfx.stepWet(0.01);
+NTMI.mfx.stepWet(-0.01);
+
+NTMI.mfx.scaleWet(0.9);
+NTMI.mfx.scaleWet(1.1);
+*/
 

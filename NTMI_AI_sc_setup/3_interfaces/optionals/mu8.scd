@@ -49,6 +49,7 @@ m.addHalo(\butsUsedForMode, false);
 
 // rightmost slider is main vol:
 MKtl('mu8').elAt(\sl, 7).action = { |sl|
+	var diff = (sl.deviceValue - sl.prevDeviceValue).clip2(3);
 	MFdef(\mainVolStep).(sl.deviceValue - sl.prevDeviceValue)
 };
 

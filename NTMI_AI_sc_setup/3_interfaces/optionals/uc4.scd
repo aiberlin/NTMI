@@ -114,8 +114,11 @@ m.elAt('main').action = { |xf|
 	// 	s.volume.volume_(\svol.asSpec.map(xf.value))
 	////// set mainVol in absolute mode:
 	// 	MFdef(\mainVolSetUni).value(xf.value);
-	// best: step mainVol according to slider move
-	MFdef(\mainVolStep).value(xf.deviceValue - xf.prevDeviceValue);
+	// best: step mainVol according to slider move, avoid big jumps
+	var diff = (xf.deviceValue - xf.prevDeviceValue);
+	if (diff.abs > 5) { "uc4 initial jump? ignoring.".postln } {
+		MFdef(\mainVolStep).value(diff.clip2(5))
+	};
 };
 
 /* top line buttons are modal:

@@ -4,16 +4,31 @@ If they are not defined somewhere in a startup script,
 the values in here will be looked up and used as defaults.
 */
 
-// GENERAL: should NTMI use random initial values
+NTMI.postDefaults = {
+	"\n*** NTMI.defaults: ***".postln;
+	NTMI.defaults.sortedKeysValuesDo { |key, val|
+		"\nNTMI.defaults.% = %;\n".postf(key, val.cs);
+	}; "*** end NTMI.defaults ***\n".postln;
+};
+
+NTMI.postSettings = {
+	"\n*** NTMI settings vs defaults: ***".postln;
+	"// name ... setting ... // default".postln;
+	NTMI.defaults.sortedKeysValuesDo { |key, val|
+		"\nNTMI.% = %; // def: %\n".postf(key, NTMI.at(key), val.cs);
+	}; "*** end NTMI settings ***\n".postln;
+};
+
+// GENERAL defaults: should NTMI use random initial values
 // when no initial sounds & presets are set?
-// if yes, one gets to know different ones over time
+// if yes, one gets to know more sounds & presets over time
 NTMI.defaults.usesRandomInit = true;
 
-// headless or regular desktop?
+// headless platform or regular desktop?
 NTMI.defaults.hasGui = \View.asClass.notNil;
 NTMI.defaults.hasSmallScreen = false;
 
-// tell NTMI my username, e.g. for networking
+// tell NTMI my username, e.g. for automatic networking
 NTMI.defaults.myname = Platform.userHomeDir.basename.asSymbol;
 
 /****** Server Setup *******/
@@ -22,6 +37,7 @@ NTMI.defaults.myname = Platform.userHomeDir.basename.asSymbol;
 NTMI.defaults.numIns = 2;
 NTMI.defaults.numChans = 2;
 
+// setup to use from POOL :
 NTMI.defaults.serverSetupFile = "serverBasic2.scd";
 
 // should server be rebooted on NTMI.run,
@@ -69,6 +85,7 @@ NTMI.defaults.namesToLoad;
 //// often including the four defaultActives
 //// when not set, this defaults to random sounds and presets.
 NTMI.defaults.initialPresetNames = nil;
+
 // NTMI.defaults.initialPresetNames = [
 // 	'bleepo' -> 'vocca',
 // 	'xFMSH' -> 'border',
@@ -105,7 +122,12 @@ NTMI.defaults.inph_randSeeds = [ 7, 13, 23, 42, 86, rrand(0, 1000), \diagL ];
 // // the preset key/name to set on startup
 NTMI.defaults.inph_presIndex = 0;
 
-NTMI.defaults.postInterfaces = { "\n NTMI.defaults.postInterfaces: any things to do after interfaces are loaded?".postln };
+/*
+NTMI.defaults.postInterfaces = {
+"\n NTMI.defaults.postInterfaces: any things to do after interfaces are loaded?".postln
+};
+*/
+
 
 ////////// MainFX: which preset to use on startup?
 // usually nil, so it defaults to random choice
@@ -119,3 +141,4 @@ NTMI.defaults.finalSetup;
 
 // flag whether demo tdefs should be loaded
 NTMI.defaults.loadDemos = true;
+

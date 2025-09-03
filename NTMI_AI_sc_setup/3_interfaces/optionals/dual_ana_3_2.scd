@@ -1,17 +1,46 @@
-///// ******** Thrustmaster dual_analog_4 Gamepad patch *********
-///// ********     adapted into NTMI / UFO app *********
-
+///// ******** dual_ana_3_2 Gamepad patch *********
 
 /*
 MKtl.find(\hid);
+m.gui.showLabels;
 
 ///////// tests
+m.openDevice;
 m.gui.showLabels;
+m.elAt(\bt, 0).dump
+
+****** LAYOUT: *****
+buttons 1-4: play snd 1-4
+joysticks x, y: setRel influx
+- maybe add setAbs ...
+
+bt shoulder right upper: mainfx preset down
+bt shoulder right lower: mainfx preset up
+bt shoulder left lower: snapshot
+
+
+joyhat R: influxpreset up
+joyhat L: influxpreset down
+joyhat both: jump - jumps, then steps.
+
+
+compass: hold down snd but 1, 2, 3, 4, then:
+compass left  is preset down,
+compass right is preset up,
+compass up    is sound next,
+compass down  is sound prev,
+
+but 5 left shoulder up: free
+
+MKtl(\dual_ana_3_2).free;
+openDevice
+m.dump
 
 */
 
 var m;
-m = NTMI.makeMKtl(\dual_ana_4, "*dual-analog-4", NTMI.currInfo);
+
+m = NTMI.makeMKtl(\dual_ana_3_2, "*dual-analog-3.2", NTMI.currInfo);
 
 // prepare all elements for debugging:
 m.elementsDict.do(_.action_(MFunc()));
@@ -22,19 +51,19 @@ m.elementsDict.do { |el|
 m.elementsDict.do { |el| el.action.enable(\post) };
 m.elementsDict.do { |el| el.action.disable(\post) };
 
-
-//////// NAME ElementGroups:
+//////// NAME ElementGroups
 ////////// 4 joyaxes
 m.addNamed(\joyAxes,
 	m.elAt(\joy, nil, [\x, \y]).flat
 );
 
-m.addHalo(\vols, ());
-m.addHalo(\selectedSlots, List[]);
+m.getHalo.vols = ();
+m.getHalo.selectedSlots = List[];
 
 
 // 4 SOUND BUTTONS:
 m.addNamed(\sndButs, m.elAt(\bt, (0..3)));
+m.getHalo.sndButs = m.elAt(\sndButs);
 
 // soundbuttons 1-4 turn 4 slots on/off
 m.elAt(\sndButs).do { |bt, i|
@@ -66,6 +95,8 @@ m.elAt(\sndButs).do { |bt, i|
 		}
 	})
 };
+
+m.getHalo.zoom = 0.5;
 
 ////////// 4 joyaxes set relative influx inputs
 m.elAt(\joyAxes).do { |el, i|
@@ -188,28 +219,28 @@ m.elAt(\compass).action.add(\stepPre, { |cp|
 
 // bt 9 -> random preset
 m.elAt(\bt, \9).elemDesc.label = "rand pre";
-m.elAt(\bt, \9).action.add(\randPre, {
-	if (m.getHalo.mode == \slot) {
-		m.elAt(\sndButs).do { |bt, slIndex|
+m.elAt(\bt, \9).action.add(\randPre, { |randBt|
+	if (m.getHalo.mode == \slot and: (randBt.isOn)) {
+		m.getHalo.sndButs.do { |bt, slIndex|
 			if (bt.isOn) { NTMI.pre.stepNdefInf(NTMI.ndefs[slIndex], nil) }
 		}
 	}
 });
 
-// bt 9 -> random sound func
+// bt 10 -> random sound func
 m.elAt(\bt, \10).elemDesc.label = "rand snd";
-m.elAt(\bt, \10).action.add(\randPre, {
-	if (m.getHalo.mode == \slot) {
-		m.elAt(\sndButs).do { |bt, slIndex|
+m.elAt(\bt, \10).action.add(\randPre, { |randBt|
+	if (m.getHalo.mode == \slot and: (randBt.isOn)) {
+		m.getHalo.sndButs.do { |bt, slIndex|
 			if (bt.isOn) { NTMI.slots.stepNext(slIndex, nil) }
 		}
 	}
 });
 
 m.elAt(\bt, \6).elemDesc.label = "snap Pre";
-m.elAt(\bt, \6).action.add(\snapPre, {
-	MFdef('snapshot').value;
+m.elAt(\bt, \6).action.add(\snapPre, { |bt|
+	if (bt.isOn) { MFdef('snapshot').value };
 });
 
-// return the mktl:
+// return MKtl
 m;
