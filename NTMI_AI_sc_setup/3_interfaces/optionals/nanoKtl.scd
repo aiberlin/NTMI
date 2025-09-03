@@ -30,31 +30,6 @@ MKtl(\nanoKtl).elAt(\bt)
 var m = NTMI.makeMKtl(\nanoKtl, "*trol2", NTMI.currInfo);
 
 
-// support multiple identical interfaces:
-
-// give m a local zoom value:
-m.addSpec(\zoom, [0, 4, \amp]);
-// create halo by adding zoom value,
-// and sync it as NTMI space for m:
-m.addHalo(\zoom, 1);
-
-// then allow direct access of halo via NTMI:
-NTMI.q.put(m.name, m.getHalo);
-
-// flag whether to use influx in relative or absolute mode:
-// (there could be more modes, e.g. softAbs ...)
-m.getHalo.influxMode = \setRel;
-
-// set functions to switch between the two supported modes:
-m.getHalo.setRel = {
-	m.getHalo.influxMode = \setRel;
-	"*** % influxMode is now: %\n.".postf(m.name, \setRel);
-};
-m.getHalo.setAbs = {
-	m.getHalo.influxMode = \setAbs;
-	"*** % influxMode is now: %\n.".postf(m.name, \setAbs);
-};
-
 // make all named elements first
 m.addNamed(\main, m.elAt(\sl, 7));
 m.addNamed(\inflSet, m.elAt(\sl, (0..6)));
