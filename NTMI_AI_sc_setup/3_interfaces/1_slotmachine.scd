@@ -81,6 +81,7 @@ NTMI.slots.playAt = { |sl, index|
 	// and make sure preset is active:
 	NTMI.inphlux.offsetsFromPreset(pre, currPreName);
 	"using preset % as influx offset.\n".postf(currPreName.cs);
+	NTMI.slots.zz[index].wakeUp;
 };
 
 NTMI.slots.stopAt = { |sl, index, endOnStop|
@@ -136,7 +137,7 @@ NTMI.slots.addActive = { |sl, index, obj|
 		};
 		NTMI.slots.actives.put(index, obj);
 		"slots: % source is %\n".postf(NTMI.slots.zz[index], obj);
-		NTMI.slots.zz[index].postln.source = { obj.ar };
+		NTMI.slots.zz[index].source = { obj.ar };
 		NTMI.slots.updateChoices;
 	}
 };
