@@ -95,42 +95,46 @@ NTMI.pre.makePreset = { |preDict, proxy|
 	var defaultNamesToStore = controlKeys.reject( _ == \amp);
 	var name = proxy.key;
 	var preset, presPath, namesToStore;
-
-	// set namesToStore if not already defined:
-	if (proxy.getHalo(\namesToStore).isNil) {
-		proxy.addHalo(\namesToStore, defaultNamesToStore)
-	};
-	// use all params as namesToInflux unless already defined:
-	if (proxy.getHalo(\namesToInflux).isNil) {
-		proxy.addHalo(\namesToInflux, controlKeys)
-	};
-
-	// // uses getHalo(\namesToStore):
-	preset = NdefPreset(proxy);
-	presPath = (NTMI.pre.settingsDir +/+ name ++ ".pxpreset.scd");
-	preset.storePath_(presPath);
-
-	if(File.exists(presPath)){
-		preset.loadSettings(presPath);
-		"  + preset % with % settings loaded. \n"
-		.postf(name, preset.settings.size);
+	if (controlKeys.first != \amp) {
+		warn("% : first control name must be amp! cannot make preset".format(proxy));
+		nil
 	} {
-		"--- PRESET %: no preset found! \n".postf(name);
-	};
 
-	preset.storeToDisk = true;
+		// set namesToStore if not already defined:
+		if (proxy.getHalo(\namesToStore).isNil) {
+			proxy.addHalo(\namesToStore, defaultNamesToStore)
+		};
+		// use all params as namesToInflux unless already defined:
+		if (proxy.getHalo(\namesToInflux).isNil) {
+			proxy.addHalo(\namesToInflux, controlKeys)
+		};
 
-	if (NTMI.pre.addsToTop == true){
-		preset.perform(\addsToTop_, true);
+		// // uses getHalo(\namesToStore):
+		preset = NdefPreset(proxy);
+		presPath = (NTMI.pre.settingsDir +/+ name ++ ".pxpreset.scd");
+		preset.storePath_(presPath);
+
+		if(File.exists(presPath)){
+			preset.loadSettings(presPath);
+			"  + preset % with % settings loaded. \n"
+			.postf(name, preset.settings.size);
+		} {
+			"--- PRESET %: no preset found! \n".postf(name);
+		};
+
+		preset.storeToDisk = true;
+
+		if (NTMI.pre.addsToTop == true){
+			preset.perform(\addsToTop_, true);
+		};
+		preset
 	};
-	preset
 };
 
 // making all the presets here
-NTMI.pre.presets = NTMI.processes.collect { |proxy, i|
+NTMI.pre.presets = NTMI.processes.collectAs( { |proxy, i|
 	NTMI.pre.makePreset(proxy)
-};
-);
+}, List);
 
 // init to first preset if there are any saved ones
 NTMI.pre.presets.do { |pre|
@@ -227,3 +231,24 @@ NTMI.pre.stepNdefInf = { |dict, ndef, inc|
 		NTMI.inphlux.offsetsFromPreset(*[pre, nextName]);
 	};
 };
+
+
+// add an Ndef while running:
+NTMI.addNdef = { |slots, ndef|
+	// wrap in preset, config preset to save at NTMI pool
+	NTMI.pre.makePreset(ndef);
+	// add to all lists:
+	NTMI.processes.add(ndef);
+	NTMI.process.allNames.add(ndef.key);
+	// then make sure slots have and show it
+	NTMI.slots.updateChoices
+};
+
+/* - test:
+Ndef('test2').addSpec('dist', [0,5]);
+Ndef(\test2, { |amp, freq=200, dist = 2|
+	(Saw.ar(freq + [-1, 1]) * dist) * amp
+});
+NTMI.addNdef(Ndef(\test2));
+*/
+)
