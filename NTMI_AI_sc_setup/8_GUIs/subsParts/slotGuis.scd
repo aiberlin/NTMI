@@ -43,6 +43,7 @@ NTMI.g.addMVmeter = { |g, gui, bounds|
 // add play buttons?
 popMVs = 4.collect { |i|
 	var ndef = NTMI.slots.actives[i];
+	var zz = NTMI.slots.zz[i];
 	var ndefpre = NdefPreset(ndef);
 	var zonebounds = NTMI.g.main.leftMVZone.bounds;
 	var left = 0;
@@ -67,7 +68,7 @@ popMVs = 4.collect { |i|
 	.font_(font);
 
 	emmy.addUniqueMethod(\object, { emmy.dict.object });
-	emmy.dict.object = ndef;
+	emmy.dict.object = zz;
 	NTMI.g.addMVmeter(emmy,
 		Rect(left, top + (height * 0.75), width, height * 0.25)
 	);
@@ -103,7 +104,7 @@ popMVs = 4.collect { |i|
 	emmy.dict[\knobCol] = Color.grey(0, 0.7);
 	emmy.putDict(\myspec, \amp);
 	emmy.action.add(\setVol,  { |em|
-		NTMI.slots.actives[i].vol_(em.value)
+		NTMI.slots.zz[i].vol_(em.value)
 	});
 
 	emmy.dict.keyNumFuncs
@@ -141,17 +142,18 @@ NTMI.g.main.ndefMViews.do { |mview, i|
 	// volume change, no on/off toggle
 	mview.uv.mouseMoveAction = { |uv, x|
 		var ndef = NTMI.slots.actives[i];
+		var zz = NTMI.slots.zz[i];
 		var wid = uv.bounds.width;
 		var step = (x - downx / wid * 1.6);
 		var spec = \amp.asSpec;
-		var currvol = ndef.vol;
+		var currvol = zz.vol;
 		var currvolnorm = spec.unmap(currvol);
 		var newvolnorm = (currvolnorm + step).clip(0, 1);
 		var newvol = spec.map(newvolnorm);
 
 		downx = x;
 		didDrag = true;
-		ndef.vol = newvol;
+		zz.vol = newvol;
 		uv.refresh;
 	};
 	// no move, just click ->  on/off toggle
@@ -201,9 +203,10 @@ NTMI.g.main[\updateSlots] = {
 		var prepop = NTMI.g.main.prePops[i];
 		var mview = NTMI.g.main.ndefMViews[i];
 		var coupleBut = NTMI.g.main.coupleButs[i];
-		var vol = ndef.vol;
+		var zz = NTMI.slots.zz[i];
+		var vol = zz.vol;
 
-		var playCol = if (ndef.monitor.isPlaying,
+		var playCol = if (zz.monitor.isPlaying,
 			NTMI.g.main.sliderCols[0],
 			NTMI.g.main.sliderCols[1]);
 		var ndefRandSeed;
@@ -232,7 +235,7 @@ NTMI.g.main[\updateSlots] = {
 			pop.items = NTMI.slots.choices[i];
 			pop.value = pop.items.indexOf(ndef.key ? pop.value);
 
-			mview.dict.object = ndef;
+			mview.dict.object = zz;
 			prepop.items = NdefPreset(ndef).getSetNames;
 			prepop.value = NdefPreset(ndef).currIndex;
 

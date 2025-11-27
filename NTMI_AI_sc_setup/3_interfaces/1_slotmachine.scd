@@ -54,45 +54,44 @@ NTMI.slots.defaultAmp = NTMI.slots.defaultAmp ? 0.25;
 
 // could also be a function that keeps ndefs running
 // that are used elsewhere:
-NTMI.slots.endOnStop = true;
+NTMI.slots.endOnStop = false;
 
 // mirror the 4 slots for plugging into others
 NTMI.slots.zz = [ Ndef(\zz1), Ndef(\zz2), Ndef(\zz3), Ndef(\zz4)];
 
 NTMI.slots.nowPlaying = {
-	NTMI.slots.actives.select { |ndef| ndef.monitor.isPlaying  };
+	NTMI.slots.actives.select { |ndef,idx| NTMI.slots.zz[idx].monitor.isPlaying  };
 };
 
 NTMI.processes.do(_.vol_(NTMI.slots.defaultVol));
-
 
 NTMI.slots.playAt = { |sl, index|
 	var obj = NTMI.slots.actives[index];
 	var pre = NdefPreset(obj.key);
 	var currPreName = pre.currSet.key;
-	var vol = if (obj.monitor.isNil, NTMI.slots.defaultVol, { obj.vol });
+	var zz = NTMI.slots.zz[index];
+	var vol = if (zz.monitor.isNil, NTMI.slots.defaultVol, { zz.vol });
 	"SLOT %: % starts - ".postf(index, obj);
-	obj.rebuild.play(vol: vol);
-	obj.set(\amp, NTMI.slots.defaultAmp);
-//	if ([\full, \touch].includes(NTMI.nUFO.mode)) {
-	if (NTMI.inph.decoupled.includes(obj.key).not) {
-		NTMI.inphlux.attachMapped(obj);
-	};
+	zz.play(q.mainOutBus, vol: vol);
+	//if (NTMI.inph.decoupled.includes(obj.key).not) {
+	//	NTMI.inphlux.attachMapped(obj);
+	//};
 	// and make sure preset is active:
 	NTMI.inphlux.offsetsFromPreset(pre, currPreName);
 	"using preset % as influx offset.\n".postf(currPreName.cs);
-	NTMI.slots.zz[index].wakeUp;
 };
 
 NTMI.slots.stopAt = { |sl, index, endOnStop|
 	var obj = NTMI.slots.actives[index];
-	if (obj.isPlaying) {
-		if (endOnStop.postln ?? NTMI.slots.endOnStop) {
+	var zz = NTMI.slots.zz[index];
+	if (zz.isPlaying) {
+		//if (endOnStop ?? NTMI.slots.endOnStop) {
+		if (false) {
 			"SLOT %: % ends.\n".postf(index, obj);
-			obj.end(NTMI.slots.fadeoutTime)
+			zz.end(NTMI.slots.fadeoutTime)
 		} {
 			"SLOT %: % stops.\n".postf(index, obj);
-			obj.stop(NTMI.slots.fadeoutTime)
+			zz.stop(NTMI.slots.fadeoutTime)
 		};
 		try { NTMI.inphlux.removeMapped(obj.key) };
 	}
@@ -100,9 +99,10 @@ NTMI.slots.stopAt = { |sl, index, endOnStop|
 
 NTMI.slots.toggleAt = { |sl, index|
 	var obj = NTMI.slots.actives[index];
-	var isPlaying = if (obj.isKindOf(NodeProxy))
-	{ obj.monitor.isPlaying }
-	{ obj.isPlaying };
+	var zz = NTMI.slots.zz[index];
+	var isPlaying = if (zz.isKindOf(NodeProxy))
+	{ zz.monitor.isPlaying }
+	{ zz.isPlaying };
 
 	if (isPlaying) {
 		NTMI.slots.stopAt(index);
@@ -133,11 +133,11 @@ NTMI.slots.addActive = { |sl, index, obj|
 	}
 	{		// all is well
 		if (NTMI.slots.actives[index] != obj) {
-			NTMI.slots.stopAt(index, true); // end the old one
+			//NTMI.slots.stopAt(index, true); // end the old one
 		};
 		NTMI.slots.actives.put(index, obj);
 		"slots: % source is %\n".postf(NTMI.slots.zz[index], obj);
-		NTMI.slots.zz[index].source = { obj.ar };
+		NTMI.slots.zz[index][0] = { obj.ar };
 		NTMI.slots.updateChoices;
 	}
 };
@@ -183,7 +183,9 @@ NTMI.slots.stepActivePres = { |dict, step|
 
 //// init just to make sure
 NTMI.slots.updateChoices;
+"".postln; "Choices updated!!!!".postln;
 NTMI.slots.actives.do { |ndef, i|
+	ndef.postln;
 	NTMI.slots.addActive(i, ndef);
 };
 
