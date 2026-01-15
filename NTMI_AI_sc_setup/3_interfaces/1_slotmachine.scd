@@ -64,6 +64,7 @@ NTMI.slots.nowPlaying = {
 };
 
 NTMI.processes.do(_.vol_(NTMI.slots.defaultVol));
+NTMI.processes.do(_.set(\amp, NTMI.slots.defaultAmp));
 
 NTMI.slots.playAt = { |sl, index|
 	var obj = NTMI.slots.actives[index];
@@ -72,10 +73,11 @@ NTMI.slots.playAt = { |sl, index|
 	var zz = NTMI.slots.zz[index];
 	var vol = if (zz.monitor.isNil, NTMI.slots.defaultVol, { zz.vol });
 	"SLOT %: % starts - ".postf(index, obj);
+	obj.wakeUp;
 	zz.play(q.mainOutBus, vol: vol);
-	//if (NTMI.inph.decoupled.includes(obj.key).not) {
-	//	NTMI.inphlux.attachMapped(obj);
-	//};
+	if (NTMI.inph.decoupled.includes(obj.key).not) {
+		NTMI.inphlux.attachMapped(obj);
+	};
 	// and make sure preset is active:
 	NTMI.inphlux.offsetsFromPreset(pre, currPreName);
 	"using preset % as influx offset.\n".postf(currPreName.cs);
