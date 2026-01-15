@@ -117,6 +117,8 @@ Task {
 
 		"*** NTMI.postPresets runs.".postln;
 		NTMI.postPresets;
+		// wait for Ndef loading and .end to finish
+		0.2.wait;
 
 		/********** INTERFACES *********/
 

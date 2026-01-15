@@ -58,6 +58,9 @@ forkIfNeeded {
 	};
 
 	NTMI.processes = NTMI.process.allNames.collect(Ndef(_));
+	// filter all Ndefs for bad values, so if they explode,
+	// they go silent without killing everything
+	// NTMI.processes.do(_.filter(1234, {|in| in.zap }));
 
 	NTMI.ndef.groups.put(\NTMI, NTMI.processes);
 
@@ -94,4 +97,5 @@ forkIfNeeded {
 		NTMI.ndefs.postln;
 		"\n\n".postln;
 	}.value;
+
 };
