@@ -29,6 +29,7 @@ NTMI.makeMKtl(\uc4, "*uc4_pg", NTMI.currInfo);
 MKtl.all.karl.gui
 MKtl.all.uc4.gui
 MKtl.all.uc4.free;
+m = MKtl(\uc4);
 */
 
 // Use makeMKtl and NTMI.currInfo to support multiple hardware MKtls:
@@ -94,7 +95,7 @@ m.elAt('main').value = 0.5;
 /// lower 4 knobs change slots volume
 m.elAt(\vols).do { |el, i|
 	el.action = { |el|
-		var ndef = NTMI.ndefs[i];
+		var ndef = NTMI.slots.zz[i];
 		// limit to +-6, the largest ever step on an encoder
 		var valStep = NTMI.encDelta(el);
 		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));

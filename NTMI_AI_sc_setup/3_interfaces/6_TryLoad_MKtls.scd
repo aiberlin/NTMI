@@ -105,7 +105,7 @@ NTMI.makeMKtl = { |q, defaultName, descName, currInfo, makeHalo=true|
 	// support multiple identical interfaces as passed in from TryLoad:
 	if (currInfo.notNil) {
 		var mktlName = NTMI.currInfo.mktlName ? defaultName;
-		var multiIndex = NTMI.currInfo.multiIndex;
+		var multiIndex = NTMI.currInfo.multiIndex ? 0;
 		("NTMI.currInfo: " + NTMI.currInfo.cs).postln;
 		MKtl.all[mktlName].free;
 		// clear currInfo, because we used it
