@@ -82,7 +82,7 @@ WinBounds.addMake('Main_NTMI', {
 	var nUFOView, recBut;
 	var popMVs, ndefPops, ndefMViews, rMViews;
 
-	"leftMinWidth: %, botMinHeight: %\n".postf(leftMinWidth, botMinHeight);
+	// "leftMinWidth: %, botMinHeight: %\n".postf(leftMinWidth, botMinHeight);
 
 	///// then make the window:
 	w = Window(name, bounds).front.alpha_(NTMI.g.alpha);
