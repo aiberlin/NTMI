@@ -55,16 +55,16 @@ forkIfNeeded {
 			"*** no Ndef for %! please check its code file.\n".postf(name);
 		};
 		found
-	};
+	}.asList;
 
-	NTMI.processes = NTMI.process.allNames.collect(Ndef(_));
+	NTMI.processes = NTMI.process.allNames.collect(Ndef(_)).asList;
 	// filter all Ndefs for bad values, so if they explode,
 	// they go silent without killing everything
 	// NTMI.processes.do(_.filter(1234, {|in| in.zap }));
 
 	NTMI.ndef.groups.put(\NTMI, NTMI.processes);
 
-	// kill them all again for startup
+	// end them all again on startup
 	defer ({ NTMI.processes.do(_.end) }, 0.1);
 
 	{
