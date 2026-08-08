@@ -28,7 +28,7 @@ Task {
 
 	0.1.wait; /// wait for SC Welcome post ...
 
-	"\n*** 00_loadMe file for NTMI_AI_sc_setup ...\n".postln;
+	"\n*** loadMe file for NTMI_AI_sc_setup loading...".postln;
 	LoadMe.start;
 
 	//// Set generally useful global  defaults, if not set in startup file:
@@ -58,7 +58,7 @@ Task {
 
 	if (NTMI.reboot) {
 		// Server.killAll; // ?
-		"*** NTMI kills server to reboot.".postln;
+		"\n\n*** NTMI.reboot is true, so server reboots.".postln;
 		s.quit; "".postln;
 		0.2.wait;
 	};
@@ -96,7 +96,7 @@ Task {
 	"*** NTMI.preBoot runs.".postln;
 	NTMI.preBoot;
 
-	"\n\n".postln;
+	"\n".postln;
 
 
 	s.waitForBoot {
@@ -107,18 +107,17 @@ Task {
 
 		"\n".postln;
 
-		"NTMI.helloSound plays".postln;
+		"*** NTMI.helloSound plays:".postln;
 		NTMI.helloSound;
 
 		"*** NTMI.postBoot runs.".postln;
 		NTMI.postBoot;
 
 		LoadMe("2_process_presets/*.scd");
+		s.sync;
 
 		"*** NTMI.postPresets runs.".postln;
 		NTMI.postPresets;
-		// wait for Ndef loading and .end to finish
-		0.2.wait;
 
 		/********** INTERFACES *********/
 
@@ -174,9 +173,10 @@ Task {
 		"*** NTMI.finalSetup runs.".postln;
 		NTMI.finalSetup;
 
+		s.sync;
+
 		// reinstate orig. latency
 		if (s.latency.isNil) {
-			s.sync;
 			s.latency = prevLatency;
 			"// server latency: setting back to % after loading.\n\n".postf(s.latency);
 		} {

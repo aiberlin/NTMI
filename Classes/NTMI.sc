@@ -18,7 +18,9 @@ NTMI {
 			run: {|dict, path|
 				path = (path ? (NTMI.filenameSymbol.asString.dirname.dirname
 					+/+ "NTMI_AI_sc_setup/00_loadMe.scd"));
-				path.postcs.loadPaths
+				"*** NTMI.run loads from this path:".postln;
+				path.postcs;
+				path.loadPaths
 			},
 			// init necessary dicts
 			defaults: (),
