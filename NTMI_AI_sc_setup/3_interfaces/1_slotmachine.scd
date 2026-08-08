@@ -121,6 +121,15 @@ NTMI.slots.checkIndex = { |sl, index|
 	res;
 };
 
+NTMI.slots.volStep = { |sl, index, step = 0, ignoreAbove = 5|
+	var obj = NTMI.slots.actives[index];
+	var zz = NTMI.slots.zz[index];
+	"NTMI.slots.volStep - i % step %\n".postf(index, step);
+	if (step.abs <= ignoreAbove) {
+		MFdef(\ndefVolStep).(zz, step);
+	};
+};
+
 // super defensive
 NTMI.slots.addActive = { |sl, index, obj|
 	case
