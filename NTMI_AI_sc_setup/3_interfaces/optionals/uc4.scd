@@ -98,7 +98,7 @@ m.elAt(\vols).do { |el, i|
 		var ndef = NTMI.slots.zz[i];
 		// limit to +-6, the largest ever step on an encoder
 		var valStep = NTMI.encDelta(el);
-		MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
+		NTMI.slots.volStep(i, (valStep * 0.4))
 	}
 };
 

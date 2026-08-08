@@ -372,6 +372,7 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 	var slotDown = (NTMI.nUFO.leftDown.size > 0).binaryValue;
 	var hatDown = MKtl(\nUFO).elAt(\encHat).isOn.binaryValue;
 	var modeNum = slotDown * 2 + hatDown;
+	var stepVal = enc.deviceValue - enc.prevDeviceValue;
 
 	modeNum.switch(
 		0, {
@@ -388,7 +389,7 @@ MKtl(\nUFO).elAt(\enc).action.add(\modal, { |enc|
 			// "NTMI.nUFO.leftWasUsed: %\n".postf(NTMI.nUFO.leftWasUsed);
 			NTMI.nUFO.leftDown.do { |slotIndex|
 				"SLOT %: ".postf(slotIndex);
-				MFdef(\ndefVolStep).(NTMI.slots.actives[slotIndex], enc.deviceValue);
+				NTMI.slots.volStep(slotIndex, stepVal * 0.4);
 			};
 		},
 		3, {

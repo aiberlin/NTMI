@@ -84,7 +84,7 @@ MKtl('mu8').elAt(\bt).action = { |bt|
 MKtl('mu8').addNamed(\modSl, MKtl('mu8').elAt(\sl, (0..6)));
 
 (
-MKtl('mu8').elAt(\modSl).action = { |sl|
+MKtl('mu8').elAt(\modSl).action = { |sl, i|
 	case { m.getHalo.butDown.isEmpty } {
 		// "influx".postln;
 		// inIndices, diffs, zoom
@@ -120,7 +120,7 @@ MKtl('mu8').elAt(\modSl).action = { |sl|
 
 			// "slot mode:".postln;
 			case { m.getHalo.butDown.includes(0) } {
-				MFdef(\ndefVolStep).(ndef, step)
+				NTMI.slots.volStep(sl.indexInGroup, (step * 0.4))
 
 			} { m.getHalo.butDown.includes(1) } {
 				NTMI.pre.stepNdefInf(ndef, step)

@@ -128,7 +128,7 @@ m.elAt(\vols).do { |el, i|
 			NTMI.slots.stepNext(i, valStep);
 		} {
 			// default: vol
-			MFdef(\ndefVolStep).(ndef, (valStep * 0.4));
+			NTMI.slots.volStep(i, (valStep * 0.4))
 		};
 		// reset if we hit maxval or minval
 		NTMI.resetOnMinMax(el);
