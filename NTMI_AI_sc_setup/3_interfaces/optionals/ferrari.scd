@@ -235,8 +235,11 @@ m.elAt(\wheel).action.add(\setvol, { |wheel|
 		// get the slot(s) in focus, set its/their volume(s)
 		indices = m.getHalo.selectedSlots.select(_.isNumber);
 		// "set slot vol: %\n".postf(NTMI.ndefs[indices]);
-		NTMI.ndefs[indices].do { |ndef|
-			ndef.softVol_(wheel.value.squared, 0.05, true, wheel.prevValue.squared);
+		// NTMI.ndefs[indices].do { |ndef|
+		// 	ndef.softVol_(wheel.value.squared, 0.05, true, wheel.prevValue.squared);
+		// };
+		indices.do { |heldSlotIndex|
+			NTMI.slots.volStep(heldSlotIndex, wheel.deviceValue - wheel.prevDeviceValue * 0.4);
 		};
 		m.getHalo.slotModeWasUsed = true;
 	} {

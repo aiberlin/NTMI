@@ -80,7 +80,7 @@ m.elAt(\enc).do { |enc, i|
 		var step = enc.deviceValue - enc.prevDeviceValue.clip(1, 126);
 		// prepare for mode
 		var enchat = m.elAt(\enchat, i);
-		var enchatIsUp = enchat.isOn.not;
+		var enchatIsUp = enchat.isOn.not or: enchat[0].isOn.not;
 
 		if (enchatIsUp) {
 			// "// normal mode is influx ...".postln;
@@ -94,7 +94,8 @@ m.elAt(\enc).do { |enc, i|
 
 			if (i < 4) {
 				// "// first 4 change volume ...".postln;
-				NTMI.ndefs[i].softVol_(enc.value.squared, lastVal: enc.prevValue.squared);
+				// NTMI.ndefs[i].softVol_(enc.value.squared, lastVal: enc.prevValue.squared);
+				NTMI.slots.volStep(i, enc.deviceValue - enc.prevDeviceValue * 0.4);
 			} {
 				var slotIndex = i-4;
 				var ndef = NTMI.ndefs[slotIndex];

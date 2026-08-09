@@ -75,7 +75,7 @@ m.elAt(\inflSet).do { |sl, i| sl.elemDesc.label = "inf" + NTMI.inphlux.inNames[i
 /// left top 4 knobs change slots volume
 m.elAt(\vols).do { |el, i|
 	el.action = { |el|
-		NTMI.ndefs[i].softVol_(el.value, lastVal: el.prevValue);
+		NTMI.slots.volStep(i, el.deviceValue - el.prevDeviceValue * 0.4);
 	};
 };
 
